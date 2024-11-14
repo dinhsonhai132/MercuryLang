@@ -4,7 +4,7 @@
 using namespace std;
 
 enum VerType {
-    INT, PLUS, MINUS, NONE
+    INT, PLUS, MINUS, TIME, DIV, NONE
 };
 
 struct datatype {
@@ -35,6 +35,14 @@ public:
                 datatoken.type = MINUS;
                 datatoken.value = 0;
                 tokens.push_back(datatoken);
+            } else if (cur == '*') {
+                datatoken.type = TIME;
+                datatoken.value = 0;
+                tokens.push_back(datatoken);
+            } else if (cur == '/') {
+                datatoken.type = DIV;
+                datatoken.value = 0;
+                tokens.push_back(datatoken);
             } else if (isdigit(cur)) {
                 datatoken.type = INT;
                 datatoken.value = cur - '0';
@@ -58,27 +66,50 @@ public:
     parser(vector<datatype> tokenize) : tokenize(tokenize), tok_idx(0) {}
 
     int eval() {
-        vector<VerType> ops;
-        vector<int> nums;
-        while (tok_idx < tokenize.size()) {
-            cur_idx = tokenize[tok_idx];
-            if (cur_idx.type == INT) {
-                nums.push_back(cur_idx.value);
-            } else if (cur_idx.type == PLUS || cur_idx.type == MINUS) {
-                ops.push_back(cur_idx.type);
-            }
-            tok_idx++;
-        }
+        auto get_next_tok = [&]() -> datatype {
+            return tokenize[tok_idx++];
+        };
 
-        int result = nums[0];
-        for(size_t index = 1; index < nums.size(); index++) {
-            if (ops[index - 1] == PLUS) {
-                result += nums[index];
-            } else if (ops[index - 1] == MINUS) {
-                result -= nums[index];
+        auto factor = [&]() -> int {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == INT) {
+                return cur_idx.value;
             }
-        }
-        return result;
+        };
+
+        auto term = [&]() -> int {
+            int result = factor();
+            while (true) {
+                cur_idx = get_next_tok();
+                if (cur_idx.type == DIV) {
+                    result /= factor();
+                } else if (cur_idx.type == TIME) {
+                    result *= factor();
+                } else {
+                    tok_idx--;
+                    break;
+                }
+            }
+            return result;
+        };
+
+        auto expr = [&]() -> int {
+            int result = term();
+            while (true) {
+                cur_idx = get_next_tok();
+                if (cur_idx.type == PLUS) {
+                    result += term();
+                } else if (cur_idx.type == MINUS) {
+                    result -= term();
+                } else {
+                    tok_idx--;
+                    break;
+                }
+            }
+            return result;
+        };
+        
+        return expr();
     }
 };
 
@@ -86,13 +117,12 @@ int main() {
     cout << "fslang2 [Version 0.0.1] \n(c) Haidinhson company. All rights reserved." << endl;
     while (true) {
         string input;
-        cin >> input;
-        cout << endl;
+        cout << "enter: ";
+        getline(cin, input);
         lexer lex = lexer(input);
         vector<datatype> tok = lex.token();
         parser par = parser(tok);
         int result = par.eval();
         cout << "result: " << result << endl;
     }
-    
 }

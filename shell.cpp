@@ -4,12 +4,17 @@
 using namespace std;
 
 enum VerType {
-    INT, PLUS, MINUS, TIME, DIV, NONE
+    INT, PLUS, MINUS, TIME, DIV, NONE, VAR
 };
 
 struct datatype {
     VerType type;
     int value;
+};
+
+struct var {
+    string name;
+    int val;
 };
 
 class lexer {
@@ -18,6 +23,7 @@ private:
     size_t pos;
     char cur;
     vector<datatype> tokens;
+    vector<var> vars;
     size_t tok_idx;
     datatype cur_idx;
 public:
@@ -25,34 +31,30 @@ public:
 
     vector<datatype> token() {
         datatype datatoken;
+        int num = 0;
         while (pos < input.size()) {
             cur = input[pos];
             if (cur == '+') {
-                datatoken.type = PLUS;
-                datatoken.value = 0;
-                tokens.push_back(datatoken);
+                tokens.push_back({PLUS, 0});
             } else if (cur == '-') {
-                datatoken.type = MINUS;
-                datatoken.value = 0;
-                tokens.push_back(datatoken);
+                tokens.push_back({MINUS, 0});
             } else if (cur == '*') {
-                datatoken.type = TIME;
-                datatoken.value = 0;
-                tokens.push_back(datatoken);
+                tokens.push_back({TIME, 0});
             } else if (cur == '/') {
-                datatoken.type = DIV;
-                datatoken.value = 0;
-                tokens.push_back(datatoken);
+                tokens.push_back({DIV, 0});
             } else if (isdigit(cur)) {
-                datatoken.type = INT;
-                datatoken.value = cur - '0';
-                tokens.push_back(datatoken);
+                num = 0;
+                while (isdigit(input[pos]) && pos < input.size()) {
+                    num = num * 10 + (input[pos] - '0');
+                    pos++;
+                }
+                tokens.push_back({INT, num});
+                continue;
+            } else if (cur == ';') {
+                tokens.push_back({NONE, 0});
             }
             pos++;
         }
-        datatoken.type = NONE;
-        datatoken.value = 0;
-        tokens.push_back(datatoken);
         return tokens;
     }
 };
@@ -62,6 +64,8 @@ private:
     size_t tok_idx;
     datatype cur_idx;
     vector<datatype> tokenize;
+    string var;
+    int val;
 public:
     parser(vector<datatype> tokenize) : tokenize(tokenize), tok_idx(0) {}
 
@@ -117,12 +121,12 @@ int main() {
     cout << "fslang2 [Version 0.0.1] \n(c) Haidinhson company. All rights reserved." << endl;
     while (true) {
         string input;
-        cout << "enter: ";
+        cout << ">>> ";
         getline(cin, input);
         lexer lex = lexer(input);
         vector<datatype> tok = lex.token();
         parser par = parser(tok);
         int result = par.eval();
-        cout << "result: " << result << endl;
+        cout << result << endl;
     }
 }

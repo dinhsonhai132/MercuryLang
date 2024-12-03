@@ -29,81 +29,79 @@ private:
 public:
     lexer(string input) : input(input), pos(0) {}
     
-    vector<datatype> token() {
+    void advance() {
+        if (pos < input.size() - 1) {
+            pos++;
+            cur = input[pos];
+        } else {
+            pos = 0;
+            cur = '\0';
+        }
+    }
 
-        bool error_num = false;
-        bool error_iden = false;
-        bool error_string = false;
-        bool error_var = false;
+    vector<datatype> token() {
 
         while (pos < input.size()) {
             cur = input[pos];
             if (cur == '+') {
                 tokens.push_back({PLUS, 0, ""});
+                advance();
             } else if (cur == '-') {
                 tokens.push_back({MINUS, 0, ""});
+                advance();
             } else if (cur == '*') {
                 tokens.push_back({TIME, 0, ""});
+                advance();
             } else if (cur == '/') {
                 tokens.push_back({DIV, 0, ""});
+                advance();
             } else if (isdigit(cur)) {
                 int num = 0;
                 while (isdigit(input[pos]) && pos < input.size()) {
                     num = num * 10 + (input[pos] - '0');
-                    pos++;
-                    if (isalpha(cur)) {
-                        error_num = true;
+                    advance();
+                    if (isalpha(cur) || cur == ';') {
                         break;
                     }
                 }
-                if (!error_num) tokens.push_back({INT, num, ""});
+                tokens.push_back({INT, num, ""});
                 continue;
             } else if (cur == ';') {
-                tokens.push_back({NONE, 0});
+                tokens.push_back({NONE, 0, ""});
+                advance();
             } else if (cur == '@') {
+                int val = 0;
                 string name = "";
-                int value = 0;
-                pos++;
-                while (pos < input.size() && isalpha(input[pos])) {
-                    name += input[pos];
-                    pos++;
-                }
-                if (input[pos] == '=') {
-                    pos++;
-                    while (pos < input.size() && isdigit(input[pos])) {
-                        value = value * 10 + (input[pos] - '0');
-                        pos++;
+                while (pos < input.size()) {
+                    if (isalpha(input[pos])) {
+                        name += input[pos];
+                    } else if (input[pos] == '=') {
+                        break;
                     }
+                    advance();
                 }
-                if (!name.empty()) {
-                    varibles.push_back({name, value});
-                } else {
-                    error_var = true;
+                while (pos < input.size()) {
+                    if (isdigit(input[pos])) {
+                        val = val * 10 + (input[pos] - '0');
+                    } else if (input[pos] == ';') {
+                        break;
+                    }
+                    advance();
                 }
-            } else if (cur == ' ' || cur == '\t' || cur == '\n') {
-                pos++;
+                varibles.push_back({name, val});
             } else if (isalpha(cur)) {
                 string name = "";
-                while (isalpha(input[pos]) && pos < input.size()) {
+                while (isalpha(cur)) {
                     name += input[pos];
-                    pos++;
+                    advance();
                 }
                 tokens.push_back({VAR, 0, name});
+            } else if (isspace(cur)) {
+                advance();
             } else {
-                if (error_num) {
-                    cout << "Number error cant evalulate";
-                    error_num = false;
-                } else if (error_string) {
-                    cout << "Error string cannot in number";
-                    error_string = false;
-                } else if (error_iden) {
-                    cout << "Error identifier";
-                    error_iden = false;
-                } else {
-                    continue;
-                }
+                cerr << "Unrecognized character: '" << cur << "' at position: " << pos << endl;
+                advance();
             }
-            pos++;
         }
         return tokens;
     }
@@ -113,14 +111,16 @@ public:
 class parser {
 private:
     size_t tok_idx;
-    vector<datatype> tokenize;
     datatype cur_idx;
+    vector<datatype> tokenize;
+    string var;
+    int val;
 public:
-    parser(vector<datatype> tokenize) : tokenize(tokenize), tok_idx(0), cur_idx(tokenize[tok_idx]) {}
+    parser(vector<datatype> tokenize) : tokenize(tokenize), tok_idx(0) {}
+
     int eval() {
         auto get_next_tok = [&]() -> datatype {
-            if (tok_idx < tokenize.size()) return tokenize[tok_idx++];
-            return {NONE, 0};
+            return tokenize[tok_idx++];
         };
 
         auto factor = [&]() -> int {
@@ -128,13 +128,13 @@ public:
             if (cur_idx.type == INT) {
                 return cur_idx.value;
             } else if (cur_idx.type == VAR) {
-                for (const auto &varible: varibles) {
-                    if (varible.name == cur_idx.name) {
+                string var_name = cur_idx.name;
+                for (auto &varible : varibles) {
+                    if (varible.name == var_name) {
                         return varible.val;
                     }
                 }
-                cout << "Error: Undefined variable '" << cur_idx.name << "'" << endl;
-                throw runtime_error("Undefined variable");
+                return 0;
             }
             return 0;
         };
@@ -173,10 +173,9 @@ public:
         
         return expr();
     }
-
-    void print_varibles() {
-        for (auto &var: varibles) {
-            cout << var.name << "=" << var.val << endl;
+    void print_var() {
+        for (auto &varible: varibles) {
+            cout << varible.name << "=" << varible.val << endl;
         }
     }
 };
@@ -194,10 +193,7 @@ void run() {
             cout << endl;
         } else if (input == "help?") {
             cout << "visit https://dinhsonhai132.github.io/fslang.github.io/fslang.html for more info" << endl;
-        } else if (input == "var") {
-            par.print_varibles();
-        }
-        else {
+        } else {
             cout << par.eval() << endl;
         }
     }

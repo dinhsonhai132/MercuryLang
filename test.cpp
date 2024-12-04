@@ -75,7 +75,10 @@ public:
                 while (pos < input.size()) {
                     if (isalpha(input[pos])) {
                         name += input[pos];
-                    } else if (input[pos] == '=') {
+                    } else if (isspace(input[pos])) {
+                        continue;
+                    }
+                    else if (input[pos] == '=') {
                         break;
                     }
                     advance();
@@ -118,61 +121,64 @@ private:
 public:
     parser(vector<datatype> tokenize) : tokenize(tokenize), tok_idx(0) {}
 
-    int eval() {
-        auto get_next_tok = [&]() -> datatype {
+    datatype get_next_tok() {
+        if (tok_idx < tokenize.size()) {
             return tokenize[tok_idx++];
-        };
-
-        auto factor = [&]() -> int {
-            cur_idx = get_next_tok();
-            if (cur_idx.type == INT) {
-                return cur_idx.value;
-            } else if (cur_idx.type == VAR) {
-                string var_name = cur_idx.name;
-                for (auto &varible : varibles) {
-                    if (varible.name == var_name) {
-                        return varible.val;
-                    }
-                }
-                return 0;
-            }
-            return 0;
-        };
-
-        auto term = [&]() -> int {
-            int result = factor();
-            while (true) {
-                cur_idx = get_next_tok();
-                if (cur_idx.type == DIV) {
-                    result /= factor();
-                } else if (cur_idx.type == TIME) {
-                    result *= factor();
-                } else {
-                    tok_idx--;
-                    break;
-                }
-            }
-            return result;
-        };
-
-        auto expr = [&]() -> int {
-            int result = term();
-            while (true) {
-                cur_idx = get_next_tok();
-                if (cur_idx.type == PLUS) {
-                    result += term();
-                } else if (cur_idx.type == MINUS) {
-                    result -= term();
-                } else {
-                    tok_idx--;
-                    break;
-                }
-            }
-            return result;
-        };
-        
-        return expr();
+        }
+        return {NONE, 0, ""};
     }
+
+    int factor() {
+        cur_idx = get_next_tok();
+        if (cur_idx.type == INT) {
+            return cur_idx.value;
+        } else if (cur_idx.type == VAR) {
+            string var_name = cur_idx.name;
+            for (auto &varible : varibles) {
+                if (varible.name == var_name) {
+                    return varible.val;
+                }
+            }
+            cerr << "Variable not found: " << var_name << endl;
+            return 0;
+        }
+        cerr << "Unexpected token in factor: " << cur_idx.type << endl;
+        return 0;
+    }
+
+    int term() {
+        int result = factor();
+        while (true) {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == DIV) {
+                result /= factor();
+            } else if (cur_idx.type == TIME) {
+                result *= factor();
+            } else {
+                tok_idx--;
+                break;
+            }
+        }
+        return result;
+    }
+
+    int expr() {
+        int result = term();
+        while (true) {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == PLUS) {
+                result += term();
+            } else if (cur_idx.type == MINUS) {
+                result -= term();
+            } else {
+                tok_idx--;
+                break;
+            }
+        }
+        return result;
+    }
+ 
+
     void print_var() {
         for (auto &varible: varibles) {
             cout << varible.name << "=" << varible.val << endl;
@@ -186,18 +192,23 @@ void run() {
         string input;
         cout << ">>> ";
         getline(cin, input);
-        lexer lex = lexer(input);
-        vector<datatype> tok = lex.token();
-        parser par = parser(tok);
         if (input.empty()) {
             cout << endl;
-        } else if (input == "help?") {
-            cout << "visit https://dinhsonhai132.github.io/fslang.github.io/fslang.html for more info" << endl;
+            continue;
+        }
+
+        lexer lex(input);
+        vector<datatype> tok = lex.token();
+        parser par(tok);
+
+        if (input == "help?") {
+            cout << "Visit https://dinhsonhai132.github.io/fslang.github.io/fslang.html for more info" << endl;
         } else {
-            cout << par.eval() << endl;
+            cout << par.expr() << endl;
         }
     }
 }
+
 
 int main() {
     run();

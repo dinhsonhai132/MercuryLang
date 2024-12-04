@@ -1,2 +1,1 @@
-# fslang-langluage-2
-the better version of fslang using c++
+this is Mercury Langluage

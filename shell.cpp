@@ -118,7 +118,7 @@ public:
 };
 
 int main() {
-    cout << "fslang2 [Version 0.0.1] \n(c) Haidinhson company. All rights reserved." << endl;
+    cout << "Mercury [Version 0.0.1] \n(c) All rights reserved." << endl;
     while (true) {
         string input;
         cout << ">>> ";

@@ -68,7 +68,7 @@ public:
                 int val = 0;
                 string name = "";
                 advance();
-                while (isalnum(input[pos]) && pos < input.size() && input[pos] == '_') {
+                while (isalpha(input[pos]) && pos < input.size()) {
                     name += input[pos];
                     advance();
                 }
@@ -126,9 +126,7 @@ public:
                     return varible.val;
                 }
             }
-            cerr << "Variable not found: " << var_name << endl;
-            return 0;
-        } 
+        }
         return 0;
     }
 
@@ -178,7 +176,7 @@ public:
 };
 
 void run() {
-    cout << "fslang2 [Version 0.0.2] \n(c) (this is test version) All rights reserved.\n type 'help?' for help" << endl;
+    cout << "Mercury [Version 1.1.1] \n(c) (this is test version) All rights reserved.\n type 'help?' for help" << endl;
     while (true) {
         string input;
         cout << ">>> ";

@@ -183,7 +183,7 @@ public:
 };
 
 void run() {
-    cout << "fslang2 [Version 0.0.2] \n(c) (this is test version) All rights reserved.\n type 'help?' for help" << endl;
+    cout << "Mercury [Version 1.1.3] \n(c) (this is test version) All rights reserved.\n type 'help?' for help" << endl;
     while (true) {
         string input;
         cout << ">>> ";

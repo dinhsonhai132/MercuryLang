@@ -67,21 +67,17 @@ public:
             } else if (cur == '@') {
                 int val = 0;
                 string name = "";
-                while (pos < input.size()) {
-                    if (isalpha(input[pos])) {
-                        name += input[pos];
-                    } else if (input[pos] == '=') {
-                        break;
-                    }
+                advance();
+                while (isalnum(input[pos]) && pos < input.size() && input[pos] == '_') {
+                    name += input[pos];
                     advance();
                 }
-                while (pos < input.size()) {
-                    if (isdigit(input[pos])) {
-                        val = val * 10 + (input[pos] - '0');
-                    } else if (input[pos] == '=') {
-                        break;
-                    }
+                if (input[pos] == '=') {
                     advance();
+                    while (isdigit(input[pos]) && pos < input.size()) {
+                        val = val * 10 + (input[pos] - '0');
+                        advance();
+                    }
                 }
                 varibles.push_back({name, val});
             } else if (isalpha(cur)) {
@@ -133,7 +129,6 @@ public:
             cerr << "Variable not found: " << var_name << endl;
             return 0;
         } 
-        cerr << "Unexpected token in factor: " << cur_idx.type << endl;
         return 0;
     }
 
@@ -183,7 +178,7 @@ public:
 };
 
 void run() {
-    cout << "Mercury [Version 1.1.3] \n(c) (this is test version) All rights reserved.\n type 'help?' for help" << endl;
+    cout << "fslang2 [Version 0.0.2] \n(c) (this is test version) All rights reserved.\n type 'help?' for help" << endl;
     while (true) {
         string input;
         cout << ">>> ";
@@ -199,7 +194,10 @@ void run() {
 
         if (input == "help?") {
             cout << "Visit https://dinhsonhai132.github.io/fslang.github.io/fslang.html for more info" << endl;
-        } else {
+        } else if (input == "var") {
+            par.print_var();
+        } 
+        else {
             cout << par.expr() << endl;
         }
     }

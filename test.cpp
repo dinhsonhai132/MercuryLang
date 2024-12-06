@@ -6,7 +6,7 @@ using namespace std;
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, WHILE_LOOP, 
     FOR_LOOP, AND, OR, NOT, TRUE, FALSE, PRINT, INPUT, STRING, 
-    TEMPORARY_MEMORY, FUNCTION
+    TEMPORARY_MEMORY, FUNCTION, IF, THEN, ELSE, BIGGER, SMALLER
 };
 
 struct datatype {
@@ -117,6 +117,12 @@ public:
             } else if (cur == 'P' && input.substr(pos, 5) == "PRINT") {
                 tokens.push_back({PRINT, 0, ""});
                 advance_to(5);
+            } else if (cur == '<') {
+                tokens.push_back({SMALLER, 0, ""});
+                advance();
+            } else if (cur == '>') {
+                tokens.push_back({BIGGER, 0, ""});
+                advance();
             } else {
                 advance();
             }
@@ -142,6 +148,27 @@ public:
         }
         return {NONE, 0, ""};
     }
+    
+    int compair() {
+        datatype left = get_next_tok();
+        if (get_next_tok().type == BIGGER) {
+            datatype right = get_next_tok();
+            if (left.value > right.value) {
+                return 1;
+            } else {
+                return 0;
+            }
+            tok_idx = 0;
+        } else if (get_next_tok().type == SMALLER) {
+            datatype right = get_next_tok();
+            if (left.value < right.value) {
+                return 1;
+            } else {
+                return 0;
+            }
+            tok_idx = 0;
+        }
+    }
 
     int factor() {
         cur_idx = get_next_tok();
@@ -154,6 +181,9 @@ public:
                     return variable.val;
                 }
             }
+        } else if (cur_idx.type == BIGGER || cur_idx.type == SMALLER) {
+            tok_idx--;
+            
         }
         return 0;
     }
@@ -194,7 +224,10 @@ public:
         }
         return result;
     }
- 
+
+    void print_func() {
+        
+    } 
 
     void print_var() {
         for (auto &variable: variables) {

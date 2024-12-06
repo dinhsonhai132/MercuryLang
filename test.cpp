@@ -4,7 +4,9 @@
 using namespace std;
 
 enum VerType {
-    INT, PLUS, MINUS, TIME, DIV, NONE, VAR
+    INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, WHILE_LOOP, 
+    FOR_LOOP, AND, OR, NOT, TRUE, FALSE, PRINT, INPUT, STRING, 
+    TEMPORARY_MEMORY, FUNCTION
 };
 
 struct datatype {
@@ -18,7 +20,8 @@ struct store_var {
     int val;
 };
 
-vector<store_var> varibles;
+vector<store_var> variables;
+vector<vector<store_var>> memory;
 
 class lexer {
 private:
@@ -28,13 +31,21 @@ private:
     vector<datatype> tokens;
 public:
     lexer(string input) : input(input), pos(0) {}
-    
+
     void advance() {
-        if (pos < input.size() - 1) {
+        if (pos < input.size()) {
             pos++;
             cur = input[pos];
         } else {
-            pos = 0;
+            cur = '\0';
+        }
+    }
+
+    void advance_to(int a) {
+        if (pos < input.size()) {
+            pos += a;
+            cur = input[pos];
+        } else {
             cur = '\0';
         }
     }
@@ -46,63 +57,67 @@ public:
             if (cur == '+') {
                 tokens.push_back({PLUS, 0, ""});
                 advance();
+
             } else if (cur == '-') {
                 tokens.push_back({MINUS, 0, ""});
                 advance();
+
             } else if (cur == '*') {
                 tokens.push_back({TIME, 0, ""});
                 advance();
+
             } else if (cur == '/') {
                 tokens.push_back({DIV, 0, ""});
                 advance();
+
             } else if (isdigit(cur)) {
                 int num = 0;
                 while (isdigit(input[pos]) && pos < input.size()) {
                     num = num * 10 + (input[pos] - '0');
                     advance();
-                    if (isalpha(cur) || cur == ';') {
-                        break;
-                    }
                 }
                 tokens.push_back({INT, num, ""});
-                continue;
+
             } else if (cur == ';') {
                 tokens.push_back({NONE, 0, ""});
                 advance();
-            } else if (cur == '@') {
+
+            } else if (cur == 'L' && input.substr(pos, 3) == "LET") {
                 int val = 0;
                 string name = "";
-                while (pos < input.size()) {
-                    if (isalpha(input[pos])) {
-                        name += input[pos];
-                    } else if (isspace(input[pos])) {
-                        continue;
-                    }
-                    else if (input[pos] == '=') {
-                        break;
-                    }
+                advance_to(3);
+
+                while (isspace(input[pos])) {
                     advance();
                 }
-                while (pos < input.size()) {
-                    if (isdigit(input[pos])) {
+                
+                while (isalpha(input[pos]) && pos < input.size()) {
+                    name += input[pos];
+                    advance();
+                }
+
+                if (input[pos] == '=') {
+                    advance();
+                    while (isdigit(input[pos]) && pos < input.size()) {
                         val = val * 10 + (input[pos] - '0');
-                    } else if (input[pos] == ';') {
-                        break;
+                        advance();
                     }
-                    advance();
                 }
-                varibles.push_back({name, val});
+
+                variables.push_back({name, val});
             } else if (isalpha(cur)) {
                 string name = "";
                 while (isalpha(cur)) {
                     name += input[pos];
                     advance();
                 }
-                tokens.push_back({VAR, 0, name});
+                tokens.push_back({TEMPORARY_MEMORY, 0, name});
             } else if (isspace(cur)) {
                 advance();
+            } else if (cur == 'P' && input.substr(pos, 5) == "PRINT") {
+                tokens.push_back({PRINT, 0, ""});
+                advance_to(5);
             } else {
-                cerr << "Unrecognized character: '" << cur << "' at position: " << pos << endl;
                 advance();
             }
         }
@@ -132,17 +147,14 @@ public:
         cur_idx = get_next_tok();
         if (cur_idx.type == INT) {
             return cur_idx.value;
-        } else if (cur_idx.type == VAR) {
+        } else if (cur_idx.type == TEMPORARY_MEMORY) {
             string var_name = cur_idx.name;
-            for (auto &varible : varibles) {
-                if (varible.name == var_name) {
-                    return varible.val;
+            for (auto &variable : variables) {
+                if (variable.name == var_name) {
+                    return variable.val;
                 }
             }
-            cerr << "Variable not found: " << var_name << endl;
-            return 0;
         }
-        cerr << "Unexpected token in factor: " << cur_idx.type << endl;
         return 0;
     }
 
@@ -151,7 +163,12 @@ public:
         while (true) {
             cur_idx = get_next_tok();
             if (cur_idx.type == DIV) {
-                result /= factor();
+                int divisor = factor();
+                if (divisor == 0) {
+                    cerr << "Error: Division by zero" << endl;
+                    return 0;
+                }
+                result /= divisor;
             } else if (cur_idx.type == TIME) {
                 result *= factor();
             } else {
@@ -180,11 +197,15 @@ public:
  
 
     void print_var() {
-        for (auto &varible: varibles) {
-            cout << varible.name << "=" << varible.val << endl;
+        for (auto &variable: variables) {
+            cout << variable.name << "=" << variable.val << endl;
         }
     }
 };
+
+void info() {
+
+}
 
 void run() {
     cout << "Mercury [Version 0.0.2] \n(c) (this is test version) All rights reserved.\n type 'help?' for help" << endl;
@@ -203,13 +224,21 @@ void run() {
 
         if (input == "help?") {
             cout << "Visit https://dinhsonhai132.github.io/fslang.github.io/fslang.html for more info" << endl;
-        } else {
+        } else if (input == "var") {
+            par.print_var();
+        } else if (input == "exit") {
+            cout << "Goodbye :)" << endl;
+            break;  
+        } else if (input == "info") {
+            info();
+        }
+        else {
             cout << par.expr() << endl;
         }
     }
 }
 
-
 int main() {
     run();
+    system("pause");
 }

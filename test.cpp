@@ -4,9 +4,8 @@
 using namespace std;
 
 enum VerType {
-    INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, WHILE_LOOP, 
-    FOR_LOOP, AND, OR, NOT, TRUE, FALSE, PRINT, INPUT, STRING, 
-    TEMPORARY_MEMORY, FUNCTION, IF, THEN, ELSE, BIGGER, SMALLER
+    INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
+    TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL
 };
 
 struct datatype {
@@ -96,8 +95,15 @@ public:
                     advance();
                 }
 
+                while (isspace(cur)) {
+                    advance();
+                }
+                
                 if (input[pos] == '=') {
                     advance();
+                    while (isspace(cur)) {
+                        advance();
+                    }
                     while (isdigit(input[pos]) && pos < input.size()) {
                         val = val * 10 + (input[pos] - '0');
                         advance();
@@ -123,7 +129,21 @@ public:
             } else if (cur == '>') {
                 tokens.push_back({BIGGER, 0, ""});
                 advance();
-            } else {
+            } else if (cur == '"') {
+                string name = "";
+                advance();
+                while (cur != '"' && cur != '\0' && cur != '\n') {
+                    name += input[pos];
+                    advance();
+                }
+                if (!name.empty()) {
+                    tokens.push_back({STRING, 0, name});
+                }
+            } else if (cur == '=' && input[pos + 1] == '=') {
+                tokens.push_back({EQUAL, 0, ""});
+                advance_to(2);
+            }
+            else {
                 advance();
             }
         }
@@ -148,30 +168,11 @@ public:
         }
         return {NONE, 0, ""};
     }
-    
-    int compair() {
-        datatype left = get_next_tok();
-        if (get_next_tok().type == BIGGER) {
-            datatype right = get_next_tok();
-            if (left.value > right.value) {
-                return 1;
-            } else {
-                return 0;
-            }
-            tok_idx = 0;
-        } else if (get_next_tok().type == SMALLER) {
-            datatype right = get_next_tok();
-            if (left.value < right.value) {
-                return 1;
-            } else {
-                return 0;
-            }
-            tok_idx = 0;
-        }
-    }
 
     int factor() {
         cur_idx = get_next_tok();
+        datatype next_cur_idx = get_next_tok();
+        tok_idx--;
         if (cur_idx.type == INT) {
             return cur_idx.value;
         } else if (cur_idx.type == TEMPORARY_MEMORY) {
@@ -181,9 +182,6 @@ public:
                     return variable.val;
                 }
             }
-        } else if (cur_idx.type == BIGGER || cur_idx.type == SMALLER) {
-            tok_idx--;
-            
         }
         return 0;
     }
@@ -225,23 +223,97 @@ public:
         return result;
     }
 
+    int comparison() {
+        tok_idx = 0;
+        auto left_number = get_next_tok();
+        VerType op = get_next_tok().type;
+        auto right_number = get_next_tok();
+        int left; int right;
+        if (left_number.type == TEMPORARY_MEMORY) {
+            for (auto &variable : variables) {
+                string name = left_number.name;
+                if (variable.name == name) {
+                    left = variable.val;
+                    break;
+                }
+            }
+        } else if (left_number.type == INT) {
+            left = left_number.value;
+        }
+        if (right_number.type == TEMPORARY_MEMORY) {
+            for (auto &variable : variables) {
+                string name = right_number.name;
+                if (variable.name == name) {
+                    right = variable.val;
+                    break;
+                }
+            }
+        } else if (right_number.type == INT) {
+            right = right_number.value;
+        }
+
+        switch (op) {
+            case BIGGER: return left > right ? 1 : 0;
+            case SMALLER: return left < right ? 1 : 0;
+            case EQUAL: return left == right ? 1 : 0;
+        }
+        return 0;
+    }
+
     void print_func() {
-        
-    } 
+        auto tok = get_next_tok();
+        if (tok.type == PRINT) {
+            int result = expr();
+            cout << result << endl;
+        } else {
+            cerr << "Error: Invalid token for PRINT command." << endl;
+        }
+    }
+
+    void run() {
+        while (tok_idx < tokenize.size()) {
+            if (tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == BIGGER 
+            || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == SMALLER
+            || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == EQUAL) {
+                cout << comparison() << endl;
+                break;
+            } else if (tokenize[tok_idx].type == PRINT) {
+                print_func();
+                break;
+            } else if (tokenize[tok_idx].type == STRING) {
+                cout << tokenize[tok_idx].name << endl;
+                break;
+            } else {
+                cout << expr() << endl;
+                break;
+            }
+        }
+    }
 
     void print_var() {
         for (auto &variable: variables) {
-            cout << variable.name << "=" << variable.val << endl;
+            cout << variable.name << " = " << variable.val << endl;
         }
+    }
+
+    void printstring() {
+        int idx = 0;
+        while (idx < tokenize.size()) {
+            if (tokenize[idx].type == STRING) {
+                cout << tokenize[idx].name << endl;
+            }
+            idx++;
+        }
+        
     }
 };
 
 void info() {
-
+    cout << "copy right (c) dinhsonhai132" << endl;
 }
 
 void run() {
-    cout << "Mercury [Version 0.0.2] \n(c) (this is test version) All rights reserved.\n type 'help?' for help" << endl;
+    cout << "MercuryLang [Version 0.0.2] \n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
         cout << ">>> ";
@@ -264,9 +336,11 @@ void run() {
             break;  
         } else if (input == "info") {
             info();
+        } else if (input == "str") {
+            par.printstring();
         }
         else {
-            cout << par.expr() << endl;
+            par.run();
         }
     }
 }

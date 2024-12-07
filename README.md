@@ -1,2 +1,4 @@
 this is Mercury Langluage
-BRO WHAT THE HELLL I HAVE A BUG AND  CHATGPT IS USSLESS BRO I HAVE TO FIX BY MY SELF
+update log:
+new feature add comparison in test
+add run function

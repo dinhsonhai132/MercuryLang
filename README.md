@@ -13,4 +13,6 @@ this is Mercury Langluage
 > add new token check method
 ## (12/8/2024) 3:51PM
 > add new else feature
-* loop comming soon
+>
+## (12/8/2024) 6:55PM
+> fix else error

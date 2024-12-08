@@ -5,7 +5,8 @@ using namespace std;
 
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
-    TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCE, IF, ELSE, THEN, LP, RP
+    TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCE, IF, ELSE,
+    THEN, LP, RP, FOR
 };
 
 struct datatype {
@@ -159,6 +160,9 @@ public:
             } else if (cur == 'T' && input.substr(pos, 4) == "THEN") {
                  tokens.push_back({THEN, 0, ""});
                  advance_to(4);
+            } else if (cur == 'E' && input.substr(pos, 4) == "ELSE") {
+                tokens.push_back({ELSE, 0, ""});
+                advance_to(4);
             } else if (isalpha(cur)) {
                 string name = "";
                 while (isalpha(cur)) {
@@ -166,14 +170,13 @@ public:
                     advance();
                 }
                 tokens.push_back({TEMPORARY_MEMORY, 0, name});
-            } else {
+            }else {
                 advance();
             }
         }
         return tokens;
     }
 };
-
 
 class parser {
 private:
@@ -276,7 +279,7 @@ public:
         }
         return 0;
     }
-
+    
     void condition() {
         tok_idx = 0;
         cur_idx = get_next_tok();
@@ -287,7 +290,24 @@ public:
                 if (next_tok.type == STRING) {
                     cout << next_tok.name << endl;
                 } else if (next_tok.type == INT) {
+                    tok_idx--;
                     cout << expr() << endl;
+                }
+            } else if (check == 0 && get_next_tok().type == THEN) {
+                while (tok_idx < tokenize.size()) {
+                    tok_idx++;
+                    if (tokenize[tok_idx].type == ELSE) {
+                        break;
+                    }
+                }
+                auto tok = get_next_tok();
+                if (tok.type == STRING) {
+                    cout << get_next_tok().name << endl;
+                } else if (tok.type == INT) {
+                    tok_idx--;
+                    cout << expr() << endl;
+                } else {
+                    cout << endl;
                 }
             }
         }
@@ -297,10 +317,15 @@ public:
         tok_idx = 0;
         auto tok = get_next_tok();
         if (tok.type == PRINT) {
-            int result = expr();
-            cout << result << endl;
-        } else {
-            cerr << "Error: Invalid token for PRINT command." << endl;
+            auto next_tok = get_next_tok();
+            if (next_tok.type == INT) {
+                tok_idx--;
+                cout << expr() << endl;
+            } else if (next_tok.type == STRING) {
+                cout << next_tok.name << endl;
+            } else {
+                cout << "Invalid PRINT token" << endl;
+            }
         }
     }
 
@@ -319,6 +344,7 @@ public:
                 cout << tokenize[tok_idx].name << endl;
                 break;
             } else if (tokenize[tok_idx].type == PRINT) {
+                tok_idx--;
                 print_func();
                 break;
             } else if (tokenize[tok_idx].type == IF) {
@@ -336,6 +362,35 @@ void info() {
 }
 
 void run() {
+    cout << "MercuryLang [Version 0.0.2] \n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
+    while (true) {
+        string input;
+        cout << ">>> ";
+        getline(cin, input);
+        if (input.empty()) {
+            cout << endl;
+            continue;
+        }
+
+        lexer lex(input);
+        vector<datatype> tokens = lex.token();
+        parser par(tokens);
+
+        if (input == "help?") {
+            cout << "Visit https://dinhsonhai132.github.io/fslang.github.io/fslang.html for more info" << endl;
+        } else if (input == "exit") {
+            cout << "Goodbye :)" << endl;
+            break;  
+        } else if (input == "info") {
+            info();
+        } else {
+            par.run();
+        }
+        tokens = {};
+    }
+}
+
+void debug() {
     cout << "MercuryLang [Version 0.0.2] \n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
@@ -386,6 +441,12 @@ void run() {
 }
 
 int main() {
-    run();
+    string mode;
+    getline(cin, mode);
+    if (mode == "debug") {
+        debug();
+    } else {
+        run();
+    }
     system("pause");
 }

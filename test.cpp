@@ -297,11 +297,9 @@ public:
                     cout << expr() << endl;
                 }
             } else if (check == 0 && get_next_tok().type == THEN) {
-                while (tok_idx < tokenize.size()) {
+                while (cur_idx.type != ELSE && tok_idx < tokenize.size()) {
+                    cur_idx = tokenize[tok_idx];
                     tok_idx++;
-                    if (tokenize[tok_idx].type == ELSE) {
-                        break;
-                    }
                 }
                 auto tok = get_next_tok();
                 if (tok.type == STRING) {

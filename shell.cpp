@@ -6,7 +6,7 @@ using namespace std;
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCE, IF, ELSE,
-    THEN, LP, RP, FOR
+    THEN, LP, RP, FOR, PP, MM
 };
 
 struct datatype {
@@ -62,22 +62,18 @@ public:
 
         while (pos < input.size()) {
             cur = input[pos];
-            if (cur == '+') {
+            if (cur == '+' && isalnum(input[pos + 1])) {
                 tokens.push_back({PLUS, 0, ""});
                 advance();
-
-            } else if (cur == '-') {
+            } else if (cur == '-' && isalnum(input[pos + 1])) {
                 tokens.push_back({MINUS, 0, ""});
                 advance();
-
             } else if (cur == '*') {
                 tokens.push_back({TIME, 0, ""});
                 advance();
-
             } else if (cur == '/') {
                 tokens.push_back({DIV, 0, ""});
                 advance();
-
             } else if (isdigit(cur)) {
                 int num = 0;
                 while (isdigit(input[pos]) && pos < input.size()) {
@@ -85,11 +81,15 @@ public:
                     advance();
                 }
                 tokens.push_back({INT, num, ""});
-
             } else if (cur == ';') {
                 tokens.push_back({NONE, 0, ""});
                 advance();
-
+            } else if (cur == '+' && input.substr(pos, 2) == "++") {
+                tokens.push_back({PP, 0, ""});
+                advance_to(2);
+            } else if (cur == '-' && input.substr(pos, 2) == "--") {
+                tokens.push_back({MM, 0, ""});
+                advance_to(2);
             } else if (cur == 'L' && input.substr(pos, 3) == "LET") {
                 int val = 0;
                 string name = "";
@@ -170,7 +170,7 @@ public:
                     advance();
                 }
                 tokens.push_back({TEMPORARY_MEMORY, 0, name});
-            }else {
+            } else {
                 advance();
             }
         }
@@ -212,6 +212,9 @@ public:
             string var_name = cur_idx.name;
             int value = get_variable(var_name);
             return value;
+        } else if (cur_idx.type == PP) {
+            int num = get_next_tok().value;
+            return num++;
         }
         return 0;
     }
@@ -294,11 +297,9 @@ public:
                     cout << expr() << endl;
                 }
             } else if (check == 0 && get_next_tok().type == THEN) {
-                while (tok_idx < tokenize.size()) {
+                while (cur_idx.type != ELSE && tok_idx < tokenize.size()) {
+                    cur_idx = tokenize[tok_idx];
                     tok_idx++;
-                    if (tokenize[tok_idx].type == ELSE) {
-                        break;
-                    }
                 }
                 auto tok = get_next_tok();
                 if (tok.type == STRING) {

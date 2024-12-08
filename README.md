@@ -11,3 +11,5 @@ this is Mercury Langluage
 > new feature print func
 >
 > add new print token method
+
+Next i will add else and lparent, rparent

@@ -63,10 +63,10 @@ public:
 
         while (pos < input.size()) {
             cur = input[pos];
-            if (cur == '+' && isalnum(input[pos + 1])) {
+            if (cur == '+') {
                 tokens.push_back({PLUS, 0, ""});
                 advance();
-            } else if (cur == '-' && isalnum(input[pos + 1])) {
+            } else if (cur == '-') {
                 tokens.push_back({MINUS, 0, ""});
                 advance();
             } else if (cur == '*') {

@@ -63,7 +63,13 @@ public:
 
         while (pos < input.size()) {
             cur = input[pos];
-            if (cur == '+') {
+            if (cur == '+' && input.substr(pos, 2) == "++") {
+                tokens.push_back({PP, 0, ""});
+                advance_to(2);
+            } else if (cur == '-' && input.substr(pos, 2) == "--") {
+                tokens.push_back({MM, 0, ""});
+                advance_to(2);
+            } else if (cur == '+') {
                 tokens.push_back({PLUS, 0, ""});
                 advance();
             } else if (cur == '-') {
@@ -85,12 +91,6 @@ public:
             } else if (cur == ';') {
                 tokens.push_back({NONE, 0, ""});
                 advance();
-            } else if (cur == '+' && input.substr(pos, 2) == "++") {
-                tokens.push_back({PP, 0, ""});
-                advance_to(2);
-            } else if (cur == '-' && input.substr(pos, 2) == "--") {
-                tokens.push_back({MM, 0, ""});
-                advance_to(2);
             } else if (cur == 'L' && input.substr(pos, 3) == "LET") {
                 int val = 0;
                 string name = "";

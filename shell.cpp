@@ -473,6 +473,8 @@ int interpreter(string file_name) {
 }
 
 int main() {
+    cout << "'debug' for debug mode, 'run' to run, enter file name to interpreter\n";
+    cout << "mode> ";
     string mode;
     getline(cin, mode);
     if (mode == "debug") {

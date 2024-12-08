@@ -69,10 +69,12 @@ public:
             } else if (cur == '-' && input.substr(pos, 2) == "--") {
                 tokens.push_back({MM, 0, ""});
                 advance_to(2);
-            } else if (cur == '+') {
+            } else if (cur == '+' && isalnum(input[pos - 1]) ||
+            cur == '+' && isspace(input[pos - 1])) {
                 tokens.push_back({PLUS, 0, ""});
                 advance();
-            } else if (cur == '-') {
+            } else if (cur == '-' && isalnum(input[pos - 1]) ||
+            cur == '+' && isspace(input[pos - 1])) {
                 tokens.push_back({MINUS, 0, ""});
                 advance();
             } else if (cur == '*') {

@@ -13,3 +13,5 @@ this is Mercury Langluage
 > add new token check method
 
 Next i will add else and lparent, rparent
+## (12/8/2024) 3:51PM
+> add new else feature

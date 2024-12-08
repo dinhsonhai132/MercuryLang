@@ -303,7 +303,7 @@ public:
                 }
                 auto tok = get_next_tok();
                 if (tok.type == STRING) {
-                    cout << get_next_tok().name << endl;
+                    cout << tok.name << endl;
                 } else if (tok.type == INT) {
                     tok_idx--;
                     cout << expr() << endl;

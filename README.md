@@ -16,3 +16,4 @@ this is Mercury Langluage
 >
 ## (12/8/2024) 6:55PM
 > fix else error
+> add interpreter method

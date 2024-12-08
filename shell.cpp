@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 using namespace std;
 
 enum VerType {
@@ -212,9 +213,19 @@ public:
             string var_name = cur_idx.name;
             int value = get_variable(var_name);
             return value;
-        } else if (cur_idx.type == PP) {
+        } else if (cur_idx.type == PP && get_next_tok().type == INT) {
+            tok_idx--;
             int num = get_next_tok().value;
-            return num++;
+            return ++num;
+        } else if (cur_idx.type == MM && get_next_tok().type == INT) {
+            tok_idx--;
+            int num = get_next_tok().value;
+            return --num;
+        } else if (cur_idx.type == PP && get_next_tok().type == TEMPORARY_MEMORY) {
+            tok_idx--;
+            string name = get_next_tok().name;
+            int num = get_variable(name);
+            return ++num;
         }
         return 0;
     }
@@ -283,7 +294,7 @@ public:
         return 0;
     }
     
-    void condition() {
+    auto condition() {
         tok_idx = 0;
         cur_idx = get_next_tok();
         if (cur_idx.type == IF) {
@@ -301,14 +312,13 @@ public:
                     cur_idx = tokenize[tok_idx];
                     tok_idx++;
                 }
+                tok_idx--;
                 auto tok = get_next_tok();
                 if (tok.type == STRING) {
                     cout << tok.name << endl;
                 } else if (tok.type == INT) {
                     tok_idx--;
                     cout << expr() << endl;
-                } else {
-                    cout << endl;
                 }
             }
         }
@@ -433,6 +443,8 @@ void debug() {
                     case NONE: token_type = "NONE"; break;
                     case BIGGER: token_type = "BIGGER"; break;
                     case SMALLER: token_type = "SMALLER"; break;
+                    case PP: token_type = "PP"; break;
+                    case MM: token_type = "MM"; break;
                 }
                 cout << "Type: " << token_type << " Value: " << token.value << " Name: " << token.name << endl;
             }
@@ -441,13 +453,34 @@ void debug() {
     }
 }
 
+int interpreter(string file_name) {
+    std::ifstream inputFile(file_name);
+    if (!inputFile) {
+        std::cerr << "Error opening file!" << std::endl;
+        return 1;
+    }
+
+    std::string line;
+    while (std::getline(inputFile, line)) {
+        lexer lex(line);
+        vector<datatype> tokens = lex.token();
+        parser par(tokens);
+        par.run();
+    }
+
+    inputFile.close();
+    return 0;
+}
+
 int main() {
     string mode;
     getline(cin, mode);
     if (mode == "debug") {
         debug();
-    } else {
+    } else if (mode == "run") {
         run();
+    } else {
+        interpreter("Mercury.txt");
     }
     system("pause");
 }

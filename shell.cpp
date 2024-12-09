@@ -228,16 +228,30 @@ public:
         } else if (cur_idx.type == PP) {
             auto next_tok = get_next_tok();
             if (next_tok.type == TEMPORARY_MEMORY) {
-                int val = get_variable(next_tok.name);
-                return ++val;
+                int val;
+                for (auto &variable: variables) {
+                    if (variable.name == next_tok.name) {
+                        variable.val += 1;
+                        val = variable.val;
+                        break;
+                    }
+                }
+                return val;
             } else if (next_tok.type == INT) {
                 return ++next_tok.value;
             }
         } else if (cur_idx.type == MM) {
             auto next_tok = get_next_tok();
             if (next_tok.type == TEMPORARY_MEMORY) {
-                int val = get_variable(next_tok.name);
-                return --val;
+                int val;
+                for (auto &variable: variables) {
+                    if (variable.name == next_tok.name) {
+                        variable.val -= 1;
+                        val = variable.val;
+                        break;
+                    }
+                }
+                return val;
             } else if (next_tok.type == INT) {
                 return --next_tok.value;
             }

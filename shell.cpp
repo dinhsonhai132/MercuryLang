@@ -7,7 +7,7 @@ using namespace std;
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCE, IF, ELSE,
-    THEN, LP, RP, FOR, PP, MM
+    THEN, LP, RP, FOR, PP, MM, WHILE
 };
 
 struct datatype {
@@ -63,18 +63,10 @@ public:
 
         while (pos < input.size()) {
             cur = input[pos];
-            if (cur == '+' && input.substr(pos, 2) == "++") {
-                tokens.push_back({PP, 0, ""});
-                advance_to(2);
-            } else if (cur == '-' && input.substr(pos, 2) == "--") {
-                tokens.push_back({MM, 0, ""});
-                advance_to(2);
-            } else if (cur == '+' && isalnum(input[pos - 1]) ||
-            cur == '+' && isspace(input[pos - 1])) {
+            if (cur == '+' && isalnum(input[pos + 1])) {
                 tokens.push_back({PLUS, 0, ""});
                 advance();
-            } else if (cur == '-' && isalnum(input[pos - 1]) ||
-            cur == '+' && isspace(input[pos - 1])) {
+            } else if (cur == '-' && isalnum(input[pos + 1])) {
                 tokens.push_back({MINUS, 0, ""});
                 advance();
             } else if (cur == '*') {
@@ -93,6 +85,12 @@ public:
             } else if (cur == ';') {
                 tokens.push_back({NONE, 0, ""});
                 advance();
+            } else if (cur == '+' && input.substr(pos, 2) == "++") {
+                tokens.push_back({PP, 0, ""});
+                advance_to(2);
+            } else if (cur == '-' && input.substr(pos, 2) == "--") {
+                tokens.push_back({MM, 0, ""});
+                advance_to(2);
             } else if (cur == 'L' && input.substr(pos, 3) == "LET") {
                 int val = 0;
                 string name = "";
@@ -207,6 +205,18 @@ public:
         return {NONE, 0, ""};
     }
 
+    int while_loop() {
+        cur_idx = get_next_tok();
+        if (cur_idx.type == WHILE) {
+            int condition = comparison();
+            if (condition == 1) {
+                tok_idx = 0;
+                while_loop();
+            }
+        }
+        return 0;
+    }
+
     int factor() {
         cur_idx = get_next_tok();
         if (cur_idx.type == INT) {
@@ -215,19 +225,22 @@ public:
             string var_name = cur_idx.name;
             int value = get_variable(var_name);
             return value;
-        } else if (cur_idx.type == PP && get_next_tok().type == INT) {
-            tok_idx--;
-            int num = get_next_tok().value;
-            return ++num;
-        } else if (cur_idx.type == MM && get_next_tok().type == INT) {
-            tok_idx--;
-            int num = get_next_tok().value;
-            return --num;
-        } else if (cur_idx.type == PP && get_next_tok().type == TEMPORARY_MEMORY) {
-            tok_idx--;
-            string name = get_next_tok().name;
-            int num = get_variable(name);
-            return ++num;
+        } else if (cur_idx.type == PP) {
+            auto next_tok = get_next_tok();
+            if (next_tok.type == TEMPORARY_MEMORY) {
+                int val = get_variable(next_tok.name);
+                return ++val;
+            } else if (next_tok.type == INT) {
+                return ++next_tok.value;
+            }
+        } else if (cur_idx.type == MM) {
+            auto next_tok = get_next_tok();
+            if (next_tok.type == TEMPORARY_MEMORY) {
+                int val = get_variable(next_tok.name);
+                return --val;
+            } else if (next_tok.type == INT) {
+                return --next_tok.value;
+            }
         }
         return 0;
     }
@@ -245,7 +258,8 @@ public:
                 result /= divisor;
             } else if (cur_idx.type == TIME) {
                 result *= factor();
-            } else {
+            }
+            else {
                 tok_idx--;
                 break;
             }
@@ -314,7 +328,6 @@ public:
                     cur_idx = tokenize[tok_idx];
                     tok_idx++;
                 }
-                tok_idx--;
                 auto tok = get_next_tok();
                 if (tok.type == STRING) {
                     cout << tok.name << endl;
@@ -475,8 +488,6 @@ int interpreter(string file_name) {
 }
 
 int main() {
-    cout << "'debug' for debug mode, 'run' to run, enter file name to interpreter\n";
-    cout << "mode> ";
     string mode;
     getline(cin, mode);
     if (mode == "debug") {
@@ -484,7 +495,7 @@ int main() {
     } else if (mode == "run") {
         run();
     } else {
-        interpreter("Mercury.txt");
+        interpreter(mode);
     }
     system("pause");
 }

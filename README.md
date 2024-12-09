@@ -17,3 +17,6 @@ this is Mercury Langluage
 ## (12/8/2024) 6:55PM
 > fix else error
 > add interpreter method
+>
+## (12/9/2024)
+> add new plus plus and minus minus token

@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -470,8 +471,6 @@ void run() {
             info();
         } else if (input == "var") {
             print_var();
-        } else if (input == "change") {
-            main();
         }
         else {
             par.run();
@@ -504,8 +503,6 @@ void debug() {
             info();
         } else if (input == "var") {
             print_var();
-        } else if (input == "change") {
-            main();
         }
         else {
             par.run();
@@ -559,7 +556,7 @@ int interpreter(string file_name) {
 }
 
 int main() {
-    cout << "enter 'debug' to debug, 'run' to run, 'change' if want to change mode, or file name to run file" << endl;
+    cout << "enter 'debug' to debug, 'run' to run, or file name to run file" << endl;
     cout << "mode> ";
     string mode;
     getline(cin, mode);

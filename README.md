@@ -26,5 +26,7 @@ this is Mercury Langluage
 > remake variable
 >
 > fix else error
+> 
+> fix output error
 >
->  fix output error
+> fix print func error

@@ -438,7 +438,9 @@ public:
             } else if (tokenize[tok_idx].type == LET) {
                 make_var();
                 break;
-            } 
+            } else if (tokenize.empty()) {
+                break;
+            }
             else {
                 expr();
                 break;

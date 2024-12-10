@@ -23,3 +23,4 @@ this is Mercury Langluage
 
 ## (12/10/2024)
 > remake variable
+> fix else error

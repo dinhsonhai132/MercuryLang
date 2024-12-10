@@ -7,18 +7,28 @@ using namespace std;
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCE, IF, ELSE,
-    THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN
+    THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO
+};
+
+struct store_var {
+    string name;
+    int val;
+};
+
+struct PORT_NAME {
+    string port_1 = "rx1";
+    string port_2 = "rx2";
+};
+
+struct PORT_STORE {
+    vector<store_var> port_1;
+    vector<store_var> port_2;
 };
 
 struct datatype {
     VerType type;
     int value;
     string name;
-};
-
-struct store_var {
-    string name;
-    int val;
 };
 
 class Port {
@@ -357,6 +367,7 @@ public:
                     cur_idx = tokenize[tok_idx];
                     tok_idx++;
                 }
+                tok_idx--;
                 auto tok = get_next_tok();
                 if (tok.type == STRING) {
                     cout << tok.name << endl;

@@ -7,7 +7,7 @@ using namespace std;
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCE, IF, ELSE,
-    THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO
+    THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT
 };
 
 struct store_var {
@@ -321,12 +321,22 @@ public:
         int left = 0;
         int right = 0;
         if (left_token.type == TEMPORARY_MEMORY) {
-            left = get_variable(left_token.name);
+            for (auto &var: variables) {
+                if (var.name == left_token.name) {
+                    left = var.val;
+                    break;
+                }
+            }
         } else if (left_token.type == INT) {
             left = left_token.value;
         }
         if (right_token.type == TEMPORARY_MEMORY) {
-            right = get_variable(right_token.name);
+            for (auto &var: variables) {
+                if (var.name == left_token.name) {
+                    right = var.val;
+                    break;
+                }
+            }
         } else if (right_token.type == INT) {
             right = right_token.value;
         }
@@ -545,13 +555,18 @@ int interpreter(string file_name) {
 }
 
 int main() {
+    cout << "enter 'debug' to debug, 'run' to run, 'change' if want to change mode, or file name to run file" << endl;
+    cout << "mode> ";
     string mode;
     getline(cin, mode);
     if (mode == "debug") {
         debug();
     } else if (mode == "run") {
         run();
-    } else {
+    } else if (mode == "change") {
+        main();
+    } 
+    else {
         interpreter(mode);
     }
     system("pause");

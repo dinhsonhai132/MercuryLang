@@ -1,14 +1,20 @@
-
 #include <iostream>
 #include <string>
 #include <vector>
 #include <fstream>
+#include <chrono>
+#include <ctime>
 using namespace std;
 
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCE, IF, ELSE,
-    THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT
+    THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, BLOCK, 
+    FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, L_PARENT, R_PARENT
+};
+
+enum Mercury_type {
+    integer, fl
 };
 
 struct store_var {
@@ -16,14 +22,45 @@ struct store_var {
     int val;
 };
 
+struct Parameter {
+    string name;
+    int val;
+    string func_name;
+};
+
+vector<Parameter> Parameters;
+
+struct function {
+    string function_name;
+    Mercury_type function_type;
+};
+
+vector<function> functions;
+
 struct PORT_NAME {
-    string port_1 = "rx1";
-    string port_2 = "rx2";
+    string port_1 = "rx10001";
+    string port_2 = "rx20001";
+    string port_3 = "rx30001";
+    string port_4 = "rx40001";
+    string port_5 = "rx50001";
+    string port_6 = "rx60001";
+    string port_7 = "rx70001";
+    string port_8 = "rx80001";
+    string port_9 = "rx90001";
+    string port_10 = "rx1A0002";
 };
 
 struct PORT_STORE {
     vector<store_var> port_1;
     vector<store_var> port_2;
+    vector<store_var> port_3;
+    vector<store_var> port_4;
+    vector<store_var> port_5;
+    vector<store_var> port_6;
+    vector<store_var> port_7;
+    vector<store_var> port_8;
+    vector<store_var> port_9;
+    vector<store_var> port_10;
 };
 
 struct datatype {
@@ -34,11 +71,14 @@ struct datatype {
 
 class Port {
 private:
-    string name;
-    vector<datatype> store;
+    PORT_NAME name;
+    PORT_STORE store;
 public:
-    Port(string name, vector<datatype> store) : name(name), store(store) {}
+    Port(PORT_NAME name, PORT_STORE store) : name(name), store(store) {}
 };
+
+#define make_port(name, store) = Port(name, store);
+#define make_error();
 
 vector<store_var> variables;
 vector<Port> memory;
@@ -153,13 +193,43 @@ public:
             } else if (cur == 'E' && input.substr(pos, 4) == "ELSE") {
                 tokens.push_back({ELSE, 0, ""});
                 advance_to(4);
+            } else if (cur == 'F' && input.substr(pos, 8) == "FUNCTION") {
+                advance_to(9);
+                string name = "";
+                while (isspace(cur)) {
+                    advance();
+                }
+                while (isalpha(cur)) {
+                    name += cur;
+                    advance();
+                }
+                tokens.push_back({FUNCTION, 0, name});
+            } else if (cur == '&') {
+                advance();
+                string name;
+                while (isalpha(cur)) {
+                    name += cur;
+                    advance();
+                }
+                tokens.push_back({PARAMATER, 0, name});
+            } else if (cur == ',') {
+                tokens.push_back({COMMA, 0, ""});
+                advance();
+            } else if (cur == ':') {
+                tokens.push_back({DOUBLE_COLON, 0, ""});
+                advance();
             } else if (isalpha(cur)) {
                 string name = "";
                 while (isalpha(cur)) {
                     name += input[pos];
                     advance();
                 }
-                tokens.push_back({TEMPORARY_MEMORY, 0, name});
+                advance();
+                if (cur == '(') {
+                    tokens.push_back({FUNCTION_CALL, 0, name});
+                } else {
+                    tokens.push_back({TEMPORARY_MEMORY, 0, name});
+                }
             } else if (cur == '=') {
                 tokens.push_back({ASSIGN, 0, ""});
                 advance();
@@ -278,6 +348,24 @@ public:
         return result;
     }
 
+
+    int make_function() {
+        auto tok = get_next_tok();
+        function this_func;
+        if (tok.type == FUNCTION) {
+            this_func.function_name = tok.name;
+            this_func.function_type = integer;
+            functions.push_back(this_func);
+            while (tok.type != DOUBLE_COLON && tok_idx < tokenize.size()) {
+                if (tok.type == PARAMATER) {
+                    Parameters.push_back({tok.name, 0, this_func.function_name});
+                }
+                tok = get_next_tok();
+            }
+        }
+        return 0;
+    }
+
     int while_loop() {
         cur_idx = get_next_tok();
         if (cur_idx.type == WHILE) {
@@ -322,22 +410,14 @@ public:
         int left = 0;
         int right = 0;
         if (left_token.type == TEMPORARY_MEMORY) {
-            for (auto &var: variables) {
-                if (var.name == left_token.name) {
-                    left = var.val;
-                    break;
-                }
-            }
+            string name = left_token.name;
+            left = get_variable(name);
         } else if (left_token.type == INT) {
             left = left_token.value;
         }
         if (right_token.type == TEMPORARY_MEMORY) {
-            for (auto &var: variables) {
-                if (var.name == left_token.name) {
-                    right = var.val;
-                    break;
-                }
-            }
+            string name = right_token.name;
+            right = get_variable(name);
         } else if (right_token.type == INT) {
             right = right_token.value;
         }
@@ -395,7 +475,7 @@ public:
         auto tok = get_next_tok();
         if (tok.type == PRINT) {
             auto next_tok = get_next_tok();
-            if (next_tok.type == INT) {
+            if (next_tok.type == INT || next_tok.type == TEMPORARY_MEMORY) {
                 tok_idx--;
                 cout << expr() << endl;
             } else if (next_tok.type == STRING) {
@@ -430,7 +510,9 @@ public:
             } else if (tokenize[tok_idx].type == LET) {
                 make_var();
                 break;
-            } 
+            } else if (tokenize.empty()) {
+                break;
+            }
             else {
                 expr();
                 break;
@@ -449,16 +531,21 @@ void print_var() {
     }
 }
 
+void para() {
+    for (auto &para: Parameters) {
+        cout << "Name: " << para.name << " Value: " << para.val << " func_name: " << para.func_name << endl;
+    }
+}
+
 void run() {
-    cout << "MercuryLang [Version 0.0.2] \n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
+    auto now = std::chrono::system_clock::now();
+    std::time_t current_time = std::chrono::system_clock::to_time_t(now);
+    auto time = ctime(&current_time);
+    cout << "MercuryLang [Version 0.0.2]\n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
         cout << ">>> ";
         getline(cin, input);
-        if (input.empty()) {
-            cout << endl;
-            continue;
-        }
 
         lexer lex(input);
         vector<datatype> tokens = lex.token();
@@ -473,7 +560,11 @@ void run() {
             info();
         } else if (input == "var") {
             print_var();
-        }
+        } else if (input.empty() || input == "") {
+            continue;
+        } else if (input == "para") {
+            para();
+        } 
         else {
             par.run();
         }
@@ -482,16 +573,14 @@ void run() {
 }
 
 void debug() {
+    auto now = std::chrono::system_clock::now();
+    std::time_t current_time = std::chrono::system_clock::to_time_t(now);
+    auto time = ctime(&current_time);
     cout << "MercuryLang [Version 0.0.2] \n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
         cout << ">>> ";
         getline(cin, input);
-        if (input.empty()) {
-            cout << endl;
-            continue;
-        }
-
         lexer lex(input);
         vector<datatype> tokens = lex.token();
         parser par(tokens);
@@ -505,8 +594,11 @@ void debug() {
             info();
         } else if (input == "var") {
             print_var();
-        }
-        else {
+        } else if (input.empty() || input == "") {
+            continue;
+        } else if (input == "para") {
+            para();
+        } else {
             par.run();
             string token_type;
             for (auto &token : tokens) {
@@ -530,6 +622,13 @@ void debug() {
                     case MM: token_type = "MM"; break;
                     case LET: token_type = "LET"; break;
                     case ASSIGN: token_type = "ASSIGN"; break;
+                    case COMMA: token_type = "COMMA"; break;
+                    case FUNCTION: token_type = "FUNCTION"; break;
+                    case PARAMATER: token_type = "PARAMATER"; break;
+                    case DOUBLE_COLON: token_type = "DOUBLE_COLON"; break;
+                    case FUNCTION_CALL: token_type = "FUNCTION_CALL"; break;
+                    case LP: token_type = "LP"; break;
+                    case RP: token_type = "RP"; break;
                 }
                 cout << "Type: " << token_type << " Value: " << token.value << " Name: " << token.name << endl;
             }

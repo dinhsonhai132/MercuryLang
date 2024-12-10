@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <string>
 #include <vector>
@@ -8,7 +7,7 @@ using namespace std;
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCE, IF, ELSE,
-    THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT
+    THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST
 };
 
 struct store_var {
@@ -17,13 +16,29 @@ struct store_var {
 };
 
 struct PORT_NAME {
-    string port_1 = "rx1";
-    string port_2 = "rx2";
+    string port_1 = "rx10001";
+    string port_2 = "rx20001";
+    string port_3 = "rx30001";
+    string port_4 = "rx40001";
+    string port_5 = "rx50001";
+    string port_6 = "rx60001";
+    string port_7 = "rx70001";
+    string port_8 = "rx80001";
+    string port_9 = "rx90001";
+    string port_10 = "rx1A0002";
 };
 
 struct PORT_STORE {
     vector<store_var> port_1;
     vector<store_var> port_2;
+    vector<store_var> port_3;
+    vector<store_var> port_4;
+    vector<store_var> port_5;
+    vector<store_var> port_6;
+    vector<store_var> port_7;
+    vector<store_var> port_8;
+    vector<store_var> port_9;
+    vector<store_var> port_10;
 };
 
 struct datatype {
@@ -34,11 +49,14 @@ struct datatype {
 
 class Port {
 private:
-    string name;
-    vector<datatype> store;
+    PORT_NAME name;
+    PORT_STORE store;
 public:
-    Port(string name, vector<datatype> store) : name(name), store(store) {}
+    Port(PORT_NAME name, PORT_STORE store) : name(name), store(store) {}
 };
+
+#define make_port(name, store) = Port(name, store);
+#define make_error();
 
 vector<store_var> variables;
 vector<Port> memory;
@@ -322,22 +340,12 @@ public:
         int left = 0;
         int right = 0;
         if (left_token.type == TEMPORARY_MEMORY) {
-            for (auto &var: variables) {
-                if (var.name == left_token.name) {
-                    left = var.val;
-                    break;
-                }
-            }
+            left = get_variable(left_token.name);
         } else if (left_token.type == INT) {
             left = left_token.value;
         }
         if (right_token.type == TEMPORARY_MEMORY) {
-            for (auto &var: variables) {
-                if (var.name == left_token.name) {
-                    right = var.val;
-                    break;
-                }
-            }
+            right = get_variable(right_token.name);
         } else if (right_token.type == INT) {
             right = right_token.value;
         }
@@ -395,7 +403,7 @@ public:
         auto tok = get_next_tok();
         if (tok.type == PRINT) {
             auto next_tok = get_next_tok();
-            if (next_tok.type == INT) {
+            if (next_tok.type == INT || next_tok.type == TEMPORARY_MEMORY) {
                 tok_idx--;
                 cout << expr() << endl;
             } else if (next_tok.type == STRING) {

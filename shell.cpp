@@ -483,8 +483,9 @@ void run() {
             info();
         } else if (input == "var") {
             print_var();
-        }
-        else {
+        } else if (input.empty()) {
+            continue;
+        } else {
             par.run();
         }
         tokens = {};
@@ -515,8 +516,9 @@ void debug() {
             info();
         } else if (input == "var") {
             print_var();
-        }
-        else {
+        } else if (input.empty()) {
+            continue;
+        } else {
             par.run();
             string token_type;
             for (auto &token : tokens) {

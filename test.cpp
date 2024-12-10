@@ -555,6 +555,8 @@ int interpreter(string file_name) {
 }
 
 int main() {
+    cout << "enter 'debug' to debug, 'run' to run or file name to run file" << endl;
+    cout << "mode> ";
     string mode;
     getline(cin, mode);
     if (mode == "debug") {

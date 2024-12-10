@@ -465,10 +465,6 @@ void run() {
         string input;
         cout << ">>> ";
         getline(cin, input);
-        if (input.empty()) {
-            cout << endl;
-            continue;
-        }
 
         lexer lex(input);
         vector<datatype> tokens = lex.token();
@@ -483,7 +479,7 @@ void run() {
             info();
         } else if (input == "var") {
             print_var();
-        } else if (input.empty()) {
+        } else if (input.empty() || input == "") {
             continue;
         } else {
             par.run();
@@ -498,11 +494,6 @@ void debug() {
         string input;
         cout << ">>> ";
         getline(cin, input);
-        if (input.empty()) {
-            cout << endl;
-            continue;
-        }
-
         lexer lex(input);
         vector<datatype> tokens = lex.token();
         parser par(tokens);
@@ -516,7 +507,7 @@ void debug() {
             info();
         } else if (input == "var") {
             print_var();
-        } else if (input.empty()) {
+        } else if (input.empty() || input == "") {
             continue;
         } else {
             par.run();

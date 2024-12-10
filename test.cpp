@@ -7,7 +7,7 @@ using namespace std;
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCE, IF, ELSE,
-    THEN, LP, RP, FOR, PP, MM
+    THEN, LP, RP, FOR, PP, MM, WHILE
 };
 
 struct datatype {
@@ -213,19 +213,36 @@ public:
             string var_name = cur_idx.name;
             int value = get_variable(var_name);
             return value;
-        } else if (cur_idx.type == PP && get_next_tok().type == INT) {
-            tok_idx--;
-            int num = get_next_tok().value;
-            return ++num;
-        } else if (cur_idx.type == MM && get_next_tok().type == INT) {
-            tok_idx--;
-            int num = get_next_tok().value;
-            return --num;
-        } else if (cur_idx.type == PP && get_next_tok().type == TEMPORARY_MEMORY) {
-            tok_idx--;
-            string name = get_next_tok().name;
-            int num = get_variable(name);
-            return ++num;
+        } else if (cur_idx.type == PP) {
+            auto next_tok = get_next_tok();
+            if (next_tok.type == TEMPORARY_MEMORY) {
+                int val;
+                for (auto &variable: variables) {
+                    if (variable.name == next_tok.name) {
+                        variable.val += 1;
+                        val = variable.val;
+                        break;
+                    }
+                }
+                return val;
+            } else if (next_tok.type == INT) {
+                return ++next_tok.value;
+            }
+        } else if (cur_idx.type == MM) {
+            auto next_tok = get_next_tok();
+            if (next_tok.type == TEMPORARY_MEMORY) {
+                int val;
+                for (auto &variable: variables) {
+                    if (variable.name == next_tok.name) {
+                        variable.val -= 1;
+                        val = variable.val;
+                        break;
+                    }
+                }
+                return val;
+            } else if (next_tok.type == INT) {
+                return --next_tok.value;
+            }
         }
         return 0;
     }
@@ -243,7 +260,8 @@ public:
                 result /= divisor;
             } else if (cur_idx.type == TIME) {
                 result *= factor();
-            } else {
+            }
+            else {
                 tok_idx--;
                 break;
             }
@@ -267,32 +285,55 @@ public:
         return result;
     }
 
-    int comparison() {
-        auto left_number = get_next_tok();
-        VerType op = get_next_tok().type;
-        auto right_number = get_next_tok();
-        int left; int right;
-        if (left_number.type == TEMPORARY_MEMORY) {
-            left = get_variable(left_number.name);
-        } else if (left_number.type == INT) {
-            left = left_number.value;
-        }
-        if (right_number.type == TEMPORARY_MEMORY) {
-            right = get_variable(right_number.name);
-        } else if (right_number.type == INT) {
-            right = right_number.value;
-        }
-
-        switch (op) {
-            case BIGGER: return left > right ? 1 : 0;
-            case SMALLER: return left < right ? 1 : 0;
-            case EQUAL: return left == right ? 1 : 0;
-            case BE: return left >= right ? 1 : 0;
-            case SE: return left <= right ? 1 : 0;
-            case DIFFERENCE: return left != right ? 1 : 0;
+    int while_loop() {
+        cur_idx = get_next_tok();
+        if (cur_idx.type == WHILE) {
+            int condition = comparison();
+            if (condition == 1) {
+                expr();
+                tok_idx = 0;
+                while_loop();
+            } else {
+                return 0;
+            }
         }
         return 0;
     }
+
+int comparison() {
+    auto left_token = get_next_tok();
+    VerType OP = get_next_tok().type;
+    auto right_token = get_next_tok();
+    int left = 0;
+    int right = 0;
+    if (left_token.type == TEMPORARY_MEMORY) {
+        left = get_variable(left_token.name);
+    } else if (left_token.type == INT) {
+        left = left_token.value;
+    }
+    if (right_token.type == TEMPORARY_MEMORY) {
+        right = get_variable(right_token.name);
+    } else if (right_token.type == INT) {
+        right = right_token.value;
+    }
+    switch (OP) {
+        case BIGGER:
+            return left > right ? 1 : 0;
+        case SMALLER:
+            return left < right ? 1 : 0;
+        case EQUAL:
+            return left == right ? 1 : 0;
+        case BE:
+            return left >= right ? 1 : 0;
+        case SE:
+            return left <= right ? 1 : 0;
+        case DIFFERENCE:
+            return left != right ? 1 : 0;
+        default:
+            return 0;
+    }
+    return 0;
+}
     
     auto condition() {
         tok_idx = 0;
@@ -315,7 +356,7 @@ public:
                 auto tok = get_next_tok();
                 if (tok.type == STRING) {
                     cout << tok.name << endl;
-                } else if (tok.type == INT) {
+                } else if (tok.type == INT || tok.type == TEMPORARY_MEMORY) {
                     tok_idx--;
                     cout << expr() << endl;
                 }

@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -425,11 +426,13 @@ public:
                 break;
             } else if (tokenize[tok_idx].type == IF) {
                 condition();
+                break;
             } else if (tokenize[tok_idx].type == LET) {
                 make_var();
+                break;
             } 
             else {
-                cout << expr() << endl;
+                expr();
                 break;
             }
         }
@@ -470,7 +473,7 @@ void run() {
             info();
         } else if (input == "var") {
             print_var();
-        } 
+        }
         else {
             par.run();
         }
@@ -502,7 +505,7 @@ void debug() {
             info();
         } else if (input == "var") {
             print_var();
-        }  
+        }
         else {
             par.run();
             string token_type;
@@ -555,7 +558,7 @@ int interpreter(string file_name) {
 }
 
 int main() {
-    cout << "enter 'debug' to debug, 'run' to run or file name to run file" << endl;
+    cout << "enter 'debug' to debug, 'run' to run, or file name to run file" << endl;
     cout << "mode> ";
     string mode;
     getline(cin, mode);

@@ -470,7 +470,9 @@ void run() {
             info();
         } else if (input == "var") {
             print_var();
-        } 
+        } else if (input == "change") {
+            main();
+        }
         else {
             par.run();
         }
@@ -502,7 +504,9 @@ void debug() {
             info();
         } else if (input == "var") {
             print_var();
-        }  
+        } else if (input == "change") {
+            main();
+        }
         else {
             par.run();
             string token_type;
@@ -563,10 +567,7 @@ int main() {
         debug();
     } else if (mode == "run") {
         run();
-    } else if (mode == "change") {
-        main();
-    } 
-    else {
+    } else {
         interpreter(mode);
     }
     system("pause");

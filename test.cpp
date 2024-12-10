@@ -7,18 +7,28 @@ using namespace std;
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCE, IF, ELSE,
-    THEN, LP, RP, FOR, PP, MM, WHILE
+    THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT
+};
+
+struct store_var {
+    string name;
+    int val;
+};
+
+struct PORT_NAME {
+    string port_1 = "rx1";
+    string port_2 = "rx2";
+};
+
+struct PORT_STORE {
+    vector<store_var> port_1;
+    vector<store_var> port_2;
 };
 
 struct datatype {
     VerType type;
     int value;
     string name;
-};
-
-struct store_var {
-    string name;
-    int val;
 };
 
 class Port {
@@ -92,30 +102,8 @@ public:
                 tokens.push_back({MM, 0, ""});
                 advance_to(2);
             } else if (cur == 'L' && input.substr(pos, 3) == "LET") {
-                int val = 0;
-                string name = "";
+                tokens.push_back({LET, 0, ""});
                 advance_to(3);
-                while (isspace(input[pos])) {
-                    advance();
-                }               
-                while (isalpha(input[pos]) && pos < input.size()) {
-                    name += input[pos];
-                    advance();
-                }
-                while (isspace(cur)) {
-                    advance();
-                }
-                if (input[pos] == '=') {
-                    advance();
-                    while (isspace(cur)) {
-                        advance();
-                    }
-                    while (isdigit(input[pos]) && pos < input.size()) {
-                        val = val * 10 + (input[pos] - '0');
-                        advance();
-                    }
-                }
-                variables.push_back({name, val});
             } else if (cur == 'P' && input.substr(pos, 5) == "PRINT") {
                 tokens.push_back({PRINT, 0, ""});
                 advance_to(5);
@@ -171,7 +159,11 @@ public:
                     advance();
                 }
                 tokens.push_back({TEMPORARY_MEMORY, 0, name});
-            } else {
+            } else if (cur == '=') {
+                tokens.push_back({ASSIGN, 0, ""});
+                advance();
+            } 
+            else {
                 advance();
             }
         }
@@ -300,40 +292,72 @@ public:
         return 0;
     }
 
-int comparison() {
-    auto left_token = get_next_tok();
-    VerType OP = get_next_tok().type;
-    auto right_token = get_next_tok();
-    int left = 0;
-    int right = 0;
-    if (left_token.type == TEMPORARY_MEMORY) {
-        left = get_variable(left_token.name);
-    } else if (left_token.type == INT) {
-        left = left_token.value;
+    void make_var() {
+        datatype name;
+        int val;
+        string var_name;
+        auto tok = get_next_tok();
+        if (tok.type == LET) {
+            name = get_next_tok();
+            if (name.type = TEMPORARY_MEMORY) {
+                var_name = name.name;
+            }
+            tok = get_next_tok();
+            if (tok.type == ASSIGN) {
+                tok = get_next_tok();
+                if (tok.type == INT) {
+                    tok_idx--;
+                    val = expr();
+                }
+            }
+        }
+        variables.push_back({var_name, val});
     }
-    if (right_token.type == TEMPORARY_MEMORY) {
-        right = get_variable(right_token.name);
-    } else if (right_token.type == INT) {
-        right = right_token.value;
+
+    int comparison() {
+        auto left_token = get_next_tok();
+        VerType OP = get_next_tok().type;
+        auto right_token = get_next_tok();
+        int left = 0;
+        int right = 0;
+        if (left_token.type == TEMPORARY_MEMORY) {
+            for (auto &var: variables) {
+                if (var.name == left_token.name) {
+                    left = var.val;
+                    break;
+                }
+            }
+        } else if (left_token.type == INT) {
+            left = left_token.value;
+        }
+        if (right_token.type == TEMPORARY_MEMORY) {
+            for (auto &var: variables) {
+                if (var.name == left_token.name) {
+                    right = var.val;
+                    break;
+                }
+            }
+        } else if (right_token.type == INT) {
+            right = right_token.value;
+        }
+        switch (OP) {
+            case BIGGER:
+                return left > right ? 1 : 0;
+            case SMALLER:
+                return left < right ? 1 : 0;
+            case EQUAL:
+                return left == right ? 1 : 0;
+            case BE:
+                return left >= right ? 1 : 0;
+            case SE:
+                return left <= right ? 1 : 0;
+            case DIFFERENCE:
+                return left != right ? 1 : 0;
+            default:
+                return 0;
+        }
+        return 0;
     }
-    switch (OP) {
-        case BIGGER:
-            return left > right ? 1 : 0;
-        case SMALLER:
-            return left < right ? 1 : 0;
-        case EQUAL:
-            return left == right ? 1 : 0;
-        case BE:
-            return left >= right ? 1 : 0;
-        case SE:
-            return left <= right ? 1 : 0;
-        case DIFFERENCE:
-            return left != right ? 1 : 0;
-        default:
-            return 0;
-    }
-    return 0;
-}
     
     auto condition() {
         tok_idx = 0;
@@ -353,6 +377,7 @@ int comparison() {
                     cur_idx = tokenize[tok_idx];
                     tok_idx++;
                 }
+                tok_idx--;
                 auto tok = get_next_tok();
                 if (tok.type == STRING) {
                     cout << tok.name << endl;
@@ -400,7 +425,10 @@ int comparison() {
                 break;
             } else if (tokenize[tok_idx].type == IF) {
                 condition();
-            } else {
+            } else if (tokenize[tok_idx].type == LET) {
+                make_var();
+            } 
+            else {
                 cout << expr() << endl;
                 break;
             }
@@ -410,6 +438,12 @@ int comparison() {
 
 void info() {
     cout << "copy right (c) dinhsonhai132" << endl;
+}
+
+void print_var() {
+    for (auto &var: variables) {
+        cout << "Name: " << var.name << " Value: " << var.val << endl;
+    }
 }
 
 void run() {
@@ -434,7 +468,10 @@ void run() {
             break;  
         } else if (input == "info") {
             info();
-        } else {
+        } else if (input == "var") {
+            print_var();
+        } 
+        else {
             par.run();
         }
         tokens = {};
@@ -463,7 +500,10 @@ void debug() {
             break;  
         } else if (input == "info") {
             info();
-        } else {
+        } else if (input == "var") {
+            print_var();
+        }  
+        else {
             par.run();
             string token_type;
             for (auto &token : tokens) {
@@ -485,6 +525,8 @@ void debug() {
                     case SMALLER: token_type = "SMALLER"; break;
                     case PP: token_type = "PP"; break;
                     case MM: token_type = "MM"; break;
+                    case LET: token_type = "LET"; break;
+                    case ASSIGN: token_type = "ASSIGN"; break;
                 }
                 cout << "Type: " << token_type << " Value: " << token.value << " Name: " << token.name << endl;
             }

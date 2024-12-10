@@ -426,11 +426,13 @@ public:
                 break;
             } else if (tokenize[tok_idx].type == IF) {
                 condition();
+                break;
             } else if (tokenize[tok_idx].type == LET) {
                 make_var();
+                break;
             } 
             else {
-                cout << expr() << endl;
+                expr();
                 break;
             }
         }

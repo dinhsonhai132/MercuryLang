@@ -20,3 +20,6 @@ this is Mercury Langluage
 >
 ## (12/9/2024)
 > add new plus plus and minus minus token
+
+## (12/10/2024)
+> remake variable

@@ -30,3 +30,5 @@ this is Mercury Langluage
 > fix output error
 >
 > fix print func error
+## (12/11/2024)
+> fix eval logic

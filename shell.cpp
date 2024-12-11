@@ -379,11 +379,15 @@ public:
         if (cur_idx.type == WHILE) {
             int condition = comparison();
             if (condition == 1) {
-                expr();
-                tok_idx = 0;
-                while_loop();
-            } else {
-                return 0;
+                cur_idx = get_next_tok();
+                if (cur_idx.type == DO) {
+                    expr();
+                    tok_idx = 0;
+                    cout << "LOOP\n";
+                    while_loop();
+                } else {
+                    return 0;
+                }
             }
         }
         return 0;

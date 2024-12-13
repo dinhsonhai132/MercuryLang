@@ -381,9 +381,14 @@ public:
             if (condition == 1) {
                 cur_idx = get_next_tok();
                 if (cur_idx.type == DO) {
-                    expr();
+                    cur_idx = get_next_tok();
+                    if (cur_idx.type == PRINT) {
+                        cout << expr() << endl;
+                    } else {
+                        tok_idx--;
+                        expr();
+                    }
                     tok_idx = 0;
-                    cout << "LOOP\n";
                     while_loop();
                 } else {
                     return 0;
@@ -446,14 +451,11 @@ public:
                 return left <= right ? 1 : 0;
             case DIFFERENCE:
                 return left != right ? 1 : 0;
-            default:
-                return 0;
         }
         return 0;
     }
     
     auto condition() {
-        tok_idx = 0;
         cur_idx = get_next_tok();
         if (cur_idx.type == IF) {
             int check = comparison();
@@ -466,6 +468,7 @@ public:
                     cout << expr() << endl;
                 }
             } else if (check == 0 && get_next_tok().type == THEN) {
+                bool found = false;
                 while (cur_idx.type != ELSE && tok_idx < tokenize.size()) {
                     cur_idx = tokenize[tok_idx];
                     tok_idx++;
@@ -477,13 +480,15 @@ public:
                 } else if (tok.type == INT || tok.type == TEMPORARY_MEMORY) {
                     tok_idx--;
                     cout << expr() << endl;
+                } else {
+                    cout << "";
                 }
             }
         }
+        return 0;
     }
 
     void print_func() {
-        tok_idx = 0;
         auto tok = get_next_tok();
         if (tok.type == PRINT) {
             auto next_tok = get_next_tok();
@@ -506,14 +511,13 @@ public:
             || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == BE
             || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == SE
             || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == DIFFERENCE) {
-                tok_idx = 0;
+                tok_idx -= 2;
                 cout << comparison() << endl;
                 break;
             } else if (tokenize[tok_idx].type == STRING) {
                 cout << tokenize[tok_idx].name << endl;
                 break;
             } else if (tokenize[tok_idx].type == PRINT) {
-                tok_idx--;
                 print_func();
                 break;
             } else if (tokenize[tok_idx].type == IF) {

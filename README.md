@@ -32,4 +32,5 @@ this is Mercury Langluage
 > fix print func error
 ## (12/11/2024)
 > fix eval logic
+> 
 > new while func (W.I.P)

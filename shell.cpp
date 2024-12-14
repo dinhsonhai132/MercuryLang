@@ -464,6 +464,7 @@ public:
                 if (next_tok.type == STRING) {
                     cout << next_tok.name << endl;
                 } else if (next_tok.type == INT || next_tok.type == TEMPORARY_MEMORY) {
+                    tok_idx--;
                     cout << expr() << endl;
                 }
             } else if (check == 0 && get_next_tok().type == THEN) {
@@ -477,6 +478,7 @@ public:
                 if (tok.type == STRING) {
                     cout << tok.name << endl;
                 } else if (tok.type == INT || tok.type == TEMPORARY_MEMORY) {
+                    tok_idx--;
                     cout << expr() << endl;
                 } else {
                     cout << "";

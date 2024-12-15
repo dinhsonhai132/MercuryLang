@@ -117,7 +117,10 @@ public:
 
         while (pos < input.size()) {
             cur = input[pos];
-            if (cur == '*') {
+            if (cur == '-' && input.substr(pos, 2) == "->") {
+                tokens.push_back({EXTRACT, 0, ""});
+                advance_to(2);
+            } else if (cur == '*') {
                 tokens.push_back({TIME, 0, ""});
                 advance();
             } else if (cur == '/') {
@@ -246,11 +249,7 @@ public:
                     advance();
                 }
                 tokens.push_back({LIST_NAME, 0, name});
-            } else if (cur == '-' && input.substr(pos, 2) == "->") {
-                tokens.push_back({EXTRACT, 0, ""});
-                advance();
-            } 
-            else if (isalpha(cur)) {
+            } else if (isalpha(cur)) {
                 string name = "";
                 while (isalpha(cur)) {
                     name += input[pos];

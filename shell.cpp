@@ -4,11 +4,13 @@
 #include <fstream>
 #include <chrono>
 #include <ctime>
+// #include <windows.h>
+// #include <unistd.h>
 using namespace std;
 
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
-    TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCE, IF, ELSE,
+    TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE,
     THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, BLOCK, 
     FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, L_PARENT, R_PARENT, DO
 };
@@ -148,6 +150,7 @@ public:
             } else if (cur == 'P' && input.substr(pos, 5) == "PRINT") {
                 tokens.push_back({PRINT, 0, ""});
                 advance_to(5);
+                token();
             } else if (isspace(cur)) {
                 advance();
             } else if (cur == '<') {
@@ -163,9 +166,10 @@ public:
                     name += input[pos];
                     advance();
                 }
-                if (!name.empty()) {
+                if (!name.empty() && cur == '"') {
                     tokens.push_back({STRING, 0, name});
                 }
+                advance();
             } else if (cur == '=' && input[pos + 1] == '=') {
                 tokens.push_back({EQUAL, 0, ""});
                 advance_to(2);
@@ -176,7 +180,7 @@ public:
                 tokens.push_back({SE, 0, ""});
                 advance_to(2);
             } else if (cur == '!' && input[pos + 1] == '=') {
-                tokens.push_back({DIFFERENCE, 0, ""});
+                tokens.push_back({DIFFERENCES, 0, ""});
                 advance_to(2);
             } else if (cur == 'I' && input.substr(pos, 2) == "IF") {
                 tokens.push_back({IF, 0, ""});
@@ -381,13 +385,7 @@ public:
             if (condition == 1) {
                 cur_idx = get_next_tok();
                 if (cur_idx.type == DO) {
-                    cur_idx = get_next_tok();
-                    if (cur_idx.type == PRINT) {
-                        cout << expr() << endl;
-                    } else {
-                        tok_idx--;
-                        expr();
-                    }
+                    do_block();
                     tok_idx = 0;
                     while_loop();
                 } else {
@@ -449,7 +447,7 @@ public:
                 return left >= right ? 1 : 0;
             case SE:
                 return left <= right ? 1 : 0;
-            case DIFFERENCE:
+            case DIFFERENCES:
                 return left != right ? 1 : 0;
         }
         return 0;
@@ -463,8 +461,7 @@ public:
                 auto next_tok = get_next_tok();
                 if (next_tok.type == STRING) {
                     cout << next_tok.name << endl;
-                } else if (next_tok.type == INT || next_tok.type == TEMPORARY_MEMORY) {
-                    tok_idx--;
+                } else if (next_tok.type == INT) {
                     cout << expr() << endl;
                 }
             } else if (check == 0 && get_next_tok().type == THEN) {
@@ -478,7 +475,6 @@ public:
                 if (tok.type == STRING) {
                     cout << tok.name << endl;
                 } else if (tok.type == INT || tok.type == TEMPORARY_MEMORY) {
-                    tok_idx--;
                     cout << expr() << endl;
                 } else {
                     cout << "";
@@ -492,13 +488,31 @@ public:
         auto tok = get_next_tok();
         if (tok.type == PRINT) {
             auto next_tok = get_next_tok();
-            if (next_tok.type == INT || next_tok.type == TEMPORARY_MEMORY) {
-                tok_idx--;
-                cout << expr() << endl;
-            } else if (next_tok.type == STRING) {
+            if (next_tok.type == STRING) {
                 cout << next_tok.name << endl;
             } else {
-                cout << "Invalid PRINT token" << endl;
+                tok_idx--;
+                cout << expr() << endl;
+            }
+        }
+    }
+
+    void do_block() {
+        while (tok_idx < tokenize.size()) {
+            cur_idx = tokenize[tok_idx];
+            if (cur_idx.type == PRINT) {
+                print_func();
+                tok_idx++;
+            } else if (cur_idx.type == LET) {
+                make_var();
+                tok_idx++;
+            } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
+                tok_idx++;
+            } else if (cur_idx.type == IF) {
+                condition();
+                tok_idx++;
+            } else {
+                expr();
             }
         }
     }
@@ -510,7 +524,7 @@ public:
             || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == EQUAL
             || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == BE
             || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == SE
-            || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == DIFFERENCE) {
+            || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == DIFFERENCES) {
                 tok_idx = 0;
                 cout << comparison() << endl;
                 break;
@@ -559,7 +573,7 @@ void run() {
     cout << "MercuryLang [Version 0.0.2]\n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
-        cout << ">>> ";
+        cout << "> ";
         getline(cin, input);
 
         lexer lex(input);
@@ -570,7 +584,7 @@ void run() {
             cout << "Visit https://dinhsonhai132.github.io/fslang.github.io/fslang.html for more info" << endl;
         } else if (input == "exit") {
             cout << "Goodbye :)" << endl;
-            break;  
+            break; 
         } else if (input == "info") {
             info();
         } else if (input == "var") {
@@ -593,7 +607,7 @@ void debug() {
     cout << "MercuryLang [Version 0.0.2] \n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
-        cout << ">>> ";
+        cout << "debug_mode> ";
         getline(cin, input);
         lexer lex(input);
         vector<datatype> tokens = lex.token();

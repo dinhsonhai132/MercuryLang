@@ -458,27 +458,18 @@ public:
         if (cur_idx.type == IF) {
             int check = comparison();
             if (check == 1 && get_next_tok().type == THEN) {
-                auto next_tok = get_next_tok();
-                if (next_tok.type == STRING) {
-                    cout << next_tok.name << endl;
-                } else if (next_tok.type == INT) {
-                    cout << expr() << endl;
-                }
+                do_block();
             } else if (check == 0 && get_next_tok().type == THEN) {
                 bool found = false;
-                while (cur_idx.type != ELSE && tok_idx < tokenize.size()) {
+                while (tok_idx < tokenize.size()) {
                     cur_idx = tokenize[tok_idx];
+                    if (cur_idx.type == ELSE) {
+                        found = true;
+                        break;
+                    }
                     tok_idx++;
                 }
-                tok_idx--;
-                auto tok = get_next_tok();
-                if (tok.type == STRING) {
-                    cout << tok.name << endl;
-                } else if (tok.type == INT || tok.type == TEMPORARY_MEMORY) {
-                    cout << expr() << endl;
-                } else {
-                    cout << "";
-                }
+                if (found) do_block();
             }
         }
         return 0;
@@ -570,7 +561,7 @@ void run() {
     auto now = std::chrono::system_clock::now();
     std::time_t current_time = std::chrono::system_clock::to_time_t(now);
     auto time = ctime(&current_time);
-    cout << "MercuryLang [Version 1.1.1]\n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
+    cout << "MercuryLang [Version 0.0.2]\n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
         cout << "> ";
@@ -604,7 +595,7 @@ void debug() {
     auto now = std::chrono::system_clock::now();
     std::time_t current_time = std::chrono::system_clock::to_time_t(now);
     auto time = ctime(&current_time);
-    cout << "MercuryLang [Version 1.1.1] \n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
+    cout << "MercuryLang [Version 0.0.2] \n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
         cout << "debug_mode> ";

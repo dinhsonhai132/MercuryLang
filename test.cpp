@@ -148,6 +148,7 @@ public:
             } else if (cur == 'P' && input.substr(pos, 5) == "PRINT") {
                 tokens.push_back({PRINT, 0, ""});
                 advance_to(5);
+                token();
             } else if (isspace(cur)) {
                 advance();
             } else if (cur == '<') {
@@ -163,9 +164,10 @@ public:
                     name += input[pos];
                     advance();
                 }
-                if (!name.empty()) {
+                if (!name.empty() && cur == '"') {
                     tokens.push_back({STRING, 0, name});
                 }
+                advance();
             } else if (cur == '=' && input[pos + 1] == '=') {
                 tokens.push_back({EQUAL, 0, ""});
                 advance_to(2);
@@ -490,7 +492,8 @@ public:
         auto tok = get_next_tok();
         if (tok.type == PRINT) {
             auto next_tok = get_next_tok();
-            if (next_tok.type == INT || next_tok.type == TEMPORARY_MEMORY) {
+            if (next_tok.type == INT || next_tok.type == TEMPORARY_MEMORY 
+            || cur_idx.type == PP || cur_idx.type == MM) {
                 tok_idx--;
                 cout << expr() << endl;
             } else if (next_tok.type == STRING) {
@@ -506,9 +509,16 @@ public:
             cur_idx = tokenize[tok_idx];
             if (cur_idx.type == PRINT) {
                 print_func();
+                tok_idx++;
             } else if (cur_idx.type == LET) {
                 make_var();
+                tok_idx++;
             } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
+                tok_idx++;
+            } else if (cur_idx.type == PP || cur_idx.type == MM || cur_idx.type == INT || cur_idx.type == TEMPORARY_MEMORY) {
+                tok_idx--;
+                expr();
+            } else {
                 tok_idx++;
             }
         }
@@ -570,7 +580,7 @@ void run() {
     cout << "MercuryLang [Version 0.0.2]\n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
-        cout << ">>> ";
+        cout << "> ";
         getline(cin, input);
 
         lexer lex(input);
@@ -592,7 +602,7 @@ void run() {
             para();
         } 
         else {
-            par.do_block();
+            par.run_code();
         }
     }
 }
@@ -604,7 +614,7 @@ void debug() {
     cout << "MercuryLang [Version 0.0.2] \n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
-        cout << ">>> ";
+        cout << "> ";
         getline(cin, input);
         lexer lex(input);
         vector<datatype> tokens = lex.token();

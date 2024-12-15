@@ -4,13 +4,15 @@
 #include <fstream>
 #include <chrono>
 #include <ctime>
+#include <variant>
 using namespace std;
 
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
-    TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCE, IF, ELSE,
+    TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE,
     THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, BLOCK, 
-    FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, L_PARENT, R_PARENT, DO
+    FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, L_PARENT, R_PARENT, 
+    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, EXTRACT
 };
 
 enum Mercury_type {
@@ -82,6 +84,7 @@ public:
 
 vector<store_var> variables;
 vector<Port> memory;
+vector<pair<vector<variant<string, int>>, string>> vectors;
 
 class lexer {
 private:
@@ -178,7 +181,7 @@ public:
                 tokens.push_back({SE, 0, ""});
                 advance_to(2);
             } else if (cur == '!' && input[pos + 1] == '=') {
-                tokens.push_back({DIFFERENCE, 0, ""});
+                tokens.push_back({DIFFERENCES, 0, ""});
                 advance_to(2);
             } else if (cur == 'I' && input.substr(pos, 2) == "IF") {
                 tokens.push_back({IF, 0, ""});
@@ -189,6 +192,15 @@ public:
             } else if (cur == ')') {
                 tokens.push_back({RP, 0, ""});
                 advance();
+            } else if (cur == ']') {
+                tokens.push_back({SPARE_RP, 0, ""});
+                advance();
+            } else if (cur == '[') {
+                tokens.push_back({SPARE_LP, 0, ""});
+                advance();
+            } else if (cur == 'L' && input.substr(pos, 4) == "LIST") {
+                tokens.push_back({VECTOR, 0, ""});
+                advance_to(4);
             } else if (cur == 'T' && input.substr(pos, 4) == "THEN") {
                  tokens.push_back({THEN, 0, ""});
                  advance_to(4);
@@ -226,7 +238,19 @@ public:
             } else if (cur == 'W' && input.substr(pos, 5) == "WHILE") {
                 advance_to(5);
                 tokens.push_back({WHILE, 0, ""});
-            } else if (isalpha(cur)) {
+            } else if (cur == '@') {
+                advance();
+                string name = "";
+                while (isalpha(cur)) {
+                    name += input[pos];
+                    advance();
+                }
+                tokens.push_back({LIST_NAME, 0, name});
+            } else if (cur == '-' && input.substr(pos, 2) == "->") {
+                tokens.push_back({EXTRACT, 0, ""});
+                advance();
+            } 
+            else if (isalpha(cur)) {
                 string name = "";
                 while (isalpha(cur)) {
                     name += input[pos];
@@ -356,6 +380,59 @@ public:
         return result;
     }
 
+    void make_list() {
+        string name;
+        vector<variant<string, int>> the_list;
+        auto tok = get_next_tok();
+        if (tok.type == VECTOR) {
+            tok = get_next_tok();
+            if (tok.type == LIST_NAME) {
+                name = tok.name;
+                tok = get_next_tok();
+                if (tok.type == ASSIGN) {
+                    tok = get_next_tok();
+                    if (tok.type == SPARE_LP) {
+                        get_next_tok();
+                        while (tok_idx < tokenize.size() && tokenize[tok_idx].type != SPARE_RP) {
+                            if (tokenize[tok_idx].type == INT) {
+                                int num = tokenize[tok_idx].value;
+                                the_list.push_back(num);
+                            } else if (tokenize[tok_idx].type == STRING) {
+                                string str = tokenize[tok_idx].name;
+                                the_list.push_back(str);
+                            }
+                            tok_idx++;
+                        }
+                    }
+                }
+            }
+        }
+        vectors.push_back(make_pair(the_list, name));
+    }
+
+    auto get_list(string name) {
+        for (auto &vector : vectors) {
+            if (vector.second == name) {
+                return vector.first;
+            }
+        }
+    }
+
+    auto extract() {
+        auto tok = get_next_tok();
+        if (tok.type == LIST_NAME) {
+            auto list = get_list(tok.name);
+            tok = get_next_tok();
+            if (tok.type == EXTRACT) {
+                tok = get_next_tok();
+                if (tok.type == INT) {
+                    auto element = list[tok.value];
+                    return element;
+                }
+            }
+        }
+        return 0;
+    }
 
     int make_function() {
         auto tok = get_next_tok();
@@ -383,13 +460,7 @@ public:
             if (condition == 1) {
                 cur_idx = get_next_tok();
                 if (cur_idx.type == DO) {
-                    cur_idx = get_next_tok();
-                    if (cur_idx.type == PRINT) {
-                        cout << expr() << endl;
-                    } else {
-                        tok_idx--;
-                        expr();
-                    }
+                    do_block();
                     tok_idx = 0;
                     while_loop();
                 } else {
@@ -451,7 +522,7 @@ public:
                 return left >= right ? 1 : 0;
             case SE:
                 return left <= right ? 1 : 0;
-            case DIFFERENCE:
+            case DIFFERENCES:
                 return left != right ? 1 : 0;
         }
         return 0;
@@ -462,27 +533,18 @@ public:
         if (cur_idx.type == IF) {
             int check = comparison();
             if (check == 1 && get_next_tok().type == THEN) {
-                auto next_tok = get_next_tok();
-                if (next_tok.type == STRING) {
-                    cout << next_tok.name << endl;
-                } else if (next_tok.type == INT) {
-                    cout << expr() << endl;
-                }
+                do_block();
             } else if (check == 0 && get_next_tok().type == THEN) {
                 bool found = false;
-                while (cur_idx.type != ELSE && tok_idx < tokenize.size()) {
+                while (tok_idx < tokenize.size()) {
                     cur_idx = tokenize[tok_idx];
+                    if (cur_idx.type == ELSE) {
+                        found = true;
+                        break;
+                    }
                     tok_idx++;
                 }
-                tok_idx--;
-                auto tok = get_next_tok();
-                if (tok.type == STRING) {
-                    cout << tok.name << endl;
-                } else if (tok.type == INT || tok.type == TEMPORARY_MEMORY) {
-                    cout << expr() << endl;
-                } else {
-                    cout << "";
-                }
+                if (found) do_block();
             }
         }
         return 0;
@@ -492,14 +554,11 @@ public:
         auto tok = get_next_tok();
         if (tok.type == PRINT) {
             auto next_tok = get_next_tok();
-            if (next_tok.type == INT || next_tok.type == TEMPORARY_MEMORY 
-            || cur_idx.type == PP || cur_idx.type == MM) {
-                tok_idx--;
-                cout << expr() << endl;
-            } else if (next_tok.type == STRING) {
+            if (next_tok.type == STRING) {
                 cout << next_tok.name << endl;
             } else {
-                cout << "Invalid PRINT token" << endl;
+                tok_idx--;
+                cout << expr() << endl;
             }
         }
     }
@@ -515,11 +574,14 @@ public:
                 tok_idx++;
             } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
                 tok_idx++;
-            } else if (cur_idx.type == PP || cur_idx.type == MM || cur_idx.type == INT || cur_idx.type == TEMPORARY_MEMORY) {
-                tok_idx--;
-                expr();
-            } else {
+            } else if (cur_idx.type == IF) {
+                condition();
                 tok_idx++;
+            } else if (cur_idx.type == LIST) {
+                make_list();
+                tok_idx++;
+            } else {
+                expr();
             }
         }
     }
@@ -531,7 +593,7 @@ public:
             || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == EQUAL
             || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == BE
             || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == SE
-            || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == DIFFERENCE) {
+            || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == DIFFERENCES) {
                 tok_idx = 0;
                 cout << comparison() << endl;
                 break;
@@ -548,6 +610,9 @@ public:
                 continue;
             } else if (tokenize[tok_idx].type == WHILE) {
                 while_loop();
+                break;
+            } else if (tokenize[tok_idx].type == LIST) {
+                make_list();
                 break;
             } else {
                 expr();
@@ -614,7 +679,7 @@ void debug() {
     cout << "MercuryLang [Version 0.0.2] \n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
-        cout << "> ";
+        cout << "debug_mode> ";
         getline(cin, input);
         lexer lex(input);
         vector<datatype> tokens = lex.token();
@@ -666,6 +731,9 @@ void debug() {
                     case RP: token_type = "RP"; break;
                     case DO: token_type = "DO"; break;
                     case WHILE: token_type = "WHILE"; break;
+                    case VECTOR: token_type = "VECTOR"; break;
+                    case LIST_NAME: token_type = "LIST_NAME"; break;
+                    case EXTRACT: token_type = "EXTRACT"; break;
                 }
                 cout << "Type: " << token_type << " Value: " << token.value << " Name: " << token.name << endl;
             }

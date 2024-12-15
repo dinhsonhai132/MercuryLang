@@ -364,7 +364,9 @@ public:
             }
         } else if (cur_idx.type == LIST_NAME) {
             auto val = extract();
-            return val;
+            if (isdigit(val)) {
+                return val;
+            }
         }
         return 0;
     }

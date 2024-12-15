@@ -37,4 +37,8 @@ this is Mercury Langluage
 ## (12/15/2024)
 > add new DO func (W.I.P)
 
-*(big upd soon)
+--NEW BIG UPDATE--
+## (12/15/2024) 4:15PM
+> add new while func
+>
+> MercuryLang new version 1.1.1

@@ -84,7 +84,7 @@ public:
 
 vector<store_var> variables;
 vector<Port> memory;
-vector<pair<vector<variant<string, int>>, string>> vectors;
+vector<pair<vector<int>, string>> vectors;
 
 class lexer {
 private:
@@ -293,6 +293,30 @@ public:
         return 0;
     }
 
+    auto get_list(string name) {
+        for (auto &vector : vectors) {
+            if (vector.second == name) {
+                return vector.first;
+            }
+        }
+    }
+
+    auto extract() {
+        auto tok = get_next_tok();
+        if (tok.type == LIST_NAME) {
+            auto list = get_list(tok.name);
+            tok = get_next_tok();
+            if (tok.type == EXTRACT) {
+                tok = get_next_tok();
+                if (tok.type == INT) {
+                    auto element = list[tok.value];
+                    return element;
+                }
+            }
+        }
+        return 0;
+    }
+
     datatype get_next_tok() {
         if (tok_idx < tokenize.size()) {
             return tokenize[tok_idx++];
@@ -338,6 +362,9 @@ public:
             } else if (next_tok.type == INT) {
                 return --next_tok.value;
             }
+        } else if (cur_idx.type == LIST_NAME) {
+            auto val = extract();
+            return val;
         }
         return 0;
     }
@@ -382,7 +409,7 @@ public:
 
     void make_list() {
         string name;
-        vector<variant<string, int>> the_list;
+        vector<int> the_list;
         auto tok = get_next_tok();
         if (tok.type == VECTOR) {
             tok = get_next_tok();
@@ -397,9 +424,6 @@ public:
                             if (tokenize[tok_idx].type == INT) {
                                 int num = tokenize[tok_idx].value;
                                 the_list.push_back(num);
-                            } else if (tokenize[tok_idx].type == STRING) {
-                                string str = tokenize[tok_idx].name;
-                                the_list.push_back(str);
                             }
                             tok_idx++;
                         }
@@ -408,30 +432,6 @@ public:
             }
         }
         vectors.push_back(make_pair(the_list, name));
-    }
-
-    auto get_list(string name) {
-        for (auto &vector : vectors) {
-            if (vector.second == name) {
-                return vector.first;
-            }
-        }
-    }
-
-    auto extract() {
-        auto tok = get_next_tok();
-        if (tok.type == LIST_NAME) {
-            auto list = get_list(tok.name);
-            tok = get_next_tok();
-            if (tok.type == EXTRACT) {
-                tok = get_next_tok();
-                if (tok.type == INT) {
-                    auto element = list[tok.value];
-                    return element;
-                }
-            }
-        }
-        return 0;
     }
 
     int make_function() {

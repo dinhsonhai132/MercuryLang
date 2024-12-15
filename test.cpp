@@ -381,9 +381,14 @@ public:
             if (condition == 1) {
                 cur_idx = get_next_tok();
                 if (cur_idx.type == DO) {
-                    expr();
+                    cur_idx = get_next_tok();
+                    if (cur_idx.type == PRINT) {
+                        cout << expr() << endl;
+                    } else {
+                        tok_idx--;
+                        expr();
+                    }
                     tok_idx = 0;
-                    cout << "LOOP\n";
                     while_loop();
                 } else {
                     return 0;
@@ -446,14 +451,11 @@ public:
                 return left <= right ? 1 : 0;
             case DIFFERENCE:
                 return left != right ? 1 : 0;
-            default:
-                return 0;
         }
         return 0;
     }
     
     auto condition() {
-        tok_idx = 0;
         cur_idx = get_next_tok();
         if (cur_idx.type == IF) {
             int check = comparison();
@@ -462,10 +464,10 @@ public:
                 if (next_tok.type == STRING) {
                     cout << next_tok.name << endl;
                 } else if (next_tok.type == INT) {
-                    tok_idx--;
                     cout << expr() << endl;
                 }
             } else if (check == 0 && get_next_tok().type == THEN) {
+                bool found = false;
                 while (cur_idx.type != ELSE && tok_idx < tokenize.size()) {
                     cur_idx = tokenize[tok_idx];
                     tok_idx++;
@@ -475,15 +477,16 @@ public:
                 if (tok.type == STRING) {
                     cout << tok.name << endl;
                 } else if (tok.type == INT || tok.type == TEMPORARY_MEMORY) {
-                    tok_idx--;
                     cout << expr() << endl;
+                } else {
+                    cout << "";
                 }
             }
         }
+        return 0;
     }
 
     void print_func() {
-        tok_idx = 0;
         auto tok = get_next_tok();
         if (tok.type == PRINT) {
             auto next_tok = get_next_tok();
@@ -498,7 +501,20 @@ public:
         }
     }
 
-    void run() {
+    void do_block() {
+        while (tok_idx < tokenize.size()) {
+            cur_idx = tokenize[tok_idx];
+            if (cur_idx.type == PRINT) {
+                print_func();
+            } else if (cur_idx.type == LET) {
+                make_var();
+            } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
+                tok_idx++;
+            }
+        }
+    }
+
+    void run_code() {
         while (tok_idx < tokenize.size()) {
             if (tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == BIGGER 
             || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == SMALLER
@@ -509,11 +525,7 @@ public:
                 tok_idx = 0;
                 cout << comparison() << endl;
                 break;
-            } else if (tokenize[tok_idx].type == STRING) {
-                cout << tokenize[tok_idx].name << endl;
-                break;
             } else if (tokenize[tok_idx].type == PRINT) {
-                tok_idx--;
                 print_func();
                 break;
             } else if (tokenize[tok_idx].type == IF) {
@@ -523,9 +535,10 @@ public:
                 make_var();
                 break;
             } else if (tokenize.empty()) {
-                break;
+                continue;
             } else if (tokenize[tok_idx].type == WHILE) {
                 while_loop();
+                break;
             } else {
                 expr();
                 break;
@@ -568,7 +581,7 @@ void run() {
             cout << "Visit https://dinhsonhai132.github.io/fslang.github.io/fslang.html for more info" << endl;
         } else if (input == "exit") {
             cout << "Goodbye :)" << endl;
-            break;  
+            break; 
         } else if (input == "info") {
             info();
         } else if (input == "var") {
@@ -579,9 +592,8 @@ void run() {
             para();
         } 
         else {
-            par.run();
+            par.do_block();
         }
-        tokens = {};
     }
 }
 
@@ -612,7 +624,7 @@ void debug() {
         } else if (input == "para") {
             para();
         } else {
-            par.run();
+            par.run_code();
             string token_type;
             for (auto &token : tokens) {
                 switch(token.type) {
@@ -648,7 +660,6 @@ void debug() {
                 cout << "Type: " << token_type << " Value: " << token.value << " Name: " << token.name << endl;
             }
         }
-        tokens = {};
     }
 }
 
@@ -664,7 +675,7 @@ int interpreter(string file_name) {
         lexer lex(line);
         vector<datatype> tokens = lex.token();
         parser par(tokens);
-        par.run();
+        par.run_code();
     }
 
     inputFile.close();
@@ -683,5 +694,5 @@ int main() {
     } else {
         interpreter(mode);
     }
-    system("pause");
+    return 0;
 }

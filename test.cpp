@@ -735,6 +735,8 @@ void debug() {
                     case VECTOR: token_type = "VECTOR"; break;
                     case LIST_NAME: token_type = "LIST_NAME"; break;
                     case EXTRACT: token_type = "EXTRACT"; break;
+                    case SPARE_LP: token_type = "SPARE_LP"; break;
+                    case SPARE_RP: token_type = "SPARE_R"; break;
                 }
                 cout << "Type: " << token_type << " Value: " << token.value << " Name: " << token.name << endl;
             }

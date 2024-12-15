@@ -34,3 +34,7 @@ this is Mercury Langluage
 > fix eval logic
 > 
 > new while func (W.I.P)
+## (12/15/2024)
+> add new DO func
+
+*(big upd soon)

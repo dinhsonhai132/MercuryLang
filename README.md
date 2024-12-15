@@ -35,6 +35,6 @@ this is Mercury Langluage
 > 
 > new while func (W.I.P)
 ## (12/15/2024)
-> add new DO func
+> add new DO func (W.I.P)
 
 *(big upd soon)

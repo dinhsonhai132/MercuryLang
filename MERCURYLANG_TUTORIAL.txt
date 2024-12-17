@@ -27,3 +27,16 @@ IF_ELSE:
          IF              __CONDITION__  THEN __CODEBLOCK__  ELSE  __CODEBLOCK__;
          ^                     ^                                    
 (use "IF" keyword)     (exp: 1 < 2, x < 5)                    
+
+LIST:
+
+        LIST             __NAME_LIST__      =      [ (store_value) ];
+         ^
+(use "LIST" keyword) 
+exp : LIST a = [1, 2, 3];
+
+extract:
+          @               __NAME_LIST__     ->      __ORDER__;
+          ^                                            ^
+  (use "@" keyword)                              (start with 1)
+exp : @a -> 1; output: 1;

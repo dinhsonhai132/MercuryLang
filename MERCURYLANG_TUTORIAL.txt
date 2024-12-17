@@ -39,4 +39,4 @@ extract:
           @               __NAME_LIST__     ->      __ORDER__;
           ^                                            ^
   (use "@" keyword)                              (start with 1)
-exp : @a -> 1; output: 1;
+exp : @a -> 1 or @a -> x; output: 1;

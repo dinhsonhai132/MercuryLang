@@ -42,3 +42,5 @@ this is Mercury Langluage
 > add new while func
 >
 > MercuryLang new version 1.1.1
+## 12/17/2024
+> add list type

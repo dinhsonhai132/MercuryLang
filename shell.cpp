@@ -328,6 +328,17 @@ public:
                     }
                     auto element = list[tok.value - 1];
                     return element;
+                } else if (tok.type == TEMPORARY_MEMORY) {
+                    int val = get_variable(tok.name);
+                    if (val > list.size()) {
+                        cout << "Error: index out of range, please change the another variable" << endl;
+                        return 0;
+                    } else if (val < 1) {
+                        cout << "Error: order can't below 1, please change the another variable" << endl;
+                        return 0;
+                    }
+                    int element = list[val - 1];
+                    return element;
                 }
             }
         } else {
@@ -496,7 +507,7 @@ public:
                     tok_idx = 0;
                     while_loop();
                 } else {
-                    return 0;
+                    cout << "Error: can't not found the token 'DO' in while loop" << endl;
                 }
             }
         }

@@ -44,3 +44,5 @@ this is Mercury Langluage
 > MercuryLang new version 1.1.1
 ## 12/17/2024
 > add list type
+>
+> more user friendly

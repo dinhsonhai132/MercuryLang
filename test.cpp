@@ -27,17 +27,14 @@ struct store_var {
 struct Parameter {
     string name;
     int val;
-    string func_name;
 };
-
-vector<Parameter> Parameters;
 
 struct function {
     string function_name;
-    Mercury_type function_type;
+    vector<Parameter> Parameters;
+    vector<datatype> store_tokens;
 };
 
-vector<function> functions;
 
 struct PORT_NAME {
     string port_1 = "rx10001";
@@ -90,7 +87,7 @@ public:
 vector<store_var> variables;
 vector<Port> memory;
 vector<store_list> lists;
-vector<datatype> func_do;
+vector<function> functions;
 
 class lexer {
 private:
@@ -489,24 +486,42 @@ public:
         }
     }
 
-    int make_function() {
-        auto tok = get_next_tok();
-        function this_func;
-        if (tok.type == FUNCTION) {
-            this_func.function_name = tok.name;
-            this_func.function_type = INT_TYPE;
-            functions.push_back(this_func);
-            while (tok.type != DOUBLE_COLON && tok_idx < tokenize.size()
-            || tok.type != DO && tok_idx < tokenize.size()) {
-                if (tok.type == PARAMATER) {
-                    Parameters.push_back({tok.name, 0, this_func.function_name});
+    void make_function() {
+        cur_idx = get_next_tok();
+        string name_func;
+        vector<Parameter> paras;
+        vector<datatype> store_tokens;
+        if (cur_idx.type = FUNCTION) {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == TEMPORARY_MEMORY) {
+                name_func = cur_idx.value;
+                bool found_do = false;
+                while (tok_idx < tokenize.size()) {
+                    if (cur_idx.type == LP) {
+                        tok_idx++;
+                    } else if (cur_idx.type == RP) {
+                        tok_idx++;
+                    } else if (cur_idx.type == PARAMATER) {
+                        paras.push_back({cur_idx.name, 0});
+                        tok_idx++;
+                    } else if (cur_idx.type == DO) {
+                        found_do = true;
+                        break;
+                    } else {
+                        tok_idx++;
+                    }
                 }
-                tok = tokenize[tok_idx];
-                tok_idx++;
+                if (found_do) {
+                    while (tok_idx < tokenize.size()) {
+                        store_tokens.push_back(tokenize[tok_idx]);
+                        tok_idx++;
+                    }
+                }
             }
         }
-        return 0;
+        functions.push_back({name_func, paras, store_tokens});
     }
+
     void for_loop() {
         cur_idx = get_next_tok();
         int left, right;
@@ -728,7 +743,12 @@ public:
                 break;
             } else if (tokenize[tok_idx].type == FOR_LOOP) {
                 for_loop();
-            } else {
+                break;
+            } else if (tokenize[tok_idx].type == FUNCTION) {
+                make_function();
+                break;
+            }
+            else {
                 expr();
                 break;
             }
@@ -743,12 +763,6 @@ void info() {
 void print_var() {
     for (auto &var: variables) {
         cout << "Name: " << var.name << " Value: " << var.val << endl;
-    }
-}
-
-void para() {
-    for (auto &para: Parameters) {
-        cout << "Name: " << para.name << " Value: " << para.val << " func_name: " << para.func_name << endl;
     }
 }
 
@@ -783,8 +797,6 @@ void run() {
             print_var();
         } else if (input.empty() || input == "") {
             continue;
-        } else if (input == "para") {
-            para();
         } else if (input == "list") {
             print_list();
         }
@@ -818,8 +830,6 @@ void debug() {
             print_var();
         } else if (input.empty() || input == "") {
             continue;
-        } else if (input == "para") {
-            para();
         } else if (input == "list") {
             print_list();
         } else {

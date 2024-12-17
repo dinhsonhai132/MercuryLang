@@ -12,7 +12,7 @@ enum VerType {
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE,
     THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, BLOCK, 
     FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, L_PARENT, R_PARENT, 
-    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, EXTRACT
+    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, EXTRACT, RANGE
 };
 
 enum Mercury_type {
@@ -71,6 +71,11 @@ struct datatype {
     string name;
 };
 
+struct store_list {
+    string name;
+    vector<int> list;
+};
+
 class Port {
 private:
     PORT_NAME name;
@@ -85,6 +90,7 @@ public:
 vector<store_var> variables;
 vector<Port> memory;
 vector<pair<vector<int>, string>> vectors;
+vector<store_list> lists;
 
 class lexer {
 private:
@@ -292,12 +298,13 @@ public:
         return 0;
     }
 
-    auto get_list(string name) {
-        for (auto &vector : vectors) {
-            if (vector.second == name) {
-                return vector.first;
+    vector<int> get_list(string name) {
+        for (auto &list : lists) {
+            if (list.name == name) {
+                return list.list;
             }
         }
+        return {0};
     }
 
     auto extract() {
@@ -362,10 +369,7 @@ public:
                 return --next_tok.value;
             }
         } else if (cur_idx.type == LIST_NAME) {
-            auto val = extract();
-            if (isdigit(val)) {
-                return val;
-            }
+            return extract();
         }
         return 0;
     }
@@ -420,19 +424,24 @@ public:
                 if (tok.type == ASSIGN) {
                     tok = get_next_tok();
                     if (tok.type == SPARE_LP) {
-                        get_next_tok();
+                        tok_idx++;
                         while (tok_idx < tokenize.size() && tokenize[tok_idx].type != SPARE_RP) {
                             if (tokenize[tok_idx].type == INT) {
-                                int num = tokenize[tok_idx].value;
-                                the_list.push_back(num);
+                                the_list.push_back(tokenize[tok_idx].value);
+                                tok_idx++;
+                            } else if (tokenize[tok_idx].type == COMMA) {
+                                tok_idx++;
+                            } else {
+                                tok_idx++;
                             }
-                            tok_idx++;
                         }
                     }
                 }
+            } else {
+                cerr << "Error: Expected list name after 'LIST'" << endl;
             }
         }
-        vectors.push_back(make_pair(the_list, name));
+        lists.push_back({name, the_list});
     }
 
     int make_function() {
@@ -613,7 +622,11 @@ public:
                 while_loop();
                 break;
             } else if (tokenize[tok_idx].type == LIST) {
+                tok_idx = 0;
                 make_list();
+                break;
+            } else if (tokenize[tok_idx].type == LIST_NAME) {
+                cout << extract() << endl;
                 break;
             } else {
                 expr();
@@ -636,6 +649,12 @@ void print_var() {
 void para() {
     for (auto &para: Parameters) {
         cout << "Name: " << para.name << " Value: " << para.val << " func_name: " << para.func_name << endl;
+    }
+}
+
+void print_list() {
+    for (auto &list: lists) {
+        cout << "LIST NAME: " << list.name << endl;
     }
 }
 
@@ -666,7 +685,9 @@ void run() {
             continue;
         } else if (input == "para") {
             para();
-        } 
+        } else if (input == "list") {
+            print_list();
+        }
         else {
             par.run_code();
         }
@@ -699,6 +720,8 @@ void debug() {
             continue;
         } else if (input == "para") {
             para();
+        } else if (input == "list") {
+            print_list();
         } else {
             par.run_code();
             string token_type;
@@ -736,7 +759,7 @@ void debug() {
                     case LIST_NAME: token_type = "LIST_NAME"; break;
                     case EXTRACT: token_type = "EXTRACT"; break;
                     case SPARE_LP: token_type = "SPARE_LP"; break;
-                    case SPARE_RP: token_type = "SPARE_R"; break;
+                    case SPARE_RP: token_type = "SPARE_RP"; break;
                 }
                 cout << "Type: " << token_type << " Value: " << token.value << " Name: " << token.name << endl;
             }

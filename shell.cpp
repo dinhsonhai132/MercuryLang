@@ -4,15 +4,15 @@
 #include <fstream>
 #include <chrono>
 #include <ctime>
-// #include <windows.h>
-// #include <unistd.h>
+#include <variant>
 using namespace std;
 
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE,
     THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, BLOCK, 
-    FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, L_PARENT, R_PARENT, DO
+    FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, L_PARENT, R_PARENT, 
+    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, EXTRACT, RANGE, FOR_LOOP, IN
 };
 
 enum Mercury_type {
@@ -71,6 +71,11 @@ struct datatype {
     string name;
 };
 
+struct store_list {
+    string name;
+    vector<int> list;
+};
+
 class Port {
 private:
     PORT_NAME name;
@@ -84,6 +89,7 @@ public:
 
 vector<store_var> variables;
 vector<Port> memory;
+vector<store_list> lists;
 
 class lexer {
 private:
@@ -116,7 +122,10 @@ public:
 
         while (pos < input.size()) {
             cur = input[pos];
-            if (cur == '*') {
+            if (cur == '-' && input.substr(pos, 2) == "->") {
+                tokens.push_back({EXTRACT, 0, ""});
+                advance_to(2);
+            } else if (cur == '*') {
                 tokens.push_back({TIME, 0, ""});
                 advance();
             } else if (cur == '/') {
@@ -191,14 +200,23 @@ public:
             } else if (cur == ')') {
                 tokens.push_back({RP, 0, ""});
                 advance();
+            } else if (cur == ']') {
+                tokens.push_back({SPARE_RP, 0, ""});
+                advance();
+            } else if (cur == '[') {
+                tokens.push_back({SPARE_LP, 0, ""});
+                advance();
+            } else if (cur == 'L' && input.substr(pos, 4) == "LIST") {
+                tokens.push_back({LIST, 0, ""});
+                advance_to(4);
             } else if (cur == 'T' && input.substr(pos, 4) == "THEN") {
                  tokens.push_back({THEN, 0, ""});
                  advance_to(4);
             } else if (cur == 'E' && input.substr(pos, 4) == "ELSE") {
                 tokens.push_back({ELSE, 0, ""});
                 advance_to(4);
-            } else if (cur == 'F' && input.substr(pos, 8) == "FUNCTION") {
-                advance_to(9);
+            } else if (cur == 'F' && input.substr(pos, 4) == "FUNC") {
+                advance_to(5);
                 string name = "";
                 while (isspace(cur)) {
                     advance();
@@ -228,23 +246,25 @@ public:
             } else if (cur == 'W' && input.substr(pos, 5) == "WHILE") {
                 advance_to(5);
                 tokens.push_back({WHILE, 0, ""});
+            } else if (cur == '@') {
+                advance();
+                string name = "";
+                while (isalpha(cur)) {
+                    name += input[pos];
+                    advance();
+                }
+                tokens.push_back({LIST_NAME, 0, name});
             } else if (isalpha(cur)) {
                 string name = "";
                 while (isalpha(cur)) {
                     name += input[pos];
                     advance();
                 }
-                advance();
-                if (cur == '(') {
-                    tokens.push_back({FUNCTION_CALL, 0, name});
-                } else {
-                    tokens.push_back({TEMPORARY_MEMORY, 0, name});
-                }
+                tokens.push_back({TEMPORARY_MEMORY, 0, name});
             } else if (cur == '=') {
                 tokens.push_back({ASSIGN, 0, ""});
                 advance();
-            } 
-            else {
+            } else {
                 advance();
             }
         }
@@ -263,10 +283,47 @@ public:
     parser(vector<datatype> tokenize) : tokenize(tokenize), tok_idx(0) {}
 
     int get_variable(string name) {
+        bool found = false;
         for (auto &variable: variables) {
             if (variable.name == name) {
+                found = true;
                 return variable.val;
             }
+        }
+        if (!found) {
+            cout << "Error: can't found the variable name" << endl;
+        }
+        return 0;
+    }
+
+    vector<int> get_list(string name) {
+        bool found = false;
+        for (auto &list : lists) {
+            if (list.name == name) {
+                found = true;
+                return list.list;
+            }
+        }
+        if (!found) {
+            cout << "Error: can't found the list" << endl;
+        }
+        return {0};
+    }
+
+    auto extract() {
+        auto tok = get_next_tok();
+        if (tok.type == LIST_NAME) {
+            auto list = get_list(tok.name);
+            tok = get_next_tok();
+            if (tok.type == EXTRACT) {
+                tok = get_next_tok();
+                if (tok.type == INT) {
+                    auto element = list[tok.value - 1];
+                    return element;
+                }
+            }
+        } else {
+            cout << "Error: can't extract the value from the list" << endl;
         }
         return 0;
     }
@@ -316,6 +373,11 @@ public:
             } else if (next_tok.type == INT) {
                 return --next_tok.value;
             }
+        } else if (cur_idx.type == LIST_NAME) {
+            tok_idx--;
+            return extract();
+        } else {
+            cout << "Error: Unexpected factor" << endl;
         }
         return 0;
     }
@@ -327,7 +389,7 @@ public:
             if (cur_idx.type == DIV) {
                 int divisor = factor();
                 if (divisor == 0) {
-                    cerr << "Error: Division by zero" << endl;
+                    cout << "Error: Division by zero" << endl;
                     return 0;
                 }
                 result /= divisor;
@@ -358,6 +420,43 @@ public:
         return result;
     }
 
+    void make_list() {
+        string name;
+        vector<int> the_list;
+        auto tok = get_next_tok();
+        if (tok.type == LIST) {
+            tok = get_next_tok();
+            if (tok.type == TEMPORARY_MEMORY) {
+                name = tok.name;
+                tok = get_next_tok();
+                if (tok.type == ASSIGN) {
+                    tok = get_next_tok();
+                    if (tok.type == SPARE_LP) {
+                        while (tok_idx < tokenize.size() && tokenize[tok_idx].type != SPARE_RP) {
+                            if (tokenize[tok_idx].type == INT) {
+                                the_list.push_back(tokenize[tok_idx].value);
+                                tok_idx++;
+                            } else if (tokenize[tok_idx].type == COMMA) {
+                                tok_idx++;
+                            }
+                        }
+                    }
+                } else {
+                    cout << "Error: '=' not found" << endl;
+                }
+            } else {
+                cout << "Error: Expected list name after 'LIST'" << endl;
+            }
+        } else {
+            cout << "Error: are you using 'list' type" << endl;
+        }
+
+        if (!name.empty()) {
+            lists.push_back({name, the_list});
+        } else {
+            cout << "Error: name not found" << endl;
+        }
+    }
 
     int make_function() {
         auto tok = get_next_tok();
@@ -412,6 +511,10 @@ public:
                 if (tok.type == INT) {
                     tok_idx--;
                     val = expr();
+                } else if (tok.type == STRING) {
+                    cout << "Error: not support 'string' type in variable" << endl;
+                } else {
+                    cout << "Error: type not found" << endl;
                 }
             }
         }
@@ -429,6 +532,8 @@ public:
             left = get_variable(name);
         } else if (left_token.type == INT) {
             left = left_token.value;
+        } else {
+            cout << "Error: error type" << endl;
         }
         if (right_token.type == TEMPORARY_MEMORY) {
             string name = right_token.name;
@@ -470,6 +575,8 @@ public:
                     tok_idx++;
                 }
                 if (found) do_block();
+            } else {
+                cout << "Error: condition failed" << endl;
             }
         }
         return 0;
@@ -502,6 +609,9 @@ public:
             } else if (cur_idx.type == IF) {
                 condition();
                 tok_idx++;
+            } else if (cur_idx.type == LIST) {
+                make_list();
+                tok_idx++;
             } else {
                 expr();
             }
@@ -533,6 +643,9 @@ public:
             } else if (tokenize[tok_idx].type == WHILE) {
                 while_loop();
                 break;
+            } else if (tokenize[tok_idx].type == LIST) {
+                make_list();
+                break;
             } else {
                 expr();
                 break;
@@ -554,6 +667,12 @@ void print_var() {
 void para() {
     for (auto &para: Parameters) {
         cout << "Name: " << para.name << " Value: " << para.val << " func_name: " << para.func_name << endl;
+    }
+}
+
+void print_list() {
+    for (auto &list: lists) {
+        cout << "LIST NAME: " << list.name << endl;
     }
 }
 
@@ -584,7 +703,9 @@ void run() {
             continue;
         } else if (input == "para") {
             para();
-        } 
+        } else if (input == "list") {
+            print_list();
+        }
         else {
             par.run_code();
         }
@@ -617,6 +738,8 @@ void debug() {
             continue;
         } else if (input == "para") {
             para();
+        } else if (input == "list") {
+            print_list();
         } else {
             par.run_code();
             string token_type;
@@ -650,6 +773,11 @@ void debug() {
                     case RP: token_type = "RP"; break;
                     case DO: token_type = "DO"; break;
                     case WHILE: token_type = "WHILE"; break;
+                    case LIST: token_type = "LIST"; break;
+                    case LIST_NAME: token_type = "LIST_NAME"; break;
+                    case EXTRACT: token_type = "EXTRACT"; break;
+                    case SPARE_LP: token_type = "SPARE_LP"; break;
+                    case SPARE_RP: token_type = "SPARE_RP"; break;
                 }
                 cout << "Type: " << token_type << " Value: " << token.value << " Name: " << token.name << endl;
             }
@@ -660,7 +788,7 @@ void debug() {
 int interpreter(string file_name) {
     std::ifstream inputFile(file_name);
     if (!inputFile) {
-        std::cerr << "Error opening file!" << std::endl;
+        std::cout << "Error opening file!" << std::endl;
         return 1;
     }
 

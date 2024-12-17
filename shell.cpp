@@ -318,6 +318,14 @@ public:
             if (tok.type == EXTRACT) {
                 tok = get_next_tok();
                 if (tok.type == INT) {
+                    int order = tok.value;
+                    if (order > list.size()) {
+                        cout << "Error: index out of range" << endl;
+                        return 0;
+                    } else if (order < 1) {
+                        cout << "Error: order can't below 1" << endl;
+                        return 0;
+                    }
                     auto element = list[tok.value - 1];
                     return element;
                 }

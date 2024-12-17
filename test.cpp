@@ -511,6 +511,7 @@ public:
         cur_idx = get_next_tok();
         int left, right;
         string name;
+        bool list_found = false;
         if (cur_idx.type == FOR_LOOP) {
             cur_idx = get_next_tok();
             if (cur_idx.type == TEMPORARY_MEMORY) {
@@ -520,22 +521,28 @@ public:
                     cur_idx = get_next_tok();
                     if (cur_idx.type == INT) {
                         left = cur_idx.value;
-                    } else {
-                        cout << "Error: unexpected factor" << endl;
-                    }
-                    cur_idx = get_next_tok();
-                    if (cur_idx.type == TO) {
                         cur_idx = get_next_tok();
-                        if (cur_idx.type == INT) {
-                            right = cur_idx.value;
-                            for (int s = left; s < right + 1; ++s) {
-                                cout << s << endl;
+                        if (cur_idx.type == TO) {
+                            cur_idx = get_next_tok();
+                            if (cur_idx.type == INT) {
+                                right = cur_idx.value;
+                                for (int s = left; s < right + 1; ++s) {
+                                    cout << s << endl;
+                                }
+                            } else {
+                                cout << "Error: unexpected factor" << endl;
                             }
                         } else {
-                            cout << "Error: unexpected factor" << endl;
+                            cout << "Error: can't found token 'TO'" << endl;
+                        }
+                    } else if (cur_idx.type == LIST_NAME) {
+                        list_found = true;
+                        vector<int> list = get_list(cur_idx.name);
+                        for (int i : list) {
+                            cout << i << endl;
                         }
                     } else {
-                        cout << "Error: can't found token 'TO'" << endl;
+                        cout << "Error: unexpected factor" << endl;
                     }
                 } else {
                     cout << "Error: can't found token 'IN'" << endl;
@@ -546,7 +553,7 @@ public:
         } else {
             cout << "Error: can't found token 'FOR'" << endl;
         }
-        variables.push_back({name, right});
+        if (!list_found) variables.push_back({name, right});
     }
     int while_loop() {
         cur_idx = get_next_tok();

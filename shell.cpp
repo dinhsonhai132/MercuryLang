@@ -12,7 +12,7 @@ enum VerType {
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE,
     THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, BLOCK, 
     FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, L_PARENT, R_PARENT, 
-    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, EXTRACT, RANGE, FOR_LOOP, IN
+    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, EXTRACT, RANGE, FOR_LOOP, IN, TO
 };
 
 enum Mercury_type {
@@ -27,42 +27,6 @@ struct store_var {
 struct Parameter {
     string name;
     int val;
-    string func_name;
-};
-
-vector<Parameter> Parameters;
-
-struct function {
-    string function_name;
-    Mercury_type function_type;
-};
-
-vector<function> functions;
-
-struct PORT_NAME {
-    string port_1 = "rx10001";
-    string port_2 = "rx20001";
-    string port_3 = "rx30001";
-    string port_4 = "rx40001";
-    string port_5 = "rx50001";
-    string port_6 = "rx60001";
-    string port_7 = "rx70001";
-    string port_8 = "rx80001";
-    string port_9 = "rx90001";
-    string port_10 = "rx1A0002";
-};
-
-struct PORT_STORE {
-    vector<store_var> port_1;
-    vector<store_var> port_2;
-    vector<store_var> port_3;
-    vector<store_var> port_4;
-    vector<store_var> port_5;
-    vector<store_var> port_6;
-    vector<store_var> port_7;
-    vector<store_var> port_8;
-    vector<store_var> port_9;
-    vector<store_var> port_10;
 };
 
 struct datatype {
@@ -76,20 +40,15 @@ struct store_list {
     vector<int> list;
 };
 
-class Port {
-private:
-    PORT_NAME name;
-    PORT_STORE store;
-public:
-    Port(PORT_NAME name, PORT_STORE store) : name(name), store(store) {}
+struct function {
+    string function_name;
+    vector<Parameter> Parameters;
+    vector<datatype> store_tokens;
 };
 
-#define make_port(name, store) = Port(name, store);
-#define make_error();
-
 vector<store_var> variables;
-vector<Port> memory;
 vector<store_list> lists;
+vector<function> functions;
 
 class lexer {
 private:
@@ -206,6 +165,15 @@ public:
             } else if (cur == '[') {
                 tokens.push_back({SPARE_LP, 0, ""});
                 advance();
+            } else if (cur == 'T' && input.substr(pos, 2) == "TO") {
+                tokens.push_back({TO, 0, ""});
+                advance_to(2);
+            } else if (cur == 'F' && input.substr(pos, 3) == "FOR") {
+                tokens.push_back({FOR_LOOP, 0, ""});
+                advance_to(3);
+            } else if (cur == 'I' && input.substr(pos, 2) == "IN") {
+                tokens.push_back({IN, 0, ""});
+                advance_to(2);
             } else if (cur == 'L' && input.substr(pos, 4) == "LIST") {
                 tokens.push_back({LIST, 0, ""});
                 advance_to(4);
@@ -395,8 +363,8 @@ public:
         } else if (cur_idx.type == LIST_NAME) {
             tok_idx--;
             return extract();
-        } else {
-            cout << "Error: Unexpected factor" << endl;
+        } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
+            tok_idx++;
         }
         return 0;
     }
@@ -477,23 +445,107 @@ public:
         }
     }
 
-    int make_function() {
-        auto tok = get_next_tok();
-        function this_func;
-        if (tok.type == FUNCTION) {
-            this_func.function_name = tok.name;
-            this_func.function_type = INT_TYPE;
-            functions.push_back(this_func);
-            while (tok.type != DOUBLE_COLON && tok_idx < tokenize.size()
-            || tok.type != DO && tok_idx < tokenize.size()) {
-                if (tok.type == PARAMATER) {
-                    Parameters.push_back({tok.name, 0, this_func.function_name});
+    void make_function() {
+        cur_idx = get_next_tok();
+        string name_func;
+        vector<Parameter> paras;
+        vector<datatype> store_tokens;
+        if (cur_idx.type = FUNCTION) {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == TEMPORARY_MEMORY) {
+                name_func = cur_idx.value;
+                bool found_do = false;
+                while (tok_idx < tokenize.size()) {
+                    if (cur_idx.type == LP) {
+                        tok_idx++;
+                    } else if (cur_idx.type == RP) {
+                        tok_idx++;
+                    } else if (cur_idx.type == PARAMATER) {
+                        paras.push_back({cur_idx.name, 0});
+                        tok_idx++;
+                    } else if (cur_idx.type == DO) {
+                        found_do = true;
+                        break;
+                    } else {
+                        tok_idx++;
+                    }
                 }
-                tok = tokenize[tok_idx];
-                tok_idx++;
+                if (found_do) {
+                    while (tok_idx < tokenize.size()) {
+                        store_tokens.push_back(tokenize[tok_idx]);
+                        tok_idx++;
+                    }
+                }
             }
         }
-        return 0;
+        functions.push_back({name_func, paras, store_tokens});
+    }
+
+    void for_loop() {
+        cur_idx = get_next_tok();
+        int left, right;
+        string name;
+        bool list_found = false;
+        if (cur_idx.type == FOR_LOOP) {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == TEMPORARY_MEMORY) {
+                name = cur_idx.name;
+                variables.push_back({name, 0});
+                cur_idx = get_next_tok();
+                if (cur_idx.type == IN) {
+                    cur_idx = get_next_tok();
+                    if (cur_idx.type == INT) {
+                        int left = cur_idx.value;
+                        cur_idx = get_next_tok();
+                        if (cur_idx.type == TO) {
+                            cur_idx = get_next_tok();
+                            if (cur_idx.type == INT) {
+                                right = cur_idx.value;
+                                cur_idx = get_next_tok();
+                                if (cur_idx.type == DO) {
+                                    int cur_tok_idx = tok_idx;
+                                    for (;left < right; left++) {
+                                        for (auto &variable : variables) {
+                                            if (variable.name == name) {
+                                                variable.val = left;
+                                            }
+                                        }
+                                        do_block();
+                                        tok_idx = cur_tok_idx;
+                                    }
+                                }
+                            } else {
+                                cout << "Error: unexpected factor" << endl;
+                            }
+                        } else {
+                            cout << "Error: can't found token 'TO'" << endl;
+                        }
+                    } else if (cur_idx.type == LIST_NAME) {
+                        list_found = true;
+                        vector<int> list = get_list(cur_idx.name);
+                        int cur_tok_idx = tok_idx;
+                        for (int i : list) {
+                            for (auto &variable : variables) {
+                                if (variable.name == name) {
+                                    variable.val = i;
+                                }
+                            }
+                            do_block();
+                            tok_idx = cur_tok_idx;
+                        }
+                    } else {
+                        cout << "Error: unexpected factor" << endl;
+                    }
+                } else {
+                    cout << "Error: can't found token 'IN'" << endl;
+                }
+            } else {
+                cout << "Error: name variable failed" << endl;
+            }
+        } else {
+            cout << "Error: can't found token 'FOR'" << endl;
+        }
+        if (!list_found) variables.push_back({name, right});
     }
 
     int while_loop() {
@@ -523,6 +575,8 @@ public:
             name = get_next_tok();
             if (name.type = TEMPORARY_MEMORY) {
                 var_name = name.name;
+            } else {
+                cout << "Error: name variable failed" << endl;
             }
             tok = get_next_tok();
             if (tok.type == ASSIGN) {
@@ -665,7 +719,14 @@ public:
             } else if (tokenize[tok_idx].type == LIST) {
                 make_list();
                 break;
-            } else {
+            } else if (tokenize[tok_idx].type == FOR_LOOP) {
+                for_loop();
+                break;
+            } else if (tokenize[tok_idx].type == FUNCTION) {
+                make_function();
+                break;
+            }
+            else {
                 expr();
                 break;
             }
@@ -680,12 +741,6 @@ void info() {
 void print_var() {
     for (auto &var: variables) {
         cout << "Name: " << var.name << " Value: " << var.val << endl;
-    }
-}
-
-void para() {
-    for (auto &para: Parameters) {
-        cout << "Name: " << para.name << " Value: " << para.val << " func_name: " << para.func_name << endl;
     }
 }
 
@@ -720,8 +775,6 @@ void run() {
             print_var();
         } else if (input.empty() || input == "") {
             continue;
-        } else if (input == "para") {
-            para();
         } else if (input == "list") {
             print_list();
         }
@@ -755,8 +808,6 @@ void debug() {
             print_var();
         } else if (input.empty() || input == "") {
             continue;
-        } else if (input == "para") {
-            para();
         } else if (input == "list") {
             print_list();
         } else {
@@ -797,6 +848,9 @@ void debug() {
                     case EXTRACT: token_type = "EXTRACT"; break;
                     case SPARE_LP: token_type = "SPARE_LP"; break;
                     case SPARE_RP: token_type = "SPARE_RP"; break;
+                    case FOR_LOOP: token_type = "FOR_LOOP"; break;
+                    case IN: token_type = "IN"; break;
+                    case TO: token_type = "TO"; break;
                 }
                 cout << "Type: " << token_type << " Value: " << token.value << " Name: " << token.name << endl;
             }

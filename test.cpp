@@ -29,39 +29,6 @@ struct Parameter {
     int val;
 };
 
-struct function {
-    string function_name;
-    vector<Parameter> Parameters;
-    vector<datatype> store_tokens;
-};
-
-
-struct PORT_NAME {
-    string port_1 = "rx10001";
-    string port_2 = "rx20001";
-    string port_3 = "rx30001";
-    string port_4 = "rx40001";
-    string port_5 = "rx50001";
-    string port_6 = "rx60001";
-    string port_7 = "rx70001";
-    string port_8 = "rx80001";
-    string port_9 = "rx90001";
-    string port_10 = "rx1A0002";
-};
-
-struct PORT_STORE {
-    vector<store_var> port_1;
-    vector<store_var> port_2;
-    vector<store_var> port_3;
-    vector<store_var> port_4;
-    vector<store_var> port_5;
-    vector<store_var> port_6;
-    vector<store_var> port_7;
-    vector<store_var> port_8;
-    vector<store_var> port_9;
-    vector<store_var> port_10;
-};
-
 struct datatype {
     VerType type;
     int value;
@@ -73,19 +40,13 @@ struct store_list {
     vector<int> list;
 };
 
-class Port {
-private:
-    PORT_NAME name;
-    PORT_STORE store;
-public:
-    Port(PORT_NAME name, PORT_STORE store) : name(name), store(store) {}
+struct function {
+    string function_name;
+    vector<Parameter> Parameters;
+    vector<datatype> store_tokens;
 };
 
-#define make_port(name, store) = Port(name, store);
-#define make_error();
-
 vector<store_var> variables;
-vector<Port> memory;
 vector<store_list> lists;
 vector<function> functions;
 
@@ -531,18 +492,29 @@ public:
             cur_idx = get_next_tok();
             if (cur_idx.type == TEMPORARY_MEMORY) {
                 name = cur_idx.name;
+                variables.push_back({name, 0});
                 cur_idx = get_next_tok();
                 if (cur_idx.type == IN) {
                     cur_idx = get_next_tok();
                     if (cur_idx.type == INT) {
-                        left = cur_idx.value;
+                        int left = cur_idx.value;
                         cur_idx = get_next_tok();
                         if (cur_idx.type == TO) {
                             cur_idx = get_next_tok();
                             if (cur_idx.type == INT) {
                                 right = cur_idx.value;
-                                for (int s = left; s < right + 1; ++s) {
-                                    cout << s << endl;
+                                cur_idx = get_next_tok();
+                                if (cur_idx.type == DO) {
+                                    int cur_tok_idx = tok_idx;
+                                    for (;left < right; left++) {
+                                        for (auto &variable : variables) {
+                                            if (variable.name == name) {
+                                                variable.val = left;
+                                            }
+                                        }
+                                        do_block();
+                                        tok_idx = cur_tok_idx;
+                                    }
                                 }
                             } else {
                                 cout << "Error: unexpected factor" << endl;
@@ -570,6 +542,7 @@ public:
         }
         if (!list_found) variables.push_back({name, right});
     }
+
     int while_loop() {
         cur_idx = get_next_tok();
         if (cur_idx.type == WHILE) {
@@ -583,6 +556,8 @@ public:
                 } else {
                     cout << "Error: can't not found the token 'DO' in while loop" << endl;
                 }
+            } else {
+                cout << "Error: condition failed" << endl;
             }
         }
         return 0;

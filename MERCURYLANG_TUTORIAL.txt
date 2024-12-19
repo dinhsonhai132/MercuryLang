@@ -40,3 +40,14 @@ extract:
           ^                                            ^
   (use "@" keyword)                              (start with 1)
 exp : @a -> 1 or @a -> x; output: 1;
+
+For loop:
+first loop:
+        FOR             __NAME_VARIABLE__     IN     __NUM__ TO __NUM__     DO     __CODEBLOCK__;
+         ^                                    
+(use "FOR" keyword)
+exp (FOR x IN 1 TO 10 DO PRINT x;)
+
+second loop:
+        FOR             __NAME_VARIABLE__     IN     @__LISTNAME__          DO     __CODEBLOCK__;
+exp (FOR x IN @a DO PRINT x;)

@@ -48,3 +48,5 @@ this is Mercury Langluage
 > more user friendly
 >
 > add new extract
+## 12/19/2024
+> add for loop

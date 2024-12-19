@@ -12,7 +12,7 @@ enum VerType {
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE,
     THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, BLOCK, 
     FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, L_PARENT, R_PARENT, 
-    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, EXTRACT, RANGE, FOR_LOOP, IN, TO
+    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, EXTRACT, RANGE, FOR_LOOP, IN, TO, END
 };
 
 enum Mercury_type {
@@ -112,6 +112,9 @@ public:
             } else if (cur == '-') {
                 tokens.push_back({MINUS, 0, ""});
                 advance();
+            } else if (cur == 'E' && input.substr(pos, 3) == "END") {
+                tokens.push_back({END, 0, ""});
+                advance_to(3);
             } else if (cur == 'L' && input.substr(pos, 3) == "LET") {
                 tokens.push_back({LET, 0, ""});
                 advance_to(3);
@@ -208,6 +211,14 @@ public:
             } else if (cur == ':') {
                 tokens.push_back({DOUBLE_COLON, 0, ""});
                 advance();
+            } else if (cur == '!') {
+                advance();
+                string name = "";
+                while (isalpha(cur)) {
+                    name += input[pos];
+                    advance();
+                }
+                tokens.push_back({FUNCTION_CALL, 0, name});
             } else if (cur == 'D' && input.substr(pos, 2) == "DO") {
                 advance_to(2);
                 tokens.push_back({DO, 0, ""});
@@ -363,10 +374,8 @@ public:
         } else if (cur_idx.type == LIST_NAME) {
             tok_idx--;
             return extract();
-        } else if (cur_idx.type == NONE) {
+        } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
             tok_idx++;
-        } else {
-            cout << "Error: Unexpected factor" << endl;
         }
         return 0;
     }
@@ -436,8 +445,6 @@ public:
             } else {
                 cout << "Error: Expected list name after 'LIST'" << endl;
             }
-        } else {
-            cout << "Error: are you using 'list' type" << endl;
         }
 
         if (!name.empty()) {
@@ -456,31 +463,76 @@ public:
             cur_idx = get_next_tok();
             if (cur_idx.type == TEMPORARY_MEMORY) {
                 name_func = cur_idx.value;
-                bool found_do = false;
-                while (tok_idx < tokenize.size()) {
-                    if (cur_idx.type == LP) {
-                        tok_idx++;
-                    } else if (cur_idx.type == RP) {
-                        tok_idx++;
-                    } else if (cur_idx.type == PARAMATER) {
-                        paras.push_back({cur_idx.name, 0});
-                        tok_idx++;
-                    } else if (cur_idx.type == DO) {
-                        found_do = true;
-                        break;
-                    } else {
-                        tok_idx++;
+                cur_idx = get_next_tok();
+                if (cur_idx.type == L_PARENT) {
+                    while (tok_idx < tokenize.size() && cur_idx.type != R_PARENT) {
+                        if (cur_idx.type == PARAMATER) {
+                            paras.push_back({cur_idx.name, 0});
+                        }
+                        cur_idx = tokenize[tok_idx++];
                     }
-                }
-                if (found_do) {
-                    while (tok_idx < tokenize.size()) {
-                        store_tokens.push_back(tokenize[tok_idx]);
-                        tok_idx++;
+                    cur_idx = get_next_tok();
+                    if (cur_idx.type == DO) {
+                        while (tok_idx < tokenize.size() && cur_idx.type != END
+                        || tok_idx < tokenize.size()) {
+                            store_tokens.push_back(cur_idx);
+                            cur_idx = tokenize[tok_idx++];
+                        }
                     }
+                } else {
+                    cout << "Error: missing left parent" << endl;
                 }
+            } else {
+                cout << "Error: function name failed" << endl;
             }
         }
         functions.push_back({name_func, paras, store_tokens});
+    }
+
+    vector<datatype> get_function(string name) {
+        for (auto &func : functions) {
+            if (func.function_name == name) {
+                return func.store_tokens;
+            }
+        }
+    }
+
+    vector<Parameter> get_para(string name) {
+        for (auto &func : functions) {
+            if (func.function_name == name) {
+                return func.Parameters;
+            }
+        }
+    }
+
+    void call_function() {
+        cur_idx = get_next_tok();
+        string name;
+        vector<int> values;
+        vector<datatype> func_tokens;
+        vector<Parameter> paras;
+        if (cur_idx.type == FUNCTION_CALL) {
+            name = cur_idx.name;
+            cur_idx = get_next_tok();
+            if (cur_idx.type == L_PARENT) {
+                func_tokens = get_function(name);
+                paras = get_para(name);
+                int orders = 0;
+                while (tok_idx < tokenize.size() && cur_idx.type != R_PARENT) {
+                    if (cur_idx.type == INT) {
+                        paras[orders].val = cur_idx.value;
+                        orders++;
+                    }
+                    cur_idx = tokenize[tok_idx++];
+                }
+            } else {
+                cout << "Error: missing left parent" << endl;
+            }
+        }
+    }
+
+    void return_func() {
+        
     }
 
     void for_loop() {
@@ -525,8 +577,15 @@ public:
                     } else if (cur_idx.type == LIST_NAME) {
                         list_found = true;
                         vector<int> list = get_list(cur_idx.name);
+                        int cur_tok_idx = tok_idx;
                         for (int i : list) {
-                            cout << i << endl;
+                            for (auto &variable : variables) {
+                                if (variable.name == name) {
+                                    variable.val = i;
+                                }
+                            }
+                            do_block();
+                            tok_idx = cur_tok_idx;
                         }
                     } else {
                         cout << "Error: unexpected factor" << endl;
@@ -556,8 +615,6 @@ public:
                 } else {
                     cout << "Error: can't not found the token 'DO' in while loop" << endl;
                 }
-            } else {
-                cout << "Error: condition failed" << endl;
             }
         }
         return 0;
@@ -848,6 +905,7 @@ void debug() {
                     case FOR_LOOP: token_type = "FOR_LOOP"; break;
                     case IN: token_type = "IN"; break;
                     case TO: token_type = "TO"; break;
+                    case END: token_type = "END"; break;
                 }
                 cout << "Type: " << token_type << " Value: " << token.value << " Name: " << token.name << endl;
             }

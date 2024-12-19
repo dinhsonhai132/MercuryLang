@@ -489,7 +489,7 @@ public:
         functions.push_back({name_func, paras, store_tokens});
     }
 
-    vector<datatype> get_function(string name) {
+    vector<datatype> get_tokens(string name) {
         for (auto &func : functions) {
             if (func.function_name == name) {
                 return func.store_tokens;
@@ -503,7 +503,16 @@ public:
                 return func.Parameters;
             }
         }
-    }
+    } 
+
+    int get_para_func(string name_func, string name_para) {
+        vector<Parameter> paras = get_para(name_func);
+        for (auto &para : paras) {
+            if (para.name == name_para) {
+                return para.val;
+            }
+        }
+    } 
 
     void call_function() {
         cur_idx = get_next_tok();
@@ -515,7 +524,7 @@ public:
             name = cur_idx.name;
             cur_idx = get_next_tok();
             if (cur_idx.type == L_PARENT) {
-                func_tokens = get_function(name);
+                func_tokens = get_tokens(name);
                 paras = get_para(name);
                 int orders = 0;
                 while (tok_idx < tokenize.size() && cur_idx.type != R_PARENT) {
@@ -525,6 +534,11 @@ public:
                     }
                     cur_idx = tokenize[tok_idx++];
                 }
+                for (auto &token : func_tokens) {
+                    if (token.type == PARAMATER) {
+                        int val = get_para_func(name, token.name);
+                    }
+                }
             } else {
                 cout << "Error: missing left parent" << endl;
             }
@@ -532,7 +546,7 @@ public:
     }
 
     void return_func() {
-        
+
     }
 
     void for_loop() {

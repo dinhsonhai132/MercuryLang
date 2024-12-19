@@ -24,7 +24,7 @@ while loop:
 
 IF_ELSE:
 
-         IF              __CONDITION__  THEN __CODEBLOCK__  ELSE  __CODEBLOCK__;
+         IF              __CONDITION__  THEN __CODEBLOCK__  ELSE IF __CONDITION_2__ THEN __CODE_BLOCK__ ELSE __CODE_BLOCK__;
          ^                     ^                                    
 (use "IF" keyword)     (exp: 1 < 2, x < 5)                    
 

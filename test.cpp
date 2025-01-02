@@ -289,7 +289,7 @@ public:
         return {0};
     }
 
-    auto extract() {
+    int extract() {
         auto tok = get_next_tok();
         if (tok.type == LIST_NAME) {
             auto list = get_list(tok.name);
@@ -505,15 +505,6 @@ public:
         }
     } 
 
-    int get_para_func(string name_func, string name_para) {
-        vector<Parameter> paras = get_para(name_func);
-        for (auto &para : paras) {
-            if (para.name == name_para) {
-                return para.val;
-            }
-        }
-    } 
-
     void call_function() {
         cur_idx = get_next_tok();
         string name;
@@ -528,12 +519,23 @@ public:
                 paras = get_para(name);
                 int orders = 0;
                 while (tok_idx < tokenize.size() && cur_idx.type != R_PARENT) {
+                    if (cur_idx.type == INT) {
+                        values.push_back(cur_idx.value);
+                    }
                     cur_idx = tokenize[tok_idx++];
                 }
-                for (auto &token : func_tokens) {
-                    if (token.type == PARAMATER) {
-                        int val = get_para_func(name, token.name);
+                cur_idx = get_next_tok();
+                if (cur_idx.type == DO) {
+                    for (int i = 0; i < paras.size(); i++) {
+                        paras[i].val = values[i];
                     }
+
+                    for (int i = 0; i < func_tokens.size(); i++) {
+                        char cur_tok = func_tokens[i];
+                        if (cur_tok.type == )
+                    }
+                } else {
+                    cout << "missing token: DO" << endl;
                 }
             } else {
                 cout << "Error: missing left parent" << endl;
@@ -695,7 +697,7 @@ public:
         return 0;
     }
     
-    auto condition() {
+    int condition() {
         cur_idx = get_next_tok();
         if (cur_idx.type == IF) {
             int check = comparison();

@@ -528,6 +528,9 @@ public:
                 paras = get_para(name);
                 int orders = 0;
                 while (tok_idx < tokenize.size() && cur_idx.type != R_PARENT) {
+                    if (cur_idx.type == INT) {
+                        
+                    }
                     cur_idx = tokenize[tok_idx++];
                 }
                 for (auto &token : func_tokens) {

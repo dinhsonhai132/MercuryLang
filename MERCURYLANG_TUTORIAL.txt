@@ -1,53 +1,49 @@
-print function:
+MercuryLang tutorial
+1. print function
+PRINT (value); 
+value can be number or string or variable example PRINT "hello"; output will be hello
 
+2. variable
+LET name = (value);
+name only alpha no number or other syntax example LET x = 1 + 1;
 
-    PRINT      __value__;
-      ^            ^
- (call print)  (output exp: "hello world!", x, 1+1)
+3. condition
+(value 1) operator (value 2);
+value can be name of variable or number example x < 2 or 1 < 5 output will be 1 or 0;
 
+4. if else
+IF (condition 1) THEN (code block) ELSE (code block)
+every line of code in code block end with ";" example LET x = 0; PRINT x;
+IF 1 == 1 THEN LET x = 0; PRINT x ELSE PRINT "hello";
 
-variable:
+5. plus plus and minus minus
+++value or --value
+value can be number or variable if variable it will update the variable value
+example LET x = 0; ++x; PRINT x; output will be 1
 
+6. while loop
+WHILE (condition) DO (code block);
+example:
+LET x = 0;
+WHILE x < 10 DO ++x; PRINT x;
 
-        LET         __NAME_VARIABLE__   =   __value__;
-         ^                   ^                   ^
-(use "LET" keyword)    (alpha only)          (INT only)
+7. LIST
+LIST list_name = [(value 1), (value 2), ...];
+value only in number type
+example: LIST a = [1, 2, 3];
 
+8. subtract
+@list_name -> number;
+it will print the numberth element of list start with 1;
+example: PRINT @a -> 1; output will be 1;
 
-while loop:
+9. for loop
+(1) loop range
+FOR var_name IN num1 TO num2 DO (code block);
+example:
+FOR i IN 1 TO 10 DO PRINT i; it will print 1 to 10
+(2) loop list
+FOR var_name IN @list_name DO (code block);
+example:
+FOR i IN @a DO PRINT i; it will print every element of a;
 
-
-        WHILE                 __CONDITION__          DO        __CODEBLOCK__;
-          ^                         ^                                ^
-(use "WHILE" keyword)       (exp: 1 < 2, x < 5)              (exp: "++x; PRINT x;")
-
-
-IF_ELSE:
-
-         IF              __CONDITION__  THEN __CODEBLOCK__  ELSE IF __CONDITION_2__ THEN __CODE_BLOCK__ ELSE __CODE_BLOCK__;
-         ^                     ^                                    
-(use "IF" keyword)     (exp: 1 < 2, x < 5)                    
-
-LIST:
-
-        LIST             __NAME_LIST__      =      [ (store_value) ];
-         ^
-(use "LIST" keyword) 
-exp : LIST a = [1, 2, 3];
-
-extract:
-          @               __NAME_LIST__     ->      __ORDER__;
-          ^                                            ^
-  (use "@" keyword)                              (start with 1)
-exp : @a -> 1 or @a -> x; output: 1;
-
-For loop:
-first loop:
-        FOR             __NAME_VARIABLE__     IN     __NUM__ TO __NUM__     DO     __CODEBLOCK__;
-         ^                                    
-(use "FOR" keyword)
-exp (FOR x IN 1 TO 10 DO PRINT x;)
-
-second loop:
-        FOR             __NAME_VARIABLE__     IN     @__LISTNAME__          DO     __CODEBLOCK__;
-exp (FOR x IN @a DO PRINT x;)

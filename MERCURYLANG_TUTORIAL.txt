@@ -47,3 +47,8 @@ FOR var_name IN @list_name DO (code block);
 example:
 FOR i IN @a DO PRINT i; it will print every element of a;
 
+example prorgram
+PRINT "print increase 1 to every element in list if its below 5";
+
+LIST a = [1, 5, 6, 2, 3];
+FOR i in @a DO IF i < 5 THEN PRINT i + 1;

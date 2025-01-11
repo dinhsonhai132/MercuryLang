@@ -580,6 +580,20 @@ public:
                 }
             }
         };
+
+        auto func_code = [&]() {
+            while (tok_idx < tokens.size()) {
+                cur_idx = tokens[tok_idx];
+                if (cur_idx.type == PRINT) {
+                    func_print_func();
+                    tok_idx++;
+                } else {
+                    func_expr();
+                }
+            }
+        };
+
+        func_code();
     }
 
     void call_function() {
@@ -604,6 +618,10 @@ public:
 
                 for (int i = 0; i < paras.size(); i++) {
                     paras[i].val = values[i];
+                }
+
+                if (!values.empty()) {
+                    func_block(func_tokens, paras);
                 }
 
             } else {
@@ -826,6 +844,12 @@ public:
             } else if (cur_idx.type == WHILE) {
                 while_loop();
                 tok_idx++;
+            } else if (cur_idx.type == FUNCTION_CALL) {
+                call_function();
+                tok_idx++;
+            } else if (cur_idx.type == FUNCTION) {
+                make_function();
+                tok_idx++;
             } else {
                 expr();
             }
@@ -865,6 +889,9 @@ public:
                 break;
             } else if (tokenize[tok_idx].type == FUNCTION) {
                 make_function();
+                break;
+            } else if (tokenize[tok_idx].type == FUNCTION_CALL) {
+                call_function();
                 break;
             }
             else {

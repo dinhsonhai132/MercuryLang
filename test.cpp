@@ -505,30 +505,81 @@ public:
         }
     } 
 
-    void func_block(vector<datatype> tokens) {
+    auto func_block(vector<datatype> tokens, vector<Parameter> paras) {
         tok_idx = 0;
-        while (tok_idx < tokens.size()) {
-            cur_idx = tokens[tok_idx];
-            if (cur_idx.type == PRINT) {
-                print_func();
-                tok_idx++;
-            } else if (cur_idx.type == LET) {
-                make_var();
-                tok_idx++;
-            } else if (cur_idx.type == LIST) {
-                make_list();
-                tok_idx++;
-            } else if (cur_idx.type == IF) {
-                condition();
-                tok_idx++;
-            } else if (cur_idx.type == FOR_LOOP) {
-                for_loop();
-                tok_idx++;
-            } else if (cur_idx.type == WHILE) {
-                while_loop();
-                tok_idx++;
+        cur_idx = tokens[tok_idx];
+
+        auto func_get_next_tok = [&]() {
+            cur_idx = tokens[tok_idx++];
+            return cur_idx;
+        };
+
+        auto func_factor = [&]() {
+            cur_idx = func_get_next_tok();
+            if (cur_idx.type == INT) {
+                return cur_idx.value;
+            } else if (cur_idx.type == TEMPORARY_MEMORY) {
+                string name = cur_idx.name;
+                return get_variable(name);
+            } else if (cur_idx.type == PARAMATER) {
+                string name = cur_idx.name;
+                for (auto &para : paras) {
+                    if (para.name == name) {
+                        return para.val;
+                    }
+                }
             }
-        }
+        };
+
+        auto func_term = [&]() {
+            int value = func_factor();
+            while (true) {
+                cur_idx = func_get_next_tok();
+                if (cur_idx.type == TIME) {
+                    value *= func_factor();
+                } else if (cur_idx.type == DIV) {
+                    int divisor = func_factor();
+                    if (divisor != 0) {
+                        value /= divisor;
+                    } else {
+                        cout << "Error can not div by zero" << endl;
+                    }
+                } else {
+                    tok_idx--;
+                    break;
+                }
+            }
+            return value;
+        };
+        
+        auto func_expr = [&]() {
+            int value = func_factor();
+            while (true) {
+                cur_idx = func_get_next_tok();
+                if (cur_idx.type == PLUS) {
+                    value += func_factor();
+                } else if (cur_idx.type == MINUS) {
+                    value -= func_factor();
+                } else {
+                    tok_idx--;
+                    break;
+                }
+            }
+            return value;
+        };
+
+        auto func_print_func = [&]() {
+            cur_idx = func_get_next_tok();
+            if (cur_idx.type == PRINT) {
+                cur_idx = func_get_next_tok();
+                if (cur_idx.type == STRING) {
+                    cout << cur_idx.name << endl;
+                } else {
+                    tok_idx--;
+                    cout << func_expr() << endl;
+                }
+            }
+        };
     }
 
     void call_function() {
@@ -844,7 +895,7 @@ void run() {
     auto now = std::chrono::system_clock::now();
     std::time_t current_time = std::chrono::system_clock::to_time_t(now);
     auto time = ctime(&current_time);
-    cout << "MercuryLang [Version 0.0.2]\n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
+    cout << "MercuryLang [Version 1.1.1]\n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
         cout << "> ";
@@ -878,7 +929,7 @@ void debug() {
     auto now = std::chrono::system_clock::now();
     std::time_t current_time = std::chrono::system_clock::to_time_t(now);
     auto time = ctime(&current_time);
-    cout << "MercuryLang [Version 0.0.2] \n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
+    cout << "MercuryLang [Version 1.1.1] \n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
         cout << "debug_mode> ";

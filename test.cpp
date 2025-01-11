@@ -505,6 +505,32 @@ public:
         }
     } 
 
+    void func_block(vector<datatype> tokens) {
+        tok_idx = 0;
+        while (tok_idx < tokens.size()) {
+            cur_idx = tokens[tok_idx];
+            if (cur_idx.type == PRINT) {
+                print_func();
+                tok_idx++;
+            } else if (cur_idx.type == LET) {
+                make_var();
+                tok_idx++;
+            } else if (cur_idx.type == LIST) {
+                make_list();
+                tok_idx++;
+            } else if (cur_idx.type == IF) {
+                condition();
+                tok_idx++;
+            } else if (cur_idx.type == FOR_LOOP) {
+                for_loop();
+                tok_idx++;
+            } else if (cur_idx.type == WHILE) {
+                while_loop();
+                tok_idx++;
+            }
+        }
+    }
+
     void call_function() {
         cur_idx = get_next_tok();
         string name;
@@ -524,19 +550,11 @@ public:
                     }
                     cur_idx = tokenize[tok_idx++];
                 }
-                cur_idx = get_next_tok();
-                if (cur_idx.type == DO) {
-                    for (int i = 0; i < paras.size(); i++) {
-                        paras[i].val = values[i];
-                    }
 
-                    for (int i = 0; i < func_tokens.size(); i++) {
-                        char cur_tok = func_tokens[i];
-                        if (cur_tok.type == )
-                    }
-                } else {
-                    cout << "missing token: DO" << endl;
+                for (int i = 0; i < paras.size(); i++) {
+                    paras[i].val = values[i];
                 }
+
             } else {
                 cout << "Error: missing left parent" << endl;
             }
@@ -750,6 +768,12 @@ public:
                 tok_idx++;
             } else if (cur_idx.type == LIST) {
                 make_list();
+                tok_idx++;
+            } else if (cur_idx.type == FOR_LOOP) {
+                for_loop();
+                tok_idx++;
+            } else if (cur_idx.type == WHILE) {
+                while_loop();
                 tok_idx++;
             } else {
                 expr();

@@ -50,4 +50,5 @@ this is Mercury Langluage
 > add new extract
 ## 12/19/2024
 > add for loop
-# elif upd soon
+## 1/11/2025
+> add new function (W.I.P)

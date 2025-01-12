@@ -1,6 +1,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
+#include <chrono>
+#include <ctime>
+#include <variant>
 #include "shell.h"
 #include "parser.h"
 #include "lexer.h"

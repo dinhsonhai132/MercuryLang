@@ -11,7 +11,7 @@ enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE, ELIF,
     THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, BLOCK, 
-    FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, L_PARENT, R_PARENT, 
+    FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON,
     DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, EXTRACT, RANGE, FOR_LOOP, IN, TO, END
 };
 
@@ -190,8 +190,8 @@ public:
             } else if (cur == 'E' && input.substr(pos, 4) == "ELIF") {
                 tokens.push_back({ELIF, 0, ""});
                 advance_to(4);
-            } else if (cur == 'F' && input.substr(pos, 4) == "FUNC") {
-                advance_to(5);
+            } else if (cur == 'D' && input.substr(pos, 3) == "DEF") {
+                advance_to(4);
                 string name = "";
                 while (isspace(cur)) {
                     advance();
@@ -487,32 +487,30 @@ public:
         string name_func;
         vector<Parameter> paras;
         vector<datatype> store_tokens;
-        if (cur_idx.type = FUNCTION) {
+        if (cur_idx.type == FUNCTION) {
+            name_func = cur_idx.name;
             cur_idx = get_next_tok();
-            if (cur_idx.type == TEMPORARY_MEMORY) {
-                name_func = cur_idx.value;
+            if (cur_idx.type == LP) {
+                while (tok_idx < tokenize.size() && cur_idx.type != RP) {
+                    if (cur_idx.type == PARAMATER) {
+                        paras.push_back({cur_idx.name, 0});
+                    }
+                    cur_idx = tokenize[tok_idx++];
+                }
                 cur_idx = get_next_tok();
-                if (cur_idx.type == L_PARENT) {
-                    while (tok_idx < tokenize.size() && cur_idx.type != R_PARENT) {
-                        if (cur_idx.type == PARAMATER) {
-                            paras.push_back({cur_idx.name, 0});
-                        }
+                if (cur_idx.type == DO) {
+                    while (tok_idx < tokenize.size() && cur_idx.type != END
+                    || tok_idx < tokenize.size()) {
+                        store_tokens.push_back(cur_idx);
                         cur_idx = tokenize[tok_idx++];
                     }
-                    cur_idx = get_next_tok();
-                    if (cur_idx.type == DO) {
-                        while (tok_idx < tokenize.size() && cur_idx.type != END
-                        || tok_idx < tokenize.size()) {
-                            store_tokens.push_back(cur_idx);
-                            cur_idx = tokenize[tok_idx++];
-                        }
-                    }
-                } else {
-                    cout << "Error: missing left parent" << endl;
                 }
             } else {
-                cout << "Error: function name failed" << endl;
+                cout << "Error: missing left parent" << endl;
             }
+        }
+        else {
+                cout << "Error: function name failed" << endl;
         }
         functions.push_back({name_func, paras, store_tokens});
     }
@@ -523,6 +521,7 @@ public:
                 return func.store_tokens;
             }
         }
+        return {};
     }
 
     vector<Parameter> get_para(string name) {
@@ -531,6 +530,7 @@ public:
                 return func.Parameters;
             }
         }
+        return {};
     } 
 
     auto func_block(vector<datatype> tokens, vector<Parameter> paras) {
@@ -586,11 +586,11 @@ public:
         if (cur_idx.type == FUNCTION_CALL) {
             name = cur_idx.name;
             cur_idx = get_next_tok();
-            if (cur_idx.type == L_PARENT) {
+            if (cur_idx.type == LP) {
                 func_tokens = get_tokens(name);
                 paras = get_para(name);
                 int orders = 0;
-                while (tok_idx < tokenize.size() && cur_idx.type != R_PARENT) {
+                while (tok_idx < tokenize.size() && cur_idx.type != RP) {
                     if (cur_idx.type == INT) {
                         values.push_back(cur_idx.value);
                     }
@@ -707,7 +707,7 @@ public:
         auto tok = get_next_tok();
         if (tok.type == LET) {
             name = get_next_tok();
-            if (name.type = TEMPORARY_MEMORY) {
+            if (name.type == TEMPORARY_MEMORY) {
                 var_name = name.name;
             } else {
                 cout << "Error: name variable failed" << endl;
@@ -764,25 +764,32 @@ public:
         }
         return 0;
     }
-    
+
+    bool found_else = false;
+    bool found_elif = false;
+
     int condition() {
+        int pos = tok_idx;
         cur_idx = get_next_tok();
         if (cur_idx.type == IF) {
             int check = comparison();
             if (check == 1 && get_next_tok().type == THEN) {
                 do_block();
             } else if (check == 0 && get_next_tok().type == THEN) {
-                bool found = false;
                 while (tok_idx < tokenize.size()) {
                     cur_idx = tokenize[tok_idx];
                     if (cur_idx.type == ELSE) {
-                        found = true;
+                        found_else = true;
+                        break;
+                    } else if (cur_idx.type == ELIF) {
+                        found_elif = true;
                         break;
                     }
                     tok_idx++;
                 }
-                if (found) do_block();
-            } else {
+                if (found_else) do_block();
+            }
+            else {
                 cout << "Error: condition failed" << endl;
             }
         }
@@ -874,8 +881,7 @@ public:
             } else if (tokenize[tok_idx].type == FUNCTION_CALL) {
                 call_function();
                 break;
-            }
-            else {
+            } else {
                 expr();
                 break;
             }
@@ -896,6 +902,12 @@ void print_var() {
 void print_list() {
     for (auto &list: lists) {
         cout << "LIST NAME: " << list.name << endl;
+    }
+}
+
+void print_func() {
+    for (auto &func : functions) {
+        cout << func.function_name << endl;
     }
 }
 
@@ -926,8 +938,9 @@ void run() {
             continue;
         } else if (input == "list") {
             print_list();
-        }
-        else {
+        } else if (input == "func") {
+            print_func();
+        } else {
             par.run_code();
         }
     }
@@ -959,6 +972,8 @@ void debug() {
             continue;
         } else if (input == "list") {
             print_list();
+        } else if (input == "func") {
+            print_func();
         } else {
             par.run_code();
             string token_type;

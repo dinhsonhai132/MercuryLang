@@ -9,7 +9,7 @@ using namespace std;
 
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
-    TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE,
+    TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE, ELIF,
     THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, BLOCK, 
     FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, L_PARENT, R_PARENT, 
     DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, EXTRACT, RANGE, FOR_LOOP, IN, TO, END
@@ -47,6 +47,7 @@ struct function {
 };
 
 vector<store_var> variables;
+vector<store_var> tempotary_variables;
 vector<store_list> lists;
 vector<function> functions;
 
@@ -186,6 +187,9 @@ public:
             } else if (cur == 'E' && input.substr(pos, 4) == "ELSE") {
                 tokens.push_back({ELSE, 0, ""});
                 advance_to(4);
+            } else if (cur == 'E' && input.substr(pos, 4) == "ELIF") {
+                tokens.push_back({ELIF, 0, ""});
+                advance_to(4);
             } else if (cur == 'F' && input.substr(pos, 4) == "FUNC") {
                 advance_to(5);
                 string name = "";
@@ -260,6 +264,26 @@ private:
     int val;
 public:
     parser(vector<datatype> tokenize) : tokenize(tokenize), tok_idx(0) {}
+
+    int get_tempotary_variable(string name) {
+        bool found = false;
+
+        if (!tempotary_variables.empty()) {
+            cout << "Error: parameters only use in function" << endl;
+            return 0;
+        }
+
+        for (auto &variable: tempotary_variables) {
+            if (variable.name == name) {
+                found = true;
+                return variable.val;
+            }
+        }
+        if (!found) {
+            cout << "Error: can't found the variable name" << endl;
+        }
+        return 0;      
+    }
 
     int get_variable(string name) {
         bool found = false;
@@ -340,6 +364,10 @@ public:
         } else if (cur_idx.type == TEMPORARY_MEMORY) {
             string var_name = cur_idx.name;
             int value = get_variable(var_name);
+            return value;
+        } else if (cur_idx.type == PARAMATER) {
+            string var_name = cur_idx.name;
+            int value = get_tempotary_variable(var_name);
             return value;
         } else if (cur_idx.type == PP) {
             auto next_tok = get_next_tok();
@@ -506,94 +534,47 @@ public:
     } 
 
     auto func_block(vector<datatype> tokens, vector<Parameter> paras) {
+        for (auto &para : paras) {
+            tempotary_variables.push_back({para.name, para.val});
+        }
+
         tok_idx = 0;
-        cur_idx = tokens[tok_idx];
+        tokenize = tokens;
+        cur_idx = tokenize[tok_idx];
 
-        auto func_get_next_tok = [&]() {
-            cur_idx = tokens[tok_idx++];
-            return cur_idx;
-        };
-
-        auto func_factor = [&]() {
-            cur_idx = func_get_next_tok();
-            if (cur_idx.type == INT) {
-                return cur_idx.value;
-            } else if (cur_idx.type == TEMPORARY_MEMORY) {
-                string name = cur_idx.name;
-                return get_variable(name);
-            } else if (cur_idx.type == PARAMATER) {
-                string name = cur_idx.name;
-                for (auto &para : paras) {
-                    if (para.name == name) {
-                        return para.val;
-                    }
-                }
-            }
-        };
-
-        auto func_term = [&]() {
-            int value = func_factor();
-            while (true) {
-                cur_idx = func_get_next_tok();
-                if (cur_idx.type == TIME) {
-                    value *= func_factor();
-                } else if (cur_idx.type == DIV) {
-                    int divisor = func_factor();
-                    if (divisor != 0) {
-                        value /= divisor;
-                    } else {
-                        cout << "Error can not div by zero" << endl;
-                    }
-                } else {
-                    tok_idx--;
-                    break;
-                }
-            }
-            return value;
-        };
-        
-        auto func_expr = [&]() {
-            int value = func_factor();
-            while (true) {
-                cur_idx = func_get_next_tok();
-                if (cur_idx.type == PLUS) {
-                    value += func_factor();
-                } else if (cur_idx.type == MINUS) {
-                    value -= func_factor();
-                } else {
-                    tok_idx--;
-                    break;
-                }
-            }
-            return value;
-        };
-
-        auto func_print_func = [&]() {
-            cur_idx = func_get_next_tok();
+        while (tok_idx < tokenize.size()) {
+            cur_idx = tokenize[tok_idx];
             if (cur_idx.type == PRINT) {
-                cur_idx = func_get_next_tok();
-                if (cur_idx.type == STRING) {
-                    cout << cur_idx.name << endl;
-                } else {
-                    tok_idx--;
-                    cout << func_expr() << endl;
-                }
+                print_func();
+                tok_idx++;
+            } else if (cur_idx.type == LET) {
+                make_var();
+                tok_idx++;
+            } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
+                tok_idx++;
+            } else if (cur_idx.type == IF) {
+                condition();
+                tok_idx++;
+            } else if (cur_idx.type == LIST) {
+                make_list();
+                tok_idx++;
+            } else if (cur_idx.type == FOR_LOOP) {
+                for_loop();
+                tok_idx++;
+            } else if (cur_idx.type == WHILE) {
+                while_loop();
+                tok_idx++;
+            } else if (cur_idx.type == FUNCTION_CALL) {
+                call_function();
+                tok_idx++;
+            } else if (cur_idx.type == FUNCTION) {
+                make_function();
+                tok_idx++;
+            } else {
+                expr();
             }
-        };
-
-        auto func_code = [&]() {
-            while (tok_idx < tokens.size()) {
-                cur_idx = tokens[tok_idx];
-                if (cur_idx.type == PRINT) {
-                    func_print_func();
-                    tok_idx++;
-                } else {
-                    func_expr();
-                }
-            }
-        };
-
-        func_code();
+        }
+        tempotary_variables = {};
     }
 
     void call_function() {

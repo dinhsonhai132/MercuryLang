@@ -279,9 +279,11 @@ public:
                 return variable.val;
             }
         }
+
         if (!found) {
             cout << "Error: can't found the variable name" << endl;
         }
+
         return 0;      
     }
 
@@ -510,7 +512,7 @@ public:
             }
         }
         else {
-                cout << "Error: function name failed" << endl;
+            cout << "Error: function name failed" << endl;
         }
         functions.push_back({name_func, paras, store_tokens});
     }
@@ -600,10 +602,8 @@ public:
                 for (int i = 0; i < paras.size(); i++) {
                     paras[i].val = values[i];
                 }
-
-                if (!values.empty()) {
-                    func_block(func_tokens, paras);
-                }
+                
+                func_block(func_tokens, paras);
 
             } else {
                 cout << "Error: missing left parent" << endl;
@@ -906,8 +906,18 @@ void print_list() {
 }
 
 void print_func() {
+    vector<string> para_name;
     for (auto &func : functions) {
-        cout << func.function_name << endl;
+        for (auto &para : func.Parameters) {
+            para_name.push_back(para.name);
+        }
+        cout << "func name: " << func.function_name << " ";
+        cout << "para: ";
+        for (auto name : para_name) {
+            cout << name << " ";
+        }
+        para_name = {};
+        cout << endl;
     }
 }
 

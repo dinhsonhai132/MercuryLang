@@ -58,3 +58,5 @@ this is Mercury Langluage
 > bug fixed
 >
 > for loop update
+>
+> add new elif

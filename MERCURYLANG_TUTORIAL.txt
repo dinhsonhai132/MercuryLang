@@ -57,6 +57,10 @@ example:
 FUNC foo() DO PRINT "HELLO WORLD"; PRINT "HI";
 !foo();
 
+11. comment
+/* (comment) */
+inorge line of code
+
 output will be HELLO WORLD and HI
 example prorgram
 PRINT "print increase 1 to every element in list if its below 5";

@@ -55,6 +55,8 @@ this is Mercury Langluage
 ## 1/12/2025
 > function fixed (W.I.P)
 > 
-> bug fixed 
+> bug fixed
+>
+> for loop update
 
 (imma off while to search how function work)

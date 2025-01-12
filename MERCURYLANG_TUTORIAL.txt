@@ -54,7 +54,7 @@ DEF function_name (&para1, &para2, &...) DO (code_block);
 !function_name (value1, value2, ...);
 example: 
 
-DEF foo() DO PRINT "HELLO WORLD"; PRINT "HI";
+FUNC foo() DO PRINT "HELLO WORLD"; PRINT "HI";
 !foo();
 
 output will be HELLO WORLD and HI

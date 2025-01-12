@@ -560,10 +560,8 @@ public:
                 tok_idx++;
             } else if (cur_idx.type == FOR_LOOP) {
                 for_loop();
-                tok_idx++;
             } else if (cur_idx.type == WHILE) {
                 while_loop();
-                tok_idx++;
             } else if (cur_idx.type == FUNCTION_CALL) {
                 call_function();
                 tok_idx++;

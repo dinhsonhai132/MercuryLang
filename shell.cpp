@@ -89,7 +89,13 @@ public:
 
         while (pos < input.size()) {
             cur = input[pos];
-            if (cur == '-' && input.substr(pos, 2) == "->") {
+            if (cur == '/' && input[pos + 1] == '*') {
+                advance_to(2);
+                while (pos < input.size() && !(cur == '*' && input[pos + 1] == '/')) {
+                    advance();
+                }
+                advance_to(2);
+            } else if (cur == '-' && input.substr(pos, 2) == "->") {
                 tokens.push_back({EXTRACT, 0, ""});
                 advance_to(2);
             } else if (cur == '*') {
@@ -468,27 +474,6 @@ public:
             }
         }
         return result;
-    }
-
-    void command_line() {
-        cur_idx = get_next_tok();
-        if (cur_idx.type == COMMAND) {
-            while (tok_idx < tokenize.size()) {
-                tok_idx++;
-            }
-        }
-    }
-
-    void command_block() {
-        cur_idx = get_next_tok();
-        if (cur_idx.type == COMMAND_START) {
-            while (tok_idx < tokenize.size()) {
-                cur_idx = tokenize[tok_idx++];
-                if (cur_idx.type == COMMAND_END) {
-                    break;
-                }
-            }
-        }
     }
 
     void make_list() {

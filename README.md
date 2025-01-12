@@ -52,3 +52,5 @@ this is Mercury Langluage
 > add for loop
 ## 1/11/2025
 > add new function (W.I.P)
+## 1/12/2025
+> function fixed (W.I.P)

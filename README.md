@@ -56,3 +56,5 @@ this is Mercury Langluage
 > function fixed (W.I.P)
 > 
 > bug fixed 
+
+(imma off while to search how function work)

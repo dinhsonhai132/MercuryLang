@@ -268,11 +268,6 @@ public:
     int get_tempotary_variable(string name) {
         bool found = false;
 
-        if (!tempotary_variables.empty()) {
-            cout << "Error: parameters only use in function" << endl;
-            return 0;
-        }
-
         for (auto &variable: tempotary_variables) {
             if (variable.name == name) {
                 found = true;
@@ -281,7 +276,7 @@ public:
         }
 
         if (!found) {
-            cout << "Error: can't found the variable name" << endl;
+            cout << "Error: can't found the paramater name" << endl;
         }
 
         return 0;      
@@ -535,9 +530,12 @@ public:
         return {};
     } 
 
-    auto func_block(vector<datatype> tokens, vector<Parameter> paras) {
-        for (auto &para : paras) {
-            tempotary_variables.push_back({para.name, para.val});
+    auto excute(vector<datatype> tokens, vector<Parameter> paras) {
+
+        if (!paras.empty()) {
+            for (auto &para : paras) {
+                tempotary_variables.push_back({para.name, para.val});
+            }
         }
 
         tok_idx = 0;
@@ -602,8 +600,8 @@ public:
                 for (int i = 0; i < paras.size(); i++) {
                     paras[i].val = values[i];
                 }
-                
-                func_block(func_tokens, paras);
+
+                excute(func_tokens, paras);
 
             } else {
                 cout << "Error: missing left parent" << endl;

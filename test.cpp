@@ -190,7 +190,7 @@ public:
             } else if (cur == 'E' && input.substr(pos, 4) == "ELIF") {
                 tokens.push_back({ELIF, 0, ""});
                 advance_to(4);
-            } else if (cur == 'F' && input.substr(pos, 3) == "FUNC") {
+            } else if (cur == 'F' && input.substr(pos, 4) == "FUNC") {
                 advance_to(5);
                 string name = "";
                 while (isspace(cur)) {

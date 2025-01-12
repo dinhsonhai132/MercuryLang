@@ -11,8 +11,8 @@ name only alpha no number or other syntax example LET x = 1 + 1;
 (value 1) operator (value 2);
 value can be name of variable or number example x < 2 or 1 < 5 output will be 1 or 0;
 
-4. if else
-IF (condition 1) THEN (code block) ELSE (code block)
+4. if else elif
+IF (condition 1) THEN (code block) ELIF (condition 2) THEN (code block) ELSE (code block);
 every line of code in code block end with ";" example LET x = 0; PRINT x;
 IF 1 == 1 THEN LET x = 0; PRINT x ELSE PRINT "hello";
 

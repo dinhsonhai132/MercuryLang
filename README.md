@@ -58,5 +58,3 @@ this is Mercury Langluage
 > bug fixed
 >
 > for loop update
-
-(imma off while to search how function work)

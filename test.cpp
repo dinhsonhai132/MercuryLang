@@ -11,12 +11,12 @@ enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE, ELIF,
     THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, BLOCK, 
-    FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON,
+    FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, COMMAND, CIN, COMMAND_START, COMMAND_END,
     DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, EXTRACT, RANGE, FOR_LOOP, IN, TO, END
 };
 
 enum Mercury_type {
-    INT_TYPE, FLOAT_TYPE
+    INT_TYPE, FLOAT_TYPE, STRING_TYPE
 };
 
 struct store_var {
@@ -190,8 +190,8 @@ public:
             } else if (cur == 'E' && input.substr(pos, 4) == "ELIF") {
                 tokens.push_back({ELIF, 0, ""});
                 advance_to(4);
-            } else if (cur == 'D' && input.substr(pos, 3) == "DEF") {
-                advance_to(4);
+            } else if (cur == 'F' && input.substr(pos, 3) == "FUNC") {
+                advance_to(5);
                 string name = "";
                 while (isspace(cur)) {
                     advance();
@@ -279,7 +279,7 @@ public:
             cout << "Error: can't found the paramater name" << endl;
         }
 
-        return 0;      
+        return 0;
     }
 
     int get_variable(string name) {
@@ -443,6 +443,27 @@ public:
         return result;
     }
 
+    void command_line() {
+        cur_idx = get_next_tok();
+        if (cur_idx.type == COMMAND) {
+            while (tok_idx < tokenize.size()) {
+                tok_idx++;
+            }
+        }
+    }
+
+    void command_block() {
+        cur_idx = get_next_tok();
+        if (cur_idx.type == COMMAND_START) {
+            while (tok_idx < tokenize.size()) {
+                cur_idx = tokenize[tok_idx++];
+                if (cur_idx.type == COMMAND_END) {
+                    break;
+                }
+            }
+        }
+    }
+
     void make_list() {
         string name;
         vector<int> the_list;
@@ -560,10 +581,8 @@ public:
                 tok_idx++;
             } else if (cur_idx.type == FOR_LOOP) {
                 for_loop();
-                tok_idx++;
             } else if (cur_idx.type == WHILE) {
                 while_loop();
-                tok_idx++;
             } else if (cur_idx.type == FUNCTION_CALL) {
                 call_function();
                 tok_idx++;
@@ -593,6 +612,8 @@ public:
                 while (tok_idx < tokenize.size() && cur_idx.type != RP) {
                     if (cur_idx.type == INT) {
                         values.push_back(cur_idx.value);
+                    } else if (cur_idx.type == TEMPORARY_MEMORY) {
+                        values.push_back(get_variable(cur_idx.name));
                     }
                     cur_idx = tokenize[tok_idx++];
                 }
@@ -600,9 +621,9 @@ public:
                 for (int i = 0; i < paras.size(); i++) {
                     paras[i].val = values[i];
                 }
-
+                int pos = tok_idx;
                 excute(func_tokens, paras);
-
+                tok_idx = pos;
             } else {
                 cout << "Error: missing left parent" << endl;
             }
@@ -646,13 +667,156 @@ public:
                                         tok_idx = cur_tok_idx;
                                     }
                                 }
+                            } else if (cur_idx.type == TEMPORARY_MEMORY) {
+                                right = get_variable(cur_idx.name);
+                                cur_idx = get_next_tok();
+                                if (cur_idx.type == DO) {
+                                    int cur_tok_idx = tok_idx;
+                                    for (;left < right; left++) {
+                                        for (auto &variable : variables) {
+                                            if (variable.name == name) {
+                                                variable.val = left;
+                                            }
+                                        }
+                                        do_block();
+                                        tok_idx = cur_tok_idx;
+                                    }
+                                }
+                            } else if (cur_idx.type == PARAMATER) {
+                                right = get_tempotary_variable(cur_idx.name);
+                                cur_idx = get_next_tok();
+                                if (cur_idx.type == DO) {
+                                    int cur_tok_idx = tok_idx;
+                                    for (;left < right; left++) {
+                                        for (auto &variable : variables) {
+                                            if (variable.name == name) {
+                                                variable.val = left;
+                                            }
+                                        }
+                                        do_block();
+                                        tok_idx = cur_tok_idx;
+                                    }
+                                }
                             } else {
                                 cout << "Error: unexpected factor" << endl;
                             }
                         } else {
                             cout << "Error: can't found token 'TO'" << endl;
                         }
-                    } else if (cur_idx.type == LIST_NAME) {
+                    } else if (cur_idx.type == TEMPORARY_MEMORY) {
+                        int left = get_variable(cur_idx.name);
+                        cur_idx = get_next_tok();
+                        if (cur_idx.type == TO) {
+                            cur_idx = get_next_tok();
+                            if (cur_idx.type == INT) {
+                                right = cur_idx.value;
+                                cur_idx = get_next_tok();
+                                if (cur_idx.type == DO) {
+                                    int cur_tok_idx = tok_idx;
+                                    for (;left < right; left++) {
+                                        for (auto &variable : variables) {
+                                            if (variable.name == name) {
+                                                variable.val = left;
+                                            }
+                                        }
+                                        do_block();
+                                        tok_idx = cur_tok_idx;
+                                    }
+                                }
+                            } else if (cur_idx.type == TEMPORARY_MEMORY) {
+                                right = get_variable(cur_idx.name);
+                                cur_idx = get_next_tok();
+                                if (cur_idx.type == DO) {
+                                    int cur_tok_idx = tok_idx;
+                                    for (;left < right; left++) {
+                                        for (auto &variable : variables) {
+                                            if (variable.name == name) {
+                                                variable.val = left;
+                                            }
+                                        }
+                                        do_block();
+                                        tok_idx = cur_tok_idx;
+                                    }
+                                }
+                            } else if (cur_idx.type == PARAMATER) {
+                                right = get_tempotary_variable(cur_idx.name);
+                                cur_idx = get_next_tok();
+                                if (cur_idx.type == DO) {
+                                    int cur_tok_idx = tok_idx;
+                                    for (;left < right; left++) {
+                                        for (auto &variable : variables) {
+                                            if (variable.name == name) {
+                                                variable.val = left;
+                                            }
+                                        }
+                                        do_block();
+                                        tok_idx = cur_tok_idx;
+                                    }
+                                }
+                            } else {
+                                cout << "Error: unexpected factor" << endl;
+                            }
+                        } else {
+                            cout << "Error: can't found token 'TO'" << endl;
+                        }
+                    } else if (cur_idx.type == PARAMATER) {
+                        int left = get_tempotary_variable(cur_idx.name);
+                        cur_idx = get_next_tok();
+                        if (cur_idx.type == TO) {
+                            cur_idx = get_next_tok();
+                            if (cur_idx.type == INT) {
+                                right = cur_idx.value;
+                                cur_idx = get_next_tok();
+                                if (cur_idx.type == DO) {
+                                    int cur_tok_idx = tok_idx;
+                                    for (;left < right; left++) {
+                                        for (auto &variable : variables) {
+                                            if (variable.name == name) {
+                                                variable.val = left;
+                                            }
+                                        }
+                                        do_block();
+                                        tok_idx = cur_tok_idx;
+                                    }
+                                }
+                            } else if (cur_idx.type == TEMPORARY_MEMORY) {
+                                right = get_variable(cur_idx.name);
+                                cur_idx = get_next_tok();
+                                if (cur_idx.type == DO) {
+                                    int cur_tok_idx = tok_idx;
+                                    for (;left < right; left++) {
+                                        for (auto &variable : variables) {
+                                            if (variable.name == name) {
+                                                variable.val = left;
+                                            }
+                                        }
+                                        do_block();
+                                        tok_idx = cur_tok_idx;
+                                    }
+                                }
+                            } else if (cur_idx.type == PARAMATER) {
+                                right = get_tempotary_variable(cur_idx.name);
+                                cur_idx = get_next_tok();
+                                if (cur_idx.type == DO) {
+                                    int cur_tok_idx = tok_idx;
+                                    for (;left < right; left++) {
+                                        for (auto &variable : variables) {
+                                            if (variable.name == name) {
+                                                variable.val = left;
+                                            }
+                                        }
+                                        do_block();
+                                        tok_idx = cur_tok_idx;
+                                    }
+                                }
+                            } else {
+                                cout << "Error: unexpected factor" << endl;
+                            }
+                        } else {
+                            cout << "Error: can't found token 'TO'" << endl;
+                        }
+                    }
+                    else if (cur_idx.type == LIST_NAME) {
                         list_found = true;
                         vector<int> list = get_list(cur_idx.name);
                         int cur_tok_idx = tok_idx;
@@ -737,7 +901,10 @@ public:
             left = get_variable(name);
         } else if (left_token.type == INT) {
             left = left_token.value;
-        } else {
+        } else if (left_token.type == PARAMATER) {
+            left = get_tempotary_variable(left_token.name);
+        } 
+        else {
             cout << "Error: error type" << endl;
         }
         if (right_token.type == TEMPORARY_MEMORY) {
@@ -745,6 +912,8 @@ public:
             right = get_variable(name);
         } else if (right_token.type == INT) {
             right = right_token.value;
+        } else if (right_token.type == PARAMATER) {
+            right = get_tempotary_variable(right_token.name);
         }
         switch (OP) {
             case BIGGER:

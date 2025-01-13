@@ -1,0 +1,69 @@
+MercuryLang tutorial
+1. print function
+PRINT (value); 
+value can be number or string or variable example PRINT "hello"; output will be hello
+
+2. variable
+LET name = (value);
+name only alpha no number or other syntax example LET x = 1 + 1;
+
+3. condition
+(value 1) operator (value 2);
+value can be name of variable or number example x < 2 or 1 < 5 output will be 1 or 0;
+
+4. if else elif
+IF (condition 1) THEN (code block) ELIF (condition 2) THEN (code block) ELSE (code block);
+every line of code in code block end with ";" example LET x = 0; PRINT x;
+IF 1 == 1 THEN LET x = 0; PRINT x ELSE PRINT "hello";
+
+5. plus plus and minus minus
+++value or --value
+value can be number or variable if variable it will update the variable value
+example LET x = 0; ++x; PRINT x; output will be 1
+
+6. while loop
+WHILE (condition) DO (code block);
+example:
+LET x = 0;
+WHILE x < 10 DO ++x; PRINT x;
+
+7. LIST
+LIST list_name = [(value 1), (value 2), ...];
+value only in number type
+example: LIST a = [1, 2, 3];
+
+8. subtract
+@list_name -> number;
+it will print the numberth element of list start with 1;
+example: PRINT @a -> 1; output will be 1;
+
+9. for loop
+(1) loop range
+FOR var_name IN num1 TO num2 DO (code block);
+example:
+FOR i IN 1 TO 10 DO PRINT i; it will print 1 to 10
+(2) loop list
+FOR var_name IN @list_name DO (code block);
+example:
+FOR i IN @a DO PRINT i; it will print every element of a;
+
+10. function (W.I.P)
+(1) make function
+DEF function_name (&para1, &para2, &...) DO (code_block);
+(2) call function
+!function_name (value1, value2, ...);
+example: 
+
+FUNC foo() DO PRINT "HELLO WORLD"; PRINT "HI";
+!foo();
+
+11. comment
+/* (comment) */
+inorge line of code
+
+output will be HELLO WORLD and HI
+example prorgram
+PRINT "print increase 1 to every element in list if its below 5";
+
+LIST a = [1, 5, 6, 2, 3];
+FOR i in @a DO IF i < 5 THEN PRINT i + 1;

@@ -8,11 +8,16 @@
 using namespace std;
 
 enum VerType {
-    INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, 
-    TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE, ELIF,
-    THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, BLOCK, 
-    FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, COMMAND, CIN, COMMAND_START, COMMAND_END,
-    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, EXTRACT, RANGE, FOR_LOOP, IN, TO, END
+    INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, STRUCT, ENUM, BLOCK, PORT,
+    TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE, ELIF, PARAMATER_KWARGS,
+    THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, RETURN_FUNC, POP, PUSH, AT, REPAIR,
+    FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, COMMAND, CIN, CLASS, LAMBDA, MAXTRIX, IMPORT, 
+    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, ARROW_TOKEN, RANGE, FOR_LOOP, IN, TO, END
+};
+
+enum VerLibrary_type {
+    MERCURY_MATH, MERCURY_FILE, MERCURY_TIME, 
+    MERCURY_RANDOM, MERCURY_INPUT_OUTPUT,
 };
 
 enum Mercury_type {
@@ -27,6 +32,11 @@ struct store_var {
 struct Parameter {
     string name;
     int val;
+};
+
+struct Parameter_kwargs {
+    string name;
+    vector<int> vec;
 };
 
 struct datatype {
@@ -44,6 +54,9 @@ struct function {
     string function_name;
     vector<Parameter> Parameters;
     vector<datatype> store_tokens;
+    vector<Parameter_kwargs> parameter_kwargs;
+    int value = 0;
+    bool return_func = false;
 };
 
 vector<store_var> variables;
@@ -82,8 +95,14 @@ public:
 
         while (pos < input.size()) {
             cur = input[pos];
-            if (cur == '-' && input.substr(pos, 2) == "->") {
-                tokens.push_back({EXTRACT, 0, ""});
+            if (cur == '/' && input[pos + 1] == '*') {
+                advance_to(2);
+                while (pos < input.size() && !(cur == '*' && input[pos + 1] == '/')) {
+                    advance();
+                }
+                advance_to(2);
+            } else if (cur == '-' && input.substr(pos, 2) == "->") {
+                tokens.push_back({ARROW_TOKEN, 0, ""});
                 advance_to(2);
             } else if (cur == '*') {
                 tokens.push_back({TIME, 0, ""});
@@ -123,6 +142,9 @@ public:
                 tokens.push_back({PRINT, 0, ""});
                 advance_to(5);
                 token();
+            } else if (cur == 'R' && input.substr(pos, 6) == "RETURN") {
+                tokens.push_back({RETURN_FUNC, 0, ""});
+                advance_to(6);
             } else if (isspace(cur)) {
                 advance();
             } else if (cur == '<') {
@@ -201,6 +223,21 @@ public:
                     advance();
                 }
                 tokens.push_back({FUNCTION, 0, name});
+            } else if (cur == 'P' && input.substr(pos, 3) == "POP") {
+                advance_to(3);
+                tokens.push_back({POP, 0, ""});
+            } else if (cur == 'P' && input.substr(pos, 4) == "PUSH") {
+                advance_to(4);
+                tokens.push_back({PUSH, 0, ""});
+            } else if (cur == 'A' && input.substr(pos, 2) == "AT") {
+                advance_to(2);  
+                tokens.push_back({AT, 0, ""});
+            } else if (cur == 'R' && input.substr(pos, 5) == "REPAIR") {
+                advance_to(5);
+                tokens.push_back({REPAIR, 0, ""});
+            } else if (cur == 'C' && input.substr(pos, 3) == "CIN") {
+                advance_to(3);
+                tokens.push_back({CIN, 0, ""});
             } else if (cur == '&') {
                 advance();
                 string name;
@@ -209,7 +246,16 @@ public:
                     advance();
                 }
                 tokens.push_back({PARAMATER, 0, name});
-            } else if (cur == ',') {
+            } else if (cur == '%') {
+                advance();
+                string name;
+                while (isalpha(cur)) {
+                    name += cur;
+                    advance();
+                }
+                tokens.push_back({PARAMATER_KWARGS, 0, name});
+            } 
+            else if (cur == ',') {
                 tokens.push_back({COMMA, 0, ""});
                 advance();
             } else if (cur == ':') {
@@ -315,7 +361,7 @@ public:
         if (tok.type == LIST_NAME) {
             auto list = get_list(tok.name);
             tok = get_next_tok();
-            if (tok.type == EXTRACT) {
+            if (tok.type == ARROW_TOKEN) {
                 tok = get_next_tok();
                 if (tok.type == INT) {
                     int order = tok.value;
@@ -342,7 +388,7 @@ public:
                 }
             }
         } else {
-            cout << "Error: can't extract the value from the list" << endl;
+            cout << "Error: can't ARROW_TOKEN the value from the list" << endl;
         }
         return 0;
     }
@@ -354,6 +400,14 @@ public:
         return {NONE, 0, ""};
     }
 
+    datatype get_next_tok_to(int s) {
+        if (tok_idx < tokenize.size()) {
+            tok_idx += s;
+            return tokenize[tok_idx];
+        }
+        return {NONE, 0, ""};
+    }
+    
     int factor() {
         cur_idx = get_next_tok();
         if (cur_idx.type == INT) {
@@ -443,27 +497,6 @@ public:
         return result;
     }
 
-    void command_line() {
-        cur_idx = get_next_tok();
-        if (cur_idx.type == COMMAND) {
-            while (tok_idx < tokenize.size()) {
-                tok_idx++;
-            }
-        }
-    }
-
-    void command_block() {
-        cur_idx = get_next_tok();
-        if (cur_idx.type == COMMAND_START) {
-            while (tok_idx < tokenize.size()) {
-                cur_idx = tokenize[tok_idx++];
-                if (cur_idx.type == COMMAND_END) {
-                    break;
-                }
-            }
-        }
-    }
-
     void make_list() {
         string name;
         vector<int> the_list;
@@ -504,18 +537,32 @@ public:
         cur_idx = get_next_tok();
         string name_func;
         vector<Parameter> paras;
+        vector<Parameter_kwargs> paras_kwargs;
         vector<datatype> store_tokens;
         if (cur_idx.type == FUNCTION) {
             name_func = cur_idx.name;
             cur_idx = get_next_tok();
             if (cur_idx.type == LP) {
-                while (tok_idx < tokenize.size() && cur_idx.type != RP) {
-                    if (cur_idx.type == PARAMATER) {
-                        paras.push_back({cur_idx.name, 0});
+
+                bool found = false;
+                if (tokenize[tok_idx + 1].type == PARAMATER_KWARGS) {
+                    paras_kwargs.push_back({tokenize[tok_idx + 1].name, {}});
+                    found = true;
+                } else {
+                    while (tok_idx < tokenize.size() && cur_idx.type != RP) {
+                        if (cur_idx.type == PARAMATER) {
+                            paras.push_back({cur_idx.name, 0});
+                        }
+                        cur_idx = tokenize[tok_idx++];
                     }
-                    cur_idx = tokenize[tok_idx++];
                 }
-                cur_idx = get_next_tok();
+
+                if (found) {
+                    cur_idx = get_next_tok_to(3);
+                } else {
+                    cur_idx = get_next_tok();
+                }
+
                 if (cur_idx.type == DO) {
                     while (tok_idx < tokenize.size() && cur_idx.type != END
                     || tok_idx < tokenize.size()) {
@@ -523,6 +570,7 @@ public:
                         cur_idx = tokenize[tok_idx++];
                     }
                 }
+
             } else {
                 cout << "Error: missing left parent" << endl;
             }
@@ -530,7 +578,12 @@ public:
         else {
             cout << "Error: function name failed" << endl;
         }
-        functions.push_back({name_func, paras, store_tokens});
+        
+        if (paras_kwargs.empty()) {
+            functions.push_back({name_func, paras, store_tokens});
+        } else {
+            functions.push_back({name_func, {}, store_tokens, paras_kwargs});
+        }
     }
 
     vector<datatype> get_tokens(string name) {
@@ -551,7 +604,14 @@ public:
         return {};
     } 
 
-    auto excute(vector<datatype> tokens, vector<Parameter> paras) {
+    auto make_return() {
+        cur_idx = get_next_tok();
+        if (cur_idx.type == RETURN_FUNC) {
+            cur_idx = get_next_tok();
+        }
+    }
+
+    auto execute(vector<datatype> tokens, vector<Parameter> paras) {
 
         if (!paras.empty()) {
             for (auto &para : paras) {
@@ -589,6 +649,9 @@ public:
             } else if (cur_idx.type == FUNCTION) {
                 make_function();
                 tok_idx++;
+            } else if (cur_idx.type == RETURN_FUNC) {
+                make_return();
+                break;
             } else {
                 expr();
             }
@@ -622,16 +685,12 @@ public:
                     paras[i].val = values[i];
                 }
                 int pos = tok_idx;
-                excute(func_tokens, paras);
+                execute(func_tokens, paras);
                 tok_idx = pos;
             } else {
                 cout << "Error: missing left parent" << endl;
             }
         }
-    }
-
-    void return_func() {
-
     }
 
     void for_loop() {
@@ -844,6 +903,64 @@ public:
         if (!list_found) variables.push_back({name, right});
     }
 
+    void pop() {
+        cur_idx = get_next_tok();
+        if (cur_idx.type == POP) {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == LIST_NAME) {
+                string name = cur_idx.name;
+                cur_idx = get_next_tok();
+                if (cur_idx.type == AT) {
+                    cur_idx = get_next_tok();
+                    if (cur_idx.type == INT) {
+                        int order = cur_idx.value;
+                        for (auto &list : lists) {
+                            if (list.name == name) {
+                                list.list.erase(list.list.begin() + order - 1);
+                            }
+                        }
+                    }
+                } else if (cur_idx.type == ARROW_TOKEN) {
+                    cur_idx = get_next_tok();
+                    if (cur_idx.type == INT) {
+                        int erase_element = cur_idx.value;
+                        for (auto &list : lists) {
+                            if (list.name == name) {
+                                for (int i = 0; i < list.list.size(); i++) {
+                                    if (list.list[i] == erase_element) {
+                                        list.list.erase(list.list.begin() + i);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void push() {
+        cur_idx = get_next_tok();
+        if (cur_idx.type == PUSH) {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == LIST_NAME) {
+                string name = cur_idx.name;
+                cur_idx = get_next_tok();
+                if (cur_idx.type == ARROW_TOKEN) {
+                    cur_idx = get_next_tok();
+                    if (cur_idx.type == INT) {
+                        int element = cur_idx.value;
+                        for (auto &list : lists) {
+                            if (list.name == name) {
+                                list.list.push_back(element);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     int while_loop() {
         cur_idx = get_next_tok();
         if (cur_idx.type == WHILE) {
@@ -954,9 +1071,25 @@ public:
                     }
                     tok_idx++;
                 }
-                if (found_else) do_block();
-            }
-            else {
+                if (found_elif) {
+                    tok_idx++;
+                    int elif_check = comparison();
+                    if (elif_check == 1 && get_next_tok().type == THEN) {
+                        do_block();
+                    } else {
+                        while (tok_idx < tokenize.size() && tokenize[tok_idx].type != ELSE && tokenize[tok_idx].type != ELIF) {
+                            tok_idx++;
+                        }
+                        if (tokenize[tok_idx].type == ELSE) {
+                            found_else = true;
+                        }
+                    }
+                }
+                if (found_else) {
+                    tok_idx++;
+                    do_block();
+                }
+            } else {
                 cout << "Error: condition failed" << endl;
             }
         }
@@ -1186,7 +1319,7 @@ void debug() {
                     case WHILE: token_type = "WHILE"; break;
                     case LIST: token_type = "LIST"; break;
                     case LIST_NAME: token_type = "LIST_NAME"; break;
-                    case EXTRACT: token_type = "EXTRACT"; break;
+                    case ARROW_TOKEN: token_type = "ARROW_TOKEN"; break;
                     case SPARE_LP: token_type = "SPARE_LP"; break;
                     case SPARE_RP: token_type = "SPARE_RP"; break;
                     case FOR_LOOP: token_type = "FOR_LOOP"; break;

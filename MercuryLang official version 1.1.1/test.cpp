@@ -607,11 +607,11 @@ public:
     auto make_return() {
         cur_idx = get_next_tok();
         if (cur_idx.type == RETURN_FUNC) {
-            cur_idx = get_next_tok();
+            return expr();
         }
     }
 
-    auto execute(vector<datatype> tokens, vector<Parameter> paras) {
+    auto execute(vector<datatype> tokens, vector<Parameter> paras, string function_name) {
 
         if (!paras.empty()) {
             for (auto &para : paras) {
@@ -650,8 +650,15 @@ public:
                 make_function();
                 tok_idx++;
             } else if (cur_idx.type == RETURN_FUNC) {
-                make_return();
-                break;
+                int value = make_return();
+                for (auto &func : functions) {
+                    if (func.function_name == function_name) {
+                        func.value = value;
+                        func.return_func = true;
+                    }
+                }
+                tempotary_variables = {};
+                return value;
             } else {
                 expr();
             }
@@ -685,7 +692,7 @@ public:
                     paras[i].val = values[i];
                 }
                 int pos = tok_idx;
-                execute(func_tokens, paras);
+                execute(func_tokens, paras, name);
                 tok_idx = pos;
             } else {
                 cout << "Error: missing left parent" << endl;

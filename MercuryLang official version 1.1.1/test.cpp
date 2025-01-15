@@ -8,11 +8,13 @@
 using namespace std;
 
 enum VerType {
-    INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, STRUCT, ENUM, BLOCK, PORT,
-    TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE, ELIF, PARAMATER_KWARGS,
+    INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, STRUCT, ENUM, BLOCK, PORT, DOT, TRUE, FALSE,
+    TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE, ELIF, PARAMATER_KWARGS, GLOBAL_VAR,
     THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, RETURN_FUNC, POP, PUSH, AT, REPAIR,
     FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, COMMAND, CIN, CLASS, LAMBDA, MAXTRIX, IMPORT, 
-    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, ARROW_TOKEN, RANGE, FOR_LOOP, IN, TO, END
+    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, ARROW_TOKEN, RANGE, FOR_LOOP, IN, TO, END, NUM_TYPE, STRING_TYPE, 
+    NULL_TYPE, LOCAL, GLOBAL, HEAP, STACK, REGISTER, CONSTANT, LOCAL_VAR, HEAP_VAR, STACK_VAR, VOID_TOK, AUTO_TOK, 
+    CONST_VAR, VOLATILE_TOK, STATIC_TOK,
 };
 
 enum VerLibrary_type {
@@ -21,22 +23,45 @@ enum VerLibrary_type {
 };
 
 enum Mercury_type {
-    INT_TYPE, FLOAT_TYPE, STRING_TYPE
+    FLOAT, DOUBLE, CHAR, BOOL, LONG, SHORT, UNSIGNED, SIGNED, 
+    VOID, AUTO, CONST, VOLATILE, STATIC, EXTERN, REGISTER_, MUTABLE, STRING_TYPE_
+};
+
+enum port_address {
+    PORT_1, PORT_2, PORT_3, PORT_4, PORT_5, PORT_6, PORT_7, PORT_8, PORT_9, PORT_10, PORT_NULL
+};
+
+struct port {
+    string name = "";
+    int value = 0;
+    vector<int> values = {};
+    port_address address = PORT_NULL;
+};
+
+struct enumerate {
+    string name;
+    int order;
+    int value;
 };
 
 struct store_var {
     string name;
     int val;
+    string string_val;
+    Mercury_type type;
+    bool check_string;
 };
 
 struct Parameter {
     string name;
     int val;
+    Mercury_type type = AUTO;
 };
 
 struct Parameter_kwargs {
     string name;
     vector<int> vec;
+    Mercury_type type = AUTO;
 };
 
 struct datatype {
@@ -48,21 +73,42 @@ struct datatype {
 struct store_list {
     string name;
     vector<int> list;
+    Mercury_type type = AUTO;
 };
 
-struct function {
+struct function_ {
     string function_name;
     vector<Parameter> Parameters;
     vector<datatype> store_tokens;
     vector<Parameter_kwargs> parameter_kwargs;
     int value = 0;
     bool return_func = false;
+    Mercury_type type = AUTO;
+};
+
+struct class_type {
+    string class_name;
+    vector<store_var> variables;
+    vector<store_list> lists;
+    vector<function_> functions;
+};
+
+struct struct_type {
+    string struct_name;
+    vector<store_var> variables;
+    vector<store_list> lists;
+};
+
+struct enum_type {
+    string enum_name;
+    vector<enumerate> enums;
 };
 
 vector<store_var> variables;
 vector<store_var> tempotary_variables;
 vector<store_list> lists;
-vector<function> functions;
+vector<function_> functions;
+vector<VerLibrary_type> libraries;
 
 class lexer {
 private:
@@ -71,7 +117,7 @@ private:
     char cur;
     vector<datatype> tokens;
 public:
-    lexer(string input) : input(input), pos(0) {}
+    lexer(string input) : input(input), pos(0), cur('\0') {}
 
     void advance() {
         if (pos < input.size()) {
@@ -238,6 +284,42 @@ public:
             } else if (cur == 'C' && input.substr(pos, 3) == "CIN") {
                 advance_to(3);
                 tokens.push_back({CIN, 0, ""});
+            } else if (cur == 'C' && input.substr(pos, 5) == "CLASS") {
+                advance_to(5);
+                tokens.push_back({CLASS, 0, ""});
+            } else if (cur == 'I' && input.substr(pos, 3) == "INT") {
+                advance_to(3);
+                tokens.push_back({NUM_TYPE, 0, ""});
+            } else if (cur == 'S' && input.substr(pos, 6) == "STRING") {
+                advance_to(6);
+                tokens.push_back({STRING, 0, ""});
+            } else if (cur == 'N' && input.substr(pos, 4) == "NULL") {
+                advance_to(4);
+                tokens.push_back({NULL_TYPE, 0, ""});
+            } else if (cur == 'I' && input.substr(pos, 6) == "IMPORT") {
+                advance_to(6);
+                tokens.push_back({IMPORT, 0, ""});
+            } else if (cur == 'V' && input.substr(pos, 6) == "VECTOR") {
+                advance_to(6);
+                tokens.push_back({VECTOR, 0, ""});
+            } else if (cur == 'M' && input.substr(pos, 6) == "MAXTRIX") {
+                advance_to(6);
+                tokens.push_back({MAXTRIX, 0, ""});
+            } else if (cur == 'E' && input.substr(pos, 4) == "ENUM") {
+                advance_to(4);
+                tokens.push_back({ENUM, 0, ""});
+            } else if (cur == 'S' && input.substr(pos, 6) == "STRUCT") {
+                advance_to(6);
+                tokens.push_back({STRUCT, 0, ""});
+            } else if (cur == 'B' && input.substr(pos, 4) == "BLOCK") {
+                advance_to(4);
+                tokens.push_back({BLOCK, 0, ""});
+            } else if (cur == 'P' && input.substr(pos, 4) == "PORT") {
+                advance_to(4);  
+                tokens.push_back({PORT, 0, ""});
+            } else if (cur == '.') {
+                advance();
+                tokens.push_back({DOT, 0, ""});
             } else if (cur == '&') {
                 advance();
                 string name;
@@ -310,6 +392,34 @@ private:
     int val;
 public:
     parser(vector<datatype> tokenize) : tokenize(tokenize), tok_idx(0) {}
+
+    float make_float() {
+        int left = 0, right = 0;
+        int pos = tok_idx;
+        cur_idx = get_next_tok();
+        if (cur_idx.type == INT) {
+            left = cur_idx.value;
+            cur_idx = get_next_tok();
+            if (cur_idx.type == DOT) {
+                cur_idx = get_next_tok();
+                if (cur_idx.type == INT) {
+                    right = cur_idx.value;
+                } else {
+                    cout << "Error: Expected integer after dot" << endl;
+                    return 0;
+                }
+            } else {
+                cout << "Error: Expected dot after integer" << endl;
+                return 0;
+            }
+        } else {
+            cout << "Error: Expected integer at the beginning" << endl;
+            return 0;
+        }
+        tok_idx = pos + 3;
+        string val = to_string(left) + "." + to_string(right);
+        return stof(val);
+    }
 
     int get_tempotary_variable(string name) {
         bool found = false;
@@ -407,49 +517,91 @@ public:
         }
         return {NONE, 0, ""};
     }
-    
-    int factor() {
+
+    int get_value_func(string name) {
+        for (auto &func : functions) {
+            if (func.function_name == name) {
+                return func.value;
+            }
+        }
+        return 0;
+    }
+
+    void update_pp() {
         cur_idx = get_next_tok();
-        if (cur_idx.type == INT) {
+        if (cur_idx.type == TEMPORARY_MEMORY) {
+            for (auto &variable: variables) {
+                if (variable.name == cur_idx.name) {
+                    variable.val += 1;
+                    break;
+                }
+            }
+        } else if (cur_idx.type == INT) {
+            cur_idx.value += 1;
+        }
+    }
+
+    void update_mm() {
+        cur_idx = get_next_tok();
+        if (cur_idx.type == TEMPORARY_MEMORY) {
+            for (auto &variable: variables) {
+                if (variable.name == cur_idx.name) {
+                    variable.val -= 1;
+                    break;
+                }
+            }
+        } else if (cur_idx.type == INT) {
+            cur_idx.value -= 1;
+        }
+    }
+
+    string get_string_variable(string name) {
+        for (auto &variable: variables) {
+            if (variable.name == name) {
+                return variable.string_val;
+                break;
+            }
+        }
+    }
+
+    void imprort_library() {
+        cur_idx = get_next_tok();
+        if (cur_idx.type == IMPORT) {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == STRING) {
+                string name = cur_idx.name;
+                if (name == "MERCURY_MATH") {
+                    #include "C:\Users\hadin\Desktop\MercuryLang version 1.1.1\MercuryLang official version 1.1.1\MercuryLibrary\MercuryMath.cpp"
+                } else if (name == "MERCURY_FILE") {
+                    #include "C:\Users\hadin\Desktop\MercuryLang version 1.1.1\MercuryLang official version 1.1.1\MercuryLibrary\MercuryFile.cpp"
+                } else if (name == "MERCURY_TIME") {
+                    #include "C:\Users\hadin\Desktop\MercuryLang version 1.1.1\MercuryLang official version 1.1.1\MercuryLibrary\MercuryTime.cpp"
+                } else if (name == "MERCURY_RANDOM") {
+                    #include "C:\Users\hadin\Desktop\MercuryLang version 1.1.1\MercuryLang official version 1.1.1\MercuryLibrary\MercuryRandom.cpp"
+                } else if (name == "MERCURY_INPUT_OUTPUT") {
+                    #include "C:\Users\hadin\Desktop\MercuryLang version 1.1.1\MercuryLang official version 1.1.1\MercuryLibrary\MercuryInputOutput.cpp"
+                }
+            }
+        }
+    }
+    
+    float factor() {
+        cur_idx = get_next_tok();
+        if (cur_idx.type == INT && tokenize[tok_idx + 1].type != DOT) {
             return cur_idx.value;
+        } else if (cur_idx.type == INT && tokenize[tok_idx + 1].type == DOT) {
+            tok_idx--;
+            return make_float();
+        } else if (cur_idx.type == FUNCTION_CALL) {
+            return get_value_func(cur_idx.name);
         } else if (cur_idx.type == TEMPORARY_MEMORY) {
-            string var_name = cur_idx.name;
-            int value = get_variable(var_name);
-            return value;
+            return get_variable(cur_idx.name);
         } else if (cur_idx.type == PARAMATER) {
-            string var_name = cur_idx.name;
-            int value = get_tempotary_variable(var_name);
-            return value;
+            return get_tempotary_variable(cur_idx.name);
         } else if (cur_idx.type == PP) {
-            auto next_tok = get_next_tok();
-            if (next_tok.type == TEMPORARY_MEMORY) {
-                int val;
-                for (auto &variable: variables) {
-                    if (variable.name == next_tok.name) {
-                        variable.val += 1;
-                        val = variable.val;
-                        break;
-                    }
-                }
-                return val;
-            } else if (next_tok.type == INT) {
-                return ++next_tok.value;
-            }
+            update_pp();
         } else if (cur_idx.type == MM) {
-            auto next_tok = get_next_tok();
-            if (next_tok.type == TEMPORARY_MEMORY) {
-                int val;
-                for (auto &variable: variables) {
-                    if (variable.name == next_tok.name) {
-                        variable.val -= 1;
-                        val = variable.val;
-                        break;
-                    }
-                }
-                return val;
-            } else if (next_tok.type == INT) {
-                return --next_tok.value;
-            }
+            update_mm();
         } else if (cur_idx.type == LIST_NAME) {
             tok_idx--;
             return extract();
@@ -457,7 +609,7 @@ public:
             tok_idx++;
         }
         return 0;
-    }
+    }   
 
     int term() {
         int result = factor();
@@ -609,9 +761,28 @@ public:
         if (cur_idx.type == RETURN_FUNC) {
             return expr();
         }
+        return 0;
     }
 
-    auto execute(vector<datatype> tokens, vector<Parameter> paras, string function_name) {
+    bool check_val_func(string name) {
+        for (auto &func : functions) {
+            if (func.function_name == name) {
+                if (func.return_func) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    auto execute(string function_name) {
+        vector<datatype> tokens = get_tokens(function_name);
+        vector<Parameter> paras = get_para(function_name);
+
+        if (tokens.empty()) {
+            cout << "Error: can't found the function name" << endl;
+            return 0;
+        }
 
         if (!paras.empty()) {
             for (auto &para : paras) {
@@ -659,31 +830,33 @@ public:
                 }
                 tempotary_variables = {};
                 return value;
+            } else if (cur_idx.type == IMPORT) {
+                cout << "Error: can't use 'IMPORT' in the function" << endl;
             } else {
                 expr();
             }
         }
         tempotary_variables = {};
+        return 0;
     }
 
-    void call_function() {
+    int call_function() {
         cur_idx = get_next_tok();
         string name;
         vector<int> values;
-        vector<datatype> func_tokens;
         vector<Parameter> paras;
         if (cur_idx.type == FUNCTION_CALL) {
             name = cur_idx.name;
             cur_idx = get_next_tok();
             if (cur_idx.type == LP) {
-                func_tokens = get_tokens(name);
                 paras = get_para(name);
-                int orders = 0;
                 while (tok_idx < tokenize.size() && cur_idx.type != RP) {
                     if (cur_idx.type == INT) {
                         values.push_back(cur_idx.value);
                     } else if (cur_idx.type == TEMPORARY_MEMORY) {
                         values.push_back(get_variable(cur_idx.name));
+                    } else if (cur_idx.type == PARAMATER) {
+                        values.push_back(get_tempotary_variable(cur_idx.name));
                     }
                     cur_idx = tokenize[tok_idx++];
                 }
@@ -691,13 +864,31 @@ public:
                 for (int i = 0; i < paras.size(); i++) {
                     paras[i].val = values[i];
                 }
+
+                for (auto &func : functions) {
+                    if (func.function_name == name) {
+                        func.Parameters = paras;
+                    }
+                }
+
+                cur_idx = get_next_tok();
+                if (cur_idx.type == ARROW_TOKEN) {
+                    cur_idx = get_next_tok();
+                    if (cur_idx.type == NUM_TYPE) {
+                        int val = execute(name);
+                        return val;
+                    }
+                }
+
                 int pos = tok_idx;
-                execute(func_tokens, paras, name);
+                execute(name);
                 tok_idx = pos;
+
             } else {
                 cout << "Error: missing left parent" << endl;
             }
         }
+        return 0;
     }
 
     void for_loop() {
@@ -926,11 +1117,47 @@ public:
                                 list.list.erase(list.list.begin() + order - 1);
                             }
                         }
+                    } else if (cur_idx.type == TEMPORARY_MEMORY) {
+                        int order = get_variable(cur_idx.name);
+                        for (auto &list : lists) {
+                            if (list.name == name) {
+                                list.list.erase(list.list.begin() + order - 1);
+                            }
+                        }
+                    } else if (cur_idx.type == PARAMATER) {
+                        int order = get_tempotary_variable(cur_idx.name);
+                        for (auto &list : lists) {
+                            if (list.name == name) {
+                                list.list.erase(list.list.begin() + order - 1);
+                            }
+                        }
                     }
                 } else if (cur_idx.type == ARROW_TOKEN) {
                     cur_idx = get_next_tok();
                     if (cur_idx.type == INT) {
                         int erase_element = cur_idx.value;
+                        for (auto &list : lists) {
+                            if (list.name == name) {
+                                for (int i = 0; i < list.list.size(); i++) {
+                                    if (list.list[i] == erase_element) {
+                                        list.list.erase(list.list.begin() + i);
+                                    }
+                                }
+                            }
+                        }
+                    } else if (cur_idx.type == TEMPORARY_MEMORY) {
+                        int erase_element = get_variable(cur_idx.name);
+                        for (auto &list : lists) {
+                            if (list.name == name) {
+                                for (int i = 0; i < list.list.size(); i++) {
+                                    if (list.list[i] == erase_element) {
+                                        list.list.erase(list.list.begin() + i);
+                                    }
+                                }
+                            }
+                        }
+                    } else if (cur_idx.type == PARAMATER) {
+                        int erase_element = get_tempotary_variable(cur_idx.name);
                         for (auto &list : lists) {
                             if (list.name == name) {
                                 for (int i = 0; i < list.list.size(); i++) {
@@ -962,6 +1189,91 @@ public:
                                 list.list.push_back(element);
                             }
                         }
+                    } else if (cur_idx.type == TEMPORARY_MEMORY) {
+                        int element = get_variable(cur_idx.name);
+                        for (auto &list : lists) {
+                            if (list.name == name) {
+                                list.list.push_back(element);
+                            }
+                        }
+                    } else if (cur_idx.type == PARAMATER) {
+                        int element = get_tempotary_variable(cur_idx.name);
+                        for (auto &list : lists) {
+                            if (list.name == name) {
+                                list.list.push_back(element);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    void repair() {
+        cur_idx = get_next_tok();
+        if (cur_idx.type == REPAIR) {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == LIST_NAME) {
+                string name = cur_idx.name;
+                cur_idx = get_next_tok();
+                if (cur_idx.type == AT) {
+                    cur_idx = get_next_tok();
+                    if (cur_idx.type == INT) {
+                        int order = cur_idx.value;
+                        cur_idx = get_next_tok();
+                        if (cur_idx.type == ASSIGN) {
+                            cur_idx = get_next_tok();
+                            if (cur_idx.type == INT) {
+                                int element = cur_idx.value;
+                                for (auto &list : lists) {
+                                    if (list.name == name) {
+                                        list.list[order - 1] = element;
+                                    }
+                                }
+                            } else if (cur_idx.type == TEMPORARY_MEMORY) {
+                                int element = get_variable(cur_idx.name);
+                                for (auto &list : lists) {
+                                    if (list.name == name) {
+                                        list.list[order - 1] = element;
+                                    }
+                                }
+                            } else if (cur_idx.type == PARAMATER) {
+                                int element = get_tempotary_variable(cur_idx.name);
+                                for (auto &list : lists) {
+                                    if (list.name == name) {
+                                        list.list[order - 1] = element;
+                                    }
+                                }
+                            }
+                        }
+                    } else if (cur_idx.type == TEMPORARY_MEMORY) {
+                        int order = get_variable(cur_idx.name);
+                        cur_idx = get_next_tok();
+                        if (cur_idx.type == ASSIGN) {
+                            cur_idx = get_next_tok();
+                            if (cur_idx.type == INT) {
+                                int element = cur_idx.value;
+                                for (auto &list : lists) {
+                                    if (list.name == name) {
+                                        list.list[order - 1] = element;
+                                    }
+                                }
+                            } else if (cur_idx.type == TEMPORARY_MEMORY) {
+                                int element = get_variable(cur_idx.name);
+                                for (auto &list : lists) {
+                                    if (list.name == name) {
+                                        list.list[order - 1] = element;
+                                    }
+                                }
+                            } else if (cur_idx.type == PARAMATER) {
+                                int element = get_tempotary_variable(cur_idx.name);
+                                for (auto &list : lists) {
+                                    if (list.name == name) {
+                                        list.list[order - 1] = element;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -990,6 +1302,7 @@ public:
         datatype name;
         int val;
         string var_name;
+        bool check_string = false;
         auto tok = get_next_tok();
         if (tok.type == LET) {
             name = get_next_tok();
@@ -1005,13 +1318,18 @@ public:
                     tok_idx--;
                     val = expr();
                 } else if (tok.type == STRING) {
-                    cout << "Error: not support 'string' type in variable" << endl;
+                    string val = tok.name;
+                    check_string = true;
+                    variables.push_back({var_name, 0, val, STRING_TYPE_, check_string});
                 } else {
                     cout << "Error: type not found" << endl;
                 }
             }
         }
-        variables.push_back({var_name, val});
+
+        if (!check_string) {
+            variables.push_back({var_name, val});
+        }
     }
 
     int comparison() {
@@ -1145,6 +1463,18 @@ public:
             } else if (cur_idx.type == FUNCTION) {
                 make_function();
                 tok_idx++;
+            } else if (cur_idx.type == POP) {
+                pop();
+                tok_idx++;
+            } else if (cur_idx.type == PUSH) {
+                push();
+                tok_idx++;
+            } else if (cur_idx.type == REPAIR) {
+                repair();
+                tok_idx++;
+            } else if (cur_idx.type == IMPORT) {
+                imprort_library();
+                tok_idx++;
             } else {
                 expr();
             }
@@ -1188,6 +1518,18 @@ public:
             } else if (tokenize[tok_idx].type == FUNCTION_CALL) {
                 call_function();
                 break;
+            } else if (tokenize[tok_idx].type == PUSH) {
+                push();
+                break;
+            } else if (tokenize[tok_idx].type == POP) {
+                pop();
+                break;
+            }  else if (cur_idx.type == REPAIR) {
+                repair();
+                break;
+            } else if (cur_idx.type == IMPORT) {
+                imprort_library();
+                break;
             } else {
                 expr();
                 break;
@@ -1223,6 +1565,8 @@ void print_func() {
         for (auto name : para_name) {
             cout << name << " ";
         }
+        cout << "value: ";
+        cout << func.value << endl;
         para_name = {};
         cout << endl;
     }
@@ -1232,7 +1576,7 @@ void run() {
     auto now = std::chrono::system_clock::now();
     std::time_t current_time = std::chrono::system_clock::to_time_t(now);
     auto time = ctime(&current_time);
-    cout << "MercuryLang [Version 1.1.1]\n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
+    cout << "MercuryLang [Version 2.0.1]\n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
         cout << "> ";
@@ -1267,7 +1611,7 @@ void debug() {
     auto now = std::chrono::system_clock::now();
     std::time_t current_time = std::chrono::system_clock::to_time_t(now);
     auto time = ctime(&current_time);
-    cout << "MercuryLang [Version 1.1.1] \n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
+    cout << "MercuryLang [Version 2.0.1] \n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
         cout << "debug_mode> ";
@@ -1333,6 +1677,17 @@ void debug() {
                     case IN: token_type = "IN"; break;
                     case TO: token_type = "TO"; break;
                     case END: token_type = "END"; break;
+                    case RETURN_FUNC: token_type = "RETURN_FUNC"; break;
+                    case POP: token_type = "POP"; break;
+                    case PUSH: token_type = "PUSH"; break;
+                    case AT: token_type = "AT"; break;
+                    case REPAIR: token_type = "REPAIR"; break;
+                    case PARAMATER_KWARGS: token_type = "PARAMATER_KWARGS"; break;
+                    case DIFFERENCES: token_type = "DIFFERENCES"; break;
+                    case BE: token_type = "BE"; break;
+                    case SE: token_type = "SE"; break;
+                    case EQUAL: token_type = "EQUAL"; break;
+                    case DOT: token_type = "DOT"; break;
                 }
                 cout << "Type: " << token_type << " Value: " << token.value << " Name: " << token.name << endl;
             }

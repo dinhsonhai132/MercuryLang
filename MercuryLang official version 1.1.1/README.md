@@ -72,3 +72,5 @@ this is Mercury Langluage
 ## NEW ENUM
 ## NEW IMPORT
 ## NEW FLOAT TYPE
+## NEW PUSH, REPAIR, POP IN LIST
+## NEW FUNCTION TYPE

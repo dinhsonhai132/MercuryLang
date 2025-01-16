@@ -62,5 +62,13 @@ this is Mercury Langluage
 > add new comment
 > 
 > add new elif
-> 
+>
 ## --BIG UPDATE SOON--
+## LEAK NEW UPDATE
+# NEW STRING TYPE IN VARIABLE
+# NEW FUNCTION
+# NEW CLASS
+# NEW STRUCT
+# NEW ENUM
+# NEW IMPORT
+# NEW FLOAT TYPE

@@ -186,15 +186,18 @@ public:
             } else if (cur == '-') {
                 tokens.push_back({MINUS, 0, ""});
                 advance();
-            } else if (cur == 'F' && input.substr(0, 5) == "FLOAT") {
-                tokens.push_back({FLOAT, 0, ""});
-                advance_to(5);
+            } else if (cur == 'L' && input.substr(pos, 3) == "LET") {
+                tokens.push_back({LET, 0, ""});
+                advance_to(3);
+            } else if (cur == 'D' && input.substr(0, 6) == "DOUBLE") {
+                advance_to(6);
+                tokens.push_back({DOUBLE, 0, ""});
             } else if (cur == 'E' && input.substr(pos, 3) == "END") {
                 tokens.push_back({END, 0, ""});
                 advance_to(3);
-            } else if (cur == 'L' && input.substr(pos, 3) == "LET") {
-                tokens.push_back({LET, 0, ""});
-                advance_to(4);
+            } else if (cur == 'F' && input.substr(0, 5) == "FLOAT") {
+                tokens.push_back({FLOAT, 0, ""});
+                advance_to(5);
             } else if (cur == 'P' && input.substr(pos, 5) == "PRINT") {
                 tokens.push_back({PRINT, 0, ""});
                 advance_to(5);
@@ -328,9 +331,6 @@ public:
             } else if (cur == 'P' && input.substr(pos, 4) == "PORT") {
                 advance_to(4);  
                 tokens.push_back({PORT, 0, ""});
-            } else if (cur == 'D' && input.substr(0, 6) == "DOUBLE") {
-                advance_to(6);
-                tokens.push_back({DOUBLE, 0, ""});
             } else if (cur == 'C' && input.substr(0, 4) == "CHAR") {
                 advance_to(4);
                 tokens.push_back({CHAR, 0, ""});
@@ -1344,6 +1344,9 @@ public:
             } else if (cur_idx.type == STR) {
                 type = STRING_TYPE;
                 found = true;
+            } else if (cur_idx.type == DOUBLE) {
+                type = DOUBLE_TYPE;
+                found = true;
             }
             
             if (found) {
@@ -1364,6 +1367,10 @@ public:
                             tok_idx--;
                             float val = expr();
                             variables.push_back({var_name, type, 0, "", false, '\0', val});
+                        } else if (type == DOUBLE_TYPE) {
+                            tok_idx--;
+                            double val = expr();
+                            variables.push_back({var_name, type, 0, "", false, '\0', 0, val});
                         }
                     } else {
                         cout << "Error: can't found the token '='" << endl;
@@ -1730,6 +1737,7 @@ void debug() {
                     case FLOAT: token_type = "FLOAT"; break;
                     case STR: token_type = "STR"; break;
                     case NUM_TYPE: token_type = "NUM_TYPE"; break;
+                    case DOUBLE: token_type = "DOUBLE"; break;
                 }
                 cout << "Type: " << token_type << " Value: " << token.value << " Name: " << token.name << endl;
             }

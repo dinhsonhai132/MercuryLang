@@ -186,12 +186,15 @@ public:
             } else if (cur == '-') {
                 tokens.push_back({MINUS, 0, ""});
                 advance();
+            } else if (cur == 'F' && input.substr(0, 5) == "FLOAT") {
+                tokens.push_back({FLOAT, 0, ""});
+                advance_to(5);
             } else if (cur == 'E' && input.substr(pos, 3) == "END") {
                 tokens.push_back({END, 0, ""});
                 advance_to(3);
             } else if (cur == 'L' && input.substr(pos, 3) == "LET") {
                 tokens.push_back({LET, 0, ""});
-                advance_to(3);
+                advance_to(4);
             } else if (cur == 'P' && input.substr(pos, 5) == "PRINT") {
                 tokens.push_back({PRINT, 0, ""});
                 advance_to(5);
@@ -325,12 +328,6 @@ public:
             } else if (cur == 'P' && input.substr(pos, 4) == "PORT") {
                 advance_to(4);  
                 tokens.push_back({PORT, 0, ""});
-            } else if (cur == 'F' && input.substr(0, 5) == "FLOAT") {
-                advance_to(5);
-                tokens.push_back({FLOAT, 0, ""});
-            } else if (cur == 'I' && input.substr(0, 3) == "INT") {
-                advance_to(3);
-                tokens.push_back({INT, 0, ""});
             } else if (cur == 'D' && input.substr(0, 6) == "DOUBLE") {
                 advance_to(6);
                 tokens.push_back({DOUBLE, 0, ""});
@@ -1335,7 +1332,6 @@ public:
         string var_name;
         Mercury_type type;
         bool found = false;
-        bool check_string = false;
         auto tok = get_next_tok();
         if (tok.type == LET) {
             cur_idx = get_next_tok();
@@ -1348,7 +1344,6 @@ public:
             } else if (cur_idx.type == STR) {
                 type = STRING_TYPE;
                 found = true;
-                check_string = true;
             }
             
             if (found) {

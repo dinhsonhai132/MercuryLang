@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <chrono>
+#include <cmath>
 #include <ctime>
 #include <variant>
 using namespace std;
@@ -439,34 +440,6 @@ private:
 public:
     parser(vector<datatype> tokenize) : tokenize(tokenize), tok_idx(0) {}
 
-    float make_float() {
-        int left = 0, right = 0;
-        int pos = tok_idx;
-        cur_idx = get_next_tok();
-        if (cur_idx.type == INT) {
-            left = cur_idx.value;
-            cur_idx = get_next_tok();
-            if (cur_idx.type == DOT) {
-                cur_idx = get_next_tok();
-                if (cur_idx.type == INT) {
-                    right = cur_idx.value;
-                } else {
-                    cout << "Error: Expected integer after dot" << endl;
-                    return 0;
-                }
-            } else {
-                cout << "Error: Expected dot after integer" << endl;
-                return 0;
-            }
-        } else {
-            cout << "Error: Expected integer at the beginning" << endl;
-            return 0;
-        }
-        tok_idx = pos + 3;
-        string val = to_string(left) + "." + to_string(right);
-        return stof(val);
-    }
-
     int get_tempotary_variable(string name) {
         bool found = false;
 
@@ -484,7 +457,7 @@ public:
         return 0;
     }
 
-    int get_variable(string name) {
+    auto get_variable(string name) {
         bool found = false;
         for (auto &variable: variables) {
             if (variable.name == name) {
@@ -496,6 +469,15 @@ public:
             cout << "Error: can't found the variable name" << endl;
         }
         return 0;
+    }
+
+    store_var get_variable_data(string name) {
+        for (auto &variable: variables) {
+            if (variable.name == name) {
+                return variable;
+            }
+        }
+        return {"", AUTO, 0};
     }
 
     vector<int> get_list(string name) {
@@ -512,7 +494,7 @@ public:
         return {0};
     }
 
-    int extract() {
+    auto extract() {
         auto tok = get_next_tok();
         if (tok.type == LIST_NAME) {
             auto list = get_list(tok.name);
@@ -564,7 +546,7 @@ public:
         return {NONE, 0, ""};
     }
 
-    int get_value_func(string name) {
+    auto get_value_func(string name) {
         for (auto &func : functions) {
             if (func.function_name == name) {
                 return func.value;
@@ -612,15 +594,37 @@ public:
     
     float factor() {
         cur_idx = get_next_tok();
-        if (cur_idx.type == INT && tokenize[tok_idx + 1].type != DOT) {
+        if (cur_idx.type == INT) {
+            int left = cur_idx.value;
+            if (tokenize[tok_idx].type == DOT) {
+                tok_idx++;
+                cur_idx = get_next_tok();
+                if (cur_idx.type == INT) {
+                    int right = cur_idx.value;
+                    float result = left + right / pow(10, to_string(right).length());
+                    return result;
+                } else {
+                    cout << "Error: Expected integer after dot" << endl;
+                    return 0;
+                }
+            } else {
+                return left;
+            }
+        } else if (cur_idx.type == INT && tokenize[tok_idx + 1].type != DOT) {
             return cur_idx.value;
-        } else if (cur_idx.type == INT && tokenize[tok_idx + 1].type == DOT) {
-            tok_idx--;
-            return make_float();
         } else if (cur_idx.type == FUNCTION_CALL) {
             return get_value_func(cur_idx.name);
         } else if (cur_idx.type == TEMPORARY_MEMORY) {
-            return get_variable(cur_idx.name);
+            auto variable = get_variable_data(cur_idx.name);
+            if (variable.type == FLOAT_TYPE) {
+                return variable.float_val;
+            } else if (variable.type == DOUBLE_TYPE) {
+                return variable.double_val;
+            } else if (variable.type == AUTO) {
+                return variable.val;
+            } else if (variable.type == INT_TYPE) {
+                return variable.val;
+            }
         } else if (cur_idx.type == PARAMATER) {
             return get_tempotary_variable(cur_idx.name);
         } else if (cur_idx.type == PP) {
@@ -636,12 +640,12 @@ public:
         return 0;
     }   
 
-    int term() {
-        int result = factor();
+    float term() {
+        float result = factor();
         while (true) {
             cur_idx = get_next_tok();
             if (cur_idx.type == DIV) {
-                int divisor = factor();
+                float divisor = factor();
                 if (divisor == 0) {
                     cout << "Error: Division by zero" << endl;
                     return 0;
@@ -658,8 +662,8 @@ public:
         return result;
     }
 
-    int expr() {
-        int result = term();
+    float expr() {
+        float result = term();
         while (true) {
             cur_idx = get_next_tok();
             if (cur_idx.type == PLUS) {
@@ -785,7 +789,7 @@ public:
         return {};
     } 
 
-    auto make_return() {
+    float make_return() {
         cur_idx = get_next_tok();
         if (cur_idx.type == RETURN_FUNC) {
             return expr();
@@ -869,7 +873,7 @@ public:
         return 0;
     }
 
-    int call_function() {
+    float call_function() {
         cur_idx = get_next_tok();
         string name;
         vector<int> values;
@@ -1328,8 +1332,6 @@ public:
     }
 
     void make_var() {
-        datatype name;
-        int val;
         string var_name;
         Mercury_type type;
         bool found = false;
@@ -1356,17 +1358,23 @@ public:
                     cur_idx = get_next_tok();
                     if (cur_idx.type == ASSIGN) {
                         cur_idx = get_next_tok();
-                        if (cur_idx.type == STRING) {
+                        if (type == STRING_TYPE) {
                             string string_val = cur_idx.name;
                             variables.push_back({var_name, type, 0, string_val});
-                        } else {
+                        } else if (type == INT_TYPE) {
                             tok_idx--;
-                            val = expr();
+                            int val = expr();
                             variables.push_back({var_name, type, val});
+                        } else if (type == FLOAT_TYPE) {
+                            tok_idx--;
+                            float val = expr();
+                            variables.push_back({var_name, type, 0, "", false, '\0', val});
                         }
                     } else {
                         cout << "Error: can't found the token '='" << endl;
                     }
+                } else {
+                    cout << "Error: can't found the variable name" << endl;
                 }
             } else {
                 cout << "Error: can't found the type" << endl;

@@ -12,9 +12,9 @@ enum VerType {
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE, ELIF, PARAMATER_KWARGS, GLOBAL_VAR,
     THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, RETURN_FUNC, POP, PUSH, AT, REPAIR,
     FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, COMMAND, CIN, CLASS, LAMBDA, MAXTRIX, IMPORT, 
-    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, ARROW_TOKEN, RANGE, FOR_LOOP, IN, TO, END, NUM_TYPE, STRING_TYPE, 
-    NULL_TYPE, LOCAL, GLOBAL, HEAP, STACK, REGISTER, CONSTANT, LOCAL_VAR, HEAP_VAR, STACK_VAR, VOID_TOK, AUTO_TOK, 
-    CONST_VAR, VOLATILE_TOK, STATIC_TOK,
+    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, ARROW_TOKEN, RANGE, FOR_LOOP, IN, TO, END, NUM_TYPE,
+    NULL_TOK, LOCAL, GLOBAL, HEAP, STACK, REGISTER, CONSTANT, LOCAL_VAR, HEAP_VAR, STACK_VAR, VOID_TOK, AUTO_TOK, 
+    CONST_VAR, VOLATILE_TOK, STATIC_TOK, FLOAT, DOUBLE, CHAR, BOOL, LONG, SHORT, UNSIGNED, SIGNED, STR,
 };
 
 enum VerLibrary_type {
@@ -23,8 +23,8 @@ enum VerLibrary_type {
 };
 
 enum Mercury_type {
-    FLOAT, DOUBLE, CHAR, BOOL, LONG, SHORT, UNSIGNED, SIGNED, 
-    VOID, AUTO, CONST, VOLATILE, STATIC, EXTERN, REGISTER_, MUTABLE, STRING_TYPE_
+    FLOAT_TYPE, DOUBLE_TYPE, CHAR_TYPE, BOOL_TYPE, LONG_TYPE, SHORT_TYPE, UNSIGNED_TYPE, SIGNED_TYPE, 
+    VOID, AUTO, CONST, VOLATILE, STATIC, EXTERN, REGISTER_, MUTABLE, STRING_TYPE, INT_TYPE, NULL_TYPE
 };
 
 enum port_address {
@@ -46,10 +46,17 @@ struct enumerate {
 
 struct store_var {
     string name;
+    Mercury_type type;
     int val;
     string string_val;
-    Mercury_type type;
-    bool check_string;
+    bool bool_val;
+    char char_val;
+    float float_val;
+    double double_val;
+    long long_val;
+    short short_val;
+    unsigned unsigned_val;
+    signed signed_val;
 };
 
 struct Parameter {
@@ -240,6 +247,9 @@ public:
             } else if (cur == 'T' && input.substr(pos, 2) == "TO") {
                 tokens.push_back({TO, 0, ""});
                 advance_to(2);
+            } else if (cur == 'I' && input.substr(pos, 3) == "INT") {
+                advance_to(3);
+                tokens.push_back({NUM_TYPE, 0, ""});
             } else if (cur == 'F' && input.substr(pos, 3) == "FOR") {
                 tokens.push_back({FOR_LOOP, 0, ""});
                 advance_to(3);
@@ -287,15 +297,12 @@ public:
             } else if (cur == 'C' && input.substr(pos, 5) == "CLASS") {
                 advance_to(5);
                 tokens.push_back({CLASS, 0, ""});
-            } else if (cur == 'I' && input.substr(pos, 3) == "INT") {
+            } else if (cur == 'S' && input.substr(pos, 3) == "STR") {
                 advance_to(3);
-                tokens.push_back({NUM_TYPE, 0, ""});
-            } else if (cur == 'S' && input.substr(pos, 6) == "STRING") {
-                advance_to(6);
-                tokens.push_back({STRING, 0, ""});
+                tokens.push_back({STR, 0, ""});
             } else if (cur == 'N' && input.substr(pos, 4) == "NULL") {
                 advance_to(4);
-                tokens.push_back({NULL_TYPE, 0, ""});
+                tokens.push_back({NULL_TOK, 0, ""});
             } else if (cur == 'I' && input.substr(pos, 6) == "IMPORT") {
                 advance_to(6);
                 tokens.push_back({IMPORT, 0, ""});
@@ -317,6 +324,45 @@ public:
             } else if (cur == 'P' && input.substr(pos, 4) == "PORT") {
                 advance_to(4);  
                 tokens.push_back({PORT, 0, ""});
+            } else if (cur == 'F' && input.substr(0, 5) == "FLOAT") {
+                advance_to(5);
+                tokens.push_back({FLOAT, 0, ""});
+            } else if (cur == 'I' && input.substr(0, 3) == "INT") {
+                advance_to(3);
+                tokens.push_back({INT, 0, ""});
+            } else if (cur == 'D' && input.substr(0, 6) == "DOUBLE") {
+                advance_to(6);
+                tokens.push_back({DOUBLE, 0, ""});
+            } else if (cur == 'C' && input.substr(0, 4) == "CHAR") {
+                advance_to(4);
+                tokens.push_back({CHAR, 0, ""});
+            } else if (cur == 'B' && input.substr(0, 4) == "BOOL") {
+                advance_to(4);
+                tokens.push_back({BOOL, 0, ""});
+            } else if (cur == 'L' && input.substr(0, 4) == "LONG") {
+                advance_to(4);
+                tokens.push_back({LONG, 0, ""});
+            } else if (cur == 'S' && input.substr(0, 5) == "SHORT") {
+                advance_to(5);
+                tokens.push_back({SHORT, 0, ""});
+            } else if (cur == 'U' && input.substr(0, 8) == "UNSIGNED") {
+                advance_to(8);
+                tokens.push_back({UNSIGNED, 0, ""});
+            } else if (cur == 'S' && input.substr(0, 6) == "SIGNED") {
+                advance_to(6);
+                tokens.push_back({SIGNED, 0, ""});
+            } else if (cur == 'T' && input.substr(0, 4) == "TRUE") {
+                advance_to(4);
+                tokens.push_back({TRUE, 0, ""});
+            } else if (cur == 'F' && input.substr(0, 5) == "FALSE") {
+                advance_to(5);
+                tokens.push_back({FALSE, 0, ""});
+            } else if (cur == 'G' && input.substr(0, 6) == "GLOBAL") {
+                advance_to(6);
+                tokens.push_back({GLOBAL_VAR, 0, ""});
+            } else if (cur == 'G' && input.substr(0, 6) == "GLOBAL") {
+                advance_to(6);
+                tokens.push_back({GLOBAL_VAR, 0, ""});
             } else if (cur == '.') {
                 advance();
                 tokens.push_back({DOT, 0, ""});
@@ -563,27 +609,6 @@ public:
             }
         }
     }
-
-    void imprort_library() {
-        cur_idx = get_next_tok();
-        if (cur_idx.type == IMPORT) {
-            cur_idx = get_next_tok();
-            if (cur_idx.type == STRING) {
-                string name = cur_idx.name;
-                if (name == "MERCURY_MATH") {
-                    #include "C:\Users\hadin\Desktop\MercuryLang version 1.1.1\MercuryLang official version 1.1.1\MercuryLibrary\MercuryMath.cpp"
-                } else if (name == "MERCURY_FILE") {
-                    #include "C:\Users\hadin\Desktop\MercuryLang version 1.1.1\MercuryLang official version 1.1.1\MercuryLibrary\MercuryFile.cpp"
-                } else if (name == "MERCURY_TIME") {
-                    #include "C:\Users\hadin\Desktop\MercuryLang version 1.1.1\MercuryLang official version 1.1.1\MercuryLibrary\MercuryTime.cpp"
-                } else if (name == "MERCURY_RANDOM") {
-                    #include "C:\Users\hadin\Desktop\MercuryLang version 1.1.1\MercuryLang official version 1.1.1\MercuryLibrary\MercuryRandom.cpp"
-                } else if (name == "MERCURY_INPUT_OUTPUT") {
-                    #include "C:\Users\hadin\Desktop\MercuryLang version 1.1.1\MercuryLang official version 1.1.1\MercuryLibrary\MercuryInputOutput.cpp"
-                }
-            }
-        }
-    }
     
     float factor() {
         cur_idx = get_next_tok();
@@ -683,6 +708,10 @@ public:
         } else {
             cout << "Error: name not found" << endl;
         }
+    }
+
+    void make_struct() {
+        //
     }
 
     void make_function() {
@@ -786,7 +815,7 @@ public:
 
         if (!paras.empty()) {
             for (auto &para : paras) {
-                tempotary_variables.push_back({para.name, para.val});
+                tempotary_variables.push_back({para.name, NULL_TYPE, para.val});
             }
         }
 
@@ -900,7 +929,7 @@ public:
             cur_idx = get_next_tok();
             if (cur_idx.type == TEMPORARY_MEMORY) {
                 name = cur_idx.name;
-                variables.push_back({name, 0});
+                variables.push_back({name, INT_TYPE, 0});
                 cur_idx = get_next_tok();
                 if (cur_idx.type == IN) {
                     cur_idx = get_next_tok();
@@ -1098,7 +1127,7 @@ public:
         } else {
             cout << "Error: can't found token 'FOR'" << endl;
         }
-        if (!list_found) variables.push_back({name, right});
+        if (!list_found) variables.push_back({name, INT_TYPE, right});
     }
 
     void pop() {
@@ -1302,33 +1331,46 @@ public:
         datatype name;
         int val;
         string var_name;
+        Mercury_type type;
+        bool found = false;
         bool check_string = false;
         auto tok = get_next_tok();
         if (tok.type == LET) {
-            name = get_next_tok();
-            if (name.type == TEMPORARY_MEMORY) {
-                var_name = name.name;
-            } else {
-                cout << "Error: name variable failed" << endl;
+            cur_idx = get_next_tok();
+            if (cur_idx.type == NUM_TYPE) {
+                type = INT_TYPE;
+                found = true;
+            } else if (cur_idx.type == FLOAT) {
+                type = FLOAT_TYPE;
+                found = true;
+            } else if (cur_idx.type == STR) {
+                type = STRING_TYPE;
+                found = true;
+                check_string = true;
             }
-            tok = get_next_tok();
-            if (tok.type == ASSIGN) {
-                tok = get_next_tok();
-                if (tok.type == INT) {
-                    tok_idx--;
-                    val = expr();
-                } else if (tok.type == STRING) {
-                    string val = tok.name;
-                    check_string = true;
-                    variables.push_back({var_name, 0, val, STRING_TYPE_, check_string});
-                } else {
-                    cout << "Error: type not found" << endl;
+            
+            if (found) {
+                cur_idx = get_next_tok();
+                if (cur_idx.type == TEMPORARY_MEMORY) {
+                    var_name = cur_idx.name;
+                    cur_idx = get_next_tok();
+                    if (cur_idx.type == ASSIGN) {
+                        cur_idx = get_next_tok();
+                        if (cur_idx.type == STRING) {
+                            string string_val = cur_idx.name;
+                            variables.push_back({var_name, type, 0, string_val});
+                        } else {
+                            tok_idx--;
+                            val = expr();
+                            variables.push_back({var_name, type, val});
+                        }
+                    } else {
+                        cout << "Error: can't found the token '='" << endl;
+                    }
                 }
+            } else {
+                cout << "Error: can't found the type" << endl;
             }
-        }
-
-        if (!check_string) {
-            variables.push_back({var_name, val});
         }
     }
 
@@ -1472,9 +1514,6 @@ public:
             } else if (cur_idx.type == REPAIR) {
                 repair();
                 tok_idx++;
-            } else if (cur_idx.type == IMPORT) {
-                imprort_library();
-                tok_idx++;
             } else {
                 expr();
             }
@@ -1526,9 +1565,6 @@ public:
                 break;
             }  else if (cur_idx.type == REPAIR) {
                 repair();
-                break;
-            } else if (cur_idx.type == IMPORT) {
-                imprort_library();
                 break;
             } else {
                 expr();
@@ -1688,6 +1724,9 @@ void debug() {
                     case SE: token_type = "SE"; break;
                     case EQUAL: token_type = "EQUAL"; break;
                     case DOT: token_type = "DOT"; break;
+                    case FLOAT: token_type = "FLOAT"; break;
+                    case STR: token_type = "STR"; break;
+                    case NUM_TYPE: token_type = "NUM_TYPE"; break;
                 }
                 cout << "Type: " << token_type << " Value: " << token.value << " Name: " << token.name << endl;
             }

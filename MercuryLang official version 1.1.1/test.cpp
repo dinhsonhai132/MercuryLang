@@ -189,19 +189,19 @@ public:
             } else if (cur == 'L' && input.substr(pos, 3) == "LET") {
                 tokens.push_back({LET, 0, ""});
                 advance_to(3);
-            } else if (cur == 'D' && input.substr(0, 6) == "DOUBLE") {
+            } else if (cur == 'D' && input.substr(pos, 6) == "DOUBLE") {
                 advance_to(6);
                 tokens.push_back({DOUBLE, 0, ""});
-            } else if (cur == 'E' && input.substr(pos, 3) == "END") {
-                tokens.push_back({END, 0, ""});
-                advance_to(3);
-            } else if (cur == 'F' && input.substr(0, 5) == "FLOAT") {
-                tokens.push_back({FLOAT, 0, ""});
-                advance_to(5);
             } else if (cur == 'P' && input.substr(pos, 5) == "PRINT") {
                 tokens.push_back({PRINT, 0, ""});
                 advance_to(5);
                 token();
+            } else if (cur == 'E' && input.substr(pos, 3) == "END") {
+                tokens.push_back({END, 0, ""});
+                advance_to(3);
+            } else if (cur == 'F' && input.substr(pos, 5) == "FLOAT") {
+                tokens.push_back({FLOAT, 0, ""});
+                advance_to(5);
             } else if (cur == 'R' && input.substr(pos, 6) == "RETURN") {
                 tokens.push_back({RETURN_FUNC, 0, ""});
                 advance_to(6);
@@ -331,34 +331,34 @@ public:
             } else if (cur == 'P' && input.substr(pos, 4) == "PORT") {
                 advance_to(4);  
                 tokens.push_back({PORT, 0, ""});
-            } else if (cur == 'C' && input.substr(0, 4) == "CHAR") {
+            } else if (cur == 'C' && input.substr(pos, 4) == "CHAR") {
                 advance_to(4);
                 tokens.push_back({CHAR, 0, ""});
-            } else if (cur == 'B' && input.substr(0, 4) == "BOOL") {
+            } else if (cur == 'B' && input.substr(pos, 4) == "BOOL") {
                 advance_to(4);
                 tokens.push_back({BOOL, 0, ""});
-            } else if (cur == 'L' && input.substr(0, 4) == "LONG") {
+            } else if (cur == 'L' && input.substr(pos, 4) == "LONG") {
                 advance_to(4);
                 tokens.push_back({LONG, 0, ""});
-            } else if (cur == 'S' && input.substr(0, 5) == "SHORT") {
+            } else if (cur == 'S' && input.substr(pos, 5) == "SHORT") {
                 advance_to(5);
                 tokens.push_back({SHORT, 0, ""});
-            } else if (cur == 'U' && input.substr(0, 8) == "UNSIGNED") {
+            } else if (cur == 'U' && input.substr(pos, 8) == "UNSIGNED") {
                 advance_to(8);
                 tokens.push_back({UNSIGNED, 0, ""});
-            } else if (cur == 'S' && input.substr(0, 6) == "SIGNED") {
+            } else if (cur == 'S' && input.substr(pos, 6) == "SIGNED") {
                 advance_to(6);
                 tokens.push_back({SIGNED, 0, ""});
-            } else if (cur == 'T' && input.substr(0, 4) == "TRUE") {
+            } else if (cur == 'T' && input.substr(pos, 4) == "TRUE") {
                 advance_to(4);
                 tokens.push_back({TRUE, 0, ""});
-            } else if (cur == 'F' && input.substr(0, 5) == "FALSE") {
+            } else if (cur == 'F' && input.substr(pos, 5) == "FALSE") {
                 advance_to(5);
                 tokens.push_back({FALSE, 0, ""});
-            } else if (cur == 'G' && input.substr(0, 6) == "GLOBAL") {
+            } else if (cur == 'G' && input.substr(pos, 6) == "GLOBAL") {
                 advance_to(6);
                 tokens.push_back({GLOBAL_VAR, 0, ""});
-            } else if (cur == 'G' && input.substr(0, 6) == "GLOBAL") {
+            } else if (cur == 'G' && input.substr(pos, 6) == "GLOBAL") {
                 advance_to(6);
                 tokens.push_back({GLOBAL_VAR, 0, ""});
             } else if (cur == '.') {
@@ -396,8 +396,8 @@ public:
                 }
                 tokens.push_back({FUNCTION_CALL, 0, name});
             } else if (cur == 'D' && input.substr(pos, 2) == "DO") {
-                advance_to(2);
                 tokens.push_back({DO, 0, ""});
+                advance_to(2);
             } else if (cur == 'W' && input.substr(pos, 5) == "WHILE") {
                 advance_to(5);
                 tokens.push_back({WHILE, 0, ""});
@@ -813,6 +813,8 @@ public:
             cout << "Error: can't found the function name" << endl;
             return 0;
         }
+        
+        vector<datatype> cur_tokens = tokenize;
 
         if (!paras.empty()) {
             for (auto &para : paras) {
@@ -867,6 +869,7 @@ public:
             }
         }
         tempotary_variables = {};
+        tokenize = cur_tokens;
         return 0;
     }
 

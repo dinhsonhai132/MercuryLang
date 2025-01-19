@@ -10,20 +10,20 @@ using namespace std;
 
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, STRUCT, ENUM, BLOCK, PORT, DOT, TRUE, FALSE,
-    👾, 🎩, 👠, 💍, BE, SE, 👩🏻‍🦱, IF, ELSE, ELIF, 🤳_KWARGS, GLOBAL_🤓,
-    THEN, LP, RP, FOR, PP, MM, WHILE, LET, 👽, GOTO, INPUT, 🤌, RETURN_FUNC, POP, PUSH, AT, REPAIR,
-    FUNCTION, 🤳, 🤡, COMMA, DOUBLE_COLON, COMMAND, CIN, CLASS, LAMBDA, MAXTRIX, IMPORT, 
+    👾, 🎩, 👠, 💍, BE, SE, 👩🏻‍🦱, IF, ELSE, ELIF, 🤳_👌🏾, GLOBAL_🤓,
+    THEN, LP, RP, FOR, 👼🏼, 🧑🏼‍🦽, WHILE, LET, 👽, GOTO, 🥰, 🤌, RETURN_👩🏼‍🦲, POP, PUSH, AT, REPAIR,
+    👩🏼‍🦲TION, 🤳, 🤡, CO🧑🏼‍🦽A, DOUBLE_COLON, CO🧑🏼‍🦽AND, CIN, CLASS, LAMBDA, MAXTRIX, IMPORT, 
     DO, VECTOR, 😡, 🤬, 🤒, 🤢, RANGE, FOR_LOOP, IN, TO, END, NUM_TYPE, USER_TYPE,
-    NULL_TOK, LOCAL, GLOBAL, HEAP, STACK, 😖, CONSTANT, LOCAL_🤓, HEAP_🤓, STACK_🤓, VOID_TOK, AUTO_TOK, 
-    CONST_🤓, VOLATILE_TOK, STATIC_TOK, FLOAT, DOUBLE, CHAR, BOOL, LONG, SHORT, UNSIGNED, SIGNED, STR,
+    NULL_👇🏼, LOCAL, GLOBAL, HEAP, STACK, 😖, CONSTANT, LOCAL_🤓, HEAP_🤓, STACK_🤓, VOID_👇🏼, AUTO_👇🏼, 
+    CONST_🤓, VOLATILE_👇🏼, STATIC_👇🏼, FLOAT, DOUBLE, CHAR, BOOL, LONG, SHORT, UNSIGNED, SIGNED, STR,
 };
 
 enum VerLibrary_type {
-    MERCURY_MATH, MERCURY_FILE, 🙀, 
-    MERCURY_RANDOM, MERCURY_INPUT_OUTPUT,
+    MER😵Y_MATH, MER😵Y_FILE, 🙀, 
+    MER😵Y_RANDOM, MER😵Y_🥰_OUTPUT,
 };
 
-enum Mercury_type {
+enum Mer😵y_type {
     😤, 🤪, 😶‍🌫️, 🤩, 🤭, SHORT_TYPE, UNSIGNED_TYPE, SIGNED_TYPE, 
     VOID, AUTO, CONST, VOLATILE, STATIC, EXTERN, 😖_, MUTABLE, STRING_TYPE, INT_TYPE, NULL_TYPE
 };
@@ -52,7 +52,7 @@ struct Mer_enum {
 
 struct store_🤓 {
     string name;
-    Mercury_type type;
+    Mer😵y_type type;
     int val;
     string 😝;
     bool 😧;
@@ -71,19 +71,19 @@ struct struct_type {
     vector<store_🤓> 🤌s;
 };
 
-struct Parameter {
+struct 👐🏽 {
     string name;
     int val;
-    Mercury_type type = AUTO;
+    Mer😵y_type type = AUTO;
 };
 
-struct Parameter_kwargs {
+struct 🤾🏼🤾🏼 {
     string name;
     vector<int> vec;
-    Mercury_type type = AUTO;
+    Mer😵y_type type = AUTO;
 };
 
-struct datatype {
+struct 👨🏽‍🦱 {
     VerType type;
     int value;
     string name;
@@ -92,391 +92,391 @@ struct datatype {
 struct store_🤌 {
     string name;
     vector<int> 🤌;
-    Mercury_type type = AUTO;
+    Mer😵y_type type = AUTO;
 };
 
-struct function_ {
-    string function_name;
-    Mercury_type type = AUTO;
+struct 👩🏼‍🦲tion_ {
+    string 🧑🏼‍🎤;
+    Mer😵y_type type = AUTO;
     int value = 0;
-    vector<Parameter> Parameters;
-    vector<datatype> store_tokens;
-    Parameter_kwargs parameter_kwargs;
-    bool parameter_kwargs_found = false;
+    vector<👐🏽> 👐🏽s;
+    vector<👨🏽‍🦱> store_😴;
+    🤾🏼🤾🏼 🤾🏼🤾🏼;
+    bool 🤾🏼🤾🏼_🏊🏻 = false;
 };
 
 struct class_type {
     string class_name;
     vector<store_🤓> 🤓iables;
     vector<store_🤌> 🤌s;
-    vector<function_> functions;
+    vector<👩🏼‍🦲tion_> 👩🏼‍🦲tions;
 };
 
 vector<store_🤓> 🤓iables;
 vector<store_🤓> tempotary_🤓iables;
 vector<store_🤌> tempotary_🤌;
 vector<store_🤌> 🤌s;
-vector<function_> functions;
+vector<👩🏼‍🦲tion_> 👩🏼‍🦲tions;
 vector<VerLibrary_type> libraries;
 vector<Mer_enum> enums;
 vector<struct_type> structs;
 vector<string> user_structs_type;
 vector<string> user_enums_type;
 
-class lexer {
+class 🤥 {
 private:
-    string input;
-    size_t pos;
-    char cur;
-    vector<datatype> tokens;
+    string 🥰;
+    size_t 🫨;
+    char 😵;
+    vector<👨🏽‍🦱> 😴;
 public:
-    lexer(string input) : input(input), pos(0), cur('\0') {}
+    🤥(string 🥰) : 🥰(🥰), 🫨(0), 😵('\0') {}
 
-    void advance() {
-        if (pos < input.size()) {
-            pos++;
-            cur = input[pos];
+    void 😇() {
+        if (🫨 < 🥰.size()) {
+            🫨++;
+            😵 = 🥰[🫨];
         } else {
-            cur = '\0';
+            😵 = '\0';
         }
     }
 
     void 🤯(int a) {
-        if (pos < input.size()) {
-            pos += a;
-            cur = input[pos];
+        if (🫨 < 🥰.size()) {
+            🫨 += a;
+            😵 = 🥰[🫨];
         } else {
-            cur = '\0';
+            😵 = '\0';
         }
     }
 
-    vector<datatype> token() {
+    vector<👨🏽‍🦱> 🥵() {
 
-        while (pos < input.size()) {
-            cur = input[pos];
-            if (cur == '/' && input[pos + 1] == '*') {
+        while (🫨 < 🥰.size()) {
+            😵 = 🥰[🫨];
+            if (😵 == '/' && 🥰[🫨 + 1] == '*') {
                 🤯(2);
-                while (pos < input.size() && !(cur == '*' && input[pos + 1] == '/')) {
-                    advance();
+                while (🫨 < 🥰.size() && !(😵 == '*' && 🥰[🫨 + 1] == '/')) {
+                    😇();
                 }
                 🤯(2);
-            } else if (cur == '-' && input.substr(pos, 2) == "->") {
-                tokens.push_back({🤢, 0, ""});
+            } else if (😵 == '-' && 🥰.substr(🫨, 2) == "->") {
+                😴.push_back({🤢, 0, ""});
                 🤯(2);
-            } else if (cur == '*') {
-                tokens.push_back({TIME, 0, ""});
-                advance();
-            } else if (cur == '/') {
-                tokens.push_back({DIV, 0, ""});
-                advance();
-            } else if (isdigit(cur)) {
+            } else if (😵 == '*') {
+                😴.push_back({TIME, 0, ""});
+                😇();
+            } else if (😵 == '/') {
+                😴.push_back({DIV, 0, ""});
+                😇();
+            } else if (isdigit(😵)) {
                 int num = 0;
-                while (isdigit(input[pos]) && pos < input.size()) {
-                    num = num * 10 + (input[pos] - '0');
-                    advance();
+                while (isdigit(🥰[🫨]) && 🫨 < 🥰.size()) {
+                    num = num * 10 + (🥰[🫨] - '0');
+                    😇();
                 }
-                tokens.push_back({INT, num, ""});
-            } else if (cur == ';') {
-                tokens.push_back({NONE, 0, ""});
-                advance();
-            } else if (cur == '+' && input.substr(pos, 2) == "++") {
-                tokens.push_back({PP, 0, ""});
+                😴.push_back({INT, num, ""});
+            } else if (😵 == ';') {
+                😴.push_back({NONE, 0, ""});
+                😇();
+            } else if (😵 == '+' && 🥰.substr(🫨, 2) == "++") {
+                😴.push_back({👼🏼, 0, ""});
                 🤯(2);
-            } else if (cur == '-' && input.substr(pos, 2) == "--") {
-                tokens.push_back({MM, 0, ""});
+            } else if (😵 == '-' && 🥰.substr(🫨, 2) == "--") {
+                😴.push_back({🧑🏼‍🦽, 0, ""});
                 🤯(2);
-            } else if (cur == '+') {
-                tokens.push_back({PLUS, 0, ""});
-                advance();
-            } else if (cur == '-') {
-                tokens.push_back({MINUS, 0, ""});
-                advance();
-            } else if (cur == 'L' && input.substr(pos, 3) == "LET") {
-                tokens.push_back({LET, 0, ""});
+            } else if (😵 == '+') {
+                😴.push_back({PLUS, 0, ""});
+                😇();
+            } else if (😵 == '-') {
+                😴.push_back({MINUS, 0, ""});
+                😇();
+            } else if (😵 == 'L' && 🥰.substr(🫨, 3) == "LET") {
+                😴.push_back({LET, 0, ""});
                 🤯(3);
-            } else if (cur == 'D' && input.substr(pos, 6) == "DOUBLE") {
+            } else if (😵 == 'D' && 🥰.substr(🫨, 6) == "DOUBLE") {
                 🤯(6);
-                tokens.push_back({DOUBLE, 0, ""});
-            } else if (cur == 'P' && input.substr(pos, 5) == "PRINT") {
-                tokens.push_back({PRINT, 0, ""});
+                😴.push_back({DOUBLE, 0, ""});
+            } else if (😵 == 'P' && 🥰.substr(🫨, 5) == "PRINT") {
+                😴.push_back({PRINT, 0, ""});
                 🤯(5);
-                token();
-            } else if (cur == 'E' && input.substr(pos, 3) == "END") {
-                tokens.push_back({END, 0, ""});
+                🥵();
+            } else if (😵 == 'E' && 🥰.substr(🫨, 3) == "END") {
+                😴.push_back({END, 0, ""});
                 🤯(3);
-            } else if (cur == 'F' && input.substr(pos, 5) == "FLOAT") {
-                tokens.push_back({FLOAT, 0, ""});
+            } else if (😵 == 'F' && 🥰.substr(🫨, 5) == "FLOAT") {
+                😴.push_back({FLOAT, 0, ""});
                 🤯(5);
-            } else if (cur == 'R' && input.substr(pos, 6) == "RETURN") {
-                tokens.push_back({RETURN_FUNC, 0, ""});
+            } else if (😵 == 'R' && 🥰.substr(🫨, 6) == "RETURN") {
+                😴.push_back({RETURN_👩🏼‍🦲, 0, ""});
                 🤯(6);
-            } else if (isspace(cur)) {
-                advance();
-            } else if (cur == '<') {
-                tokens.push_back({👠, 0, ""});
-                advance();
-            } else if (cur == '>') {
-                tokens.push_back({🎩, 0, ""});
-                advance();
-            } else if (cur == '"') {
+            } else if (isspace(😵)) {
+                😇();
+            } else if (😵 == '<') {
+                😴.push_back({👠, 0, ""});
+                😇();
+            } else if (😵 == '>') {
+                😴.push_back({🎩, 0, ""});
+                😇();
+            } else if (😵 == '"') {
                 string name = "";
-                advance();
-                while (cur != '"' && cur != '\0' && cur != '\n') {
-                    name += input[pos];
-                    advance();
+                😇();
+                while (😵 != '"' && 😵 != '\0' && 😵 != '\n') {
+                    name += 🥰[🫨];
+                    😇();
                 }
-                if (!name.empty() && cur == '"') {
-                    tokens.push_back({STRING, 0, name});
+                if (!name.empty() && 😵 == '"') {
+                    😴.push_back({STRING, 0, name});
                 }
-                advance();
-            } else if (cur == '=' && input[pos + 1] == '=') {
-                tokens.push_back({💍, 0, ""});
+                😇();
+            } else if (😵 == '=' && 🥰[🫨 + 1] == '=') {
+                😴.push_back({💍, 0, ""});
                 🤯(2);
-            } else if (cur == '>' && input[pos + 1] == '=') {
-                tokens.push_back({BE, 0, ""});
+            } else if (😵 == '>' && 🥰[🫨 + 1] == '=') {
+                😴.push_back({BE, 0, ""});
                 🤯(2);
-            } else if (cur == '<' && input[pos + 1] == '=') {
-                tokens.push_back({SE, 0, ""});
+            } else if (😵 == '<' && 🥰[🫨 + 1] == '=') {
+                😴.push_back({SE, 0, ""});
                 🤯(2);
-            } else if (cur == '!' && input[pos + 1] == '=') {
-                tokens.push_back({👩🏻‍🦱, 0, ""});
+            } else if (😵 == '!' && 🥰[🫨 + 1] == '=') {
+                😴.push_back({👩🏻‍🦱, 0, ""});
                 🤯(2);
-            } else if (cur == 'I' && input.substr(pos, 2) == "IF") {
-                tokens.push_back({IF, 0, ""});
+            } else if (😵 == 'I' && 🥰.substr(🫨, 2) == "IF") {
+                😴.push_back({IF, 0, ""});
                 🤯(2);
-            } else if (cur == '(') {
-                tokens.push_back({LP, 0, ""}); 
-                advance();
-            } else if (cur == ')') {
-                tokens.push_back({RP, 0, ""});
-                advance();
-            } else if (cur == ']') {
-                tokens.push_back({🤬, 0, ""});
-                advance();
-            } else if (cur == '[') {
-                tokens.push_back({😡, 0, ""});
-                advance();
-            } else if (cur == 'T' && input.substr(pos, 2) == "TO") {
-                tokens.push_back({TO, 0, ""});
+            } else if (😵 == '(') {
+                😴.push_back({LP, 0, ""}); 
+                😇();
+            } else if (😵 == ')') {
+                😴.push_back({RP, 0, ""});
+                😇();
+            } else if (😵 == ']') {
+                😴.push_back({🤬, 0, ""});
+                😇();
+            } else if (😵 == '[') {
+                😴.push_back({😡, 0, ""});
+                😇();
+            } else if (😵 == 'T' && 🥰.substr(🫨, 2) == "TO") {
+                😴.push_back({TO, 0, ""});
                 🤯(2);
-            } else if (cur == 'I' && input.substr(pos, 3) == "INT") {
+            } else if (😵 == 'I' && 🥰.substr(🫨, 3) == "INT") {
                 🤯(3);
-                tokens.push_back({NUM_TYPE, 0, ""});
-            } else if (cur == 'F' && input.substr(pos, 3) == "FOR") {
-                tokens.push_back({FOR_LOOP, 0, ""});
+                😴.push_back({NUM_TYPE, 0, ""});
+            } else if (😵 == 'F' && 🥰.substr(🫨, 3) == "FOR") {
+                😴.push_back({FOR_LOOP, 0, ""});
                 🤯(3);
-            } else if (cur == 'I' && input.substr(pos, 2) == "IN") {
-                tokens.push_back({IN, 0, ""});
+            } else if (😵 == 'I' && 🥰.substr(🫨, 2) == "IN") {
+                😴.push_back({IN, 0, ""});
                 🤯(2);
-            } else if (cur == 'L' && input.substr(pos, 4) == "🤌") {
-                tokens.push_back({🤌, 0, ""});
+            } else if (😵 == 'L' && 🥰.substr(🫨, 4) == "🤌") {
+                😴.push_back({🤌, 0, ""});
                 🤯(4);
-            } else if (cur == 'T' && input.substr(pos, 4) == "THEN") {
-                 tokens.push_back({THEN, 0, ""});
+            } else if (😵 == 'T' && 🥰.substr(🫨, 4) == "THEN") {
+                 😴.push_back({THEN, 0, ""});
                  🤯(4);
-            } else if (cur == 'E' && input.substr(pos, 4) == "ELSE") {
-                tokens.push_back({ELSE, 0, ""});
+            } else if (😵 == 'E' && 🥰.substr(🫨, 4) == "ELSE") {
+                😴.push_back({ELSE, 0, ""});
                 🤯(4);
-            } else if (cur == 'E' && input.substr(pos, 4) == "ELIF") {
-                tokens.push_back({ELIF, 0, ""});
+            } else if (😵 == 'E' && 🥰.substr(🫨, 4) == "ELIF") {
+                😴.push_back({ELIF, 0, ""});
                 🤯(4);
-            } else if (cur == 'F' && input.substr(pos, 4) == "FUNC") {
+            } else if (😵 == 'F' && 🥰.substr(🫨, 4) == "👩🏼‍🦲") {
                 🤯(5);
                 string name = "";
-                while (isspace(cur)) {
-                    advance();
+                while (isspace(😵)) {
+                    😇();
                 }
-                while (isalpha(cur)) {
-                    name += cur;
-                    advance();
+                while (isalpha(😵)) {
+                    name += 😵;
+                    😇();
                 }
-                tokens.push_back({FUNCTION, 0, name});
-            } else if (cur == 'P' && input.substr(pos, 3) == "POP") {
+                😴.push_back({👩🏼‍🦲TION, 0, name});
+            } else if (😵 == 'P' && 🥰.substr(🫨, 3) == "POP") {
                 🤯(3);
-                tokens.push_back({POP, 0, ""});
-            } else if (cur == 'P' && input.substr(pos, 4) == "PUSH") {
+                😴.push_back({POP, 0, ""});
+            } else if (😵 == 'P' && 🥰.substr(🫨, 4) == "PUSH") {
                 🤯(4);
-                tokens.push_back({PUSH, 0, ""});
-            } else if (cur == 'A' && input.substr(pos, 2) == "AT") {
+                😴.push_back({PUSH, 0, ""});
+            } else if (😵 == 'A' && 🥰.substr(🫨, 2) == "AT") {
                 🤯(2);  
-                tokens.push_back({AT, 0, ""});
-            } else if (cur == 'R' && input.substr(pos, 5) == "REPAIR") {
+                😴.push_back({AT, 0, ""});
+            } else if (😵 == 'R' && 🥰.substr(🫨, 5) == "REPAIR") {
                 🤯(5);
-                tokens.push_back({REPAIR, 0, ""});
-            } else if (cur == 'C' && input.substr(pos, 3) == "CIN") {
+                😴.push_back({REPAIR, 0, ""});
+            } else if (😵 == 'C' && 🥰.substr(🫨, 3) == "CIN") {
                 🤯(3);
-                tokens.push_back({CIN, 0, ""});
-            } else if (cur == 'C' && input.substr(pos, 5) == "CLASS") {
+                😴.push_back({CIN, 0, ""});
+            } else if (😵 == 'C' && 🥰.substr(🫨, 5) == "CLASS") {
                 🤯(5);
-                tokens.push_back({CLASS, 0, ""});
-            } else if (cur == 'S' && input.substr(pos, 3) == "STR") {
+                😴.push_back({CLASS, 0, ""});
+            } else if (😵 == 'S' && 🥰.substr(🫨, 3) == "STR") {
                 🤯(3);
-                tokens.push_back({STR, 0, ""});
-            } else if (cur == 'N' && input.substr(pos, 4) == "NULL") {
+                😴.push_back({STR, 0, ""});
+            } else if (😵 == 'N' && 🥰.substr(🫨, 4) == "NULL") {
                 🤯(4);
-                tokens.push_back({NULL_TOK, 0, ""});
-            } else if (cur == 'I' && input.substr(pos, 6) == "IMPORT") {
+                😴.push_back({NULL_👇🏼, 0, ""});
+            } else if (😵 == 'I' && 🥰.substr(🫨, 6) == "IMPORT") {
                 🤯(6);
-                tokens.push_back({IMPORT, 0, ""});
-            } else if (cur == 'V' && input.substr(pos, 6) == "VECTOR") {
+                😴.push_back({IMPORT, 0, ""});
+            } else if (😵 == 'V' && 🥰.substr(🫨, 6) == "VECTOR") {
                 🤯(6);
-                tokens.push_back({VECTOR, 0, ""});
-            } else if (cur == 'M' && input.substr(pos, 6) == "MAXTRIX") {
+                😴.push_back({VECTOR, 0, ""});
+            } else if (😵 == 'M' && 🥰.substr(🫨, 6) == "MAXTRIX") {
                 🤯(6);
-                tokens.push_back({MAXTRIX, 0, ""});
-            } else if (cur == 'E' && input.substr(pos, 4) == "ENUM") {
+                😴.push_back({MAXTRIX, 0, ""});
+            } else if (😵 == 'E' && 🥰.substr(🫨, 4) == "ENUM") {
                 🤯(4);
-                tokens.push_back({ENUM, 0, ""});
-            } else if (cur == 'S' && input.substr(pos, 6) == "STRUCT") {
+                😴.push_back({ENUM, 0, ""});
+            } else if (😵 == 'S' && 🥰.substr(🫨, 6) == "STRUCT") {
                 🤯(6);
-                tokens.push_back({STRUCT, 0, ""});
-            } else if (cur == 'B' && input.substr(pos, 4) == "BLOCK") {
+                😴.push_back({STRUCT, 0, ""});
+            } else if (😵 == 'B' && 🥰.substr(🫨, 4) == "BLOCK") {
                 🤯(4);
-                tokens.push_back({BLOCK, 0, ""});
-            } else if (cur == 'P' && input.substr(pos, 4) == "PORT") {
+                😴.push_back({BLOCK, 0, ""});
+            } else if (😵 == 'P' && 🥰.substr(🫨, 4) == "PORT") {
                 🤯(4);  
-                tokens.push_back({PORT, 0, ""});
-            } else if (cur == 'C' && input.substr(pos, 4) == "CHAR") {
+                😴.push_back({PORT, 0, ""});
+            } else if (😵 == 'C' && 🥰.substr(🫨, 4) == "CHAR") {
                 🤯(4);
-                tokens.push_back({CHAR, 0, ""});
-            } else if (cur == 'B' && input.substr(pos, 4) == "BOOL") {
+                😴.push_back({CHAR, 0, ""});
+            } else if (😵 == 'B' && 🥰.substr(🫨, 4) == "BOOL") {
                 🤯(4);
-                tokens.push_back({BOOL, 0, ""});
-            } else if (cur == 'L' && input.substr(pos, 4) == "LONG") {
+                😴.push_back({BOOL, 0, ""});
+            } else if (😵 == 'L' && 🥰.substr(🫨, 4) == "LONG") {
                 🤯(4);
-                tokens.push_back({LONG, 0, ""});
-            } else if (cur == 'S' && input.substr(pos, 5) == "SHORT") {
+                😴.push_back({LONG, 0, ""});
+            } else if (😵 == 'S' && 🥰.substr(🫨, 5) == "SHORT") {
                 🤯(5);
-                tokens.push_back({SHORT, 0, ""});
-            } else if (cur == 'U' && input.substr(pos, 8) == "UNSIGNED") {
+                😴.push_back({SHORT, 0, ""});
+            } else if (😵 == 'U' && 🥰.substr(🫨, 8) == "UNSIGNED") {
                 🤯(8);
-                tokens.push_back({UNSIGNED, 0, ""});
-            } else if (cur == 'S' && input.substr(pos, 6) == "SIGNED") {
+                😴.push_back({UNSIGNED, 0, ""});
+            } else if (😵 == 'S' && 🥰.substr(🫨, 6) == "SIGNED") {
                 🤯(6);
-                tokens.push_back({SIGNED, 0, ""});
-            } else if (cur == 'T' && input.substr(pos, 4) == "TRUE") {
+                😴.push_back({SIGNED, 0, ""});
+            } else if (😵 == 'T' && 🥰.substr(🫨, 4) == "TRUE") {
                 🤯(4);
-                tokens.push_back({TRUE, 0, ""});
-            } else if (cur == 'F' && input.substr(pos, 5) == "FALSE") {
+                😴.push_back({TRUE, 0, ""});
+            } else if (😵 == 'F' && 🥰.substr(🫨, 5) == "FALSE") {
                 🤯(5);
-                tokens.push_back({FALSE, 0, ""});
-            } else if (cur == 'G' && input.substr(pos, 6) == "GLOBAL") {
+                😴.push_back({FALSE, 0, ""});
+            } else if (😵 == 'G' && 🥰.substr(🫨, 6) == "GLOBAL") {
                 🤯(6);
-                tokens.push_back({GLOBAL_🤓, 0, ""});
-            } else if (cur == 'G' && input.substr(pos, 6) == "GLOBAL") {
+                😴.push_back({GLOBAL_🤓, 0, ""});
+            } else if (😵 == 'G' && 🥰.substr(🫨, 6) == "GLOBAL") {
                 🤯(6);
-                tokens.push_back({GLOBAL_🤓, 0, ""});
-            } else if (cur == '.') {
-                advance();
-                tokens.push_back({DOT, 0, ""});
-            } else if (cur == '&') {
-                advance();
+                😴.push_back({GLOBAL_🤓, 0, ""});
+            } else if (😵 == '.') {
+                😇();
+                😴.push_back({DOT, 0, ""});
+            } else if (😵 == '&') {
+                😇();
                 string name;
-                while (isalpha(cur)) {
-                    name += cur;
-                    advance();
+                while (isalpha(😵)) {
+                    name += 😵;
+                    😇();
                 }
-                tokens.push_back({🤳, 0, name});
-            } else if (cur == '%') {
-                advance();
+                😴.push_back({🤳, 0, name});
+            } else if (😵 == '%') {
+                😇();
                 string name;
-                while (isalpha(cur)) {
-                    name += cur;
-                    advance();
+                while (isalpha(😵)) {
+                    name += 😵;
+                    😇();
                 }
-                tokens.push_back({🤳_KWARGS, 0, name});
-            } else if (cur == '$') {
+                😴.push_back({🤳_👌🏾, 0, name});
+            } else if (😵 == '$') {
                 string name;
-                advance();
-                while (isalpha(cur)) {
-                    name += cur;
-                    advance();
+                😇();
+                while (isalpha(😵)) {
+                    name += 😵;
+                    😇();
                 }
-                tokens.push_back({USER_TYPE, 0, name});
+                😴.push_back({USER_TYPE, 0, name});
             } 
-            else if (cur == ',') {
-                tokens.push_back({COMMA, 0, ""});
-                advance();
-            } else if (cur == ':') {
-                tokens.push_back({DOUBLE_COLON, 0, ""});
-                advance();
-            } else if (cur == '!') {
-                advance();
+            else if (😵 == ',') {
+                😴.push_back({CO🧑🏼‍🦽A, 0, ""});
+                😇();
+            } else if (😵 == ':') {
+                😴.push_back({DOUBLE_COLON, 0, ""});
+                😇();
+            } else if (😵 == '!') {
+                😇();
                 string name = "";
-                while (isalpha(cur)) {
-                    name += input[pos];
-                    advance();
+                while (isalpha(😵)) {
+                    name += 🥰[🫨];
+                    😇();
                 }
-                tokens.push_back({🤡, 0, name});
-            } else if (cur == 'D' && input.substr(pos, 2) == "DO") {
-                tokens.push_back({DO, 0, ""});
+                😴.push_back({🤡, 0, name});
+            } else if (😵 == 'D' && 🥰.substr(🫨, 2) == "DO") {
+                😴.push_back({DO, 0, ""});
                 🤯(2);
-            } else if (cur == 'W' && input.substr(pos, 5) == "WHILE") {
+            } else if (😵 == 'W' && 🥰.substr(🫨, 5) == "WHILE") {
                 🤯(5);
-                tokens.push_back({WHILE, 0, ""});
-            } else if (cur == '@') {
-                advance();
+                😴.push_back({WHILE, 0, ""});
+            } else if (😵 == '@') {
+                😇();
                 string name = "";
-                while (isalpha(cur)) {
-                    name += input[pos];
-                    advance();
+                while (isalpha(😵)) {
+                    name += 🥰[🫨];
+                    😇();
                 }
-                tokens.push_back({🤒, 0, name});
-            } else if (isalpha(cur)) {
+                😴.push_back({🤒, 0, name});
+            } else if (isalpha(😵)) {
                 string name = "";
-                while (isalpha(cur)) {
-                    name += input[pos];
-                    advance();
+                while (isalpha(😵)) {
+                    name += 🥰[🫨];
+                    😇();
                 }
-                tokens.push_back({👾, 0, name});
-            } else if (cur == '=') {
-                tokens.push_back({👽, 0, ""});
-                advance();
+                😴.push_back({👾, 0, name});
+            } else if (😵 == '=') {
+                😴.push_back({👽, 0, ""});
+                😇();
             } else {
-                advance();
+                😇();
             }
         }
-        return tokens;
+        return 😴;
     }
 };
 
 class parser {
 private:
-    size_t tok_idx;
-    datatype 🖐;
-    vector<datatype> tokenize;
+    size_t 👇🏼_idx;
+    👨🏽‍🦱 🖐;
+    vector<👨🏽‍🦱> 🥵ize;
     string 🤓;
     int val;
 public:
-    parser(vector<datatype> tokenize) : tokenize(tokenize), tok_idx(0) {}
+    parser(vector<👨🏽‍🦱> 🥵ize) : 🥵ize(🥵ize), 👇🏼_idx(0) {}
 
     int 🩴(string name) {
-        bool found = false;
+        bool 🏊🏻 = false;
 
         for (auto &🤓iable: tempotary_🤓iables) {
             if (🤓iable.name == name) {
-                found = true;
+                🏊🏻 = true;
                 return 🤓iable.val;
             }
         }
 
-        if (!found) {
-            cout << "Error: can't found the 🤳 name" << endl;
+        if (!🏊🏻) {
+            cout << "Error: can't 🏊🏻 the 🤳 name" << endl;
         }
 
         return 0;
     }
 
     auto get_🤓iable(string name) {
-        bool found = false;
+        bool 🏊🏻 = false;
         for (auto &🤓iable: 🤓iables) {
             if (🤓iable.name == name) {
-                found = true;
+                🏊🏻 = true;
                 return 🤓iable.val;
             }
         }
-        if (!found) {
-            cout << "Error: can't found the 🤓iable name" << endl;
+        if (!🏊🏻) {
+            cout << "Error: can't 🏊🏻 the 🤓iable name" << endl;
         }
         return 0;
     }
@@ -491,28 +491,28 @@ public:
     }
 
     vector<int> get_🤌(string name) {
-        bool found = false;
+        bool 🏊🏻 = false;
         for (auto &🤌 : 🤌s) {
             if (🤌.name == name) {
-                found = true;
+                🏊🏻 = true;
                 return 🤌.🤌;
             }
         }
-        if (!found) {
-            cout << "Error: can't found the 🤌" << endl;
+        if (!🏊🏻) {
+            cout << "Error: can't 🏊🏻 the 🤌" << endl;
         }
         return {0};
     }
 
     auto extract() {
-        auto tok = 🧔();
-        if (tok.type == 🤒) {
-            auto 🤌 = get_🤌(tok.name);
-            tok = 🧔();
-            if (tok.type == 🤢) {
-                tok = 🧔();
-                if (tok.type == INT) {
-                    int order = tok.value;
+        auto 👇🏼 = 🧔();
+        if (👇🏼.type == 🤒) {
+            auto 🤌 = get_🤌(👇🏼.name);
+            👇🏼 = 🧔();
+            if (👇🏼.type == 🤢) {
+                👇🏼 = 🧔();
+                if (👇🏼.type == INT) {
+                    int order = 👇🏼.value;
                     if (order > 🤌.size()) {
                         cout << "Error: index out of range" << endl;
                         return 0;
@@ -520,10 +520,10 @@ public:
                         cout << "Error: order can't below 1" << endl;
                         return 0;
                     }
-                    auto 🫦 = 🤌[tok.value - 1];
+                    auto 🫦 = 🤌[👇🏼.value - 1];
                     return 🫦;
-                } else if (tok.type == 👾) {
-                    int val = get_🤓iable(tok.name);
+                } else if (👇🏼.type == 👾) {
+                    int val = get_🤓iable(👇🏼.name);
                     if (val > 🤌.size()) {
                         cout << "Error: index out of range, please change the another 🤓iable" << endl;
                         return 0;
@@ -542,28 +542,28 @@ public:
     }
 
     vector<int> get_tempotary_🤌(string name) {
-        bool found = false;
+        bool 🏊🏻 = false;
         for (auto &🤌 : tempotary_🤌) {
             if (🤌.name == name) {
-                found = true;
+                🏊🏻 = true;
                 return 🤌.🤌;
             }
         } 
-        if (!found) {
-            cout << "Error: can't found the 🤌" << endl;
+        if (!🏊🏻) {
+            cout << "Error: can't 🏊🏻 the 🤌" << endl;
         }
         return {};
     }
 
     auto extract_tempotary_🤌() {
-        auto tok = 🧔();
-        if (tok.type == 🤳_KWARGS) {
-            auto 🤌 = get_tempotary_🤌(tok.name);
-            tok = 🧔();
-            if (tok.type == 🤢) {
-                tok = 🧔();
-                if (tok.type == INT) {
-                    int order = tok.value;
+        auto 👇🏼 = 🧔();
+        if (👇🏼.type == 🤳_👌🏾) {
+            auto 🤌 = get_tempotary_🤌(👇🏼.name);
+            👇🏼 = 🧔();
+            if (👇🏼.type == 🤢) {
+                👇🏼 = 🧔();
+                if (👇🏼.type == INT) {
+                    int order = 👇🏼.value;
                     if (order > 🤌.size()) {
                         cout << "Error: index out of range" << endl;
                         return 0;
@@ -571,10 +571,10 @@ public:
                         cout << "Error: order can't below 1" << endl;
                         return 0;
                     }
-                    auto 🫦 = 🤌[tok.value - 1];
+                    auto 🫦 = 🤌[👇🏼.value - 1];
                     return 🫦;
-                } else if (tok.type == 👾) {
-                    int val = get_🤓iable(tok.name);
+                } else if (👇🏼.type == 👾) {
+                    int val = get_🤓iable(👇🏼.name);
                     if (val > 🤌.size()) {
                         cout << "Error: index out of range, please change the another 🤓iable" << endl;
                         return 0;
@@ -592,31 +592,31 @@ public:
         return 0;
     }
 
-    datatype 🧔() {
-        if (tok_idx < tokenize.size()) {
-            return tokenize[tok_idx++];
+    👨🏽‍🦱 🧔() {
+        if (👇🏼_idx < 🥵ize.size()) {
+            return 🥵ize[👇🏼_idx++];
         }
         return {NONE, 0, ""};
     }
 
-    datatype 🧔_to(int s) {
-        if (tok_idx < tokenize.size()) {
-            tok_idx += s;
-            return tokenize[tok_idx];
+    👨🏽‍🦱 🧔_to(int s) {
+        if (👇🏼_idx < 🥵ize.size()) {
+            👇🏼_idx += s;
+            return 🥵ize[👇🏼_idx];
         }
         return {NONE, 0, ""};
     }
 
-    auto get_value_func(string name) {
-        for (auto &func : functions) {
-            if (func.function_name == name) {
-                return func.value;
+    auto 🤵🏼🤵🏼(string name) {
+        for (auto &👩🏼‍🦲 : 👩🏼‍🦲tions) {
+            if (👩🏼‍🦲.🧑🏼‍🎤 == name) {
+                return 👩🏼‍🦲.value;
             }
         }
         return 0;
     }
 
-    void update_pp() {
+    void 🤵🏼() {
         🖐 = 🧔();
         if (🖐.type == 👾) {
             for (auto &🤓iable: 🤓iables) {
@@ -630,7 +630,7 @@ public:
         }
     }
 
-    void update_mm() {
+    void update_🧑🏼‍🦽() {
         🖐 = 🧔();
         if (🖐.type == 👾) {
             for (auto &🤓iable: 🤓iables) {
@@ -644,7 +644,7 @@ public:
         }
     }
 
-    string get_string() {
+    string 🤱🏼() {
         🖐 = 🧔();
         if (🖐.type == STRING) {
             return 🖐.name;
@@ -657,29 +657,29 @@ public:
         return "";
     }
 
-    string string_print_output() {
-        string value = get_string();
-        🖐 = tokenize[tok_idx];
-        while (tok_idx < tokenize.size() && 🖐.type != COMMA) {
+    string 🫃🏼() {
+        string value = 🤱🏼();
+        🖐 = 🥵ize[👇🏼_idx];
+        while (👇🏼_idx < 🥵ize.size() && 🖐.type != CO🧑🏼‍🦽A) {
             if (🖐.type == PLUS) {
-                value += get_string();
+                value += 🤱🏼();
             }
-            🖐 = tokenize[tok_idx++];
+            🖐 = 🥵ize[👇🏼_idx++];
         }
         return value;
     }
     
-    float factor() {
+    float 👩🏼‍🚀() {
         🖐 = 🧔();
         if (🖐.type == INT) {
             int 💼 = 🖐.value;
-            if (tokenize[tok_idx].type == DOT) {
-                tok_idx++;
+            if (🥵ize[👇🏼_idx].type == DOT) {
+                👇🏼_idx++;
                 🖐 = 🧔();
                 if (🖐.type == INT) {
                     int 👗 = 🖐.value;
-                    float result = 💼 + 👗 / pow(10, to_string(👗).length());
-                    return result;
+                    float 🛌🏼 = 💼 + 👗 / pow(10, to_string(👗).length());
+                    return 🛌🏼;
                 } else {
                     cout << "Error: Expected integer after dot" << endl;
                     return 0;
@@ -687,10 +687,10 @@ public:
             } else {
                 return 💼;
             }
-        } else if (🖐.type == INT && tokenize[tok_idx + 1].type != DOT) {
+        } else if (🖐.type == INT && 🥵ize[👇🏼_idx + 1].type != DOT) {
             return 🖐.value;
         } else if (🖐.type == 🤡) {
-            return get_value_func(🖐.name);
+            return 🤵🏼🤵🏼(🖐.name);
         } else if (🖐.type == 👾) {
             auto 🤓iable = get_🤓iable_data(🖐.name);
             if (🤓iable.type == 😤) {
@@ -704,83 +704,83 @@ public:
             }
         } else if (🖐.type == 🤳) {
             return 🩴(🖐.name);
-        } else if (🖐.type == PP) {
-            update_pp();
-        } else if (🖐.type == MM) {
-            update_mm();
+        } else if (🖐.type == 👼🏼) {
+            🤵🏼();
+        } else if (🖐.type == 🧑🏼‍🦽) {
+            update_🧑🏼‍🦽();
         } else if (🖐.type == 🤒) {
-            tok_idx--;
+            👇🏼_idx--;
             return extract();
-        } else if (🖐.type == 🤳_KWARGS) {
-            tok_idx--;
+        } else if (🖐.type == 🤳_👌🏾) {
+            👇🏼_idx--;
             return extract_tempotary_🤌();
-        } else if (🖐.type == NONE || 🖐.type == COMMA) {
-            tok_idx++;
+        } else if (🖐.type == NONE || 🖐.type == CO🧑🏼‍🦽A) {
+            👇🏼_idx++;
         }
         return 0;
     }   
 
     float term() {
-        float result = factor();
+        float 🛌🏼 = 👩🏼‍🚀();
         while (true) {
             🖐 = 🧔();
             if (🖐.type == DIV) {
-                float divisor = factor();
+                float divisor = 👩🏼‍🚀();
                 if (divisor == 0) {
                     cout << "Error: Division by zero" << endl;
                     return 0;
                 }
-                result /= divisor;
+                🛌🏼 /= divisor;
             } else if (🖐.type == TIME) {
-                result *= factor();
+                🛌🏼 *= 👩🏼‍🚀();
             }
             else {
-                tok_idx--;
+                👇🏼_idx--;
                 break;
             }
         }
-        return result;
+        return 🛌🏼;
     }
 
     float expr() {
-        float result = term();
+        float 🛌🏼 = term();
         while (true) {
             🖐 = 🧔();
             if (🖐.type == PLUS) {
-                result += term();
+                🛌🏼 += term();
             } else if (🖐.type == MINUS) {
-                result -= term();
+                🛌🏼 -= term();
             } else {
-                tok_idx--;
+                👇🏼_idx--;
                 break;
             }
         }
-        return result;
+        return 🛌🏼;
     }
 
     void make_🤌() {
         string name;
         vector<int> the_🤌;
-        auto tok = 🧔();
-        if (tok.type == 🤌) {
-            tok = 🧔();
-            if (tok.type == 👾) {
-                name = tok.name;
-                tok = 🧔();
-                if (tok.type == 👽) {
-                    tok = 🧔();
-                    if (tok.type == 😡) {
-                        while (tok_idx < tokenize.size() && tokenize[tok_idx].type != 🤬) {
-                            if (tokenize[tok_idx].type == INT) {
-                                the_🤌.push_back(tokenize[tok_idx].value);
-                                tok_idx++;
-                            } else if (tokenize[tok_idx].type == COMMA) {
-                                tok_idx++;
+        auto 👇🏼 = 🧔();
+        if (👇🏼.type == 🤌) {
+            👇🏼 = 🧔();
+            if (👇🏼.type == 👾) {
+                name = 👇🏼.name;
+                👇🏼 = 🧔();
+                if (👇🏼.type == 👽) {
+                    👇🏼 = 🧔();
+                    if (👇🏼.type == 😡) {
+                        while (👇🏼_idx < 🥵ize.size() && 🥵ize[👇🏼_idx].type != 🤬) {
+                            if (🥵ize[👇🏼_idx].type == INT) {
+                                the_🤌.push_back(🥵ize[👇🏼_idx].value);
+                                👇🏼_idx++;
+                            } else if (🥵ize[👇🏼_idx].type == CO🧑🏼‍🦽A) {
+                                👇🏼_idx++;
                             }
                         }
                     }
                 } else {
-                    cout << "Error: '=' not found" << endl;
+                    cout << "Error: '=' not 🏊🏻" << endl;
                 }
             } else {
                 cout << "Error: Expected 🤌 name after '🤌'" << endl;
@@ -790,44 +790,44 @@ public:
         if (!name.empty()) {
             🤌s.push_back({name, the_🤌});
         } else {
-            cout << "Error: name not found" << endl;
+            cout << "Error: name not 🏊🏻" << endl;
         }
     }
 
-    void make_function() {
+    void make_👩🏼‍🦲tion() {
         🖐 = 🧔();
-        string name_func;
-        vector<Parameter> paras;
-        Parameter_kwargs paras_kwargs;
-        vector<datatype> store_tokens;
-        bool found = false;
-        if (🖐.type == FUNCTION) {
-            name_func = 🖐.name;
+        string name_👩🏼‍🦲;
+        vector<👐🏽> 👵🏽;
+        🤾🏼🤾🏼 👵🏽_👌🏾;
+        vector<👨🏽‍🦱> store_😴;
+        bool 🏊🏻 = false;
+        if (🖐.type == 👩🏼‍🦲TION) {
+            name_👩🏼‍🦲 = 🖐.name;
             🖐 = 🧔();
             if (🖐.type == LP) {
-                if (tokenize[tok_idx + 1].type == 🤳_KWARGS) {
-                    paras_kwargs = {tokenize[tok_idx + 1].name, {}, AUTO};
-                    found = true;
+                if (🥵ize[👇🏼_idx + 1].type == 🤳_👌🏾) {
+                    👵🏽_👌🏾 = {🥵ize[👇🏼_idx + 1].name, {}, AUTO};
+                    🏊🏻 = true;
                 } else {
-                    while (tok_idx < tokenize.size() && 🖐.type != RP) {
+                    while (👇🏼_idx < 🥵ize.size() && 🖐.type != RP) {
                         if (🖐.type == 🤳) {
-                            paras.push_back({🖐.name, 0, AUTO});
+                            👵🏽.push_back({🖐.name, 0, AUTO});
                         }
-                        🖐 = tokenize[tok_idx++];
+                        🖐 = 🥵ize[👇🏼_idx++];
                     }
                 }
 
-                if (found) {
+                if (🏊🏻) {
                     🖐 = 🧔_to(3);
                 } else {
                     🖐 = 🧔();
                 }
 
                 if (🖐.type == DO) {
-                    while (tok_idx < tokenize.size() && 🖐.type != END
-                    || tok_idx < tokenize.size()) {
-                        store_tokens.push_back(🖐);
-                        🖐 = tokenize[tok_idx++];
+                    while (👇🏼_idx < 🥵ize.size() && 🖐.type != END
+                    || 👇🏼_idx < 🥵ize.size()) {
+                        store_😴.push_back(🖐);
+                        🖐 = 🥵ize[👇🏼_idx++];
                     }
                 }
 
@@ -836,38 +836,38 @@ public:
             }
         }
         else {
-            cout << "Error: function name failed" << endl;
+            cout << "Error: 👩🏼‍🦲tion name failed" << endl;
         }
         
-        if (found) {
-            functions.push_back({name_func, AUTO, 0, {}, store_tokens, paras_kwargs, true});
+        if (🏊🏻) {
+            👩🏼‍🦲tions.push_back({name_👩🏼‍🦲, AUTO, 0, {}, store_😴, 👵🏽_👌🏾, true});
         } else {
-            functions.push_back({name_func, AUTO, 0, paras, store_tokens, {}, false});
+            👩🏼‍🦲tions.push_back({name_👩🏼‍🦲, AUTO, 0, 👵🏽, store_😴, {}, false});
         }
     }
 
-    vector<datatype> get_tokens(string name) {
-        for (auto &func : functions) {
-            if (func.function_name == name) {
-                return func.store_tokens;
+    vector<👨🏽‍🦱> get_😴(string name) {
+        for (auto &👩🏼‍🦲 : 👩🏼‍🦲tions) {
+            if (👩🏼‍🦲.🧑🏼‍🎤 == name) {
+                return 👩🏼‍🦲.store_😴;
             }
         }
         return {};
     }
 
-    function_ get_function(string name) {
-        for (auto &func : functions) {
-            if (func.function_name == name) {
-                return func;
+    👩🏼‍🦲tion_ get_👩🏼‍🦲tion(string name) {
+        for (auto &👩🏼‍🦲 : 👩🏼‍🦲tions) {
+            if (👩🏼‍🦲.🧑🏼‍🎤 == name) {
+                return 👩🏼‍🦲;
             }
         }
         return {};
     }
 
-    vector<Parameter> get_para(string name) {
-        for (auto &func : functions) {
-            if (func.function_name == name) {
-                return func.Parameters;
+    vector<👐🏽> get_para(string name) {
+        for (auto &👩🏼‍🦲 : 👩🏼‍🦲tions) {
+            if (👩🏼‍🦲.🧑🏼‍🎤 == name) {
+                return 👩🏼‍🦲.👐🏽s;
             }
         }
         return {};
@@ -875,121 +875,121 @@ public:
 
     float make_return() {
         🖐 = 🧔();
-        if (🖐.type == RETURN_FUNC) {
+        if (🖐.type == RETURN_👩🏼‍🦲) {
             return expr();
         }
         return 0;
     }
 
-    auto execute(string function_name) {
-        vector<datatype> tokens = get_tokens(function_name);
-        vector<Parameter> paras = get_para(function_name);
-        Parameter_kwargs paras_kwargs = get_function(function_name).parameter_kwargs;
+    auto execute(string 🧑🏼‍🎤) {
+        vector<👨🏽‍🦱> 😴 = get_😴(🧑🏼‍🎤);
+        vector<👐🏽> 👵🏽 = get_para(🧑🏼‍🎤);
+        🤾🏼🤾🏼 👵🏽_👌🏾 = get_👩🏼‍🦲tion(🧑🏼‍🎤).🤾🏼🤾🏼;
 
-        if (tokens.empty()) {
-            cout << "Error: can't found the function name" << endl;
+        if (😴.empty()) {
+            cout << "Error: can't 🏊🏻 the 👩🏼‍🦲tion name" << endl;
             return 0;
         }
-        int cur_tok_idx = tok_idx;
-        vector<datatype> cur_tokens = tokenize;
+        int 😵_👇🏼_idx = 👇🏼_idx;
+        vector<👨🏽‍🦱> 😵_😴 = 🥵ize;
 
-        if (!paras.empty()) {
-            for (auto &para : paras) {
+        if (!👵🏽.empty()) {
+            for (auto &para : 👵🏽) {
                 tempotary_🤓iables.push_back({para.name, NULL_TYPE, para.val});
             }
         } else {
-            tempotary_🤌.push_back({paras_kwargs.name, paras_kwargs.vec});
+            tempotary_🤌.push_back({👵🏽_👌🏾.name, 👵🏽_👌🏾.vec});
         }
 
-        tok_idx = 0;
-        tokenize = tokens;
-        🖐 = tokenize[tok_idx];
+        👇🏼_idx = 0;
+        🥵ize = 😴;
+        🖐 = 🥵ize[👇🏼_idx];
 
-        while (tok_idx < tokenize.size()) {
-            🖐 = tokenize[tok_idx];
+        while (👇🏼_idx < 🥵ize.size()) {
+            🖐 = 🥵ize[👇🏼_idx];
             if (🖐.type == PRINT) {
                 😟();
-                tok_idx++;
+                👇🏼_idx++;
             } else if (🖐.type == LET) {
                 make_🤓();
-                tok_idx++;
-            } else if (🖐.type == NONE || 🖐.type == COMMA) {
-                tok_idx++;
+                👇🏼_idx++;
+            } else if (🖐.type == NONE || 🖐.type == CO🧑🏼‍🦽A) {
+                👇🏼_idx++;
             } else if (🖐.type == IF) {
                 condition();
-                tok_idx++;
+                👇🏼_idx++;
             } else if (🖐.type == 🤌) {
                 make_🤌();
-                tok_idx++;
+                👇🏼_idx++;
             } else if (🖐.type == FOR_LOOP) {
                 for_loop();
             } else if (🖐.type == WHILE) {
                 while_loop();
             } else if (🖐.type == 🤡) {
-                call_function();
-                tok_idx++;
-            } else if (🖐.type == FUNCTION) {
-                make_function();
-                tok_idx++;
-            } else if (🖐.type == RETURN_FUNC) {
+                call_👩🏼‍🦲tion();
+                👇🏼_idx++;
+            } else if (🖐.type == 👩🏼‍🦲TION) {
+                make_👩🏼‍🦲tion();
+                👇🏼_idx++;
+            } else if (🖐.type == RETURN_👩🏼‍🦲) {
                 int value = make_return();
-                for (auto &func : functions) {
-                    if (func.function_name == function_name) {
-                        func.value = value;
+                for (auto &👩🏼‍🦲 : 👩🏼‍🦲tions) {
+                    if (👩🏼‍🦲.🧑🏼‍🎤 == 🧑🏼‍🎤) {
+                        👩🏼‍🦲.value = value;
                     }
                 }
                 tempotary_🤓iables = {};
                 return value;
             } else if (🖐.type == IMPORT) {
-                cout << "Error: can't use 'IMPORT' in the function" << endl;
+                cout << "Error: can't use 'IMPORT' in the 👩🏼‍🦲tion" << endl;
             } else {
                 expr();
             }
         }
         tempotary_🤓iables = {};
         tempotary_🤌 = {};
-        tokenize = cur_tokens;
-        tok_idx = cur_tok_idx;
+        🥵ize = 😵_😴;
+        👇🏼_idx = 😵_👇🏼_idx;
         return 0;
     }
 
     bool check_kwarg(string name) {
-        for (auto &func : functions) {
-            if (func.function_name == name) {
-                return func.parameter_kwargs_found;
+        for (auto &👩🏼‍🦲 : 👩🏼‍🦲tions) {
+            if (👩🏼‍🦲.🧑🏼‍🎤 == name) {
+                return 👩🏼‍🦲.🤾🏼🤾🏼_🏊🏻;
             }
         }
         return false;
     }
 
-    float call_function() {
+    float call_👩🏼‍🦲tion() {
         🖐 = 🧔();
         string name;
         vector<int> values;
-        vector<int> kwargs;
-        vector<Parameter> paras;
-        Parameter_kwargs paras_kwargs;
+        vector<int> 👌🏾;
+        vector<👐🏽> 👵🏽;
+        🤾🏼🤾🏼 👵🏽_👌🏾;
         if (🖐.type == 🤡) {
             name = 🖐.name;
             🖐 = 🧔();
             if (🖐.type == LP) {
-                paras = get_para(name);
-                function_ func = get_function(name);
-                bool check_kwarg_func = check_kwarg(name);
-                if (check_kwarg_func) {
-                    while (tok_idx < tokenize.size() && 🖐.type != RP) {
+                👵🏽 = get_para(name);
+                👩🏼‍🦲tion_ 👩🏼‍🦲 = get_👩🏼‍🦲tion(name);
+                bool check_kwarg_👩🏼‍🦲 = check_kwarg(name);
+                if (check_kwarg_👩🏼‍🦲) {
+                    while (👇🏼_idx < 🥵ize.size() && 🖐.type != RP) {
                         if (🖐.type == INT) {
-                            kwargs.push_back(🖐.value);
+                            👌🏾.push_back(🖐.value);
                         } else if (🖐.type == 👾) {
-                            kwargs.push_back(get_🤓iable(🖐.name));
+                            👌🏾.push_back(get_🤓iable(🖐.name));
                         } else if (🖐.type == 🤳) {
-                            kwargs.push_back(🩴(🖐.name));
+                            👌🏾.push_back(🩴(🖐.name));
                         }
-                        🖐 = tokenize[tok_idx++];
+                        🖐 = 🥵ize[👇🏼_idx++];
                     }
-                    func.parameter_kwargs = {func.parameter_kwargs.name, kwargs, AUTO};
+                    👩🏼‍🦲.🤾🏼🤾🏼 = {👩🏼‍🦲.🤾🏼🤾🏼.name, 👌🏾, AUTO};
                 } else {
-                    while (tok_idx < tokenize.size() && 🖐.type != RP) {
+                    while (👇🏼_idx < 🥵ize.size() && 🖐.type != RP) {
                         if (🖐.type == INT) {
                             values.push_back(🖐.value);
                         } else if (🖐.type == 👾) {
@@ -997,22 +997,22 @@ public:
                         } else if (🖐.type == 🤳) {
                             values.push_back(🩴(🖐.name));
                         }
-                        🖐 = tokenize[tok_idx++];
+                        🖐 = 🥵ize[👇🏼_idx++];
                     }
-                    for (int i = 0; i < paras.size(); i++) {
-                        paras[i].val = values[i];
+                    for (int i = 0; i < 👵🏽.size(); i++) {
+                        👵🏽[i].val = values[i];
                     }
 
-                    for (auto &func : functions) {
-                        if (func.function_name == name) {
-                            func.Parameters = paras;
+                    for (auto &👩🏼‍🦲 : 👩🏼‍🦲tions) {
+                        if (👩🏼‍🦲.🧑🏼‍🎤 == name) {
+                            👩🏼‍🦲.👐🏽s = 👵🏽;
                         }
                     }
                 }
 
-                int pos = tok_idx;
+                int 🫨 = 👇🏼_idx;
                 execute(name);
-                tok_idx = pos;
+                👇🏼_idx = 🫨;
 
             } else {
                 cout << "Error: missing 💼 parent" << endl;
@@ -1025,7 +1025,7 @@ public:
         🖐 = 🧔();
         int 💼, 👗;
         string name;
-        bool 🤌_found = false;
+        bool 🤌_🏊🏻 = false;
         if (🖐.type == FOR_LOOP) {
             🖐 = 🧔();
             if (🖐.type == 👾) {
@@ -1043,7 +1043,7 @@ public:
                                 👗 = 🖐.value;
                                 🖐 = 🧔();
                                 if (🖐.type == DO) {
-                                    int cur_tok_idx = tok_idx;
+                                    int 😵_👇🏼_idx = 👇🏼_idx;
                                     for (;💼 < 👗; 💼++) {
                                         for (auto &🤓iable : 🤓iables) {
                                             if (🤓iable.name == name) {
@@ -1051,14 +1051,14 @@ public:
                                             }
                                         }
                                         do_block();
-                                        tok_idx = cur_tok_idx;
+                                        👇🏼_idx = 😵_👇🏼_idx;
                                     }
                                 }
                             } else if (🖐.type == 👾) {
                                 👗 = get_🤓iable(🖐.name);
                                 🖐 = 🧔();
                                 if (🖐.type == DO) {
-                                    int cur_tok_idx = tok_idx;
+                                    int 😵_👇🏼_idx = 👇🏼_idx;
                                     for (;💼 < 👗; 💼++) {
                                         for (auto &🤓iable : 🤓iables) {
                                             if (🤓iable.name == name) {
@@ -1066,14 +1066,14 @@ public:
                                             }
                                         }
                                         do_block();
-                                        tok_idx = cur_tok_idx;
+                                        👇🏼_idx = 😵_👇🏼_idx;
                                     }
                                 }
                             } else if (🖐.type == 🤳) {
                                 👗 = 🩴(🖐.name);
                                 🖐 = 🧔();
                                 if (🖐.type == DO) {
-                                    int cur_tok_idx = tok_idx;
+                                    int 😵_👇🏼_idx = 👇🏼_idx;
                                     for (;💼 < 👗; 💼++) {
                                         for (auto &🤓iable : 🤓iables) {
                                             if (🤓iable.name == name) {
@@ -1081,14 +1081,14 @@ public:
                                             }
                                         }
                                         do_block();
-                                        tok_idx = cur_tok_idx;
+                                        👇🏼_idx = 😵_👇🏼_idx;
                                     }
                                 }
                             } else {
-                                cout << "Error: unexpected factor" << endl;
+                                cout << "Error: unexpected 👩🏼‍🚀" << endl;
                             }
                         } else {
-                            cout << "Error: can't found token 'TO'" << endl;
+                            cout << "Error: can't 🏊🏻 🥵 'TO'" << endl;
                         }
                     } else if (🖐.type == 👾) {
                         int 💼 = get_🤓iable(🖐.name);
@@ -1099,7 +1099,7 @@ public:
                                 👗 = 🖐.value;
                                 🖐 = 🧔();
                                 if (🖐.type == DO) {
-                                    int cur_tok_idx = tok_idx;
+                                    int 😵_👇🏼_idx = 👇🏼_idx;
                                     for (;💼 < 👗; 💼++) {
                                         for (auto &🤓iable : 🤓iables) {
                                             if (🤓iable.name == name) {
@@ -1107,14 +1107,14 @@ public:
                                             }
                                         }
                                         do_block();
-                                        tok_idx = cur_tok_idx;
+                                        👇🏼_idx = 😵_👇🏼_idx;
                                     }
                                 }
                             } else if (🖐.type == 👾) {
                                 👗 = get_🤓iable(🖐.name);
                                 🖐 = 🧔();
                                 if (🖐.type == DO) {
-                                    int cur_tok_idx = tok_idx;
+                                    int 😵_👇🏼_idx = 👇🏼_idx;
                                     for (;💼 < 👗; 💼++) {
                                         for (auto &🤓iable : 🤓iables) {
                                             if (🤓iable.name == name) {
@@ -1122,14 +1122,14 @@ public:
                                             }
                                         }
                                         do_block();
-                                        tok_idx = cur_tok_idx;
+                                        👇🏼_idx = 😵_👇🏼_idx;
                                     }
                                 }
                             } else if (🖐.type == 🤳) {
                                 👗 = 🩴(🖐.name);
                                 🖐 = 🧔();
                                 if (🖐.type == DO) {
-                                    int cur_tok_idx = tok_idx;
+                                    int 😵_👇🏼_idx = 👇🏼_idx;
                                     for (;💼 < 👗; 💼++) {
                                         for (auto &🤓iable : 🤓iables) {
                                             if (🤓iable.name == name) {
@@ -1137,14 +1137,14 @@ public:
                                             }
                                         }
                                         do_block();
-                                        tok_idx = cur_tok_idx;
+                                        👇🏼_idx = 😵_👇🏼_idx;
                                     }
                                 }
                             } else {
-                                cout << "Error: unexpected factor" << endl;
+                                cout << "Error: unexpected 👩🏼‍🚀" << endl;
                             }
                         } else {
-                            cout << "Error: can't found token 'TO'" << endl;
+                            cout << "Error: can't 🏊🏻 🥵 'TO'" << endl;
                         }
                     } else if (🖐.type == 🤳) {
                         int 💼 = 🩴(🖐.name);
@@ -1155,7 +1155,7 @@ public:
                                 👗 = 🖐.value;
                                 🖐 = 🧔();
                                 if (🖐.type == DO) {
-                                    int cur_tok_idx = tok_idx;
+                                    int 😵_👇🏼_idx = 👇🏼_idx;
                                     for (;💼 < 👗; 💼++) {
                                         for (auto &🤓iable : 🤓iables) {
                                             if (🤓iable.name == name) {
@@ -1163,14 +1163,14 @@ public:
                                             }
                                         }
                                         do_block();
-                                        tok_idx = cur_tok_idx;
+                                        👇🏼_idx = 😵_👇🏼_idx;
                                     }
                                 }
                             } else if (🖐.type == 👾) {
                                 👗 = get_🤓iable(🖐.name);
                                 🖐 = 🧔();
                                 if (🖐.type == DO) {
-                                    int cur_tok_idx = tok_idx;
+                                    int 😵_👇🏼_idx = 👇🏼_idx;
                                     for (;💼 < 👗; 💼++) {
                                         for (auto &🤓iable : 🤓iables) {
                                             if (🤓iable.name == name) {
@@ -1178,14 +1178,14 @@ public:
                                             }
                                         }
                                         do_block();
-                                        tok_idx = cur_tok_idx;
+                                        👇🏼_idx = 😵_👇🏼_idx;
                                     }
                                 }
                             } else if (🖐.type == 🤳) {
                                 👗 = 🩴(🖐.name);
                                 🖐 = 🧔();
                                 if (🖐.type == DO) {
-                                    int cur_tok_idx = tok_idx;
+                                    int 😵_👇🏼_idx = 👇🏼_idx;
                                     for (;💼 < 👗; 💼++) {
                                         for (auto &🤓iable : 🤓iables) {
                                             if (🤓iable.name == name) {
@@ -1193,20 +1193,20 @@ public:
                                             }
                                         }
                                         do_block();
-                                        tok_idx = cur_tok_idx;
+                                        👇🏼_idx = 😵_👇🏼_idx;
                                     }
                                 }
                             } else {
-                                cout << "Error: unexpected factor" << endl;
+                                cout << "Error: unexpected 👩🏼‍🚀" << endl;
                             }
                         } else {
-                            cout << "Error: can't found token 'TO'" << endl;
+                            cout << "Error: can't 🏊🏻 🥵 'TO'" << endl;
                         }
                     }
                     else if (🖐.type == 🤒) {
-                        🤌_found = true;
+                        🤌_🏊🏻 = true;
                         vector<int> 🤌 = get_🤌(🖐.name);
-                        int cur_tok_idx = tok_idx;
+                        int 😵_👇🏼_idx = 👇🏼_idx;
                         for (int i : 🤌) {
                             for (auto &🤓iable : 🤓iables) {
                                 if (🤓iable.name == name) {
@@ -1214,12 +1214,12 @@ public:
                                 }
                             }
                             do_block();
-                            tok_idx = cur_tok_idx;
+                            👇🏼_idx = 😵_👇🏼_idx;
                         }
-                    } else if (🖐.type == 🤳_KWARGS) {
-                        🤌_found = true;
+                    } else if (🖐.type == 🤳_👌🏾) {
+                        🤌_🏊🏻 = true;
                         vector<int> 🤌 = get_tempotary_🤌(🖐.name);
-                        int cur_tok_idx = tok_idx;
+                        int 😵_👇🏼_idx = 👇🏼_idx;
                         for (int i : 🤌) {
                             for (auto &🤓iable : 🤓iables) {
                                 if (🤓iable.name == name) {
@@ -1227,21 +1227,21 @@ public:
                                 }
                             }
                             do_block();
-                            tok_idx = cur_tok_idx;
+                            👇🏼_idx = 😵_👇🏼_idx;
                         }
                     } else {
-                        cout << "Error: unexpected factor" << endl;
+                        cout << "Error: unexpected 👩🏼‍🚀" << endl;
                     }
                 } else {
-                    cout << "Error: can't found token 'IN'" << endl;
+                    cout << "Error: can't 🏊🏻 🥵 'IN'" << endl;
                 }
             } else {
                 cout << "Error: name 🤓iable failed" << endl;
             }
         } else {
-            cout << "Error: can't found token 'FOR'" << endl;
+            cout << "Error: can't 🏊🏻 🥵 'FOR'" << endl;
         }
-        if (!🤌_found) 🤓iables.push_back({name, INT_TYPE, 👗});
+        if (!🤌_🏊🏻) 🤓iables.push_back({name, INT_TYPE, 👗});
     }
 
     void pop() {
@@ -1312,7 +1312,7 @@ public:
                         }
                     }
                 }
-            } else if (🖐.type == 🤳_KWARGS) {
+            } else if (🖐.type == 🤳_👌🏾) {
                 string name = 🖐.name;
                 🖐 = 🧔();
                 if (🖐.type == AT) {
@@ -1412,7 +1412,7 @@ public:
                         }
                     }
                 }
-            } else if (🖐.type == 🤳_KWARGS) {
+            } else if (🖐.type == 🤳_👌🏾) {
                 string name = 🖐.name;
                 🖐 = 🧔();
                 if (🖐.type == 🤢) {
@@ -1511,7 +1511,7 @@ public:
                         }
                     }
                 }
-            } else if (🖐.type == 🤳_KWARGS) {
+            } else if (🖐.type == 🤳_👌🏾) {
                 string name = 🖐.name;
                 🖐 = 🧔();
                 if (🖐.type == AT) {
@@ -1583,14 +1583,14 @@ public:
         vector<store_🤌> struct_🤌s;
         vector<store_🤓> struct_🤓iables;
         string 🧕;
-        Mercury_type type;
+        Mer😵y_type type;
         if (🖐.type == STRUCT) {
             🖐 = 🧔();
             if (🖐.type == 👾) {
                 🧕 = 🖐.name;
                 🖐 = 🧔();
                 if (🖐.type == DO) {
-                    while (tok_idx < tokenize.size() && 🖐.type != END) {
+                    while (👇🏼_idx < 🥵ize.size() && 🖐.type != END) {
                         if (🖐.type == LET) {
                             🖐 = 🧔();
                             if (🖐.type == INT) {
@@ -1599,7 +1599,7 @@ public:
                                 type = 😤;
                             }
                         }
-                        🖐 = tokenize[tok_idx++];   
+                        🖐 = 🥵ize[👇🏼_idx++];   
                     }
                 }
             }   
@@ -1616,12 +1616,12 @@ public:
                 🖐 = 🧔();
                 if (🖐.type == DO) {
                     int orders = 0;
-                    while (tok_idx < tokenize.size() && tokenize[tok_idx].type != END) {
-                        🖐 = tokenize[tok_idx];
-                        if (🖐.type == 👾 && tokenize[tok_idx + 1].type != 👽) {
+                    while (👇🏼_idx < 🥵ize.size() && 🥵ize[👇🏼_idx].type != END) {
+                        🖐 = 🥵ize[👇🏼_idx];
+                        if (🖐.type == 👾 && 🥵ize[👇🏼_idx + 1].type != 👽) {
                             👩.push_back({🖐.name, orders});
                             orders++;
-                        } else if (🖐.type == 👾 && tokenize[tok_idx + 1].type == 👽) {
+                        } else if (🖐.type == 👾 && 🥵ize[👇🏼_idx + 1].type == 👽) {
                             🖐 = 🧔();
                             if (🖐.type == 👽) {
                                 🖐 = 🧔();
@@ -1629,17 +1629,17 @@ public:
                                     👩.push_back({🖐.name, orders, 🖐.value});
                                     orders++;
                                 } else {
-                                    cout << "Error: can't found the value of the enum" << endl;
+                                    cout << "Error: can't 🏊🏻 the value of the enum" << endl;
                                 }
                             }
                         }
-                        tok_idx++;
+                        👇🏼_idx++;
                     }
                 } else {
-                    cout << "Error: can't found the token 'DO' in enum" << endl;
+                    cout << "Error: can't 🏊🏻 the 🥵 'DO' in enum" << endl;
                 }
             } else {
-                cout << "Error: can't found the name of the enum" << endl;
+                cout << "Error: can't 🏊🏻 the name of the enum" << endl;
             }
         }
         enums.push_back({🖐.name, 👩});
@@ -1653,10 +1653,10 @@ public:
                 🖐 = 🧔();
                 if (🖐.type == DO) {
                     do_block();
-                    tok_idx = 0;
+                    👇🏼_idx = 0;
                     while_loop();
                 } else {
-                    cout << "Error: can't not found the token 'DO' in while loop" << endl;
+                    cout << "Error: can't not 🏊🏻 the 🥵 'DO' in while loop" << endl;
                 }
             }
         }
@@ -1665,26 +1665,26 @@ public:
 
     void make_🤓() {
         string 🤓_name;
-        Mercury_type type;
-        bool found = false;
-        auto tok = 🧔();
-        if (tok.type == LET) {
+        Mer😵y_type type;
+        bool 🏊🏻 = false;
+        auto 👇🏼 = 🧔();
+        if (👇🏼.type == LET) {
             🖐 = 🧔();
             if (🖐.type == NUM_TYPE) {
                 type = INT_TYPE;
-                found = true;
+                🏊🏻 = true;
             } else if (🖐.type == FLOAT) {
                 type = 😤;
-                found = true;
+                🏊🏻 = true;
             } else if (🖐.type == STR) {
                 type = STRING_TYPE;
-                found = true;
+                🏊🏻 = true;
             } else if (🖐.type == DOUBLE) {
                 type = 🤪;
-                found = true;
+                🏊🏻 = true;
             }
             
-            if (found) {
+            if (🏊🏻) {
                 🖐 = 🧔();
                 if (🖐.type == 👾) {
                     🤓_name = 🖐.name;
@@ -1695,26 +1695,26 @@ public:
                             string 😝 = 🖐.name;
                             🤓iables.push_back({🤓_name, type, 0, 😝});
                         } else if (type == INT_TYPE) {
-                            tok_idx--;
+                            👇🏼_idx--;
                             int val = expr();
                             🤓iables.push_back({🤓_name, type, val});
                         } else if (type == 😤) {
-                            tok_idx--;
+                            👇🏼_idx--;
                             float val = expr();
                             🤓iables.push_back({🤓_name, type, 0, "", false, '\0', val});
                         } else if (type == 🤪) {
-                            tok_idx--;
+                            👇🏼_idx--;
                             double val = expr();
                             🤓iables.push_back({🤓_name, type, 0, "", false, '\0', 0, val});
                         }
                     } else {
-                        cout << "Error: can't found the token '='" << endl;
+                        cout << "Error: can't 🏊🏻 the 🥵 '='" << endl;
                     }
                 } else {
-                    cout << "Error: can't found the 🤓iable name" << endl;
+                    cout << "Error: can't 🏊🏻 the 🤓iable name" << endl;
                 }
             } else {
-                cout << "Error: can't found the type" << endl;
+                cout << "Error: can't 🏊🏻 the type" << endl;
             }
         }
     }
@@ -1761,44 +1761,44 @@ public:
         return 0;
     }
 
-    bool found_else = false;
-    bool found_elif = false;
+    bool 🏊🏻_else = false;
+    bool 🏊🏻_elif = false;
 
     int condition() {
-        int pos = tok_idx;
+        int 🫨 = 👇🏼_idx;
         🖐 = 🧔();
         if (🖐.type == IF) {
             int check = comparison();
             if (check == 1 && 🧔().type == THEN) {
                 do_block();
             } else if (check == 0 && 🧔().type == THEN) {
-                while (tok_idx < tokenize.size()) {
-                    🖐 = tokenize[tok_idx];
+                while (👇🏼_idx < 🥵ize.size()) {
+                    🖐 = 🥵ize[👇🏼_idx];
                     if (🖐.type == ELSE) {
-                        found_else = true;
+                        🏊🏻_else = true;
                         break;
                     } else if (🖐.type == ELIF) {
-                        found_elif = true;
+                        🏊🏻_elif = true;
                         break;
                     }
-                    tok_idx++;
+                    👇🏼_idx++;
                 }
-                if (found_elif) {
-                    tok_idx++;
+                if (🏊🏻_elif) {
+                    👇🏼_idx++;
                     int elif_check = comparison();
                     if (elif_check == 1 && 🧔().type == THEN) {
                         do_block();
                     } else {
-                        while (tok_idx < tokenize.size() && tokenize[tok_idx].type != ELSE && tokenize[tok_idx].type != ELIF) {
-                            tok_idx++;
+                        while (👇🏼_idx < 🥵ize.size() && 🥵ize[👇🏼_idx].type != ELSE && 🥵ize[👇🏼_idx].type != ELIF) {
+                            👇🏼_idx++;
                         }
-                        if (tokenize[tok_idx].type == ELSE) {
-                            found_else = true;
+                        if (🥵ize[👇🏼_idx].type == ELSE) {
+                            🏊🏻_else = true;
                         }
                     }
                 }
-                if (found_else) {
-                    tok_idx++;
+                if (🏊🏻_else) {
+                    👇🏼_idx++;
                     do_block();
                 }
             } else {
@@ -1809,57 +1809,57 @@ public:
     }
 
     void 😟() {
-        auto tok = 🧔();
-        if (tok.type == PRINT) {
-            auto next_tok = 🧔();
-            if (next_tok.type == STRING) {
-                tok_idx--;
-                cout << string_print_output() << endl;
+        auto 👇🏼 = 🧔();
+        if (👇🏼.type == PRINT) {
+            auto next_👇🏼 = 🧔();
+            if (next_👇🏼.type == STRING) {
+                👇🏼_idx--;
+                cout << 🫃🏼() << endl;
             } else {
-                tok_idx--;
+                👇🏼_idx--;
                 cout << expr() << endl;
             }
         }
     }
 
     void do_block() {
-        while (tok_idx < tokenize.size()) {
-            🖐 = tokenize[tok_idx];
+        while (👇🏼_idx < 🥵ize.size()) {
+            🖐 = 🥵ize[👇🏼_idx];
             if (🖐.type == PRINT) {
                 😟();
-                tok_idx++;
+                👇🏼_idx++;
             } else if (🖐.type == LET) {
                 make_🤓();
-                tok_idx++;
-            } else if (🖐.type == NONE || 🖐.type == COMMA) {
-                tok_idx++;
+                👇🏼_idx++;
+            } else if (🖐.type == NONE || 🖐.type == CO🧑🏼‍🦽A) {
+                👇🏼_idx++;
             } else if (🖐.type == IF) {
                 condition();
-                tok_idx++;
+                👇🏼_idx++;
             } else if (🖐.type == 🤌) {
                 make_🤌();
-                tok_idx++;
+                👇🏼_idx++;
             } else if (🖐.type == FOR_LOOP) {
                 for_loop();
-                tok_idx++;
+                👇🏼_idx++;
             } else if (🖐.type == WHILE) {
                 while_loop();
-                tok_idx++;
+                👇🏼_idx++;
             } else if (🖐.type == 🤡) {
-                call_function();
-                tok_idx++;
-            } else if (🖐.type == FUNCTION) {
-                make_function();
-                tok_idx++;
+                call_👩🏼‍🦲tion();
+                👇🏼_idx++;
+            } else if (🖐.type == 👩🏼‍🦲TION) {
+                make_👩🏼‍🦲tion();
+                👇🏼_idx++;
             } else if (🖐.type == POP) {
                 pop();
-                tok_idx++;
+                👇🏼_idx++;
             } else if (🖐.type == PUSH) {
                 push();
-                tok_idx++;
+                👇🏼_idx++;
             } else if (🖐.type == REPAIR) {
                 repair();
-                tok_idx++;
+                👇🏼_idx++;
             } else {
                 expr();
             }
@@ -1867,46 +1867,46 @@ public:
     }
 
     void run_code() {
-        while (tok_idx < tokenize.size()) {
-            if (tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == 🎩 
-            || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == 👠
-            || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == 💍
-            || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == BE
-            || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == SE
-            || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == 👩🏻‍🦱) {
-                tok_idx = 0;
+        while (👇🏼_idx < 🥵ize.size()) {
+            if (🥵ize[👇🏼_idx].type == INT && 🥵ize[👇🏼_idx + 1].type == 🎩 
+            || 🥵ize[👇🏼_idx].type == INT && 🥵ize[👇🏼_idx + 1].type == 👠
+            || 🥵ize[👇🏼_idx].type == INT && 🥵ize[👇🏼_idx + 1].type == 💍
+            || 🥵ize[👇🏼_idx].type == INT && 🥵ize[👇🏼_idx + 1].type == BE
+            || 🥵ize[👇🏼_idx].type == INT && 🥵ize[👇🏼_idx + 1].type == SE
+            || 🥵ize[👇🏼_idx].type == INT && 🥵ize[👇🏼_idx + 1].type == 👩🏻‍🦱) {
+                👇🏼_idx = 0;
                 cout << comparison() << endl;
                 break;
-            } else if (tokenize[tok_idx].type == PRINT) {
+            } else if (🥵ize[👇🏼_idx].type == PRINT) {
                 😟();
                 break;
-            } else if (tokenize[tok_idx].type == IF) {
+            } else if (🥵ize[👇🏼_idx].type == IF) {
                 condition();
                 break;
-            } else if (tokenize[tok_idx].type == LET) {
+            } else if (🥵ize[👇🏼_idx].type == LET) {
                 make_🤓();
                 break;
-            } else if (tokenize.empty()) {
+            } else if (🥵ize.empty()) {
                 continue;
-            } else if (tokenize[tok_idx].type == WHILE) {
+            } else if (🥵ize[👇🏼_idx].type == WHILE) {
                 while_loop();
                 break;
-            } else if (tokenize[tok_idx].type == 🤌) {
+            } else if (🥵ize[👇🏼_idx].type == 🤌) {
                 make_🤌();
                 break;
-            } else if (tokenize[tok_idx].type == FOR_LOOP) {
+            } else if (🥵ize[👇🏼_idx].type == FOR_LOOP) {
                 for_loop();
                 break;
-            } else if (tokenize[tok_idx].type == FUNCTION) {
-                make_function();
+            } else if (🥵ize[👇🏼_idx].type == 👩🏼‍🦲TION) {
+                make_👩🏼‍🦲tion();
                 break;
-            } else if (tokenize[tok_idx].type == 🤡) {
-                call_function();
+            } else if (🥵ize[👇🏼_idx].type == 🤡) {
+                call_👩🏼‍🦲tion();
                 break;
-            } else if (tokenize[tok_idx].type == PUSH) {
+            } else if (🥵ize[👇🏼_idx].type == PUSH) {
                 push();
                 break;
-            } else if (tokenize[tok_idx].type == POP) {
+            } else if (🥵ize[👇🏼_idx].type == POP) {
                 pop();
                 break;
             }  else if (🖐.type == REPAIR) {
@@ -1938,17 +1938,17 @@ void print_🤌() {
 
 void 😟() {
     vector<string> 😰;
-    for (auto &func : functions) {
-        for (auto &para : func.Parameters) {
+    for (auto &👩🏼‍🦲 : 👩🏼‍🦲tions) {
+        for (auto &para : 👩🏼‍🦲.👐🏽s) {
             😰.push_back(para.name);
         }
-        cout << "func name: " << func.function_name << " ";
+        cout << "👩🏼‍🦲 name: " << 👩🏼‍🦲.🧑🏼‍🎤 << " ";
         cout << "para: ";
         for (auto name : 😰) {
             cout << name << " ";
         }
         cout << "value: ";
-        cout << func.value << endl;
+        cout << 👩🏼‍🦲.value << endl;
         😰 = {};
         cout << endl;
     }
@@ -1956,32 +1956,32 @@ void 😟() {
 
 void run() {
     auto now = std::chrono::system_clock::now();
-    std::time_t current_time = std::chrono::system_clock::to_time_t(now);
-    auto time = ctime(&current_time);
+    std::time_t 😵rent_time = std::chrono::system_clock::to_time_t(now);
+    auto time = ctime(&😵rent_time);
     cout << "😣 [Version 2.0.1]\n(c) (this is test version) All 👗s reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
-        string input;
+        string 🥰;
         cout << "> ";
-        getline(cin, input);
+        getline(cin, 🥰);
 
-        lexer lex(input);
-        vector<datatype> tokens = lex.token();
-        parser par(tokens);
+        🤥 lex(🥰);
+        vector<👨🏽‍🦱> 😴 = lex.🥵();
+        parser par(😴);
 
-        if (input == "help?") {
+        if (🥰 == "help?") {
             cout << "Visit https://dinhsonhai132.github.io/fslang.github.io/fslang.html for more info" << endl;
-        } else if (input == "exit") {
+        } else if (🥰 == "exit") {
             cout << "Goodbye :)" << endl;
             break; 
-        } else if (input == "info") {
+        } else if (🥰 == "info") {
             info();
-        } else if (input == "🤓") {
+        } else if (🥰 == "🤓") {
             print_🤓();
-        } else if (input.empty() || input == "") {
+        } else if (🥰.empty() || 🥰 == "") {
             continue;
-        } else if (input == "🤌") {
+        } else if (🥰 == "🤌") {
             print_🤌();
-        } else if (input == "func") {
+        } else if (🥰 == "👩🏼‍🦲") {
             😟();
         } else {
             par.run_code();
@@ -1991,112 +1991,112 @@ void run() {
 
 void debug() {
     auto now = std::chrono::system_clock::now();
-    std::time_t current_time = std::chrono::system_clock::to_time_t(now);
-    auto time = ctime(&current_time);
+    std::time_t 😵rent_time = std::chrono::system_clock::to_time_t(now);
+    auto time = ctime(&😵rent_time);
     cout << "😣 [Version 2.0.1] \n(c) (this is test version) All 👗s reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
-        string input;
+        string 🥰;
         cout << "debug_😚> ";
-        getline(cin, input);
-        lexer lex(input);
-        vector<datatype> tokens = lex.token();
-        parser par(tokens);
+        getline(cin, 🥰);
+        🤥 lex(🥰);
+        vector<👨🏽‍🦱> 😴 = lex.🥵();
+        parser par(😴);
 
-        if (input == "help?") {
+        if (🥰 == "help?") {
             cout << "Visit https://dinhsonhai132.github.io/fslang.github.io/fslang.html for more info" << endl;
-        } else if (input == "exit") {
+        } else if (🥰 == "exit") {
             cout << "Goodbye :)" << endl;
             break;  
-        } else if (input == "info") {
+        } else if (🥰 == "info") {
             info();
-        } else if (input == "🤓") {
+        } else if (🥰 == "🤓") {
             print_🤓();
-        } else if (input.empty() || input == "") {
+        } else if (🥰.empty() || 🥰 == "") {
             continue;
-        } else if (input == "🤌") {
+        } else if (🥰 == "🤌") {
             print_🤌();
-        } else if (input == "func") {
+        } else if (🥰 == "👩🏼‍🦲") {
             😟();
         } else {
             par.run_code();
-            string token_type;
-            for (auto &token : tokens) {
-                switch(token.type) {
-                    case PLUS: token_type = "PLUS"; break; 
-                    case INT: token_type = "INT"; break; 
-                    case IF: token_type = "IF"; break; 
-                    case THEN: token_type = "THEN"; break; 
-                    case ELSE: token_type = "ELSE"; break;
-                    case DIV: token_type = "DIV"; break; 
-                    case MINUS: token_type = "MINUS"; break; 
-                    case TIME: token_type = "TIME"; break; 
-                    case PRINT: token_type = "PRINT"; break; 
-                    case STRING: token_type = "STRING"; break;
-                    case MEMORY: token_type = "MEMORY"; break;
-                    case 👾: token_type = "👾"; break;
-                    case NONE: token_type = "NONE"; break;
-                    case 🎩: token_type = "🎩"; break;
-                    case 👠: token_type = "👠"; break;
-                    case PP: token_type = "PP"; break;
-                    case MM: token_type = "MM"; break;
-                    case LET: token_type = "LET"; break;
-                    case 👽: token_type = "👽"; break;
-                    case COMMA: token_type = "COMMA"; break;
-                    case FUNCTION: token_type = "FUNCTION"; break;
-                    case 🤳: token_type = "🤳"; break;
-                    case DOUBLE_COLON: token_type = "DOUBLE_COLON"; break;
-                    case 🤡: token_type = "🤡"; break;
-                    case LP: token_type = "LP"; break;
-                    case RP: token_type = "RP"; break;
-                    case DO: token_type = "DO"; break;
-                    case WHILE: token_type = "WHILE"; break;
-                    case 🤌: token_type = "🤌"; break;
-                    case 🤒: token_type = "🤒"; break;
-                    case 🤢: token_type = "🤢"; break;
-                    case 😡: token_type = "😡"; break;
-                    case 🤬: token_type = "🤬"; break;
-                    case FOR_LOOP: token_type = "FOR_LOOP"; break;
-                    case IN: token_type = "IN"; break;
-                    case TO: token_type = "TO"; break;
-                    case END: token_type = "END"; break;
-                    case RETURN_FUNC: token_type = "RETURN_FUNC"; break;
-                    case POP: token_type = "POP"; break;
-                    case PUSH: token_type = "PUSH"; break;
-                    case AT: token_type = "AT"; break;
-                    case REPAIR: token_type = "REPAIR"; break;
-                    case 🤳_KWARGS: token_type = "🤳_KWARGS"; break;
-                    case 👩🏻‍🦱: token_type = "👩🏻‍🦱"; break;
-                    case BE: token_type = "BE"; break;
-                    case SE: token_type = "SE"; break;
-                    case 💍: token_type = "💍"; break;
-                    case DOT: token_type = "DOT"; break;
-                    case FLOAT: token_type = "FLOAT"; break;
-                    case STR: token_type = "STR"; break;
-                    case NUM_TYPE: token_type = "NUM_TYPE"; break;
-                    case DOUBLE: token_type = "DOUBLE"; break;
+            string 🥵_type;
+            for (auto &🥵 : 😴) {
+                switch(🥵.type) {
+                    case PLUS: 🥵_type = "PLUS"; break; 
+                    case INT: 🥵_type = "INT"; break; 
+                    case IF: 🥵_type = "IF"; break; 
+                    case THEN: 🥵_type = "THEN"; break; 
+                    case ELSE: 🥵_type = "ELSE"; break;
+                    case DIV: 🥵_type = "DIV"; break; 
+                    case MINUS: 🥵_type = "MINUS"; break; 
+                    case TIME: 🥵_type = "TIME"; break; 
+                    case PRINT: 🥵_type = "PRINT"; break; 
+                    case STRING: 🥵_type = "STRING"; break;
+                    case MEMORY: 🥵_type = "MEMORY"; break;
+                    case 👾: 🥵_type = "👾"; break;
+                    case NONE: 🥵_type = "NONE"; break;
+                    case 🎩: 🥵_type = "🎩"; break;
+                    case 👠: 🥵_type = "👠"; break;
+                    case 👼🏼: 🥵_type = "👼🏼"; break;
+                    case 🧑🏼‍🦽: 🥵_type = "🧑🏼‍🦽"; break;
+                    case LET: 🥵_type = "LET"; break;
+                    case 👽: 🥵_type = "👽"; break;
+                    case CO🧑🏼‍🦽A: 🥵_type = "CO🧑🏼‍🦽A"; break;
+                    case 👩🏼‍🦲TION: 🥵_type = "👩🏼‍🦲TION"; break;
+                    case 🤳: 🥵_type = "🤳"; break;
+                    case DOUBLE_COLON: 🥵_type = "DOUBLE_COLON"; break;
+                    case 🤡: 🥵_type = "🤡"; break;
+                    case LP: 🥵_type = "LP"; break;
+                    case RP: 🥵_type = "RP"; break;
+                    case DO: 🥵_type = "DO"; break;
+                    case WHILE: 🥵_type = "WHILE"; break;
+                    case 🤌: 🥵_type = "🤌"; break;
+                    case 🤒: 🥵_type = "🤒"; break;
+                    case 🤢: 🥵_type = "🤢"; break;
+                    case 😡: 🥵_type = "😡"; break;
+                    case 🤬: 🥵_type = "🤬"; break;
+                    case FOR_LOOP: 🥵_type = "FOR_LOOP"; break;
+                    case IN: 🥵_type = "IN"; break;
+                    case TO: 🥵_type = "TO"; break;
+                    case END: 🥵_type = "END"; break;
+                    case RETURN_👩🏼‍🦲: 🥵_type = "RETURN_👩🏼‍🦲"; break;
+                    case POP: 🥵_type = "POP"; break;
+                    case PUSH: 🥵_type = "PUSH"; break;
+                    case AT: 🥵_type = "AT"; break;
+                    case REPAIR: 🥵_type = "REPAIR"; break;
+                    case 🤳_👌🏾: 🥵_type = "🤳_👌🏾"; break;
+                    case 👩🏻‍🦱: 🥵_type = "👩🏻‍🦱"; break;
+                    case BE: 🥵_type = "BE"; break;
+                    case SE: 🥵_type = "SE"; break;
+                    case 💍: 🥵_type = "💍"; break;
+                    case DOT: 🥵_type = "DOT"; break;
+                    case FLOAT: 🥵_type = "FLOAT"; break;
+                    case STR: 🥵_type = "STR"; break;
+                    case NUM_TYPE: 🥵_type = "NUM_TYPE"; break;
+                    case DOUBLE: 🥵_type = "DOUBLE"; break;
                 }
-                cout << "Type: " << token_type << " Value: " << token.value << " Name: " << token.name << endl;
+                cout << "Type: " << 🥵_type << " Value: " << 🥵.value << " Name: " << 🥵.name << endl;
             }
         }
     }
 }
 
 int 😄(string 🥹) {
-    std::ifstream inputFile(🥹);
-    if (!inputFile) {
+    std::ifstream 🥰File(🥹);
+    if (!🥰File) {
         std::cout << "Error opening file!" << std::endl;
         return 1;
     }
 
     std::string line;
-    while (std::getline(inputFile, line)) {
-        lexer lex(line);
-        vector<datatype> tokens = lex.token();
-        parser par(tokens);
+    while (std::getline(🥰File, line)) {
+        🤥 lex(line);
+        vector<👨🏽‍🦱> 😴 = lex.🥵();
+        parser par(😴);
         par.run_code();
     }
 
-    inputFile.close();
+    🥰File.close();
     return 0;
 }
 

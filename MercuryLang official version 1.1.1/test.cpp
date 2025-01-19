@@ -13,7 +13,7 @@ enum VerType {
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE, ELIF, PARAMATER_KWARGS, GLOBAL_VAR,
     THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, RETURN_FUNC, POP, PUSH, AT, REPAIR,
     FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, COMMAND, CIN, CLASS, LAMBDA, MAXTRIX, IMPORT, 
-    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, ARROW_TOKEN, RANGE, FOR_LOOP, IN, TO, END, NUM_TYPE,
+    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, ARROW_TOKEN, RANGE, FOR_LOOP, IN, TO, END, NUM_TYPE, USER_TYPE,
     NULL_TOK, LOCAL, GLOBAL, HEAP, STACK, REGISTER, CONSTANT, LOCAL_VAR, HEAP_VAR, STACK_VAR, VOID_TOK, AUTO_TOK, 
     CONST_VAR, VOLATILE_TOK, STATIC_TOK, FLOAT, DOUBLE, CHAR, BOOL, LONG, SHORT, UNSIGNED, SIGNED, STR,
 };
@@ -43,6 +43,17 @@ struct enumerate {
     string name;
     int order;
     int value;
+};
+
+struct Mer_enum {
+    string name;
+    vector<enumerate> enums;
+};
+
+struct struct_type {
+    string struct_name;
+    vector<store_var> variables;
+    vector<store_list> lists;
 };
 
 struct store_var {
@@ -101,23 +112,16 @@ struct class_type {
     vector<function_> functions;
 };
 
-struct struct_type {
-    string struct_name;
-    vector<store_var> variables;
-    vector<store_list> lists;
-};
-
-struct enum_type {
-    string enum_name;
-    vector<enumerate> enums;
-};
-
 vector<store_var> variables;
 vector<store_var> tempotary_variables;
 vector<store_list> tempotary_list;
 vector<store_list> lists;
 vector<function_> functions;
 vector<VerLibrary_type> libraries;
+vector<Mer_enum> enums;
+vector<struct_type> structs;
+vector<string> user_structs_type;
+vector<string> user_enums_type;
 
 class lexer {
 private:
@@ -381,6 +385,14 @@ public:
                     advance();
                 }
                 tokens.push_back({PARAMATER_KWARGS, 0, name});
+            } else if (cur == '$') {
+                string name;
+                advance();
+                while (isalpha(cur)) {
+                    name += cur;
+                    advance();
+                }
+                tokens.push_back({USER_TYPE, 0, name});
             } 
             else if (cur == ',') {
                 tokens.push_back({COMMA, 0, ""});
@@ -530,10 +542,15 @@ public:
     }
 
     vector<int> get_tempotary_list(string name) {
+        bool found = false;
         for (auto &list : tempotary_list) {
             if (list.name == name) {
+                found = true;
                 return list.list;
             }
+        } 
+        if (!found) {
+            cout << "Error: can't found the list" << endl;
         }
         return {};
     }
@@ -788,7 +805,6 @@ public:
             name_func = cur_idx.name;
             cur_idx = get_next_tok();
             if (cur_idx.type == LP) {
-
                 if (tokenize[tok_idx + 1].type == PARAMATER_KWARGS) {
                     paras_kwargs = {tokenize[tok_idx + 1].name, {}, AUTO};
                     found = true;
@@ -931,6 +947,7 @@ public:
             }
         }
         tempotary_variables = {};
+        tempotary_list = {};
         tokenize = cur_tokens;
         tok_idx = cur_tok_idx;
         return 0;
@@ -1559,6 +1576,45 @@ public:
                 }
             }
         }
+    }
+
+    void make_enum() {
+        cur_idx = get_next_tok();
+        vector<enumerate> enummerates;
+        if (cur_idx.type == ENUM) {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == TEMPORARY_MEMORY) {
+                string name = cur_idx.name;
+                cur_idx = get_next_tok();
+                if (cur_idx.type == DO) {
+                    int orders = 0;
+                    while (tok_idx < tokenize.size() && tokenize[tok_idx].type != END) {
+                        cur_idx = tokenize[tok_idx];
+                        if (cur_idx.type == TEMPORARY_MEMORY && tokenize[tok_idx + 1].type != ASSIGN) {
+                            enummerates.push_back({cur_idx.name, orders});
+                            orders++;
+                        } else if (cur_idx.type == TEMPORARY_MEMORY && tokenize[tok_idx + 1].type == ASSIGN) {
+                            cur_idx = get_next_tok();
+                            if (cur_idx.type == ASSIGN) {
+                                cur_idx = get_next_tok();
+                                if (cur_idx.type == INT) {
+                                    enummerates.push_back({cur_idx.name, orders, cur_idx.value});
+                                    orders++;
+                                } else {
+                                    cout << "Error: can't found the value of the enum" << endl;
+                                }
+                            }
+                        }
+                        tok_idx++;
+                    }
+                } else {
+                    cout << "Error: can't found the token 'DO' in enum" << endl;
+                }
+            } else {
+                cout << "Error: can't found the name of the enum" << endl;
+            }
+        }
+        enums.push_back({cur_idx.name, enummerates});
     }
 
     int while_loop() {

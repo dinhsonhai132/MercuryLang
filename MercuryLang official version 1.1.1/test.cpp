@@ -12,8 +12,8 @@ enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, STRUCT, ENUM, BLOCK, PORT, DOT, TRUE, FALSE,
     👾, 🎩, 👠, 💍, BE, SE, 👩🏻‍🦱, IF, ELSE, ELIF, 🤳_👌🏾, GLOBAL_🤓,
     THEN, LP, RP, FOR, 👼🏼, 🧑🏼‍🦽, WHILE, LET, 👽, GOTO, 🥰, 🤌, RETURN_👩🏼‍🦲, POP, PUSH, AT, REPAIR,
-    👩🏼‍🦲TION, 🤳, 🤡, CO🧑🏼‍🦽A, DOUBLE_COLON, CO🧑🏼‍🦽AND, CIN, CLASS, LAMBDA, MAXTRIX, IMPORT, 
-    DO, VECTOR, 😡, 🤬, 🤒, 🤢, RANGE, FOR_LOOP, IN, TO, END, NUM_TYPE, USER_TYPE,
+    👩🏼‍🦲TION, 🤳, 🤡, CO🧑🏼‍🦽A, 🧌, CO🧑🏼‍🦽AND, CIN, CLASS, LAMBDA, MAXTRIX, IMPORT, 
+    DO, VECTOR, 😡, 🤬, 🤒, 🤢, RANGE, FOR_LOOP, IN, TO, END, 🫃🏿, 🪸,
     NULL_👇🏼, LOCAL, GLOBAL, HEAP, STACK, 😖, CONSTANT, LOCAL_🤓, HEAP_🤓, STACK_🤓, VOID_👇🏼, AUTO_👇🏼, 
     CONST_🤓, VOLATILE_👇🏼, STATIC_👇🏼, FLOAT, DOUBLE, CHAR, BOOL, LONG, SHORT, UNSIGNED, SIGNED, STR,
 };
@@ -261,7 +261,7 @@ public:
                 🤯(2);
             } else if (😵 == 'I' && 🥰.substr(🫨, 3) == "INT") {
                 🤯(3);
-                😴.push_back({NUM_TYPE, 0, ""});
+                😴.push_back({🫃🏿, 0, ""});
             } else if (😵 == 'F' && 🥰.substr(🫨, 3) == "FOR") {
                 😴.push_back({FOR_LOOP, 0, ""});
                 🤯(3);
@@ -392,13 +392,13 @@ public:
                     name += 😵;
                     😇();
                 }
-                😴.push_back({USER_TYPE, 0, name});
+                😴.push_back({🪸, 0, name});
             } 
             else if (😵 == ',') {
                 😴.push_back({CO🧑🏼‍🦽A, 0, ""});
                 😇();
             } else if (😵 == ':') {
-                😴.push_back({DOUBLE_COLON, 0, ""});
+                😴.push_back({🧌, 0, ""});
                 😇();
             } else if (😵 == '!') {
                 😇();
@@ -1670,7 +1670,7 @@ public:
         auto 👇🏼 = 🧔();
         if (👇🏼.type == LET) {
             🖐 = 🧔();
-            if (🖐.type == NUM_TYPE) {
+            if (🖐.type == 🫃🏿) {
                 type = INT_TYPE;
                 🏊🏻 = true;
             } else if (🖐.type == FLOAT) {
@@ -2044,7 +2044,7 @@ void debug() {
                     case CO🧑🏼‍🦽A: 🥵_type = "CO🧑🏼‍🦽A"; break;
                     case 👩🏼‍🦲TION: 🥵_type = "👩🏼‍🦲TION"; break;
                     case 🤳: 🥵_type = "🤳"; break;
-                    case DOUBLE_COLON: 🥵_type = "DOUBLE_COLON"; break;
+                    case 🧌: 🥵_type = "🧌"; break;
                     case 🤡: 🥵_type = "🤡"; break;
                     case LP: 🥵_type = "LP"; break;
                     case RP: 🥵_type = "RP"; break;
@@ -2072,7 +2072,7 @@ void debug() {
                     case DOT: 🥵_type = "DOT"; break;
                     case FLOAT: 🥵_type = "FLOAT"; break;
                     case STR: 🥵_type = "STR"; break;
-                    case NUM_TYPE: 🥵_type = "NUM_TYPE"; break;
+                    case 🫃🏿: 🥵_type = "🫃🏿"; break;
                     case DOUBLE: 🥵_type = "DOUBLE"; break;
                 }
                 cout << "Type: " << 🥵_type << " Value: " << 🥵.value << " Name: " << 🥵.name << endl;

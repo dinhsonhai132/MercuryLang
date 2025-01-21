@@ -1419,6 +1419,96 @@ public:
         moms.push_back({struct_name, struct_variables, struct_lists});
     }
 
+    function_ get_func_in_mom(string name_func, string name_mom) {
+        for (auto &mom : moms) {
+            if (mom.class_name == name_mom) {
+                for (auto &func : mom.functions) {
+                    if (func.function_name == name_func) {
+                        return func;
+                    }
+                }
+            }
+        }
+        return {};
+    }
+
+    auto execute_in_mom(string name_func, string name_mom) {
+        function_ func = get_func_in_mom(name_func, name_mom);
+        vector<datatype> tokens = func.store_tokens;
+        vector<Parameter> paras = func.Parameters;
+        Parameter_kwargs paras_kwargs = func.parameter_kwargs;
+
+        if (tokens.empty()) {
+            cout << "Error: can't found the function" << endl;
+            return 0;
+        }
+        int cur_tok_idx = tok_idx;
+        vector<datatype> cur_tokens = tokenize;
+
+        if (!paras.empty()) {
+            for (auto &para : paras) {
+                tempotary_variables.push_back({para.name, NULL_TYPE, para.val});
+            }
+        } else {
+            tempotary_list.push_back({paras_kwargs.name, paras_kwargs.vec});
+        }
+
+        tok_idx = 0;
+        tokenize = tokens;
+        cur_idx = tokenize[tok_idx];
+
+        while (tok_idx < tokenize.size()) {
+            cur_idx = tokenize[tok_idx];
+            if (cur_idx.type == PRINT) {
+                print_func();
+                tok_idx++;
+            } else if (cur_idx.type == LET) {
+                make_var();
+                tok_idx++;
+            } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
+                tok_idx++;
+            } else if (cur_idx.type == IF) {
+                condition();
+                tok_idx++;
+            } else if (cur_idx.type == LIST) {
+                make_list();
+                tok_idx++;
+            } else if (cur_idx.type == FOR_LOOP) {
+                for_loop();
+            } else if (cur_idx.type == WHILE) {
+                while_loop();
+            } else if (cur_idx.type == FUNCTION_CALL) {
+                call_function();
+                tok_idx++;
+            } else if (cur_idx.type == FUNCTION) {
+                make_function();
+                tok_idx++;
+            } else if (cur_idx.type == RETURN_FUNC) {
+                int value = make_return();
+                for (auto &func : moms) {
+                    if (func.class_name == name_mom) {
+                        for (auto &f : func.functions) {
+                            if (f.function_name == name_func) {
+                                f.value = value;
+                            }
+                        }
+                    }
+                }
+                tempotary_variables = {};
+                return value;
+            } else if (cur_idx.type == IMPORT) {
+                cout << "Error: can't import the file in the function" << endl;
+            } else {
+                expr();
+            }
+        }
+        tempotary_variables = {};
+        tempotary_list = {};
+        tokenize = cur_tokens;
+        tok_idx = cur_tok_idx;
+        return 0;
+    }
+
     auto take_value() {
         cur_idx = get_next_tok();
         if (cur_idx.type == USER_TYPE) {
@@ -1440,7 +1530,22 @@ public:
                                 }
                             }
                         }
-                    } else if (cur_idx.type == USER_TYPE) {
+                    } else if (cur_idx.type == FUNCTION_CALL) {
+                        string func_name = cur_idx.name;
+                        for (auto &mom : moms) {
+                            if (mom.class_name == mom_name) {
+                                for (auto &func : mom.functions) {
+                                    if (func.function_name == func_name) {
+                                        if (func.type == INT_TYPE) {
+                                            return func.value;
+                                        }
+                                        execute_in_mom(func_name, mom_name);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                     else if (cur_idx.type == USER_TYPE) {
                         string mom_name = cur_idx.name;
                     }
                 }

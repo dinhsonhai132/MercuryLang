@@ -71,12 +71,6 @@ struct store_list {
     Mercury_type type = AUTO;
 };
 
-struct struct_type {
-    string struct_name;
-    vector<store_var> variables;
-    vector<store_list> lists;
-};
-
 struct Parameter {
     string name;
     int val;
@@ -105,7 +99,7 @@ struct function_ {
     bool parameter_kwargs_found = false;
 };
 
-struct class_type {
+struct mom_type {
     string class_name;
     vector<store_var> variables;
     vector<store_list> lists;
@@ -119,10 +113,8 @@ vector<store_list> lists;
 vector<function_> functions;
 vector<VerLibrary_type> libraries;
 vector<Mer_enum> the_enums;
-vector<struct_type> the_structs;
-vector<class_type> the_classes;
-vector<string> user_struct_names;
-vector<string> user_enum_names;
+vector<mom_type> moms;
+vector<string> user_datatype;
 
 class lexer {
 private:
@@ -1395,6 +1387,7 @@ public:
             cur_idx = get_next_tok();
             if (cur_idx.type == TEMPORARY_MEMORY) {
                 string name = cur_idx.name;
+                user_datatype.push_back(name);
                 cur_idx = get_next_tok();
                 if (cur_idx.type == DO) {
                     class_lists = store_lists();
@@ -1403,7 +1396,7 @@ public:
                 }
             }
         }
-        the_classes.push_back({cur_idx.name, class_variables, class_lists, class_functions});
+        moms.push_back({cur_idx.name, class_variables, class_lists, class_functions});
     }
 
     void make_struct() {
@@ -1423,7 +1416,37 @@ public:
                 }
             }   
         }
-        the_structs.push_back({struct_name, struct_variables, struct_lists});
+        moms.push_back({struct_name, struct_variables, struct_lists});
+    }
+
+    auto take_value() {
+        cur_idx = get_next_tok();
+        if (cur_idx.type == USER_TYPE) {
+            string mom_name = cur_idx.name;
+            while (tok_idx < tokenize.size()) {
+                cur_idx = tokenize[tok_idx];
+                if (cur_idx.type == DOT) {
+                    cur_idx = get_next_tok();
+                    if (cur_idx.type == TEMPORARY_MEMORY) {
+                        string son_name = cur_idx.name;
+                        for (auto &mom : moms) {
+                            if (mom.class_name == mom_name) {
+                                for (auto &var : mom.variables) {
+                                    if (var.name == son_name) {
+                                        if (var.type == INT_TYPE) {
+                                            return var.val;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else if (cur_idx.type == USER_TYPE) {
+                        string mom_name = cur_idx.name;
+                    }
+                }
+                cur_idx = tokenize[tok_idx++];
+            }
+        }
     }
 
     void make_enum() {

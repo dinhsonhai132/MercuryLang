@@ -63,6 +63,10 @@
 > 
 > add new elif
 >
+## 1/21/2025
+> class (W.I.P)
+>
+> struct (W.I.P)
 ## --BIG UPDATE SOON--
 # LEAK NEW UPDATE
 ## NEW STRING TYPE IN VARIABLE

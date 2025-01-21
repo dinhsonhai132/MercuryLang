@@ -47,7 +47,7 @@ struct enumerate {
 
 struct Mer_enum {
     string name;
-    vector<enumerate> enums;
+    vector<enumerate> the_enums;
 };
 
 struct store_var {
@@ -118,7 +118,7 @@ vector<store_list> tempotary_list;
 vector<store_list> lists;
 vector<function_> functions;
 vector<VerLibrary_type> libraries;
-vector<Mer_enum> enums;
+vector<Mer_enum> the_enums;
 vector<struct_type> the_structs;
 vector<class_type> the_classes;
 vector<string> user_struct_names;
@@ -1245,6 +1245,447 @@ public:
         if (!list_found) variables.push_back({name, INT_TYPE, right});
     }
 
+    vector<store_var> store_variables() {
+        vector<store_var> vars;
+        Mercury_type type;
+        bool found = false;
+        while (tok_idx < tokenize.size()) {
+            cur_idx = tokenize[tok_idx];
+            if (cur_idx.type == LET) {
+                cur_idx = get_next_tok();
+                if (cur_idx.type == FLOAT) {
+                    type = FLOAT_TYPE;
+                    found = true;
+                } else if (cur_idx.type == INT) {
+                    type = INT_TYPE;
+                    found = true;
+                } else if (cur_idx.type == STR) {
+                    type = STRING_TYPE;
+                    found = true;
+                } else if (cur_idx.type == DOUBLE) {
+                    type = DOUBLE_TYPE;
+                    found = true;
+                }
+                
+                if (found) {
+                    cur_idx = get_next_tok();
+                    if (cur_idx.type == TEMPORARY_MEMORY) {
+                        string name = cur_idx.name;
+                        cur_idx = get_next_tok();
+                        if (cur_idx.type == ASSIGN) {
+                            cur_idx = get_next_tok();
+                            if (type == STRING_TYPE) {
+                                string string_val = cur_idx.name;
+                                vars.push_back({name, type, 0, string_val});
+                            } else if (type == INT_TYPE) {
+                                tok_idx--;
+                                int val = expr();
+                                vars.push_back({name, type, val});
+                            } else if (type == FLOAT_TYPE) {
+                                tok_idx--;
+                                float val = expr();
+                                vars.push_back({name, type, 0, "", false, '\0', val});
+                            } else if (type == DOUBLE_TYPE) {
+                                tok_idx--;
+                                double val = expr();
+                                vars.push_back({name, type, 0, "", false, '\0', 0, val});
+                            }
+                        } else {
+                            vars.push_back({name, type});
+                        }
+                    }
+                }
+            }
+            cur_idx = tokenize[tok_idx++];
+        }
+        return vars;
+    }
+
+    vector<store_list> store_lists() {
+        vector<store_list> lists;
+        string name;
+        vector<int> the_list;
+        while (tok_idx < tokenize.size()) {
+            cur_idx = tokenize[tok_idx];
+            if (cur_idx.type == LIST) {
+                cur_idx = get_next_tok();
+                if (cur_idx.type == LIST_NAME) {
+                    name = cur_idx.name;
+                    cur_idx = get_next_tok();
+                    if (cur_idx.type == ASSIGN) {
+                        cur_idx = get_next_tok();
+                        if (cur_idx.type == SPARE_LP) {
+                            while (tok_idx < tokenize.size() && tokenize[tok_idx].type != SPARE_RP) {
+                                if (tokenize[tok_idx].type == INT) {
+                                    the_list.push_back(tokenize[tok_idx].value);
+                                    tok_idx++;
+                                } else if (tokenize[tok_idx].type == COMMA) {
+                                    tok_idx++;
+                                }
+                            }
+                        }
+                    } else {
+                        lists.push_back({name, the_list});
+                    }
+                }
+            }
+            cur_idx = tokenize[tok_idx++];
+        }
+        return lists;
+    }
+
+    vector<function_> store_functions() {
+        vector<function_> funcs;
+        string name_func;
+        vector<Parameter> paras;
+        Parameter_kwargs paras_kwargs;
+        vector<datatype> store_tokens;
+        bool found = false;
+        while (tok_idx < tokenize.size()) {
+            cur_idx = tokenize[tok_idx];
+            if (cur_idx.type == FUNCTION) {
+                name_func = cur_idx.name;
+                cur_idx = get_next_tok();
+                if (cur_idx.type == LP) {
+                    if (tokenize[tok_idx + 1].type == PARAMATER_KWARGS) {
+                        paras_kwargs = {tokenize[tok_idx + 1].name, {}, AUTO};
+                        found = true;
+                    } else {
+                        while (tok_idx < tokenize.size() && cur_idx.type != RP) {
+                            if (cur_idx.type == PARAMATER) {
+                                paras.push_back({cur_idx.name, 0, AUTO});
+                            }
+                            cur_idx = tokenize[tok_idx++];
+                        }
+                    }
+
+                    if (found) {
+                        cur_idx = get_next_tok_to(3);
+                    } else {
+                        cur_idx = get_next_tok();
+                    }
+
+                    if (cur_idx.type == DO) {
+                        while (tok_idx < tokenize.size() && cur_idx.type != END
+                        || tok_idx < tokenize.size()) {
+                            store_tokens.push_back(cur_idx);
+                            cur_idx = tokenize[tok_idx++];
+                        }
+                    }
+
+                } else {
+                    cout << "Error: Expected '(' after function name" << endl;
+                }
+            }
+            else {
+                cout << "Error: Expected 'FUNC' after function name" << endl;
+            }
+            funcs.push_back({name_func, AUTO, 0, paras, store_tokens, paras_kwargs, found});
+            cur_idx = tokenize[tok_idx++];
+        }
+        return funcs;
+    }
+
+    void make_class() {
+        cur_idx = get_next_tok();
+        vector<store_list> class_lists;
+        vector<store_var> class_variables;
+        vector<function_> class_functions;
+        if (cur_idx.type == CLASS) {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == TEMPORARY_MEMORY) {
+                string name = cur_idx.name;
+                cur_idx = get_next_tok();
+                if (cur_idx.type == DO) {
+                    class_lists = store_lists();
+                    class_variables = store_variables();
+                    class_functions = store_functions();
+                }
+            }
+        }
+        the_classes.push_back({cur_idx.name, class_variables, class_lists, class_functions});
+    }
+
+    void make_struct() {
+        cur_idx = get_next_tok();
+        vector<store_list> struct_lists;
+        vector<store_var> struct_variables;
+        string struct_name;
+        Mercury_type type;
+        if (cur_idx.type == STRUCT) {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == TEMPORARY_MEMORY) {
+                struct_name = cur_idx.name;
+                cur_idx = get_next_tok();
+                if (cur_idx.type == DO) {
+                    struct_lists = store_lists();
+                    struct_variables = store_variables();
+                }
+            }   
+        }
+        the_structs.push_back({struct_name, struct_variables, struct_lists});
+    }
+
+    void make_enum() {
+        cur_idx = get_next_tok();
+        vector<enumerate> enummerates;
+        if (cur_idx.type == ENUM) {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == TEMPORARY_MEMORY) {
+                string name = cur_idx.name;
+                cur_idx = get_next_tok();
+                if (cur_idx.type == DO) {
+                    int orders = 0;
+                    while (tok_idx < tokenize.size() && tokenize[tok_idx].type != END) {
+                        cur_idx = tokenize[tok_idx];
+                        if (cur_idx.type == TEMPORARY_MEMORY && tokenize[tok_idx + 1].type != ASSIGN) {
+                            enummerates.push_back({cur_idx.name, orders});
+                            orders++;
+                        } else if (cur_idx.type == TEMPORARY_MEMORY && tokenize[tok_idx + 1].type == ASSIGN) {
+                            cur_idx = get_next_tok();
+                            if (cur_idx.type == ASSIGN) {
+                                cur_idx = get_next_tok();
+                                if (cur_idx.type == INT) {
+                                    enummerates.push_back({cur_idx.name, orders, cur_idx.value});
+                                    orders++;
+                                } else {
+                                    cout << "Error: can't found the value of the enum" << endl;
+                                }
+                            }
+                        }
+                        tok_idx++;
+                    }
+                } else {
+                    cout << "Error: can't found the token 'DO' in enum" << endl;
+                }
+            } else {
+                cout << "Error: can't found the name of the enum" << endl;
+            }
+        }
+        the_enums.push_back({cur_idx.name, enummerates});
+    }
+
+    int while_loop() {
+        cur_idx = get_next_tok();
+        if (cur_idx.type == WHILE) {
+            int condition = comparison();
+            if (condition == 1) {
+                cur_idx = get_next_tok();
+                if (cur_idx.type == DO) {
+                    do_block();
+                    tok_idx = 0;
+                    while_loop();
+                } else {
+                    cout << "Error: can't not found the token 'DO' in while loop" << endl;
+                }
+            }
+        }
+        return 0;
+    }
+
+    void make_var() {
+        string var_name;
+        Mercury_type type;
+        bool found = false;
+        auto tok = get_next_tok();
+        if (tok.type == LET) {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == NUM_TYPE) {
+                type = INT_TYPE;
+                found = true;
+            } else if (cur_idx.type == FLOAT) {
+                type = FLOAT_TYPE;
+                found = true;
+            } else if (cur_idx.type == STR) {
+                type = STRING_TYPE;
+                found = true;
+            } else if (cur_idx.type == DOUBLE) {
+                type = DOUBLE_TYPE;
+                found = true;
+            }
+            
+            if (found) {
+                cur_idx = get_next_tok();
+                if (cur_idx.type == TEMPORARY_MEMORY) {
+                    var_name = cur_idx.name;
+                    cur_idx = get_next_tok();
+                    if (cur_idx.type == ASSIGN) {
+                        cur_idx = get_next_tok();
+                        if (type == STRING_TYPE) {
+                            string string_val = cur_idx.name;
+                            variables.push_back({var_name, type, 0, string_val});
+                        } else if (type == INT_TYPE) {
+                            tok_idx--;
+                            int val = expr();
+                            variables.push_back({var_name, type, val});
+                        } else if (type == FLOAT_TYPE) {
+                            tok_idx--;
+                            float val = expr();
+                            variables.push_back({var_name, type, 0, "", false, '\0', val});
+                        } else if (type == DOUBLE_TYPE) {
+                            tok_idx--;
+                            double val = expr();
+                            variables.push_back({var_name, type, 0, "", false, '\0', 0, val});
+                        }
+                    } else {
+                        variables.push_back({var_name, type});
+                    }
+                } else {
+                    cout << "Error: can't found the variable name" << endl;
+                }
+            } else {
+                cout << "Error: can't found the type" << endl;
+            }
+        }
+    }
+
+    int comparison() {
+        auto left_token = get_next_tok();
+        VerType OP = get_next_tok().type;
+        auto right_token = get_next_tok();
+        int left = 0;
+        int right = 0;
+        if (left_token.type == TEMPORARY_MEMORY) {
+            string name = left_token.name;
+            left = get_variable(name);
+        } else if (left_token.type == INT) {
+            left = left_token.value;
+        } else if (left_token.type == PARAMATER) {
+            left = get_tempotary_variable(left_token.name);
+        } 
+        else {
+            cout << "Error: error type" << endl;
+        }
+        if (right_token.type == TEMPORARY_MEMORY) {
+            string name = right_token.name;
+            right = get_variable(name);
+        } else if (right_token.type == INT) {
+            right = right_token.value;
+        } else if (right_token.type == PARAMATER) {
+            right = get_tempotary_variable(right_token.name);
+        }
+        switch (OP) {
+            case BIGGER:
+                return left > right ? 1 : 0;
+            case SMALLER:
+                return left < right ? 1 : 0;
+            case EQUAL:
+                return left == right ? 1 : 0;
+            case BE:
+                return left >= right ? 1 : 0;
+            case SE:
+                return left <= right ? 1 : 0;
+            case DIFFERENCES:
+                return left != right ? 1 : 0;
+        }
+        return 0;
+    }
+
+    bool found_else = false;
+    bool found_elif = false;
+
+    int condition() {
+        int pos = tok_idx;
+        cur_idx = get_next_tok();
+        if (cur_idx.type == IF) {
+            int check = comparison();
+            if (check == 1 && get_next_tok().type == THEN) {
+                do_block();
+            } else if (check == 0 && get_next_tok().type == THEN) {
+                while (tok_idx < tokenize.size()) {
+                    cur_idx = tokenize[tok_idx];
+                    if (cur_idx.type == ELSE) {
+                        found_else = true;
+                        break;
+                    } else if (cur_idx.type == ELIF) {
+                        found_elif = true;
+                        break;
+                    }
+                    tok_idx++;
+                }
+                if (found_elif) {
+                    tok_idx++;
+                    int elif_check = comparison();
+                    if (elif_check == 1 && get_next_tok().type == THEN) {
+                        do_block();
+                    } else {
+                        while (tok_idx < tokenize.size() && tokenize[tok_idx].type != ELSE && tokenize[tok_idx].type != ELIF) {
+                            tok_idx++;
+                        }
+                        if (tokenize[tok_idx].type == ELSE) {
+                            found_else = true;
+                        }
+                    }
+                }
+                if (found_else) {
+                    tok_idx++;
+                    do_block();
+                }
+            } else {
+                cout << "Error: condition failed" << endl;
+            }
+        }
+        return 0;
+    }
+
+    void print_func() {
+        auto tok = get_next_tok();
+        if (tok.type == PRINT) {
+            auto next_tok = get_next_tok();
+            if (next_tok.type == STRING) {
+                tok_idx--;
+                cout << string_print_output() << endl;
+            } else {
+                tok_idx--;
+                cout << expr() << endl;
+            }
+        }
+    }
+
+    void do_block() {
+        while (tok_idx < tokenize.size()) {
+            cur_idx = tokenize[tok_idx];
+            if (cur_idx.type == PRINT) {
+                print_func();
+                tok_idx++;
+            } else if (cur_idx.type == LET) {
+                make_var();
+                tok_idx++;
+            } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
+                tok_idx++;
+            } else if (cur_idx.type == IF) {
+                condition();
+                tok_idx++;
+            } else if (cur_idx.type == LIST) {
+                make_list();
+                tok_idx++;
+            } else if (cur_idx.type == FOR_LOOP) {
+                for_loop();
+                tok_idx++;
+            } else if (cur_idx.type == WHILE) {
+                while_loop();
+                tok_idx++;
+            } else if (cur_idx.type == FUNCTION_CALL) {
+                call_function();
+                tok_idx++;
+            } else if (cur_idx.type == FUNCTION) {
+                make_function();
+                tok_idx++;
+            } else if (cur_idx.type == POP) {
+                pop();
+                tok_idx++;
+            } else if (cur_idx.type == PUSH) {
+                push();
+                tok_idx++;
+            } else if (cur_idx.type == REPAIR) {
+                repair();
+                tok_idx++;
+            } else {
+                expr();
+            }
+        }
+    }
+
     void pop() {
         cur_idx = get_next_tok();
         if (cur_idx.type == POP) {
@@ -1575,377 +2016,6 @@ public:
                         }
                     }
                 }
-            }
-        }
-    }
-
-    auto extract_data() {
-        cur_idx = get_next_tok();
-        if (cur_idx.type == USER_TYPE) {
-            string name = cur_idx.name; 
-        }
-    }
-
-    void make_class() {
-        cur_idx = get_next_tok();
-        if (cur_idx.type == CLASS) {
-            cur_idx = get_next_tok();
-            if (cur_idx.type == TEMPORARY_MEMORY) {
-                string name = cur_idx.name;
-                cur_idx = get_next_tok();
-                if (cur_idx.type == DO) {
-                    while (tok_idx < tokenize.size()) {
-                        
-                    }
-                }
-            }
-        }
-    }
-
-    void make_struct() {
-        cur_idx = get_next_tok();
-        vector<store_list> struct_lists;
-        vector<store_var> struct_variables;
-        string struct_name;
-        Mercury_type type;
-        if (cur_idx.type == STRUCT) {
-            cur_idx = get_next_tok();
-            if (cur_idx.type == TEMPORARY_MEMORY) {
-                struct_name = cur_idx.name;
-                cur_idx = get_next_tok();
-                if (cur_idx.type == DO) {
-                    while (tok_idx < tokenize.size() && cur_idx.type != END) {
-                        if (cur_idx.type == LET) {
-                            cur_idx = get_next_tok();
-                            if (cur_idx.type == NUM_TYPE) {
-                                type = INT_TYPE;
-                            } else if (cur_idx.type == FLOAT) {
-                                type = FLOAT_TYPE;
-                            } else if (cur_idx.type == STR) {
-                                type = STRING_TYPE;
-                            } else if (cur_idx.type == DOUBLE) {
-                                type = DOUBLE_TYPE;
-                            }
-                            cur_idx = get_next_tok();
-                            if (cur_idx.type == TEMPORARY_MEMORY) {
-                                string name = cur_idx.name;
-                                cur_idx = get_next_tok();
-                                if (cur_idx.type == ASSIGN) {
-                                    cur_idx = get_next_tok();
-                                    if (type == STRING_TYPE) {
-                                        string string_val = cur_idx.name;
-                                        struct_variables.push_back({name, type, 0, string_val});
-                                    } else if (type == INT_TYPE) {
-                                        tok_idx--;
-                                        int val = expr();
-                                        struct_variables.push_back({name, type, val});
-                                    } else if (type == FLOAT_TYPE) {
-                                        tok_idx--;
-                                        float val = expr();
-                                        struct_variables.push_back({name, type, 0, "", false, '\0', val});
-                                    } else if (type == DOUBLE_TYPE) {
-                                        tok_idx--;
-                                        double val = expr();
-                                        struct_variables.push_back({name, type, 0, "", false, '\0', 0, val});
-                                    }
-                                } else {
-                                    struct_variables.push_back({name, type});
-                                }
-                            }
-                        } else if (cur_idx.type == LIST) {
-                            string name;
-                            vector<int> the_list;
-                            cur_idx = get_next_tok();
-                            if (cur_idx.type == LIST_NAME) {
-                                name = cur_idx.name;
-                                cur_idx = get_next_tok();
-                                if (cur_idx.type == ASSIGN) {
-                                    cur_idx = get_next_tok();
-                                    if (cur_idx.type == SPARE_LP) {
-                                        while (tok_idx < tokenize.size() && tokenize[tok_idx].type != SPARE_RP) {
-                                            if (tokenize[tok_idx].type == INT) {
-                                                the_list.push_back(tokenize[tok_idx].value);
-                                                tok_idx++;
-                                            } else if (tokenize[tok_idx].type == COMMA) {
-                                                tok_idx++;
-                                            }
-                                        }
-                                    }
-                                } else {
-                                    struct_lists.push_back({name, the_list});
-                                }
-                            }
-
-                            if (!name.empty()) {
-                                struct_lists.push_back({name, the_list});
-                            } else {
-                                cout << "Error: can't create the list" << endl;
-                            }
-                        }
-                        cur_idx = tokenize[tok_idx++];   
-                    }
-                }
-            }   
-        }
-        the_structs.push_back({struct_name, struct_variables, struct_lists});
-    }
-
-    void make_enum() {
-        cur_idx = get_next_tok();
-        vector<enumerate> enummerates;
-        if (cur_idx.type == ENUM) {
-            cur_idx = get_next_tok();
-            if (cur_idx.type == TEMPORARY_MEMORY) {
-                string name = cur_idx.name;
-                cur_idx = get_next_tok();
-                if (cur_idx.type == DO) {
-                    int orders = 0;
-                    while (tok_idx < tokenize.size() && tokenize[tok_idx].type != END) {
-                        cur_idx = tokenize[tok_idx];
-                        if (cur_idx.type == TEMPORARY_MEMORY && tokenize[tok_idx + 1].type != ASSIGN) {
-                            enummerates.push_back({cur_idx.name, orders});
-                            orders++;
-                        } else if (cur_idx.type == TEMPORARY_MEMORY && tokenize[tok_idx + 1].type == ASSIGN) {
-                            cur_idx = get_next_tok();
-                            if (cur_idx.type == ASSIGN) {
-                                cur_idx = get_next_tok();
-                                if (cur_idx.type == INT) {
-                                    enummerates.push_back({cur_idx.name, orders, cur_idx.value});
-                                    orders++;
-                                } else {
-                                    cout << "Error: can't found the value of the enum" << endl;
-                                }
-                            }
-                        }
-                        tok_idx++;
-                    }
-                } else {
-                    cout << "Error: can't found the token 'DO' in enum" << endl;
-                }
-            } else {
-                cout << "Error: can't found the name of the enum" << endl;
-            }
-        }
-        enums.push_back({cur_idx.name, enummerates});
-    }
-
-    int while_loop() {
-        cur_idx = get_next_tok();
-        if (cur_idx.type == WHILE) {
-            int condition = comparison();
-            if (condition == 1) {
-                cur_idx = get_next_tok();
-                if (cur_idx.type == DO) {
-                    do_block();
-                    tok_idx = 0;
-                    while_loop();
-                } else {
-                    cout << "Error: can't not found the token 'DO' in while loop" << endl;
-                }
-            }
-        }
-        return 0;
-    }
-
-    void make_var() {
-        string var_name;
-        Mercury_type type;
-        bool found = false;
-        auto tok = get_next_tok();
-        if (tok.type == LET) {
-            cur_idx = get_next_tok();
-            if (cur_idx.type == NUM_TYPE) {
-                type = INT_TYPE;
-                found = true;
-            } else if (cur_idx.type == FLOAT) {
-                type = FLOAT_TYPE;
-                found = true;
-            } else if (cur_idx.type == STR) {
-                type = STRING_TYPE;
-                found = true;
-            } else if (cur_idx.type == DOUBLE) {
-                type = DOUBLE_TYPE;
-                found = true;
-            }
-            
-            if (found) {
-                cur_idx = get_next_tok();
-                if (cur_idx.type == TEMPORARY_MEMORY) {
-                    var_name = cur_idx.name;
-                    cur_idx = get_next_tok();
-                    if (cur_idx.type == ASSIGN) {
-                        cur_idx = get_next_tok();
-                        if (type == STRING_TYPE) {
-                            string string_val = cur_idx.name;
-                            variables.push_back({var_name, type, 0, string_val});
-                        } else if (type == INT_TYPE) {
-                            tok_idx--;
-                            int val = expr();
-                            variables.push_back({var_name, type, val});
-                        } else if (type == FLOAT_TYPE) {
-                            tok_idx--;
-                            float val = expr();
-                            variables.push_back({var_name, type, 0, "", false, '\0', val});
-                        } else if (type == DOUBLE_TYPE) {
-                            tok_idx--;
-                            double val = expr();
-                            variables.push_back({var_name, type, 0, "", false, '\0', 0, val});
-                        }
-                    } else {
-                        variables.push_back({var_name, type});
-                    }
-                } else {
-                    cout << "Error: can't found the variable name" << endl;
-                }
-            } else {
-                cout << "Error: can't found the type" << endl;
-            }
-        }
-    }
-
-    int comparison() {
-        auto left_token = get_next_tok();
-        VerType OP = get_next_tok().type;
-        auto right_token = get_next_tok();
-        int left = 0;
-        int right = 0;
-        if (left_token.type == TEMPORARY_MEMORY) {
-            string name = left_token.name;
-            left = get_variable(name);
-        } else if (left_token.type == INT) {
-            left = left_token.value;
-        } else if (left_token.type == PARAMATER) {
-            left = get_tempotary_variable(left_token.name);
-        } 
-        else {
-            cout << "Error: error type" << endl;
-        }
-        if (right_token.type == TEMPORARY_MEMORY) {
-            string name = right_token.name;
-            right = get_variable(name);
-        } else if (right_token.type == INT) {
-            right = right_token.value;
-        } else if (right_token.type == PARAMATER) {
-            right = get_tempotary_variable(right_token.name);
-        }
-        switch (OP) {
-            case BIGGER:
-                return left > right ? 1 : 0;
-            case SMALLER:
-                return left < right ? 1 : 0;
-            case EQUAL:
-                return left == right ? 1 : 0;
-            case BE:
-                return left >= right ? 1 : 0;
-            case SE:
-                return left <= right ? 1 : 0;
-            case DIFFERENCES:
-                return left != right ? 1 : 0;
-        }
-        return 0;
-    }
-
-    bool found_else = false;
-    bool found_elif = false;
-
-    int condition() {
-        int pos = tok_idx;
-        cur_idx = get_next_tok();
-        if (cur_idx.type == IF) {
-            int check = comparison();
-            if (check == 1 && get_next_tok().type == THEN) {
-                do_block();
-            } else if (check == 0 && get_next_tok().type == THEN) {
-                while (tok_idx < tokenize.size()) {
-                    cur_idx = tokenize[tok_idx];
-                    if (cur_idx.type == ELSE) {
-                        found_else = true;
-                        break;
-                    } else if (cur_idx.type == ELIF) {
-                        found_elif = true;
-                        break;
-                    }
-                    tok_idx++;
-                }
-                if (found_elif) {
-                    tok_idx++;
-                    int elif_check = comparison();
-                    if (elif_check == 1 && get_next_tok().type == THEN) {
-                        do_block();
-                    } else {
-                        while (tok_idx < tokenize.size() && tokenize[tok_idx].type != ELSE && tokenize[tok_idx].type != ELIF) {
-                            tok_idx++;
-                        }
-                        if (tokenize[tok_idx].type == ELSE) {
-                            found_else = true;
-                        }
-                    }
-                }
-                if (found_else) {
-                    tok_idx++;
-                    do_block();
-                }
-            } else {
-                cout << "Error: condition failed" << endl;
-            }
-        }
-        return 0;
-    }
-
-    void print_func() {
-        auto tok = get_next_tok();
-        if (tok.type == PRINT) {
-            auto next_tok = get_next_tok();
-            if (next_tok.type == STRING) {
-                tok_idx--;
-                cout << string_print_output() << endl;
-            } else {
-                tok_idx--;
-                cout << expr() << endl;
-            }
-        }
-    }
-
-    void do_block() {
-        while (tok_idx < tokenize.size()) {
-            cur_idx = tokenize[tok_idx];
-            if (cur_idx.type == PRINT) {
-                print_func();
-                tok_idx++;
-            } else if (cur_idx.type == LET) {
-                make_var();
-                tok_idx++;
-            } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
-                tok_idx++;
-            } else if (cur_idx.type == IF) {
-                condition();
-                tok_idx++;
-            } else if (cur_idx.type == LIST) {
-                make_list();
-                tok_idx++;
-            } else if (cur_idx.type == FOR_LOOP) {
-                for_loop();
-                tok_idx++;
-            } else if (cur_idx.type == WHILE) {
-                while_loop();
-                tok_idx++;
-            } else if (cur_idx.type == FUNCTION_CALL) {
-                call_function();
-                tok_idx++;
-            } else if (cur_idx.type == FUNCTION) {
-                make_function();
-                tok_idx++;
-            } else if (cur_idx.type == POP) {
-                pop();
-                tok_idx++;
-            } else if (cur_idx.type == PUSH) {
-                push();
-                tok_idx++;
-            } else if (cur_idx.type == REPAIR) {
-                repair();
-                tok_idx++;
-            } else {
-                expr();
             }
         }
     }

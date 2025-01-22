@@ -15,7 +15,7 @@ enum VerType {
     FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, COMMAND, CIN, CLASS, LAMBDA, MAXTRIX, IMPORT, 
     DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, ARROW_TOKEN, RANGE, FOR_LOOP, IN, TO, END, NUM_TYPE, USER_TYPE,
     NULL_TOK, LOCAL, GLOBAL, HEAP, STACK, REGISTER, CONSTANT, LOCAL_VAR, HEAP_VAR, STACK_VAR, VOID_TOK, AUTO_TOK, 
-    CONST_VAR, VOLATILE_TOK, STATIC_TOK, FLOAT, DOUBLE, CHAR, BOOL, LONG, SHORT, UNSIGNED, SIGNED, STR,
+    CONST_VAR, VOLATILE_TOK, STATIC_TOK, FLOAT, DOUBLE, CHAR, BOOL, LONG, SHORT, UNSIGNED, SIGNED, STR, F_STRING
 };
 
 enum VerLibrary_type {
@@ -359,6 +359,9 @@ public:
             } else if (cur == 'G' && input.substr(pos, 6) == "GLOBAL") {
                 advance_to(6);
                 tokens.push_back({GLOBAL_VAR, 0, ""});
+            } else if (cur == 'f') {
+                tokens.push_back({F_STRING, 0, ""});
+                advance();
             } else if (cur == '.') {
                 advance();
                 tokens.push_back({DOT, 0, ""});
@@ -635,31 +638,6 @@ public:
         } else if (cur_idx.type == INT) {
             cur_idx.value -= 1;
         }
-    }
-
-    string get_string() {
-        cur_idx = get_next_tok();
-        if (cur_idx.type == STRING) {
-            return cur_idx.name;
-        } else if (cur_idx.type == TEMPORARY_MEMORY) {
-            auto variable = get_variable_data(cur_idx.name);
-            if (variable.type == STRING_TYPE) {
-                return variable.string_val;
-            }
-        }
-        return "";
-    }
-
-    string string_print_output() {
-        string value = get_string();
-        cur_idx = tokenize[tok_idx];
-        while (tok_idx < tokenize.size() && cur_idx.type != COMMA) {
-            if (cur_idx.type == PLUS) {
-                value += get_string();
-            }
-            cur_idx = tokenize[tok_idx++];
-        }
-        return value;
     }
     
     float factor() {
@@ -1552,6 +1530,7 @@ public:
                 cur_idx = tokenize[tok_idx++];
             }
         }
+        return 0;
     }
 
     void make_enum() {
@@ -1680,7 +1659,7 @@ public:
             left = left_token.value;
         } else if (left_token.type == PARAMATER) {
             left = get_tempotary_variable(left_token.name);
-        } 
+        }
         else {
             cout << "Error: error type" << endl;
         }
@@ -1754,6 +1733,22 @@ public:
             }
         }
         return 0;
+    }
+
+    string string_print_output() {
+        string string_output = "";
+        while (tok_idx < tokenize.size()) {
+            cur_idx = tokenize[tok_idx];
+            if (cur_idx.type == STRING) {
+                string_output += cur_idx.name;
+            } else if (cur_idx.type == PLUS) {
+                continue;
+            } else {
+                break;
+            }
+            tok_idx++;
+        }
+        return string_output;
     }
 
     void print_func() {
@@ -2193,6 +2188,18 @@ public:
                 break;
             }  else if (cur_idx.type == REPAIR) {
                 repair();
+                break;
+            } else if (cur_idx.type == CLASS) {
+                make_class();
+                break;
+            }  else if (cur_idx.type == STRUCT) {
+                make_struct();
+                break;
+            } else if (cur_idx.type == ENUM) {
+                make_enum();
+                break;
+            } else if (cur_idx.type == USER_TYPE) {
+                take_value();
                 break;
             } else {
                 expr();

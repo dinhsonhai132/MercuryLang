@@ -1523,7 +1523,7 @@ public:
                             }
                         }
                     }
-                     else if (cur_idx.type == USER_TYPE) {
+                    else if (cur_idx.type == USER_TYPE) {
                         string mom_name = cur_idx.name;
                     }
                 }
@@ -2197,9 +2197,6 @@ public:
                 break;
             } else if (cur_idx.type == ENUM) {
                 make_enum();
-                break;
-            } else if (cur_idx.type == USER_TYPE) {
-                take_value();
                 break;
             } else {
                 expr();

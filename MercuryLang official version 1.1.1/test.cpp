@@ -787,8 +787,10 @@ public:
                     while (tok_idx < tokenize.size() && cur_idx.type != RP) {
                         if (cur_idx.type == PARAMATER) {
                             paras.push_back({cur_idx.name, 0, AUTO});
+                            cur_idx = tokenize[tok_idx++];
+                        } else if (cur_idx.type == COMMA) {
+                            cur_idx = tokenize[tok_idx++];
                         }
-                        cur_idx = tokenize[tok_idx++];
                     }
                 }
 
@@ -799,8 +801,7 @@ public:
                 }
 
                 if (cur_idx.type == DO) {
-                    while (tok_idx < tokenize.size() && cur_idx.type != END
-                    || tok_idx < tokenize.size()) {
+                    while (tok_idx < tokenize.size() && cur_idx.type != END) {
                         store_tokens.push_back(cur_idx);
                         cur_idx = tokenize[tok_idx++];
                     }
@@ -857,18 +858,19 @@ public:
     }
 
     auto execute(string function_name) {
-        vector<datatype> tokens = get_tokens(function_name);
-        vector<Parameter> paras = get_para(function_name);
-        Parameter_kwargs paras_kwargs = get_function(function_name).parameter_kwargs;
+        auto tokens = get_tokens(function_name);
+        auto paras = get_para(function_name);
+        auto func = get_function(function_name);
+        auto paras_kwargs = func.parameter_kwargs;
 
         if (tokens.empty()) {
             cout << "Error: can't found the function" << endl;
             return 0;
         }
         int cur_tok_idx = tok_idx;
-        vector<datatype> cur_tokens = tokenize;
+        auto cur_tokens = tokenize;
 
-        if (!paras.empty()) {
+        if (!func.parameter_kwargs_found) {
             for (auto &para : paras) {
                 tempotary_variables.push_back({para.name, NULL_TYPE, para.val});
             }
@@ -906,15 +908,6 @@ public:
             } else if (cur_idx.type == FUNCTION) {
                 make_function();
                 tok_idx++;
-            } else if (cur_idx.type == RETURN_FUNC) {
-                int value = make_return();
-                for (auto &func : functions) {
-                    if (func.function_name == function_name) {
-                        func.value = value;
-                    }
-                }
-                tempotary_variables = {};
-                return value;
             } else if (cur_idx.type == IMPORT) {
                 cout << "Error: can't import the file in the function" << endl;
             } else {

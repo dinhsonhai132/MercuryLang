@@ -617,8 +617,10 @@ public:
         if (cur_idx.type == TEMPORARY_MEMORY) {
             for (auto &variable: variables) {
                 if (variable.name == cur_idx.name) {
-                    variable.val += 1;
-                    break;
+                    switch (variable.type) {
+                        case INT_TYPE: variable.val += 1; break;
+                        case FLOAT_TYPE: variable.float_val += 1; break;
+                    }
                 }
             }
         } else if (cur_idx.type == INT) {
@@ -631,8 +633,10 @@ public:
         if (cur_idx.type == TEMPORARY_MEMORY) {
             for (auto &variable: variables) {
                 if (variable.name == cur_idx.name) {
-                    variable.val -= 1;
-                    break;
+                    switch (variable.type) {
+                        case INT_TYPE: variable.val += 1; break;
+                        case FLOAT_TYPE: variable.float_val += 1; break;
+                    }
                 }
             }
         } else if (cur_idx.type == INT) {
@@ -687,6 +691,8 @@ public:
             return extract_tempotary_list();
         } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
             tok_idx++;
+        } else if (cur_idx.type == USER_TYPE) {
+            take_value();
         }
         return 0;
     }   
@@ -1219,6 +1225,7 @@ public:
         vector<store_var> vars;
         Mercury_type type;
         bool found = false;
+        int cur_tok_idx = tok_idx;
         while (tok_idx < tokenize.size()) {
             cur_idx = tokenize[tok_idx];
             if (cur_idx.type == LET) {
@@ -1268,6 +1275,7 @@ public:
             }
             cur_idx = tokenize[tok_idx++];
         }
+        tok_idx = cur_tok_idx;
         return vars;
     }
 
@@ -1275,6 +1283,7 @@ public:
         vector<store_list> lists;
         string name;
         vector<int> the_list;
+        int cur_tok_idx = tok_idx;
         while (tok_idx < tokenize.size()) {
             cur_idx = tokenize[tok_idx];
             if (cur_idx.type == LIST) {
@@ -1301,6 +1310,7 @@ public:
             }
             cur_idx = tokenize[tok_idx++];
         }
+        tok_idx = cur_tok_idx;
         return lists;
     }
 
@@ -1311,6 +1321,7 @@ public:
         Parameter_kwargs paras_kwargs;
         vector<datatype> store_tokens;
         bool found = false;
+        int cur_tok_idx = tok_idx;
         while (tok_idx < tokenize.size()) {
             cur_idx = tokenize[tok_idx];
             if (cur_idx.type == FUNCTION) {
@@ -1353,6 +1364,7 @@ public:
             funcs.push_back({name_func, AUTO, 0, paras, store_tokens, paras_kwargs, found});
             cur_idx = tokenize[tok_idx++];
         }
+        tok_idx = cur_tok_idx;
         return funcs;
     }
 
@@ -1487,47 +1499,34 @@ public:
         return 0;
     }
 
-    auto take_value() {
+    mom_type get_mom(string name) {
+        for (auto &son : moms) {
+            if (son.class_name == name) {
+                return son;
+            }
+        }
+        return {};
+    }
+
+    int take_value() {
         cur_idx = get_next_tok();
         if (cur_idx.type == USER_TYPE) {
-            string mom_name = cur_idx.name;
-            while (tok_idx < tokenize.size()) {
-                cur_idx = tokenize[tok_idx];
-                if (cur_idx.type == DOT) {
-                    cur_idx = get_next_tok();
-                    if (cur_idx.type == TEMPORARY_MEMORY) {
-                        string son_name = cur_idx.name;
-                        for (auto &mom : moms) {
-                            if (mom.class_name == mom_name) {
-                                for (auto &var : mom.variables) {
-                                    if (var.name == son_name) {
-                                        if (var.type == INT_TYPE) {
-                                            return var.val;
-                                        }
-                                    }
-                                }
+            auto son = get_mom(cur_idx.name);
+            cur_idx = get_next_tok();
+            if (cur_idx.type == ARROW_TOKEN) {
+                cur_idx = get_next_tok();
+                if (cur_idx.type == TEMPORARY_MEMORY) {
+                    string name = cur_idx.name;
+                    for (auto &var : son.variables) {
+                        if (var.name == name) {
+                            switch (var.type) {
+                                case INT_TYPE: return static_cast<float>(var.val);
+                                case FLOAT_TYPE: return var.float_val;
+                                case DOUBLE_TYPE: return var.double_val;
                             }
                         }
-                    } else if (cur_idx.type == FUNCTION_CALL) {
-                        string func_name = cur_idx.name;
-                        for (auto &mom : moms) {
-                            if (mom.class_name == mom_name) {
-                                for (auto &func : mom.functions) {
-                                    if (func.function_name == func_name) {
-                                        if (func.type == INT_TYPE) {
-                                            return func.value;
-                                        }
-                                        execute_in_mom(func_name, mom_name);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else if (cur_idx.type == USER_TYPE) {
-                        string mom_name = cur_idx.name;
                     }
                 }
-                cur_idx = tokenize[tok_idx++];
             }
         }
         return 0;

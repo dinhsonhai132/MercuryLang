@@ -691,8 +691,6 @@ public:
             return extract_tempotary_list();
         } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
             tok_idx++;
-        } else if (cur_idx.type == USER_TYPE) {
-            take_value();
         }
         return 0;
     }   
@@ -1401,8 +1399,7 @@ public:
                 struct_name = cur_idx.name;
                 cur_idx = get_next_tok();
                 if (cur_idx.type == DO) {
-                    struct_lists = store_lists();
-                    struct_variables = store_variables();
+                    
                 }
             }   
         }
@@ -2196,6 +2193,9 @@ public:
                 break;
             } else if (cur_idx.type == ENUM) {
                 make_enum();
+                break;
+            } else if (cur_idx.type == USER_TYPE) {
+                take_value();
                 break;
             } else {
                 expr();

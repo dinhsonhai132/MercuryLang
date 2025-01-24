@@ -1,12 +1,13 @@
-# Mercury Programming Language 
-(version 2.0.1 test)
+# Mercury Programming Language
 
 Welcome to **Mercury**, a simple programming language inspired by Python. Mercury is designed for clean, readable, and powerful code, making it ideal for developers of all levels.
 
 ## Features
 
 - **Python-like Syntax**: Intuitive and easy-to-read code.
+- **Dynamic Typing**: Skip worrying about variable types.
 - **Custom Functions**: Create flexible functions with ease.
+- **Error Handling**: Debug efficiently with clear error messages.
 - **Extensive Standard Library**: Tools for data manipulation, file handling, and more.
 
 ## Getting Started
@@ -54,6 +55,19 @@ FUNC add(&x, &y) DO PRINT &x + &y;
 !add(1, 2);
 ```
 
+### Compair
+
+Mercury include a large compair operator
+
+```mercury
+PRINT 1 == 1; /* value will be 1(true) or 0(false) */
+LET INT x = 2;
+LET INT y = 5;
+PRINT x <= 2;
+PRINT x > 4;
+PRINT x != y;
+```
+
 ### Control Flow
 
 Mercury includes standard control flow statements:
@@ -72,7 +86,7 @@ LIST a = [1, 2, 3, 4];
 PRINT @a -> 1; /* first element start with 1 */
 ```
 
-### Math
+### math
 
 ```mercury
 LET INT x = 0;
@@ -81,7 +95,7 @@ PRINT --x;
 PRINT x * 2 / 3 + 1;
 ```
 
-### For loop
+### for loop
 
 ```mercury
 /* for loop in list */

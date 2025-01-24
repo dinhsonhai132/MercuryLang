@@ -57,7 +57,7 @@ FUNC add(&x, &y) DO PRINT &x + &y;
 
 ### Compair
 
-Mercury include a large compair operator
+Mercury include a large compair operators
 
 ```mercury
 PRINT 1 == 1; /* value will be 1(true) or 0(false) */

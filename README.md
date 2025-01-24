@@ -1,4 +1,5 @@
-# Mercury Programming Language (version 2.0.1 test)
+# Mercury Programming Language 
+(version 2.0.1 test)
 
 Welcome to **Mercury**, a simple programming language inspired by Python. Mercury is designed for clean, readable, and powerful code, making it ideal for developers of all levels.
 

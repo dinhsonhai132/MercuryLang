@@ -5,9 +5,7 @@ Welcome to **Mercury**, a simple programming language inspired by Python. Mercur
 ## Features
 
 - **Python-like Syntax**: Intuitive and easy-to-read code.
-- **Dynamic Typing**: Skip worrying about variable types.
 - **Custom Functions**: Create flexible functions with ease.
-- **Error Handling**: Debug efficiently with clear error messages.
 - **Extensive Standard Library**: Tools for data manipulation, file handling, and more.
 
 ## Getting Started

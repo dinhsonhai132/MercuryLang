@@ -21,7 +21,7 @@ Before using Mercury, ensure you have:
 
 ### Installation
 
-1. Download the MercuryLang using link [click this link](https://github.com/dinhsonhai132/Mercury-Langluage)
+1. Download the MercuryLang [using this link](https://github.com/dinhsonhai132/Mercury-Langluage)
 2. Extract all file
 
 ### Hello, World!
@@ -116,4 +116,3 @@ We welcome contributions! Submit issues, suggest features, or contribute code:
 For questions or suggestions, reach out:
 
 - GitHub: [Mercury Language Repository](https://github.com/dinhsonhai132/Mercury-Langluage)
-version ``` 2.0.1 ``` will release soon

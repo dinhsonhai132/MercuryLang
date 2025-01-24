@@ -603,15 +603,6 @@ public:
         return {NONE, 0, ""};
     }
 
-    auto get_value_func(string name) {
-        for (auto &func : functions) {
-            if (func.function_name == name) {
-                return func.value;
-            }
-        }
-        return 0;
-    }
-
     void update_pp() {
         cur_idx = get_next_tok();
         if (cur_idx.type == TEMPORARY_MEMORY) {
@@ -664,8 +655,6 @@ public:
             }
         } else if (cur_idx.type == INT && tokenize[tok_idx + 1].type != DOT) {
             return cur_idx.value;
-        } else if (cur_idx.type == FUNCTION_CALL) {
-            return get_value_func(cur_idx.name);
         } else if (cur_idx.type == TEMPORARY_MEMORY) {
             auto variable = get_variable_data(cur_idx.name);
             if (variable.type == FLOAT_TYPE) {
@@ -775,33 +764,34 @@ public:
         vector<Parameter> paras;
         Parameter_kwargs paras_kwargs;
         vector<datatype> store_tokens;
-        bool found = false;
+        bool list_found = false;
         if (cur_idx.type == FUNCTION) {
             name_func = cur_idx.name;
             cur_idx = get_next_tok();
             if (cur_idx.type == LP) {
-                if (tokenize[tok_idx + 1].type == PARAMATER_KWARGS) {
-                    paras_kwargs = {tokenize[tok_idx + 1].name, {}, AUTO};
-                    found = true;
+                auto next_tok = tokenize[tok_idx + 1];
+                if (next_tok.type == PARAMATER_KWARGS) {
+                    paras_kwargs = {next_tok.name, {}, AUTO};
+                    cur_idx = get_next_tok_to(2);
+                    if (cur_idx.type != RP) {
+                        cout << "Error: Expected ')' after parameter" << endl;
+                    }
+                    list_found = true;
                 } else {
                     while (tok_idx < tokenize.size() && cur_idx.type != RP) {
+                        cur_idx = tokenize[tok_idx];
                         if (cur_idx.type == PARAMATER) {
                             paras.push_back({cur_idx.name, 0, AUTO});
-                            cur_idx = tokenize[tok_idx++];
+                            tok_idx++;
                         } else if (cur_idx.type == COMMA) {
-                            cur_idx = tokenize[tok_idx++];
+                            tok_idx++;
                         }
                     }
                 }
 
-                if (found) {
-                    cur_idx = get_next_tok_to(3);
-                } else {
-                    cur_idx = get_next_tok();
-                }
-
+                cur_idx = get_next_tok();
                 if (cur_idx.type == DO) {
-                    while (tok_idx < tokenize.size() && cur_idx.type != END) {
+                    while (tok_idx < tokenize.size()) {
                         store_tokens.push_back(cur_idx);
                         cur_idx = tokenize[tok_idx++];
                     }
@@ -810,25 +800,15 @@ public:
             } else {
                 cout << "Error: Expected '(' after function name" << endl;
             }
-        }
-        else {
+        } else {
             cout << "Error: Expected 'FUNC' after function name" << endl;
         }
-        
-        if (found) {
+
+        if (list_found) {
             functions.push_back({name_func, AUTO, 0, {}, store_tokens, paras_kwargs, true});
         } else {
             functions.push_back({name_func, AUTO, 0, paras, store_tokens, {}, false});
         }
-    }
-
-    vector<datatype> get_tokens(string name) {
-        for (auto &func : functions) {
-            if (func.function_name == name) {
-                return func.store_tokens;
-            }
-        }
-        return {};
     }
 
     function_ get_function(string name) {
@@ -840,33 +820,17 @@ public:
         return {};
     }
 
-    vector<Parameter> get_para(string name) {
-        for (auto &func : functions) {
-            if (func.function_name == name) {
-                return func.Parameters;
-            }
-        }
-        return {};
-    } 
-
-    float make_return() {
-        cur_idx = get_next_tok();
-        if (cur_idx.type == RETURN_FUNC) {
-            return expr();
-        }
-        return 0;
-    }
-
     auto execute(string function_name) {
-        auto tokens = get_tokens(function_name);
-        auto paras = get_para(function_name);
         auto func = get_function(function_name);
+        auto paras = func.Parameters;
+        auto tokens = func.store_tokens;
         auto paras_kwargs = func.parameter_kwargs;
 
         if (tokens.empty()) {
             cout << "Error: can't found the function" << endl;
             return 0;
         }
+
         int cur_tok_idx = tok_idx;
         auto cur_tokens = tokenize;
 
@@ -937,13 +901,14 @@ public:
         vector<int> kwargs;
         vector<Parameter> paras;
         Parameter_kwargs paras_kwargs;
+        bool check_kwarg_func;
         if (cur_idx.type == FUNCTION_CALL) {
             name = cur_idx.name;
             cur_idx = get_next_tok();
             if (cur_idx.type == LP) {
-                paras = get_para(name);
                 function_ func = get_function(name);
-                bool check_kwarg_func = check_kwarg(name);
+                paras = func.Parameters;
+                check_kwarg_func = func.parameter_kwargs_found;
                 if (check_kwarg_func) {
                     while (tok_idx < tokenize.size() && cur_idx.type != RP) {
                         if (cur_idx.type == INT) {
@@ -1463,19 +1428,6 @@ public:
             } else if (cur_idx.type == FUNCTION) {
                 make_function();
                 tok_idx++;
-            } else if (cur_idx.type == RETURN_FUNC) {
-                int value = make_return();
-                for (auto &func : moms) {
-                    if (func.class_name == name_mom) {
-                        for (auto &f : func.functions) {
-                            if (f.function_name == name_func) {
-                                f.value = value;
-                            }
-                        }
-                    }
-                }
-                tempotary_variables = {};
-                return value;
             } else if (cur_idx.type == IMPORT) {
                 cout << "Error: can't import the file in the function" << endl;
             } else {
@@ -2236,7 +2188,7 @@ void run() {
     auto now = std::chrono::system_clock::now();
     std::time_t current_time = std::chrono::system_clock::to_time_t(now);
     auto time = ctime(&current_time);
-    cout << "MercuryLang [Version 2.0.1]\n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
+    cout << "MercuryLang [Version 2.1.1]\n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
         cout << "> ";

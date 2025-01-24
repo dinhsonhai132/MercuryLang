@@ -109,8 +109,6 @@ We welcome contributions! Submit issues, suggest features, or contribute code:
 1. Fork the repository.
 2. Create a new branch for your feature or bugfix.
 3. Submit a pull request with a description of your changes.
-https://github.com/dinhsonhai132/Mercury-Langluage/raw/main/shell.cpp
-
 
 ## Contact
 

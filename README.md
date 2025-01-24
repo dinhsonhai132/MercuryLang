@@ -71,7 +71,7 @@ LIST a = [1, 2, 3, 4];
 PRINT @a -> 1; /* first element start with 1 */
 ```
 
-### math
+### Math
 
 ```mercury
 LET INT x = 0;
@@ -80,7 +80,7 @@ PRINT --x;
 PRINT x * 2 / 3 + 1;
 ```
 
-### for loop
+### For loop
 
 ```mercury
 /* for loop in list */

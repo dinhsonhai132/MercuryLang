@@ -63,6 +63,10 @@
 - **New Features**:  
   - Started implementing **class** and **struct** functionality (work in progress).
 
+## 1/25/2025
+- **Bug Fixes**:
+  - Fixed **elif** (else-if) functionality
+
 ---
 
 # ✨ Leaked Features (Upcoming)  

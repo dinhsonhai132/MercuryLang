@@ -26,14 +26,14 @@ Before using Mercury, ensure you have:
 
 ### Hello, World!
 
-Make a .txt file and write your first Mercury program:
+Make a ```.txt``` file and write your first Mercury program:
 
 ```mercury
 PRINT "HELLO WORLD!";
 ```
 
 Run the program:
-Open shell.exe file and write the name of your .txt file
+Open ```shell.exe``` file and write the name of your ```.txt``` file
 
 ## 📐 Language Syntax
 

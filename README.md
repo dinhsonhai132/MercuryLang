@@ -128,4 +128,4 @@ We welcome contributions! Submit issues, suggest features, or contribute code:
 
 For questions or suggestions, reach out:
 
-- GitHub: [Mercury Language Repository](https://github.com/dinhsonhai132/Mercury-Langluage/discussions)
+- GitHub: [Mercury Language Discussion](https://github.com/dinhsonhai132/Mercury-Langluage/discussions)

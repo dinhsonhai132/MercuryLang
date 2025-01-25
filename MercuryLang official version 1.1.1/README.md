@@ -65,7 +65,7 @@
 
 ---
 
-# 🔆 Leaked Features (Upcoming)  
+# ✨ Leaked Features (Upcoming)  
 - **New Data Types**:  
   - String type in variables.  
   - Float type support.  

@@ -1759,7 +1759,7 @@ public:
     }
 
     void do_block() {
-        while (tok_idx < tokenize.size()) {
+        while (tok_idx < tokenize.size() && cur_idx.type != END) {
             cur_idx = tokenize[tok_idx];
             if (cur_idx.type == PRINT) {
                 print_func();

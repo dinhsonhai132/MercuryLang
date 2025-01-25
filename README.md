@@ -116,7 +116,7 @@ LET INT x = 0;
 WHILE x < 10 DO ++x; PRINT x;
 ```
 
-## Contributing
+## 🤝 Contributing
 
 We welcome contributions! Submit issues, suggest features, or contribute code:
 
@@ -124,7 +124,7 @@ We welcome contributions! Submit issues, suggest features, or contribute code:
 2. Create a new branch for your feature or bugfix.
 3. Submit a pull request with a description of your changes.
 
-## Contact
+## ✅ Contact
 
 For questions or suggestions, reach out:
 

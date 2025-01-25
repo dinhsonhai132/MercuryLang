@@ -68,6 +68,8 @@
   - Fixed **elif** (else-if) functionality
 - **New Features**
   - Add END token into ```do_block``` function
+  - Syntax change
+  - new version 1.5.0
 
 ---
 

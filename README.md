@@ -33,8 +33,7 @@ PRINT "HELLO WORLD!";
 ```
 
 Run the program:
-Open ```shell.exe``` file and write the name of your ```.txt``` file
-Or you can open ```shell.exe``` file and type ```run``` to run code in command line
+Open ```shell.exe``` file and write the name of your ```.txt``` file or you can open ```shell.exe``` file and type ```run``` to run code in command line
 
 ## 📐 Language Syntax
 

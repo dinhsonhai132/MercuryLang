@@ -16,7 +16,7 @@ Welcome to ```MercuryLang```, a simple programming language inspired by Python. 
 
 Before using Mercury, ensure you have:
 
-- A ```C++``` compiler (Mercury is implemented in C++)
+- A ```C++``` compiler (Mercury is implemented in ```C++```)
 - CMake (to build from source)
 
 ### Installation

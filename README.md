@@ -2,7 +2,7 @@
 
 Welcome to **Mercury**, a simple programming language inspired by Python. Mercury is designed for clean, readable, and powerful code, making it ideal for developers of all levels.
 
-## Features
+## 🌟🌟🌟 Features
 
 - **Python-like Syntax**: Intuitive and easy-to-read code.
 - **Dynamic Typing**: Skip worrying about variable types.

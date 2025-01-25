@@ -1,5 +1,5 @@
 
-# Mercury Language Update Log
+# 📜 Mercury Language Update Log
 
 ## 12/7/2024  
 - **New Features**:  

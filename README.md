@@ -51,7 +51,7 @@ PRINT x + y;
 Define functions with parameters:
 
 ```mercury
-FUNC add(&x, &y) DO PRINT &x + &y;
+FUNC add(&x, &y) DO PRINT &x + &y END;
 !add(1, 2);
 ```
 
@@ -74,7 +74,9 @@ Mercury includes standard control flow statements:
 
 ```mercury
 LET INT x = 0;
-IF x > 0 THEN PRINT "x is greater than zero" ELSE PRINT "x is not greater than zero";
+IF x > 0 THEN PRINT "x is greater than zero" END ELSE PRINT "x is not greater than zero" END;
+++x;
+IF x != 1 THEN PRINT "x is not 1" END ELIF x == 1 THEN PRINT "x is 1" END;
 ```
 
 ### Lists
@@ -105,7 +107,7 @@ FOR i IN @a DO PRINT i;
 
 /* for loop in range */
 
-FOR i IN 1 TO 10 DO PRINT i;
+FOR i IN 1 TO 10 DO PRINT i END;
 
 ```
 
@@ -113,7 +115,7 @@ FOR i IN 1 TO 10 DO PRINT i;
 
 ```mercury
 LET INT x = 0;
-WHILE x < 10 DO ++x; PRINT x;
+WHILE x < 10 DO ++x; PRINT x END;
 ```
 
 ## 🤝 Contributing

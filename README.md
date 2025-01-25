@@ -1,6 +1,6 @@
 # 🟠 Mercury Programming Language
 
-Welcome to **Mercury**, a simple programming language inspired by Python. Mercury is designed for clean, readable, and powerful code, making it ideal for developers of all levels.
+Welcome to ```MercuryLang```, a simple programming language inspired by Python. Mercury is designed for clean, readable, and powerful code, making it ideal for developers of all levels.
 
 ## 🌟 Features
 
@@ -16,7 +16,7 @@ Welcome to **Mercury**, a simple programming language inspired by Python. Mercur
 
 Before using Mercury, ensure you have:
 
-- A C++ compiler (Mercury is implemented in C++)
+- A ```C++``` compiler (Mercury is implemented in C++)
 - CMake (to build from source)
 
 ### Installation

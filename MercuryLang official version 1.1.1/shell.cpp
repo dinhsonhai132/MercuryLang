@@ -1715,7 +1715,7 @@ public:
     int condition() {
         int pos = tok_idx;
         cur_idx = get_next_tok();
-        if (cur_idx.type == IF) {
+        if (cur_idx.type == IF || cur_idx.type == ELIF) {
             int check = comparison();
             if (check == 1 && get_next_tok().type == THEN) {
                 do_block();
@@ -1731,23 +1731,11 @@ public:
                     }
                     tok_idx++;
                 }
-                if (found_elif) {
-                    tok_idx++;
-                    int elif_check = comparison();
-                    if (elif_check == 1 && get_next_tok().type == THEN) {
-                        do_block();
-                    } else {
-                        while (tok_idx < tokenize.size() && tokenize[tok_idx].type != ELSE && tokenize[tok_idx].type != ELIF) {
-                            tok_idx++;
-                        }
-                        if (tokenize[tok_idx].type == ELSE) {
-                            found_else = true;
-                        }
-                    }
-                }
                 if (found_else) {
                     tok_idx++;
                     do_block();
+                } else if (found_elif) {
+                    condition();
                 }
             } else {
                 cout << "Error: condition failed" << endl;

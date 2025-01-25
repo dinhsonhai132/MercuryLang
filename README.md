@@ -10,7 +10,7 @@ Welcome to **Mercury**, a simple programming language inspired by Python. Mercur
 - **Error Handling**: Debug efficiently with clear error messages.
 - **Extensive Standard Library**: Tools for data manipulation, file handling, and more.
 
-## Getting Started
+## 📒 Getting Started
 
 ### Prerequisites
 
@@ -35,7 +35,7 @@ PRINT "HELLO WORLD!";
 Run the program:
 Open shell.exe file and write the name of your .txt file
 
-## Language Syntax
+## 📐 Language Syntax
 
 ### Variables
 
@@ -86,7 +86,7 @@ LIST a = [1, 2, 3, 4];
 PRINT @a -> 1; /* first element start with 1 */
 ```
 
-### math
+### Math
 
 ```mercury
 LET INT x = 0;
@@ -95,7 +95,7 @@ PRINT --x;
 PRINT x * 2 / 3 + 1;
 ```
 
-### for loop
+### For loop
 
 ```mercury
 /* for loop in list */

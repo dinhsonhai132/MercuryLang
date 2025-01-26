@@ -1,4 +1,6 @@
-### ⚠️ Warning: before read this, this langluage is still not in finish, that's mean it doesn't support strong library, datatype, function,... all just for test before the offical version out, if you want to try the full version of the langluage please wait until the version 1.0.1a (beta) is out, Thanks you all for trying my langluage
+### ⚠️ Warning: before you read 
+```README.md```
+### , this langluage is still not in finish, that's mean it doesn't support strong library, datatype, function,... all just for test before the offical version out, if you want to try the full version of the langluage please wait until the version 1.0.1a (beta) is out, Thanks you all for trying my langluage
 
 
 --------

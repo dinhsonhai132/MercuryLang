@@ -6,6 +6,7 @@ Welcome to ```MercuryLang``` version ```1.1.1```, a simple programming language 
 ## 🌟 Features
 
 - **Python-like Syntax**: Intuitive and easy-to-read code.
+- **Datatype worring**: You don't need worry to much about datatype
 - **Custom Functions**: Create flexible functions with ease.
 - **Error Handling**: Debug efficiently with clear error messages.
 - **Extensive Standard Library**: Tools for data manipulation, file handling, and more.

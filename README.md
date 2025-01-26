@@ -1,7 +1,7 @@
 # ⚠️ Warning before read this, this langluage is still in a work in process langluage, if you want to try the full version of the langluage please wait until the version 1.0.1a (beta) is out ⚠️
 # 🟠 Mercury Programming Language
 
-Welcome to ```MercuryLang```, a simple programming language inspired by Python. Mercury is designed for clean, readable, and powerful code, making it ideal for developers of all levels.
+Welcome to ```MercuryLang``` version ```1.1.1```, a simple programming language inspired by Python. Mercury is designed for clean, readable, and powerful code, making it ideal for developers of all levels.
 
 ## 🌟 Features
 

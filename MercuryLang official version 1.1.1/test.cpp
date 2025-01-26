@@ -11,9 +11,9 @@ using namespace std;
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, STRUCT, ENUM, BLOCK, PORT, DOT, TRUE, FALSE,
     TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE, ELIF, PARAMATER_KWARGS, GLOBAL_VAR,
-    THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, RETURN_FUNC, POP, PUSH, AT, REPAIR,
+    THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, RETURN_FUNC, POP, PUSH, AT, REPAIR, DO_LOOP,
     FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, COMMAND, CIN, CLASS, LAMBDA, MAXTRIX, IMPORT, 
-    DO, VECTOR, SPARE_LP, SPARE_RP, LIST_NAME, ARROW_TOKEN, RANGE, FOR_LOOP, IN, TO, END, NUM_TYPE, USER_TYPE,
+    DO, VECTOR, SQUARE_LP, SQUARE_P, LIST_NAME, ARROW_TOKEN, RANGE, FOR_LOOP, IN, TO, END, NUM_TYPE, USER_TYPE,
     NULL_TOK, LOCAL, GLOBAL, HEAP, STACK, REGISTER, CONSTANT, LOCAL_VAR, HEAP_VAR, STACK_VAR, VOID_TOK, AUTO_TOK, 
     CONST_VAR, VOLATILE_TOK, STATIC_TOK, FLOAT, DOUBLE, CHAR, BOOL, LONG, SHORT, UNSIGNED, SIGNED, STR, F_STRING
 };
@@ -244,10 +244,10 @@ public:
                 tokens.push_back({RP, 0, ""});
                 advance();
             } else if (cur == ']') {
-                tokens.push_back({SPARE_RP, 0, ""});
+                tokens.push_back({SQUARE_P, 0, ""});
                 advance();
             } else if (cur == '[') {
-                tokens.push_back({SPARE_LP, 0, ""});
+                tokens.push_back({SQUARE_LP, 0, ""});
                 advance();
             } else if (cur == 'T' && input.substr(pos, 2) == "TO") {
                 tokens.push_back({TO, 0, ""});
@@ -359,6 +359,9 @@ public:
             } else if (cur == 'G' && input.substr(pos, 6) == "GLOBAL") {
                 advance_to(6);
                 tokens.push_back({GLOBAL_VAR, 0, ""});
+            } else if (cur == 'L' && input.substr(pos, 4) == "LOOP") {
+                advance_to(4);
+                tokens.push_back({DO_LOOP, 0, ""});
             } else if (cur == 'f') {
                 tokens.push_back({F_STRING, 0, ""});
                 advance();
@@ -680,6 +683,8 @@ public:
             return extract_tempotary_list();
         } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
             tok_idx++;
+        } else {
+            cout << "Error" << endl;
         }
         return 0;
     }   
@@ -733,8 +738,8 @@ public:
                 tok = get_next_tok();
                 if (tok.type == ASSIGN) {
                     tok = get_next_tok();
-                    if (tok.type == SPARE_LP) {
-                        while (tok_idx < tokenize.size() && tokenize[tok_idx].type != SPARE_RP) {
+                    if (tok.type == SQUARE_LP) {
+                        while (tok_idx < tokenize.size() && tokenize[tok_idx].type != SQUARE_P) {
                             if (tokenize[tok_idx].type == INT) {
                                 the_list.push_back(tokenize[tok_idx].value);
                                 tok_idx++;
@@ -780,24 +785,22 @@ public:
             name_func = cur_idx.name;
             cur_idx = get_next_tok();
             if (cur_idx.type == LP) {
-                cur_idx = get_next_tok();
-                if (cur_idx.type == PARAMATER) {
+                auto next_tok = tokenize[tok_idx++];
+                if (next_tok.type == PARAMATER_KWARGS) {
+                    found_kwargs = true;
+                    kwargs = {next_tok.name, {}, AUTO}; 
+                } else {
+                    cur_idx = get_next_tok();
                     while (tok_idx < tokenize.size() && cur_idx.type != RP) {
+                        cur_idx = tokenize[tok_idx];
                         if (cur_idx.type == PARAMATER) {
                             paras.push_back({cur_idx.name, 0, AUTO});
-                            cur_idx = tokenize[tok_idx++];
+                            found_paras = true;
+                            tok_idx++;
                         } else if (cur_idx.type == COMMA) {
-                            cur_idx = tokenize[tok_idx++];
-                        } else {
-                            cout << "Error: Unexpected factor" << endl;
-                            return;
-                        } 
+                            tok_idx++;
+                        }
                     }
-                    found_paras = true;
-                } else if (cur_idx.type == PARAMATER_KWARGS) {
-                    kwargs = {cur_idx.name, {}, AUTO};
-                    cur_idx = get_next_tok();
-                    found_kwargs = true;
                 }
             } else {
                 cout << "Error: Can't find '('" << endl;
@@ -1206,8 +1209,8 @@ public:
                     cur_idx = get_next_tok();
                     if (cur_idx.type == ASSIGN) {
                         cur_idx = get_next_tok();
-                        if (cur_idx.type == SPARE_LP) {
-                            while (tok_idx < tokenize.size() && tokenize[tok_idx].type != SPARE_RP) {
+                        if (cur_idx.type == SQUARE_LP) {
+                            while (tok_idx < tokenize.size() && tokenize[tok_idx].type != SQUARE_P) {
                                 if (tokenize[tok_idx].type == INT) {
                                     the_list.push_back(tokenize[tok_idx].value);
                                     tok_idx++;
@@ -1468,7 +1471,8 @@ public:
         the_enums.push_back({cur_idx.name, enummerates});
     }
 
-    int while_loop() {
+    void while_loop() {
+        int cur_tok_idx = tok_idx;
         cur_idx = get_next_tok();
         if (cur_idx.type == WHILE) {
             int condition = comparison();
@@ -1476,14 +1480,23 @@ public:
                 cur_idx = get_next_tok();
                 if (cur_idx.type == DO) {
                     do_block();
-                    tok_idx = 0;
+                    tok_idx = cur_tok_idx;
                     while_loop();
                 } else {
                     cout << "Error: can't not found the token 'DO' in while loop" << endl;
                 }
             }
         }
-        return 0;
+    }
+
+    void do_loop() {
+        cur_idx = get_next_tok();
+        if (cur_idx.type == DO_LOOP) {
+            cur_idx = get_next_tok();
+            if (cur_idx.type == DO) {
+                do_block();
+            }
+        }
     }
 
     void make_var() {
@@ -1662,7 +1675,7 @@ public:
     }
 
     void do_block() {
-        while (tok_idx < tokenize.size()) {
+        while (tok_idx < tokenize.size() && cur_idx.type != END) {
             cur_idx = tokenize[tok_idx];
             if (cur_idx.type == PRINT) {
                 print_func();
@@ -2091,11 +2104,14 @@ public:
             } else if (cur_idx.type == USER_TYPE) {
                 take_value();
                 break;
-            }else if (cur_idx.type == FUNCTION_CALL) {
+            } else if (cur_idx.type == FUNCTION_CALL) {
                 call_function();
                 break;
             } else if (cur_idx.type == FUNCTION) {
                 make_function();
+                break;
+            } else if (cur_idx.type == DO_LOOP) {
+                do_loop();
                 break;
             } else {
                 expr();
@@ -2123,20 +2139,8 @@ void print_list() {
 }
 
 void print_function() {
-    vector<string> para_name;
     for (auto &func : functions) {
-        cout << "func name: " << func.function_name << " ";
-        cout << "para: ";
-        for (auto name : para_name) {
-            cout << name << " ";
-        }
-        cout << "value: ";
-        cout << func.value << endl;
-        para_name = {};
-        for (auto &tokens : func.store_tokens) {
-            cout << tokens.type << " ";
-        }
-        cout << endl;
+        cout << "function name: " << func.function_name << endl;
     }
 }
 
@@ -2167,7 +2171,7 @@ void run() {
             continue;
         } else if (input == "list") {
             print_list();
-        } else if (input == "show func") {
+        } else if (input == "func") {
             print_function();
         } else {
             par.run_code();
@@ -2239,8 +2243,8 @@ void debug() {
                     case LIST: token_type = "LIST"; break;
                     case LIST_NAME: token_type = "LIST_NAME"; break;
                     case ARROW_TOKEN: token_type = "ARROW_TOKEN"; break;
-                    case SPARE_LP: token_type = "SPARE_LP"; break;
-                    case SPARE_RP: token_type = "SPARE_RP"; break;
+                    case SQUARE_LP: token_type = "SQUARE_LP"; break;
+                    case SQUARE_P: token_type = "SQUARE_P"; break;
                     case FOR_LOOP: token_type = "FOR_LOOP"; break;
                     case IN: token_type = "IN"; break;
                     case TO: token_type = "TO"; break;

@@ -122,6 +122,13 @@ LET INT x = 0;
 WHILE x < 10 DO ++x; PRINT x END;
 ```
 
+### Code block
+
+```mercury
+/*code block store multiline */
+... DO (code_block) END;
+```
+
 ## 🤝 Contributing
 
 We welcome contributions! Submit issues, suggest features, or contribute code:

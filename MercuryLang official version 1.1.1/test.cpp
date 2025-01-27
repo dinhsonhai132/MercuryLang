@@ -684,7 +684,7 @@ public:
         } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
             tok_idx++;
         } else {
-            cout << "Error" << endl;
+            cout << "Error: Unexpected factor" << endl;
         }
         return 0;
     }   
@@ -785,33 +785,31 @@ public:
             name_func = cur_idx.name;
             cur_idx = get_next_tok();
             if (cur_idx.type == LP) {
-                auto next_tok = tokenize[tok_idx++];
-                if (next_tok.type == PARAMATER_KWARGS) {
-                    found_kwargs = true;
-                    kwargs = {next_tok.name, {}, AUTO}; 
-                } else {
-                    cur_idx = get_next_tok();
-                    while (tok_idx < tokenize.size() && cur_idx.type != RP) {
+                cur_idx = get_next_tok();
+
+                if (cur_idx.type == PARAMATER) {
+                    found_paras = true;
+                    while (cur_idx.type != RP) {
                         cur_idx = tokenize[tok_idx];
                         if (cur_idx.type == PARAMATER) {
                             paras.push_back({cur_idx.name, 0, AUTO});
-                            found_paras = true;
                             tok_idx++;
                         } else if (cur_idx.type == COMMA) {
                             tok_idx++;
                         }
                     }
+                } else if (cur_idx.type == PARAMATER_KWARGS) {
+                    found_kwargs = true;
+                    kwargs = {cur_idx.name, {}, AUTO};
+                    cur_idx = get_next_tok();
                 }
-            } else {
-                cout << "Error: Can't find '('" << endl;
-            }
-            cur_idx = get_next_tok();
-            if (cur_idx.type == DO) {
-                while (tok_idx < tokenize.size()) {
-                    func_body.push_back(tokenize[tok_idx++]);
+
+                cur_idx = get_next_tok();
+                if (cur_idx.type == DO) {
+                    while (tok_idx < tokenize.size()) {
+                        func_body.push_back(tokenize[tok_idx++]);
+                    }
                 }
-            } else {
-                cout << "Error: Missing token DO" << endl;
             }
         }
 

@@ -789,13 +789,15 @@ public:
 
                 if (cur_idx.type == PARAMATER) {
                     found_paras = true;
-                    while (cur_idx.type != RP) {
+                    while (tok_idx < tokenize.size() && cur_idx.type != RP) {
                         cur_idx = tokenize[tok_idx];
                         if (cur_idx.type == PARAMATER) {
                             paras.push_back({cur_idx.name, 0, AUTO});
                             tok_idx++;
                         } else if (cur_idx.type == COMMA) {
                             tok_idx++;
+                        } else {
+                            cout << "Error: Unexpected factor in function" << endl;
                         }
                     }
                 } else if (cur_idx.type == PARAMATER_KWARGS) {
@@ -1133,301 +1135,6 @@ public:
             cout << "Error: can't found token 'FOR'" << endl;
         }
         if (!list_found) variables.push_back({name, INT_TYPE, right});
-    }
-
-    vector<store_var> store_variables() {
-        vector<store_var> vars;
-        Mercury_type type;
-        bool found = false;
-        int cur_tok_idx = tok_idx;
-        while (tok_idx < tokenize.size()) {
-            cur_idx = tokenize[tok_idx];
-            if (cur_idx.type == LET) {
-                cur_idx = get_next_tok();
-                if (cur_idx.type == FLOAT) {
-                    type = FLOAT_TYPE;
-                    found = true;
-                } else if (cur_idx.type == INT) {
-                    type = INT_TYPE;
-                    found = true;
-                } else if (cur_idx.type == STR) {
-                    type = STRING_TYPE;
-                    found = true;
-                } else if (cur_idx.type == DOUBLE) {
-                    type = DOUBLE_TYPE;
-                    found = true;
-                }
-                
-                if (found) {
-                    cur_idx = get_next_tok();
-                    if (cur_idx.type == TEMPORARY_MEMORY) {
-                        string name = cur_idx.name;
-                        cur_idx = get_next_tok();
-                        if (cur_idx.type == ASSIGN) {
-                            cur_idx = get_next_tok();
-                            if (type == STRING_TYPE) {
-                                string string_val = cur_idx.name;
-                                vars.push_back({name, type, 0, string_val});
-                            } else if (type == INT_TYPE) {
-                                tok_idx--;
-                                int val = expr();
-                                vars.push_back({name, type, val});
-                            } else if (type == FLOAT_TYPE) {
-                                tok_idx--;
-                                float val = expr();
-                                vars.push_back({name, type, 0, "", false, '\0', val});
-                            } else if (type == DOUBLE_TYPE) {
-                                tok_idx--;
-                                double val = expr();
-                                vars.push_back({name, type, 0, "", false, '\0', 0, val});
-                            }
-                        } else {
-                            vars.push_back({name, type});
-                        }
-                    }
-                }
-            }
-            cur_idx = tokenize[tok_idx++];
-        }
-        tok_idx = cur_tok_idx;
-        return vars;
-    }
-
-    vector<store_list> store_lists() {
-        vector<store_list> lists;
-        string name;
-        vector<int> the_list;
-        int cur_tok_idx = tok_idx;
-        while (tok_idx < tokenize.size()) {
-            cur_idx = tokenize[tok_idx];
-            if (cur_idx.type == LIST) {
-                cur_idx = get_next_tok();
-                if (cur_idx.type == LIST_NAME) {
-                    name = cur_idx.name;
-                    cur_idx = get_next_tok();
-                    if (cur_idx.type == ASSIGN) {
-                        cur_idx = get_next_tok();
-                        if (cur_idx.type == SQUARE_LP) {
-                            while (tok_idx < tokenize.size() && tokenize[tok_idx].type != SQUARE_P) {
-                                if (tokenize[tok_idx].type == INT) {
-                                    the_list.push_back(tokenize[tok_idx].value);
-                                    tok_idx++;
-                                } else if (tokenize[tok_idx].type == COMMA) {
-                                    tok_idx++;
-                                }
-                            }
-                        }
-                    } else {
-                        lists.push_back({name, the_list});
-                    }
-                }
-            }
-            cur_idx = tokenize[tok_idx++];
-        }
-        tok_idx = cur_tok_idx;
-        return lists;
-    }
-
-    vector<function_> store_functions() {
-        vector<function_> funcs;
-        string name_func;
-        vector<Parameter> paras;
-        Parameter_kwargs paras_kwargs;
-        vector<datatype> store_tokens;
-        bool found = false;
-        int cur_tok_idx = tok_idx;
-        while (tok_idx < tokenize.size()) {
-            cur_idx = tokenize[tok_idx];
-            if (cur_idx.type == FUNCTION) {
-                name_func = cur_idx.name;
-                cur_idx = get_next_tok();
-                if (cur_idx.type == LP) {
-                    if (tokenize[tok_idx + 1].type == PARAMATER_KWARGS) {
-                        paras_kwargs = {tokenize[tok_idx + 1].name, {}, AUTO};
-                        found = true;
-                    } else {
-                        while (tok_idx < tokenize.size() && cur_idx.type != RP) {
-                            if (cur_idx.type == PARAMATER) {
-                                paras.push_back({cur_idx.name, 0, AUTO});
-                            }
-                            cur_idx = tokenize[tok_idx++];
-                        }
-                    }
-
-                    if (found) {
-                        cur_idx = get_next_tok_to(3);
-                    } else {
-                        cur_idx = get_next_tok();
-                    }
-
-                    if (cur_idx.type == DO) {
-                        while (tok_idx < tokenize.size()) {
-                            store_tokens.push_back(cur_idx);
-                            cur_idx = tokenize[tok_idx++];
-                        }
-                    }
-
-                } else {
-                    cout << "Error: Expected '(' after function name" << endl;
-                }
-            }
-            else {
-                cout << "Error: Expected 'FUNC' after function name" << endl;
-            }
-            cur_idx = tokenize[tok_idx++];
-        }
-        tok_idx = cur_tok_idx;
-        return funcs;
-    }
-
-    void make_class() {
-        cur_idx = get_next_tok();
-        vector<store_list> class_lists;
-        vector<store_var> class_variables;
-        vector<function_> class_functions;
-        if (cur_idx.type == CLASS) {
-            cur_idx = get_next_tok();
-            if (cur_idx.type == TEMPORARY_MEMORY) {
-                string name = cur_idx.name;
-                user_datatype.push_back(name);
-                cur_idx = get_next_tok();
-                if (cur_idx.type == DO) {
-                    class_lists = store_lists();
-                    class_variables = store_variables();
-                    class_functions = store_functions();
-                }
-            }
-        }
-        moms.push_back({cur_idx.name, class_variables, class_lists, class_functions});
-    }
-
-    void make_struct() {
-        cur_idx = get_next_tok();
-        vector<store_list> struct_lists;
-        vector<store_var> struct_variables;
-        string struct_name;
-        Mercury_type type;
-        if (cur_idx.type == STRUCT) {
-            cur_idx = get_next_tok();
-            if (cur_idx.type == TEMPORARY_MEMORY) {
-                struct_name = cur_idx.name;
-                cur_idx = get_next_tok();
-                if (cur_idx.type == DO) {
-                    
-                }
-            }   
-        }
-        moms.push_back({struct_name, struct_variables, struct_lists});
-    }
-
-    function_ get_func_in_mom(string name_func, string name_mom) {
-        for (auto &mom : moms) {
-            if (mom.class_name == name_mom) {
-                for (auto &func : mom.functions) {
-                    if (func.function_name == name_func) {
-                        return func;
-                    }
-                }
-            }
-        }
-        return {};
-    }
-
-    auto execute_in_mom(string name_func, string name_mom) {
-        function_ func = get_func_in_mom(name_func, name_mom);
-        vector<datatype> tokens = func.store_tokens;
-        vector<Parameter> paras = func.Parameters;
-        Parameter_kwargs paras_kwargs = func.parameter_kwargs;
-
-        if (tokens.empty()) {
-            cout << "Error: can't found the function" << endl;
-            return 0;
-        }
-        int cur_tok_idx = tok_idx;
-        vector<datatype> cur_tokens = tokenize;
-
-        if (!paras.empty()) {
-            for (auto &para : paras) {
-                tempotary_variables.push_back({para.name, NULL_TYPE, para.val});
-            }
-        } else {
-            tempotary_list.push_back({paras_kwargs.name, paras_kwargs.vec});
-        }
-
-        tok_idx = 0;
-        tokenize = tokens;
-        cur_idx = tokenize[tok_idx];
-
-        while (tok_idx < tokenize.size()) {
-            cur_idx = tokenize[tok_idx];
-            if (cur_idx.type == PRINT) {
-                print_func();
-                tok_idx++;
-            } else if (cur_idx.type == LET) {
-                make_var();
-                tok_idx++;
-            } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
-                tok_idx++;
-            } else if (cur_idx.type == IF) {
-                condition();
-                tok_idx++;
-            } else if (cur_idx.type == LIST) {
-                make_list();
-                tok_idx++;
-            } else if (cur_idx.type == FOR_LOOP) {
-                for_loop();
-            } else if (cur_idx.type == WHILE) {
-                while_loop();
-            } else if (cur_idx.type == FUNCTION_CALL) {
-                call_function();
-                tok_idx++;
-            } else if (cur_idx.type == FUNCTION) {
-                make_function();
-                tok_idx++;
-            } else if (cur_idx.type == IMPORT) {
-                cout << "Error: can't import the file in the function" << endl;
-            } else {
-                expr();
-            }
-        }
-        tempotary_variables = {};
-        tempotary_list = {};
-        tokenize = cur_tokens;
-        tok_idx = cur_tok_idx;
-        return 0;
-    }
-
-    mom_type get_mom(string name) {
-        for (auto &son : moms) {
-            if (son.class_name == name) {
-                return son;
-            }
-        }
-        return {};
-    }
-
-    int take_value() {
-        cur_idx = get_next_tok();
-        if (cur_idx.type == USER_TYPE) {
-            auto son = get_mom(cur_idx.name);
-            cur_idx = get_next_tok();
-            if (cur_idx.type == ARROW_TOKEN) {
-                cur_idx = get_next_tok();
-                if (cur_idx.type == TEMPORARY_MEMORY) {
-                    string name = cur_idx.name;
-                    for (auto &var : son.variables) {
-                        if (var.name == name) {
-                            switch (var.type) {
-                                case INT_TYPE: return static_cast<float>(var.val);
-                                case FLOAT_TYPE: return var.float_val;
-                                case DOUBLE_TYPE: return var.double_val;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return 0;
     }
 
     void make_enum() {
@@ -2052,7 +1759,7 @@ public:
 
     void run_code() {
         while (tok_idx < tokenize.size()) {
-             if (tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == BIGGER 
+            if (tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == BIGGER 
             || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == SMALLER
             || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == EQUAL
             || tokenize[tok_idx].type == INT && tokenize[tok_idx + 1].type == BE
@@ -2090,17 +1797,8 @@ public:
             }  else if (cur_idx.type == REPAIR) {
                 repair();
                 break;
-            } else if (cur_idx.type == CLASS) {
-                make_class();
-                break;
-            }  else if (cur_idx.type == STRUCT) {
-                make_struct();
-                break;
             } else if (cur_idx.type == ENUM) {
                 make_enum();
-                break;
-            } else if (cur_idx.type == USER_TYPE) {
-                take_value();
                 break;
             } else if (cur_idx.type == FUNCTION_CALL) {
                 call_function();
@@ -2146,7 +1844,7 @@ void run() {
     auto now = std::chrono::system_clock::now();
     std::time_t current_time = std::chrono::system_clock::to_time_t(now);
     auto time = ctime(&current_time);
-    cout << "MercuryLang [Version 2.0.1]\n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
+    cout << "MercuryLang [Version 2.013123.1]\n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
         cout << "> ";

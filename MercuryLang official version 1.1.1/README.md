@@ -82,4 +82,4 @@
   - **Class** and **Struct**.  
   - **Enum** support.  
   - **Import** functionality.  
-  - List operations: **push**, **repair**, **pop**.  
+  - List operations: **push**, **repair**, **pop**, **size**.

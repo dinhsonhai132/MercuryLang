@@ -1,4 +1,4 @@
-### ⚠️ Warning: before you read this file, this langluage is still not in finish, that's mean it doesn't support strong library, datatype, function,... all just for test before the offical version out, if you want to try the full version of the langluage please wait until the version 1.0.1a (beta) is out, Thanks you all for trying my langluage
+### ⚠️ Warning: before you read this file, this language is still not in finish, that's mean it doesn't support strong library, datatype, function,... all just for test before the official version out, if you want to try the full version of the language please wait until the version 1.0.1a (beta) is out, Thanks you all for trying my language
 
 
 --------
@@ -9,7 +9,7 @@ Welcome to ```MercuryLang``` version ```1.1.1```, a simple programming language 
 ## 🌟 Features
 
 - **Python-like Syntax**: Intuitive and easy-to-read code.
-- **Datatype worring**: You don't need worry to much about datatype
+- **Datatype warring**: You don't need worry to much about datatype
 - **Custom Functions**: Create flexible functions with ease.
 - **Error Handling**: Debug efficiently with clear error messages.
 - **Extensive Standard Library**: Tools for data manipulation, file handling, and more.
@@ -37,7 +37,7 @@ PRINT "HELLO WORLD!";
 ```
 
 Run the program:
-Open ```shell.exe``` at **Mercury offical version 1.1.1** folder file and write the name of your ```.txt``` file or you can open ```shell.exe``` file and type ```run``` to run code in command line
+Open ```shell.exe``` at **Mercury official version 1.1.1** folder file and write the name of your ```.txt``` file or you can open ```shell.exe``` file and type ```run``` to run code in command line
 
 ## 🔧 Language Syntax
 

@@ -1,6 +1,6 @@
 ### ⚠️ Warning: before you read this file, this language is still not in finish, that's mean it doesn't support strong library, datatype, function,... all just for test before the official version out, if you want to try the full version of the language please wait until the version 1.0.1a (beta) is out, Thanks you all for trying my language
-
-
+>
+>
 --------
 # 🟠 Mercury Programming Language
 

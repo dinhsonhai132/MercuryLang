@@ -10,7 +10,7 @@ using namespace std;
 
 enum VerType {
     INT, PLUS, MINUS, TIME, DIV, NONE, MEMORY, PRINT, STRING, STRUCT, ENUM, BLOCK, PORT, DOT, TRUE, FALSE,
-    TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE, ELIF, PARAMATER_KWARGS, GLOBAL_VAR,
+    TEMPORARY_MEMORY, BIGGER, SMALLER, EQUAL, BE, SE, DIFFERENCES, IF, ELSE, ELIF, GLOBAL_VAR,
     THEN, LP, RP, FOR, PP, MM, WHILE, LET, ASSIGN, GOTO, INPUT, LIST, RETURN_FUNC, POP, PUSH, AT, REPAIR, DO_LOOP,
     FUNCTION, PARAMATER, FUNCTION_CALL, COMMA, DOUBLE_COLON, COMMAND, CIN, CLASS, LAMBDA, MAXTRIX, IMPORT, 
     DO, VECTOR, SQUARE_LP, SQUARE_P, LIST_NAME, ARROW_TOKEN, RANGE, FOR_LOOP, IN, TO, END, NUM_TYPE, USER_TYPE,
@@ -33,10 +33,10 @@ enum port_address {
 };
 
 struct port {
-    string name = "";
-    int value = 0;
-    vector<int> values = {};
-    port_address address = PORT_NULL;
+    string name;
+    int value;
+    vector<int> values;
+    port_address address;
 };
 
 struct enumerate {
@@ -68,19 +68,13 @@ struct store_var {
 struct store_list {
     string name;
     vector<int> list;
-    Mercury_type type = AUTO;
+    Mercury_type type;
 };
 
 struct Parameter {
     string name;
     int val;
-    Mercury_type type = AUTO;
-};
-
-struct Parameter_kwargs {
-    string name;
-    vector<int> vec;
-    Mercury_type type = AUTO;
+    Mercury_type type;
 };
 
 struct datatype {
@@ -91,12 +85,9 @@ struct datatype {
 
 struct function_ {
     string function_name;
-    Mercury_type type = AUTO;
+    Mercury_type type;
     vector<Parameter> Parameters;
-    Parameter_kwargs parameter_kwargs;
     vector<datatype> store_tokens;
-    int value = 0;
-    bool parameter_kwargs_found = false;
 };
 
 struct mom_type {
@@ -108,7 +99,6 @@ struct mom_type {
 
 vector<store_var> variables;
 vector<store_var> tempotary_variables;
-vector<store_list> tempotary_list;
 vector<store_list> lists;
 vector<function_> functions;
 vector<VerLibrary_type> libraries;
@@ -275,15 +265,7 @@ public:
                 advance_to(4);
             } else if (cur == 'F' && input.substr(pos, 4) == "FUNC") {
                 advance_to(4);
-                string name = "";
-                while (isspace(cur)) {
-                    advance();
-                }
-                while (isalpha(cur)) {
-                    name += cur;
-                    advance();
-                }
-                tokens.push_back({FUNCTION, 0, name});
+                tokens.push_back({FUNCTION, 0, ""});
             } else if (cur == 'P' && input.substr(pos, 3) == "POP") {
                 advance_to(3);
                 tokens.push_back({POP, 0, ""});
@@ -376,14 +358,6 @@ public:
                     advance();
                 }
                 tokens.push_back({PARAMATER, 0, name});
-            } else if (cur == '%') {
-                advance();
-                string name;
-                while (isalpha(cur)) {
-                    name += cur;
-                    advance();
-                }
-                tokens.push_back({PARAMATER_KWARGS, 0, name});
             } else if (cur == '$') {
                 string name;
                 advance();
@@ -458,7 +432,7 @@ public:
                 return variable.val;
             }
         }
-
+    
         if (!found) {
             cout << "Error: can't found the paramater name" << endl;
         }
@@ -507,57 +481,6 @@ public:
         auto tok = get_next_tok();
         if (tok.type == LIST_NAME) {
             auto list = get_list(tok.name);
-            tok = get_next_tok();
-            if (tok.type == ARROW_TOKEN) {
-                tok = get_next_tok();
-                if (tok.type == INT) {
-                    int order = tok.value;
-                    if (order > list.size()) {
-                        cout << "Error: index out of range" << endl;
-                        return 0;
-                    } else if (order < 1) {
-                        cout << "Error: order can't below 1" << endl;
-                        return 0;
-                    }
-                    auto element = list[tok.value - 1];
-                    return element;
-                } else if (tok.type == TEMPORARY_MEMORY) {
-                    int val = get_variable(tok.name);
-                    if (val > list.size()) {
-                        cout << "Error: index out of range, please change the another variable" << endl;
-                        return 0;
-                    } else if (val < 1) {
-                        cout << "Error: order can't below 1, please change the another variable" << endl;
-                        return 0;
-                    }
-                    int element = list[val - 1];
-                    return element;
-                }
-            }
-        } else {
-            cout << "Error: can't ARROW_TOKEN the value from the list" << endl;
-        }
-        return 0;
-    }
-
-    vector<int> get_tempotary_list(const string &name) {
-        bool found = false;
-        for (auto &list : tempotary_list) {
-            if (list.name == name) {
-                found = true;
-                return list.list;
-            }
-        } 
-        if (!found) {
-            cout << "Error: can't found the list" << endl;
-        }
-        return {};
-    }
-
-    auto extract_tempotary_list() {
-        auto tok = get_next_tok();
-        if (tok.type == PARAMATER_KWARGS) {
-            auto list = get_tempotary_list(tok.name);
             tok = get_next_tok();
             if (tok.type == ARROW_TOKEN) {
                 tok = get_next_tok();
@@ -678,9 +601,6 @@ public:
         } else if (cur_idx.type == LIST_NAME) {
             tok_idx--;
             return extract();
-        } else if (cur_idx.type == PARAMATER_KWARGS) {
-            tok_idx--;
-            return extract_tempotary_list();
         } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
             tok_idx++;
         } else {
@@ -775,53 +695,42 @@ public:
     void make_function() {
         string name_func;
         vector<Parameter> paras;
-        Parameter_kwargs kwargs;
         vector<datatype> func_body;
-        bool found_paras = false;
-        bool found_kwargs = false;
 
         cur_idx = get_next_tok();
         if (cur_idx.type == FUNCTION) {
-            name_func = cur_idx.name;
+            cur_idx = get_next_tok();
+            if (cur_idx.type == TEMPORARY_MEMORY) {
+                name_func = cur_idx.name;
+            } else {
+                return;
+            }
+
             cur_idx = get_next_tok();
             if (cur_idx.type == LP) {
                 cur_idx = get_next_tok();
 
-                if (cur_idx.type == PARAMATER) {
-                    found_paras = true;
-                    while (tok_idx < tokenize.size() && cur_idx.type != RP) {
-                        cur_idx = tokenize[tok_idx];
-                        if (cur_idx.type == PARAMATER) {
-                            paras.push_back({cur_idx.name, 0, AUTO});
-                            tok_idx++;
-                        } else if (cur_idx.type == COMMA) {
-                            tok_idx++;
-                        } else {
-                            cout << "Error: Unexpected factor in function" << endl;
-                        }
+                while (tok_idx < tokenize.size() && cur_idx.type != RP) {
+                    if (cur_idx.type == PARAMATER) {
+                        paras.push_back({cur_idx.name, 0, AUTO});
+                    } else if (cur_idx.type == COMMA) {} else {
+
+                        return;
                     }
-                } else if (cur_idx.type == PARAMATER_KWARGS) {
-                    found_kwargs = true;
-                    kwargs = {cur_idx.name, {}, AUTO};
-                    cur_idx = get_next_tok();
+                    cur_idx = tokenize[tok_idx++];
                 }
 
                 cur_idx = get_next_tok();
                 if (cur_idx.type == DO) {
-                    while (tok_idx < tokenize.size()) {
+                    while (tok_idx < tokenize.size() && cur_idx.type != END ||
+                    tok_idx < tokenize.size()) {
                         func_body.push_back(tokenize[tok_idx++]);
                     }
                 }
             }
         }
-
-        if (found_paras) {
-            functions.push_back({name_func, AUTO, paras, {}, func_body, 0, false});
-        } else if (found_kwargs) {
-            functions.push_back({name_func, AUTO, {}, kwargs, func_body, 0, true});
-        } else {
-            functions.push_back({name_func, AUTO, {}, {}, func_body, 0, false});
-        }
+        functions.push_back({name_func, AUTO, paras, func_body});
+        cout << "a" << endl;
     }
 
     void execute(string function_name) {
@@ -834,12 +743,8 @@ public:
         int cur_tok_idx = tok_idx;
         auto cur_tokens = tokenize;
 
-        if (!func.parameter_kwargs_found) {
-            for (auto &para : func.Parameters) {
-                tempotary_variables.push_back({para.name, AUTO, para.val});
-            }
-        } else {
-            tempotary_list.push_back({func.parameter_kwargs.name, func.parameter_kwargs.vec});
+        for (auto &para : func.Parameters) {
+            tempotary_variables.push_back({para.name, AUTO, para.val});
         }
 
         tok_idx = 0;
@@ -864,7 +769,6 @@ public:
         }
 
         tempotary_variables.clear();
-        tempotary_list.clear();
         tokenize = cur_tokens;
         tok_idx = cur_tok_idx;
     }
@@ -878,35 +782,24 @@ public:
 
             cur_idx = get_next_tok();
             if (cur_idx.type == LP) {
-                cur_idx = get_next_tok();
                 while (tok_idx < tokenize.size() && cur_idx.type != RP) {
                     if (cur_idx.type == INT) {
                         values.push_back(cur_idx.value);
-                        cur_idx = tokenize[tok_idx++];
                     } else if (cur_idx.type == TEMPORARY_MEMORY) {
                         values.push_back(get_variable(cur_idx.name));
-                        cur_idx = tokenize[tok_idx++];
-                    } else if (cur_idx.type == COMMA) {
-                        cur_idx = tokenize[tok_idx++];
-                    } else {
-                        cout << "Error: Unexpected factor" << endl;
-                        return;
                     }
+                    cur_idx = tokenize[tok_idx++];
                 }
 
-                if (func.parameter_kwargs_found) {
-                    func.parameter_kwargs.vec = values;
-                } else {
-                    if (func.Parameters.size() != values.size()) {
-                        cout << "Error: size does not match" << endl;
-                        return;
-                    }
-
-                    for (size_t t = 0; t < func.Parameters.size(); t++) {
-                        func.Parameters[t].val = values[t];
-                    }
+                if (func.Parameters.size() != values.size()) {
+                    cout << "Error: size does not match" << endl;
+                    return;
                 }
-            
+
+                for (size_t t = 0; t < func.Parameters.size(); t++) {
+                    func.Parameters[t].val = values[t];
+                }
+        
                 execute(name_func);
             } else {
                 cout << "Error: Can't find '('" << endl;
@@ -1099,19 +992,6 @@ public:
                     else if (cur_idx.type == LIST_NAME) {
                         list_found = true;
                         vector<int> list = get_list(cur_idx.name);
-                        int cur_tok_idx = tok_idx;
-                        for (int i : list) {
-                            for (auto &variable : variables) {
-                                if (variable.name == name) {
-                                    variable.val = i;
-                                }
-                            }
-                            do_block();
-                            tok_idx = cur_tok_idx;
-                        }
-                    } else if (cur_idx.type == PARAMATER_KWARGS) {
-                        list_found = true;
-                        vector<int> list = get_tempotary_list(cur_idx.name);
                         int cur_tok_idx = tok_idx;
                         for (int i : list) {
                             for (auto &variable : variables) {
@@ -1491,70 +1371,6 @@ public:
                         }
                     }
                 }
-            } else if (cur_idx.type == PARAMATER_KWARGS) {
-                string name = cur_idx.name;
-                cur_idx = get_next_tok();
-                if (cur_idx.type == AT) {
-                    cur_idx = get_next_tok();
-                    if (cur_idx.type == INT) {
-                        int order = cur_idx.value;
-                        for (auto &list : tempotary_list) {
-                            if (list.name == name) {
-                                list.list.erase(list.list.begin() + order - 1);
-                            }
-                        }
-                    } else if (cur_idx.type == TEMPORARY_MEMORY) {
-                        int order = get_variable(cur_idx.name);
-                        for (auto &list : tempotary_list) {
-                            if (list.name == name) {
-                                list.list.erase(list.list.begin() + order - 1);
-                            }
-                        }
-                    } else if (cur_idx.type == PARAMATER) {
-                        int order = get_tempotary_variable(cur_idx.name);
-                        for (auto &list : tempotary_list) {
-                            if (list.name == name) {
-                                list.list.erase(list.list.begin() + order - 1);
-                            }
-                        }
-                    }
-                } else if (cur_idx.type == ARROW_TOKEN) {
-                    cur_idx = get_next_tok();
-                    if (cur_idx.type == INT) {
-                        int erase_element = cur_idx.value;
-                        for (auto &list : tempotary_list) {
-                            if (list.name == name) {
-                                for (int i = 0; i < list.list.size(); i++) {
-                                    if (list.list[i] == erase_element) {
-                                        list.list.erase(list.list.begin() + i);
-                                    }
-                                }
-                            }
-                        }
-                    } else if (cur_idx.type == TEMPORARY_MEMORY) {
-                        int erase_element = get_variable(cur_idx.name);
-                        for (auto &list : tempotary_list) {
-                            if (list.name == name) {
-                                for (int i = 0; i < list.list.size(); i++) {
-                                    if (list.list[i] == erase_element) {
-                                        list.list.erase(list.list.begin() + i);
-                                    }
-                                }
-                            }
-                        }
-                    } else if (cur_idx.type == PARAMATER) {
-                        int erase_element = get_tempotary_variable(cur_idx.name);
-                        for (auto &list : tempotary_list) {
-                            if (list.name == name) {
-                                for (int i = 0; i < list.list.size(); i++) {
-                                    if (list.list[i] == erase_element) {
-                                        list.list.erase(list.list.begin() + i);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     }
@@ -1585,34 +1401,6 @@ public:
                     } else if (cur_idx.type == PARAMATER) {
                         int element = get_tempotary_variable(cur_idx.name);
                         for (auto &list : lists) {
-                            if (list.name == name) {
-                                list.list.push_back(element);
-                            }
-                        }
-                    }
-                }
-            } else if (cur_idx.type == PARAMATER_KWARGS) {
-                string name = cur_idx.name;
-                cur_idx = get_next_tok();
-                if (cur_idx.type == ARROW_TOKEN) {
-                    cur_idx = get_next_tok();
-                    if (cur_idx.type == INT) {
-                        int element = cur_idx.value;
-                        for (auto &list : tempotary_list) {
-                            if (list.name == name) {
-                                list.list.push_back(element);
-                            }
-                        }
-                    } else if (cur_idx.type == TEMPORARY_MEMORY) {
-                        int element = get_variable(cur_idx.name);
-                        for (auto &list : tempotary_list) {
-                            if (list.name == name) {
-                                list.list.push_back(element);
-                            }
-                        }
-                    } else if (cur_idx.type == PARAMATER) {
-                        int element = get_tempotary_variable(cur_idx.name);
-                        for (auto &list : tempotary_list) {
                             if (list.name == name) {
                                 list.list.push_back(element);
                             }
@@ -1690,69 +1478,6 @@ public:
                         }
                     }
                 }
-            } else if (cur_idx.type == PARAMATER_KWARGS) {
-                string name = cur_idx.name;
-                cur_idx = get_next_tok();
-                if (cur_idx.type == AT) {
-                    cur_idx = get_next_tok();
-                    if (cur_idx.type == INT) {
-                        int order = cur_idx.value;
-                        cur_idx = get_next_tok();
-                        if (cur_idx.type == ASSIGN) {
-                            cur_idx = get_next_tok();
-                            if (cur_idx.type == INT) {
-                                int element = cur_idx.value;
-                                for (auto &list : tempotary_list) {
-                                    if (list.name == name) {
-                                        list.list[order - 1] = element;
-                                    }
-                                }
-                            } else if (cur_idx.type == TEMPORARY_MEMORY) {
-                                int element = get_variable(cur_idx.name);
-                                for (auto &list : tempotary_list) {
-                                    if (list.name == name) {
-                                        list.list[order - 1] = element;
-                                    }
-                                }
-                            } else if (cur_idx.type == PARAMATER) {
-                                int element = get_tempotary_variable(cur_idx.name);
-                                for (auto &list : tempotary_list) {
-                                    if (list.name == name) {
-                                        list.list[order - 1] = element;
-                                    }
-                                }
-                            }
-                        }
-                    } else if (cur_idx.type == TEMPORARY_MEMORY) {
-                        int order = get_variable(cur_idx.name);
-                        cur_idx = get_next_tok();
-                        if (cur_idx.type == ASSIGN) {
-                            cur_idx = get_next_tok();
-                            if (cur_idx.type == INT) {
-                                int element = cur_idx.value;
-                                for (auto &list : tempotary_list) {
-                                    if (list.name == name) {
-                                        list.list[order - 1] = element;
-                                    }
-                                }
-                            } else if (cur_idx.type == TEMPORARY_MEMORY) {
-                                int element = get_variable(cur_idx.name);
-                                for (auto &list : tempotary_list) {
-                                    if (list.name == name) {
-                                        list.list[order - 1] = element;
-                                    }
-                                }
-                            } else if (cur_idx.type == PARAMATER) {
-                                int element = get_tempotary_variable(cur_idx.name);
-                                for (auto &list : tempotary_list) {
-                                    if (list.name == name) {
-                                        list.list[order - 1] = element;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
             }
         }
     }
@@ -1801,9 +1526,11 @@ public:
                 make_enum();
                 break;
             } else if (cur_idx.type == FUNCTION_CALL) {
+                tok_idx--;
                 call_function();
                 break;
             } else if (cur_idx.type == FUNCTION) {
+                tok_idx--;
                 make_function();
                 break;
             } else if (cur_idx.type == DO_LOOP) {
@@ -1906,6 +1633,7 @@ void debug() {
         } else {
             par.run_code();
             string token_type;
+            cout << endl;
             for (auto &token : tokens) {
                 switch(token.type) {
                     case PLUS: token_type = "PLUS"; break; 
@@ -1950,7 +1678,6 @@ void debug() {
                     case PUSH: token_type = "PUSH"; break;
                     case AT: token_type = "AT"; break;
                     case REPAIR: token_type = "REPAIR"; break;
-                    case PARAMATER_KWARGS: token_type = "PARAMATER_KWARGS"; break;
                     case DIFFERENCES: token_type = "DIFFERENCES"; break;
                     case BE: token_type = "BE"; break;
                     case SE: token_type = "SE"; break;

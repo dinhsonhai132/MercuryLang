@@ -341,12 +341,15 @@ public:
             } else if (cur == 'G' && input.substr(pos, 6) == "GLOBAL") {
                 advance_to(6);
                 tokens.push_back({GLOBAL_VAR, 0, ""});
+            } else if (cur == 'D' && input.substr(pos, 2) == "DO") {
+                tokens.push_back({DO, 0, ""});
+                advance_to(2);
+            } else if (cur == 'W' && input.substr(pos, 5) == "WHILE") {
+                advance_to(5);
+                tokens.push_back({WHILE, 0, ""});
             } else if (cur == 'L' && input.substr(pos, 4) == "LOOP") {
                 advance_to(4);
                 tokens.push_back({DO_LOOP, 0, ""});
-            } else if (cur == 'f') {
-                tokens.push_back({F_STRING, 0, ""});
-                advance();
             } else if (cur == '.') {
                 advance();
                 tokens.push_back({DOT, 0, ""});
@@ -381,12 +384,6 @@ public:
                     advance();
                 }
                 tokens.push_back({FUNCTION_CALL, 0, name});
-            } else if (cur == 'D' && input.substr(pos, 2) == "DO") {
-                tokens.push_back({DO, 0, ""});
-                advance_to(2);
-            } else if (cur == 'W' && input.substr(pos, 5) == "WHILE") {
-                advance_to(5);
-                tokens.push_back({WHILE, 0, ""});
             } else if (cur == '@') {
                 advance();
                 string name = "";
@@ -601,6 +598,8 @@ public:
         } else if (cur_idx.type == LIST_NAME) {
             tok_idx--;
             return extract();
+        } else if (cur_idx.type == FUNCTION) {
+            make_function();
         } else if (cur_idx.type == NONE || cur_idx.type == COMMA) {
             tok_idx++;
         } else {
@@ -709,12 +708,10 @@ public:
             cur_idx = get_next_tok();
             if (cur_idx.type == LP) {
                 cur_idx = get_next_tok();
-
                 while (tok_idx < tokenize.size() && cur_idx.type != RP) {
                     if (cur_idx.type == PARAMATER) {
                         paras.push_back({cur_idx.name, 0, AUTO});
-                    } else if (cur_idx.type == COMMA) {} else {
-
+                    } else if (cur_idx.type != COMMA) {
                         return;
                     }
                     cur_idx = tokenize[tok_idx++];
@@ -722,19 +719,36 @@ public:
 
                 cur_idx = get_next_tok();
                 if (cur_idx.type == DO) {
-                    while (tok_idx < tokenize.size() && cur_idx.type != END ||
-                    tok_idx < tokenize.size()) {
-                        func_body.push_back(tokenize[tok_idx++]);
+                    cur_idx = get_next_tok();
+                    while (tok_idx < tokenize.size()) {
+                        func_body.push_back(cur_idx);
+                        cur_idx = tokenize[tok_idx++];
                     }
                 }
             }
         }
-        functions.push_back({name_func, AUTO, paras, func_body});
-        cout << "a" << endl;
+
+        if (!name_func.empty()) {
+            functions.push_back({name_func, AUTO, paras, func_body});
+        } else {
+            cout << "Error: system incorrect name identifier" << endl;
+        }
+
+        if (func_body.empty() && paras.empty()) {
+            cout << "System: function can't store tokens and paras successfully" << endl;
+        } else if (func_body.empty()) {
+            cout << "System: function can't store tokens successfully" << endl;
+        } else if (paras.empty()) {
+            cout << "System: function can't store paras successfully" << endl;
+        } else {
+            cout << "System: function stored successfully" << endl;
+        }
     }
+
 
     void execute(string function_name) {
         auto func = get_function(function_name);
+        cout << "System: function executing..." << endl;
         if (func.store_tokens.empty()) {
             cout << "Error: can't found the function" << endl;
             return;
@@ -775,6 +789,7 @@ public:
 
     void call_function() {
         cur_idx = get_next_tok();
+        cout << "System: finding function..." << endl;
         if (cur_idx.type == FUNCTION_CALL) {
             string name_func = cur_idx.name;
             auto func = get_function(name_func);
@@ -1526,11 +1541,9 @@ public:
                 make_enum();
                 break;
             } else if (cur_idx.type == FUNCTION_CALL) {
-                tok_idx--;
                 call_function();
                 break;
             } else if (cur_idx.type == FUNCTION) {
-                tok_idx--;
                 make_function();
                 break;
             } else if (cur_idx.type == DO_LOOP) {
@@ -1571,7 +1584,7 @@ void run() {
     auto now = std::chrono::system_clock::now();
     std::time_t current_time = std::chrono::system_clock::to_time_t(now);
     auto time = ctime(&current_time);
-    cout << "MercuryLang [Version 2.013123.1]\n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
+    cout << "MercuryLang [Version 2.0.1]\n(c) (this is test version) All rights reserved.\n type 'help?' for help, 'info' for info, 'exit' to leave" << endl;
     while (true) {
         string input;
         cout << "> ";

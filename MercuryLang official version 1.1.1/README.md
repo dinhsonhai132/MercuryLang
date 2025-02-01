@@ -74,7 +74,9 @@
 ## 1/31/2025
 --**Bug Fixes**:
   - ELIF worked successfully
----
+
+## 1/2/2025
+--**New 2.0.1 (W.I.P) in test**
 
 # ✨ Leaked Features (Upcoming)  
 - **New Data Types**:  

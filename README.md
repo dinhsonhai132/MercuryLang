@@ -28,13 +28,13 @@ Before using Mercury, ensure you have:
 
 ### Hello, World!
 
-Make a ```.txt``` file and **write your first Mercury program**:
+**Make** a ```.txt``` file and **write your first Mercury program**:
 
 ```mercury
 PRINT "HELLO WORLD!";
 ```
 
-Run the program:
+**Run the program:**
 **Open** ```shell.exe``` at **Mercury official version 1.1.1** folder file and **write the name** of your ```.txt``` file or you can **open** ```shell.exe``` file and **type** ```run``` to **run code** in command line
 
 ## 🔧 Language Syntax

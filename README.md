@@ -23,12 +23,12 @@ Before using Mercury, ensure you have:
 
 ### Installation
 
-1. Download the MercuryLang [using this link](https://github.com/dinhsonhai132/Mercury-Langluage/archive/refs/heads/main.zip)
-2. Extract all file
+1. **Download** the MercuryLang [using this link](https://github.com/dinhsonhai132/Mercury-Langluage/archive/refs/heads/main.zip)
+2. **Extract** all file
 
 ### Hello, World!
 
-Make a ```.txt``` file and write your first Mercury program:
+Make a ```.txt``` file and **write your first Mercury program**:
 
 ```mercury
 PRINT "HELLO WORLD!";

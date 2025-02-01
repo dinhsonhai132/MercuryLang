@@ -1,7 +1,7 @@
 # 🟠 Mercury Programming Language
 ### Mercury Language new version 2.0.1 is out ✨
 
-**what is in this update? 🔍**
+**What is in this update? 🔍**
 - **New source code**: source code are change for readable and more user-friendly
 - **New Lexer source update**: Lexer update now can tokenize syntax more easier
 - **More syntax**: Add more syntax, ```POP```, ```PUSH```, ```REPAIR```,...

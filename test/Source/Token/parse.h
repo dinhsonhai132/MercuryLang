@@ -48,7 +48,7 @@ public:
 
     AST_ExprStatement AST_primary_expr();
 
-    ASR_ExprStatement AST_asrstatement();
+    AST_ExprStatement AST_asrstatement();
 };
 
 #endif

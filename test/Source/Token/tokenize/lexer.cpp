@@ -24,9 +24,9 @@ vector<token> lexer::tokenize() {
             }
 
             if (!found) {
-                tokens.push_back(token(VARIABLE, AUTO_T, 0.0, iden, iden));
+                tokens.push_back(token(VARIABLE, AUTO_T, 0.0, iden, iden.c_str()));
             } else {
-                tokens.push_back(token(return_identifier(iden), NULL_T, 0.0, "", iden));
+                tokens.push_back(token(return_identifier(iden), NULL_T, 0.0, "", iden.c_str()));
             }
         } else if (isdigit(c)) { // execute number
             string num = "";
@@ -45,8 +45,7 @@ vector<token> lexer::tokenize() {
 
             float num_value = atof(num.c_str());
             tokens.push_back(token(dot_count == 0 ? INT : FLOAT, 
-            dot_count == 0 ? INT_T : FLOAT_T, num_value, "", 
-            num_value.c_str()));
+            dot_count == 0 ? INT_T : FLOAT_T, num_value, "", num.c_str()));
         } else if (c == '"') { // execute string
             string str = "";
             idx++;
@@ -54,15 +53,16 @@ vector<token> lexer::tokenize() {
                 str += source[idx];
                 idx++;
             }
-            tokens.push_back(token(STRING, STRING_T, 0.0, str));
+            tokens.push_back(token(STRING, STRING_T, 0.0, str, str.c_str()));
             idx++;
         } else if (is_keyword(c)) { // execute keyword
             char c2 = source[idx + 1];
             if (is_keyword(c2)) {
-                tokens.push_back(token(get_2_char(c, c2), NULL_T, 0.0, "", c + c2));
+                string keyword = string(1, c) + string(1, c2);
+                tokens.push_back(token(get_2_char(c, c2), NULL_T, 0.0, "", keyword.c_str()));
                 idx += 2;
             } else {
-                tokens.push_back(token(get_1_char(c), NULL_T, 0.0, "", c));
+                tokens.push_back(token(get_1_char(c), NULL_T, 0.0, "", std::string(1, c)));
             }
         } else if (isskippable(c)) {
             idx++;

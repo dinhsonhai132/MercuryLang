@@ -62,7 +62,7 @@ vector<token> lexer::tokenize() {
                 tokens.push_back(token(get_2_char(c, c2), NULL_T, 0.0, "", keyword.c_str()));
                 idx += 2;
             } else {
-                tokens.push_back(token(get_1_char(c), NULL_T, 0.0, "", std::string(1, c)));
+                tokens.push_back(token(get_1_char(c), NULL_T, 0.0, "", string(1, c)));
             }
         } else if (isskippable(c)) {
             idx++;

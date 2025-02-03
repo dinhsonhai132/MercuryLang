@@ -22,7 +22,7 @@ statement parse::AST_statement() {
 };
 
 AST_ExprStatement parse::AST_exprstatement() {
-    return parse::AST_Additive_Expression();
+    return parse::AST_Multiplicative_Expression();
 };
 
 AST_ExprStatement parse::AST_primary_expr() {
@@ -39,10 +39,15 @@ AST_ExprStatement parse::AST_primary_expr() {
             .type = Literal,
             .value = tok.value
         };
+    } else if (is_Tok_Null(tok.tok)) {
+        parse::jump_ntok();
+        return (AST_NullExpression) {};
+    } else {
+        throw runtime_error("Unexpected token: " + tok.tok);
     }
 }
 
-AST_BinaryExpression parse::AST_Additive_Expression() {
+AST_ExprStatement parse::AST_Additive_Expression() {
     AST_ExprStatement left = parse::AST_primary_expr();
     auto tok = parse::get_current_token();
     parse::jump_ntok();
@@ -58,4 +63,28 @@ AST_BinaryExpression parse::AST_Additive_Expression() {
         };
         tok = parse::get_current_token();
     }
+
+    return left;
 }
+
+AST_ExprStatement parse::AST_Multiplicative_Expression() {
+    AST_ExprStatement left = parse::AST_Additive_Expression();
+    auto tok = parse::get_current_token();
+    parse::jump_ntok();
+    while (tok.tok == TIME || tok.tok == DIV) {
+        string op = tok.tok;
+        parse::jump_ntok();
+        AST_ExprStatement right = parse::AST_Additive_Expression();
+        left = (AST_BinaryExpression) {
+            .type = BinaryExpression,
+            .op = op,
+            .left = left,
+            .right = right,
+        };
+        tok = parse::get_current_token();
+    }
+
+    return left;
+}
+
+AST_ExprStatement parse::AST_ParentLitive() {}

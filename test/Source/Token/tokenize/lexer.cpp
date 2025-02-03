@@ -3,6 +3,7 @@
 using namespace std;
 
 vector<token> lexer::tokenize() {
+    int idx = 0;
     while (idx < source.length()) {
         char c = source[idx];
 
@@ -11,22 +12,15 @@ vector<token> lexer::tokenize() {
             bool found = false;
 
             while (is_potential_identifier_char(c)) {
-                c = source[idx];
                 iden += c;
                 idx++;
-
-                if (idx >= source.length()) {
-                    return {};
-                } else if (is_identifier(iden)) {
-                    found = true;
-                    break;
-                }
+                if (idx >= source.length()) break;
+                c = source[idx];
             }
-
-            if (!found) {
-                tokens.push_back(token(VARIABLE, AUTO_T, 0.0, iden, iden.c_str()));
-            } else {
+            if (is_identifier(iden)) {
                 tokens.push_back(token(return_identifier(iden), NULL_T, 0.0, "", iden.c_str()));
+            } else {
+                tokens.push_back(token(VARIABLE, AUTO_T, 0.0, iden, iden.c_str()));
             }
         } else if (isdigit(c)) { // execute number
             string num = "";
@@ -34,12 +28,11 @@ vector<token> lexer::tokenize() {
             while (isdigit(c) || c == '.') {
                 if (c == '.') {
                     dot_count++;
-                    if (dot_count > 1) {
-                        break;
-                    }
+                    if (dot_count > 1) break;
                 }
                 num += c;
                 idx++;
+                if (idx >= source.length()) break;
                 c = source[idx];
             }
 

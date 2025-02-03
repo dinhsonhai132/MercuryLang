@@ -16,9 +16,12 @@
 #define Identifier "Identifier"
 #define Literal "Literal"
 #define BinaryExpression "BinaryExpression"
+#define NullExpression "NullExpression"
+
 #include "lexer.h"
 #define IDENTIFIER {PRINT, LET, IF, ELSE, FOR, WHILE, FUNCTION, STRUCT, CLASS}
 #define LITERAL {INT, FLOAT, VARIABLE}
+#define NULL_EXPRESSION {NULL, SEMICOLON, EOF_T}
 
 #include <vector>
 #include <string>
@@ -58,7 +61,12 @@ struct AST_BinaryExpression : AST_ExprStatement {
     AST_ExprStatement right;
 };
 
+struct AST_NullExpression : AST_ExprStatement {
+    string type = NullExpression;
+};
+
 static inline bool is_Tok_identifier(string tok);
 static inline bool is_Tok_Literal(string tok);
+static inline bool is_Tok_Null(string tok);
 
 #endif

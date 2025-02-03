@@ -14,3 +14,10 @@ static inline bool is_Tok_Literal(string tok) {
         if (t == tok) return true;
     }
 }
+
+static inline bool is_Tok_Null(string tok) {
+    vector<string> toks = NULL_EXPRESSION;
+    for (string t : toks) {
+        if (t == tok) return true;
+    }
+}

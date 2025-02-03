@@ -44,7 +44,11 @@ public:
 
     AST_ExprStatement AST_primary_expr();
 
-    AST_BinaryExpression AST_Additive_Expression();
+    AST_ExprStatement AST_Additive_Expression();
+
+    AST_ExprStatement AST_Multiplicative_Expression();
+
+    AST_ExprStatement AST_ParentLitive();
 };
 
 #endif

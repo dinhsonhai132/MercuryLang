@@ -22,6 +22,7 @@ using namespace std;
 
 // define token types
 #define EOF_T "EOF"
+#define ASSGNMENT "ASSIGNMENT"
 #define INT "INT"
 #define PLUS "PLUS"
 #define MINUS "MINUS"
@@ -130,11 +131,9 @@ static inline bool isskippable(char c) {
 };
 
 static inline bool is_potential_identifier_char(char c) {
-    return (c >= 'a' || c <= 'z') 
-    || (c >= 'A' || c <= 'Z') 
-    || (c >= '0' || c <= '9') 
-    || (c >= 127 || c <= 255)
-    || (c == '_');
+    return (c >= 'a' && c <= 'z') 
+        || (c >= 'A' && c <= 'Z') 
+        || (c == '_');
 }
 
 static inline string get_2_char(char c1, char c2) {
@@ -153,7 +152,7 @@ static inline string get_2_char(char c1, char c2) {
 
 static inline string get_1_char(char c) {
     switch(c) {
-        case '=': return EQUAL;
+        case '=': return ASSGNMENT;
         case '<': return LESS;
         case '>': return GREATER;
         case '+': return PLUS;

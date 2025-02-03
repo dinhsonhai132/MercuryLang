@@ -17,10 +17,11 @@ vector<token> lexer::tokenize() {
                 if (idx >= source.length()) break;
                 c = source[idx];
             }
+            
             if (is_identifier(iden)) {
                 tokens.push_back(token(return_identifier(iden), NULL_T, 0.0, "", iden.c_str()));
             } else {
-                tokens.push_back(token(VARIABLE, AUTO_T, 0.0, iden, iden.c_str()));
+                tokens.push_back(token(VARIABLE, NULL_T, 0.0, "", iden.c_str()));
             }
         } else if (isdigit(c)) { // execute number
             string num = "";
@@ -56,6 +57,7 @@ vector<token> lexer::tokenize() {
                 idx += 2;
             } else {
                 tokens.push_back(token(get_1_char(c), NULL_T, 0.0, "", string(1, c)));
+                idx++;
             }
         } else if (isskippable(c)) {
             idx++;

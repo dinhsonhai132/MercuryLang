@@ -44,7 +44,7 @@ RunTimeVal evaluate_binary_numerical_expression(RunTimeVal left, RunTimeVal righ
         }
         result = left.value / right.value;
     } else {
-        result = left.value % right.value;
+        return RunTimeVal{.type = _Null, .value = NULL};
     }
 
     return RunTimeVal{.type = _Number, .value = result};

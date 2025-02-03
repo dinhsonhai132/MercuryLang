@@ -808,6 +808,7 @@ public:
                         }
                         cur_idx = tokenize[tok_idx++];
                     }
+                    
                 }
 
                 if (found) {

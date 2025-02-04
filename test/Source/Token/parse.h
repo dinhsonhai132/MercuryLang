@@ -14,8 +14,8 @@
 #ifndef PARSE_H
 #define PARSE_H
 
-#include "C:\Users\hadin\OneDrive\Documents\Mercury-Langluage-main\test\Source\Token\tokenize\ast.h"
-#include "C:\Users\hadin\OneDrive\Documents\Mercury-Langluage-main\test\Source\Token\tokenize\lexer.h"
+#include "ast.h"
+#include "lexer.h"
 
 using namespace std;
 
@@ -27,9 +27,9 @@ private:
     lexer lex;
     string source;
 
-    token get_current_token() { return tokens[tok_idx]; };
+    token get_current_token() { if (tok_idx < source.size() && tok_idx >= 0) return tokens[tok_idx]; };
 
-    void jump_ntok() { tokens[tok_idx++]; };
+    void jump_ntok() { if (tok_idx < source.size() && tok_idx >= 0) tokens[tok_idx++]; };
 
     bool is_CurTokEOF(string tok) { return tok == EOF_T; };
 

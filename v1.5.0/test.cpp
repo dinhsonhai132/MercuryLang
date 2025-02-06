@@ -984,11 +984,14 @@ public:
             tok_idx--;
             return extract();
         }
-        else if (cur_idx.type == FUNCTION)
-        {
+        else if (cur_idx.type == FUNCTION) {
             make_function();
+            return 0.0;
         }
-        else if (cur_idx.type == NONE || cur_idx.type == COMMA)
+        else if (cur_idx.type == FUNCTION_CALL) {
+            call_function();
+            return 0.2;
+        } else if (cur_idx.type == NONE || cur_idx.type == COMMA)
         {
             tok_idx++;
         }
@@ -1120,8 +1123,6 @@ public:
         string name_func;
         vector<Parameter> paras;
         vector<datatype> func_body;
-
-        cur_idx = get_next_tok();
         if (cur_idx.type == FUNCTION)
         {
             cur_idx = get_next_tok();
@@ -1259,7 +1260,6 @@ public:
 
     void call_function()
     {
-        cur_idx = get_next_tok();
         cout << "System: finding function..." << endl;
         if (cur_idx.type == FUNCTION_CALL)
         {
@@ -1283,15 +1283,13 @@ public:
                     cur_idx = tokenize[tok_idx++];
                 }
 
-                if (func.Parameters.size() != values.size())
-                {
+                if (func.Parameters.size() != values.size()) {
                     cout << "Error: size does not match" << endl;
                     return;
                 }
 
-                for (size_t t = 0; t < func.Parameters.size(); t++)
-                {
-                    func.Parameters[t].val = values[t];
+                for (int i = 0; i < func.Parameters.size(); i++) {
+                    func.Parameters[i].val = values[i];
                 }
 
                 execute(name_func);
@@ -2335,10 +2333,9 @@ public:
                 call_function();
                 break;
             }
-            else if (cur_idx.type == FUNCTION)
-            {
+            else if (cur_idx.type == FUNCTION) {
                 make_function();
-                break;
+                break;  
             }
             else if (cur_idx.type == DO_LOOP)
             {

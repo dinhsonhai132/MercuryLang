@@ -36,7 +36,7 @@ PRINT "HELLO WORLD!";
 
 **Run the program:**
 
-**Open** ```shell.exe``` at **Mercury official version 1.1.1** folder file and **write the name** of your ```.txt``` file or you can **open** ```shell.exe``` file and **type** ```run``` to **run code** in command line
+**Open** ```shell.exe``` at **v1.5.0** folder file and **write the name** of your ```.txt``` file or you can **open** ```shell.exe``` file and **type** ```run``` to **run code** in command line
 
 ## 🔧 Language Syntax
 

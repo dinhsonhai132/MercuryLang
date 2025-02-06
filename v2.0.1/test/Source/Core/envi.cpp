@@ -1,6 +1,6 @@
 #include "envi.h"
 
-RunTimeVal envi::declareVar(std::string name, RunTimeVal value) {
+RunTimeVal envi::declareVar(string name, RunTimeVal value) {
     if (this->var.find(name) != this->var.end()) {
         throw Mer_RuntimeError("Variable " + name + " already declared");
     }
@@ -8,13 +8,13 @@ RunTimeVal envi::declareVar(std::string name, RunTimeVal value) {
     return value;
 }
 
-RunTimeVal envi::assignVar(std::string name, RunTimeVal value) {
+RunTimeVal envi::assignVar(string name, RunTimeVal value) {
     envi* env = this->resolve(name);
     env->var[name] = value;
     return value;
 }
 
-RunTimeVal envi::lookupVar(std::string name) {
+RunTimeVal envi::lookupVar(string name) {
     envi* env = this->resolve(name);
     if (env->var.find(name) == env->var.end()) {
         throw Mer_RuntimeError("Variable " + name + " is not declared");
@@ -22,7 +22,7 @@ RunTimeVal envi::lookupVar(std::string name) {
     return env->var[name];
 }
 
-envi* envi::resolve(std::string var_name) {
+envi* envi::resolve(string var_name) {
     if (this->var.find(var_name) != this->var.end()) {
         return this;
     }

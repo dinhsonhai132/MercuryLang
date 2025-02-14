@@ -64,8 +64,6 @@ AST_node *Parser::MerParser_let_statement() {
     return state;
 }
 
-
-
 AST_node *Parser::MerParser_primary() {
     cur_tok = get_ctok();
     if (Is_tok_identifier(cur_tok.tok)) {

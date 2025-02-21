@@ -67,13 +67,13 @@ RunTimeVal MVM_evaluate_binary_expression(AST_node *expr, Envi *envi) {
         return MVM_valuelize(Null, 0.0);
     }
 
-    if (expr->op == "+") {
+    if (expr->op == PLUS) {
         return MVM_valuelize(Number, left.value + right.value);
-    } else if (expr->op == "-") {
+    } else if (expr->op == MINUS) {
         return MVM_valuelize(Number, left.value - right.value);
-    } else if (expr->op == "*") {
+    } else if (expr->op == TIME) {
         return MVM_valuelize(Number, left.value * right.value);
-    } else if (expr->op == "/") {
+    } else if (expr->op == DIV) {
         return MVM_valuelize(Number, left.value / right.value);
     }
 }

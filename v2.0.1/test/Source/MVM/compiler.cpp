@@ -53,6 +53,37 @@ int eval(Stack *stk, string code) {
     return 0;
 }
 
+struct bytecode {
+    string code;
+    Object* value;
+    Object* load;
+};
+
+bool is_binary_operator(string code) {
+    if (code == ADD || code == SUB || code == MUL || code == DIV || code == MOD) {
+        return true;
+    }
+    return false;
+}
+
+int MVM_compiler(vector<bytecode> bytecodes, Stack *stk) {
+    int line;
+    while (line < bytecodes.size()) {
+        if (bytecodes[line].code == PUSH) {
+            push(stk, bytecodes[line].value);
+        } else if (bytecodes[line].code == POP) {
+            pop(stk);
+        } else if (is_binary_operator(bytecodes[line].code)) {
+            eval(stk, bytecodes[line].code);
+        }
+        line++;
+    }
+}
+
+int main() {
+    return 0;
+}
+
 int main(int argc, char *argv[]) {
     return 0;
 }

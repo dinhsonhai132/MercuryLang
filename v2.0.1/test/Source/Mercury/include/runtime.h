@@ -21,5 +21,6 @@ struct RunTimeVal {
 };
 
 RunTimeVal valuelize(string type, float value);
+RunTimeVal *valuelize_as_ptr(string type, float value);
 
 #endif

@@ -1,3 +1,4 @@
+this is README for test
 # MercuryLang 2.0.1 🚀
 
 MercuryLang is a fast, efficient, and versatile programming language designed for general-purpose coding. With a focus on performance and ease of use, MercuryLang enables developers to write high-quality code with minimal overhead. ⚡

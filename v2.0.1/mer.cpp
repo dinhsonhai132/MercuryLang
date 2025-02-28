@@ -608,7 +608,6 @@ AST_node *Parser::MerParser_program() {
 
     while (!Is_tok_eof(cur_tok)) {
         program->children.push_back(MerParser_additive_expression());
-        cur_tok = get_ntok();
     }
     return program;
 }
@@ -640,7 +639,6 @@ AST_node *Parser::MerParser_additive_expression() {
 
         AST_node *right = MerParser_multiplicative_expression();
         left = MerParser_binary_expression(left, right, op);
-        cur_tok = get_ntok();
     }
     return left;
 }
@@ -756,8 +754,6 @@ int MerObject_free(MerObject *obj) {
     free(obj);
     return SUCCESS;
 }
-
-
 
 // run time
 #define Number "number"

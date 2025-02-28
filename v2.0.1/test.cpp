@@ -763,6 +763,7 @@ int MerObject_free(MerObject *obj) {
 struct RunTimeVal {
     string type;
     float value;
+    string svalue;
 
     MerObject *ovalue;
     string string_iden;
@@ -996,14 +997,65 @@ void Shell() {
     }
 }
 
-void MerCompiler() {
-    cout << "MercuryLang v2.0.1" << endl;
+void MerCoreCompiler_token() {
+    cout << "Repl v2.0.1" << endl;
     for (;;) {
         string source;
         cout << ">> ";
         getline(cin, source);
         if (source == "exit") {
             break;
+        } else if (source == "shell") {
+            Shell();
+            continue;
+        } else if (source == "credit") {
+            
+        }
+
+        vector <token> tokens = MerLexer_tokenize(source);
+        AST_node *ast = MerAST_make_ast(tokens);
+        RunTimeVal result = MVM_evaluate_AST(ast);
+        print_ast(ast);
+    }
+}
+
+void MerCoreCompiler_ast() {
+    cout << "Repl v2.0.1" << endl;
+    for (;;) {
+        string source;
+        cout << ">> ";
+        getline(cin, source);
+        if (source == "exit") {
+            break;
+        }
+        print_token(source);
+    }
+}
+
+void credit() {
+    cout << "Mer v2.0.1" << endl;
+    cout << "Credit: " << endl;
+    cout << "Author: Hai" << endl;
+    cout << "Date: 2021" << endl;
+}
+
+void MerCompiler() {
+    cout << "Repl v2.0.1" << endl;
+    for (;;) {
+        string source;
+        cout << ">> ";
+        getline(cin, source);
+        if (source == "exit") {
+            break;
+        } else if (source == "shell") {
+            Shell();
+            continue;
+        } else if (source == ":credit") {
+            credit();
+        } else if (source == ":ast") {
+            MerCoreCompiler_ast();
+        } else if (source == ":token") {
+            MerCoreCompiler_token();
         }
 
         vector <token> tokens = MerLexer_tokenize(source);

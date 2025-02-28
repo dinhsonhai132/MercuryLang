@@ -997,7 +997,7 @@ void Shell() {
 }
 
 void MerCompiler() {
-    cout << "v2.0.1" << endl;
+    cout << "MercuryLang v2.0.1" << endl;
     for (;;) {
         string source;
         cout << ">> ";

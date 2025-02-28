@@ -143,3 +143,4 @@ For questions or suggestions, reach out:
 - GitHub: [Mercury Language Discussions](https://github.com/dinhsonhai132/Mercury-Langluage/discussions/1)
 >
 (You guys can write suggestion and i will hear you all 😁)
+made by : hai

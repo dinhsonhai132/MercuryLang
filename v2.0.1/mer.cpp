@@ -23,7 +23,7 @@ using namespace std;
 #define EOF_T "EOF"
 #define ASSIGN "ASSIGN"
 #define MOD "MOD"
-#define INT_ "INT"
+#define INT_ "INT_"
 #define PLUS "PLUS"
 #define MINUS "MINUS"
 #define DIV "DIV"
@@ -107,7 +107,7 @@ using namespace std;
 #define MAX 1024
 
 #define LITERAL {INT_, FLOAT_, DOUBLE_}
-#define IDENTIFIER {LET, PRINT, IF, ELSE, FOR, WHILE}
+#define IDENTIFIER {DIV, MOD, PLUS, TIME, MINUS}
 #define EXPR {PLUS, MINUS, DIV, TIME, MOD, INT_, FLOAT_, DOUBLE_}
 #define TYPE {INT_T, FLOAT_T, DOUBLE_T, CHAR_T, SHORT_T, LONG_T, AUTO_T, VOID_T, BOOL_T, STRING_T, STRUCT_T, CLASS_T}
 
@@ -429,7 +429,7 @@ vector<token> MerLexer_tokenize(string source)
 struct AST_node {
     string type;
     string tok;
-    float value;
+    float value = 0.0;
     string string_iden;
     AST_node *poutput;
 
@@ -550,7 +550,7 @@ bool Is_tok_expression(string tok) {
     return false;
 }
 
-// parser
+// Parser
 class Parser {
 private:
     vector<token> tokens;
@@ -559,7 +559,6 @@ private:
     AST_node *program;
 
 public:
-
     Parser(vector<token> tokens) : tokens(tokens), idx(0) {}
 
     bool look_ahead(string tok, int n);
@@ -569,37 +568,46 @@ public:
     token jump_tok(int n);
 
     AST_node *MerParser_program();
-    AST_node *MerParser_statement();
     AST_node *MerParser_primary();
     AST_node *MerParser_additive_expression();
     AST_node *MerParser_multiplicative_expression();
-    AST_node *MerParser_function_call();
-    AST_node *MerParser_expression();
     AST_node *MerParser_binary_expression(AST_node *left, AST_node *right, string op);
 };
 
 token Parser::get_ctok() {
+    if (idx >= tokens.size()) {
+        return tokens[tokens.size() - 1];
+    }
     return cur_tok = tokens[idx];
 }
 
 token Parser::get_ntok() {
-    return cur_tok = tokens[idx++];
+    idx++;
+    if (idx >= tokens.size()) {
+        return tokens[tokens.size() - 1];
+    }
+    return cur_tok = tokens[idx];
 }
 
 token Parser::jump_tok(int n) {
-    return cur_tok = tokens[idx += n];
+    idx += n;
+    if (idx >= tokens.size()) {
+        return tokens[tokens.size() - 1];
+    }
+
+    return cur_tok = tokens[idx];
 }
 
 bool Parser::look_ahead(string tok, int n) {
-    cur_tok = tokens[idx + n];
-    return cur_tok.tok == tok;
+    return tokens[idx + n].tok == tok;
 }
 
 AST_node *Parser::MerParser_program() {
     program = MerAST_make_parent(Program);
     cur_tok = get_ctok();
+
     while (!Is_tok_eof(cur_tok)) {
-        program->children.push_back(MerParser_multiplicative_expression());
+        program->children.push_back(MerParser_additive_expression());
         cur_tok = get_ntok();
     }
     return program;
@@ -607,43 +615,62 @@ AST_node *Parser::MerParser_program() {
 
 AST_node *Parser::MerParser_primary() {
     cur_tok = get_ctok();
+    
     if (Is_tok_identifier(cur_tok.tok)) {
         return MerAST_make(Identifier_, cur_tok.tok, cur_tok.value, cur_tok.type);
     } else if (Is_tok_literal(cur_tok.tok)) {
         return MerAST_make(Literal, cur_tok.tok, cur_tok.value, cur_tok.type);
     }
-    return NULL;
+    
+    cerr << "Lỗi: Token không hợp lệ!\n";
+    return nullptr;
 }
 
 AST_node *Parser::MerParser_additive_expression() {
     AST_node *left = MerParser_multiplicative_expression();
-    AST_node *right;
 
-    cur_tok = get_ctok();
     while (cur_tok.tok == PLUS || cur_tok.tok == MINUS) {
-        string op = get_ntok().tok;
-        get_ntok();
-        right = MerParser_multiplicative_expression();
+        string op = cur_tok.tok;
+        cur_tok = get_ntok();
+
+        if (Is_tok_eof(cur_tok)) {
+            cout << "Lỗi: Phép toán " << op << " thiếu toán hạng bên phải!\n";
+            return left;
+        }
+
+        AST_node *right = MerParser_multiplicative_expression();
         left = MerParser_binary_expression(left, right, op);
+        cur_tok = get_ntok();
     }
     return left;
 }
 
 AST_node *Parser::MerParser_multiplicative_expression() {
     AST_node *left = MerParser_primary();
-    AST_node *right;
 
-    cur_tok = get_ctok();
+    cur_tok = get_ntok();
     while (cur_tok.tok == TIME || cur_tok.tok == DIV || cur_tok.tok == MOD) {
-        string op = get_ntok().tok;
+        string op = cur_tok.tok;
         cur_tok = get_ntok();
-        right = MerParser_primary();
+
+        if (Is_tok_eof(cur_tok)) {
+            cout << "Lỗi: Phép toán " << op << " thiếu toán hạng bên phải!\n";
+            return left;
+        }
+
+        AST_node *right = MerParser_primary();
         left = MerParser_binary_expression(left, right, op);
+        cur_tok = get_ntok();
     }
     return left;
 }
 
 AST_node *Parser::MerParser_binary_expression(AST_node *left, AST_node *right, string op) {
+    if (!left || !right) {
+        cout << "Lỗi: Biểu thức nhị phân " << op << " bị thiếu toán hạng!\n";
+        return nullptr;
+    }
+
     AST_node *node = MerAST_make_parent(BinaryExpression);
     node->left = left;
     node->right = right;
@@ -656,6 +683,277 @@ AST_node *MerAST_make_ast(vector<token> tokens) {
     return parser.MerParser_program();
 }
 
+// object
+
+#define SUCCESS 0;
+#define FAILURE 1;
+
+struct MerObject {
+    
+    string file_name;
+    string objtype;
+    int ovalue;
+
+    bool is_mom;
+    string mom_name;
+    string mom_t;
+
+    string iden;
+    float rvalue;
+    float fvalue;
+    string svalue;
+    double dvalue;
+    bool bvalue;
+
+    float args_value;
+    string args_type;
+    bool is_func_v;
+
+    bool is_constant;
+    bool is_args;
+    bool is_kwargs;
+    bool is_global;
+    bool iserrt;
+    MerObject *objv;
+};
+
+MerObject *MerObject_new(void);
+int MerObject_free(MerObject *obj);
+
+
+MerObject *MerObject_new(void) {
+    MerObject *obj = (MerObject *)malloc(sizeof(MerObject));
+    obj->objtype = "";
+    obj->file_name = "";
+    obj->ovalue = 0;
+    obj->is_mom = false;
+    obj->mom_name = "";
+    obj->mom_t = "";
+    obj->iden = "";
+    obj->rvalue = 0.0;
+    obj->fvalue = 0.0;
+    obj->svalue = "";
+    obj->dvalue = 0.0;
+    obj->bvalue = false;
+    obj->args_value = 0.0;
+    obj->args_type = "";
+    obj->is_func_v = false;
+    obj->is_constant = false;
+    obj->is_args = false;
+    obj->is_kwargs = false;
+    obj->is_global = false;
+    obj->iserrt = false;
+    obj->objv = NULL;
+    return obj;
+}
+
+
+int MerObject_free(MerObject *obj) {
+    if (obj->iserrt) {
+        return FAILURE
+    }
+
+    free(obj);
+    return SUCCESS;
+}
+
+
+
+// run time
+#define Number "number"
+#define Null "null"
+#define String "string"
+
+struct RunTimeVal {
+    string type;
+    float value;
+
+    MerObject *ovalue;
+    string string_iden;
+};
+
+RunTimeVal valuelize(string type, float value);
+RunTimeVal *valuelize_as_ptr(string type, float value);
+
+RunTimeVal valuelize(string type, float value) {
+    RunTimeVal val;
+    val.type = type;
+    val.value = value;
+    return val;
+}
+
+RunTimeVal *valuelize_as_ptr(string type, float value) {
+    RunTimeVal *val;
+    val->type = type;
+    val->string_iden = value;
+    return val;
+}
+// variable
+
+struct Variable {
+    string name;
+    RunTimeVal *value;
+    AST_node *nvalue;
+    MerObject *ovalue;
+};
+
+bool is_declared(string name, vector<Variable> *variables);
+Variable declared(string name, RunTimeVal *value, vector<Variable> *variables);
+RunTimeVal *lookup(string name, vector<Variable> *variables);
+Variable make_variable(string name, RunTimeVal *value);
+
+Variable make_variable(string name, RunTimeVal *value) {
+    if (!value) {
+        throw runtime_error("Variable value is null: " + name);
+    }
+    return { name, value };
+}
+
+Variable declared(string name, RunTimeVal *value, vector<Variable> *variables) {
+    if (is_declared(name, variables)) {
+        throw runtime_error("Variable already declared: " + name);
+    }
+    
+    Variable variable = make_variable(name, value);
+    variables->push_back(variable);
+    return variable;
+}
+
+RunTimeVal *lookup(string name, vector<Variable> *variables) {
+    for (auto& var : *variables) {
+        if (var.name == name) return var.value;
+    }
+
+    throw runtime_error("Variable not found: " + name);
+}
+
+bool is_declared(string name, vector<Variable> *variables) {
+    for (const auto& var : *variables) {
+        if (var.name == name) return true;
+    }
+    return false;
+}
+// envi
+
+class Envi {
+private:
+    Envi *parent;
+    vector<Variable> variables;
+public:
+
+    Envi (Envi *parentENV) {
+        this->parent = parentENV;
+        this->variables = vector<Variable>();
+    }
+
+    RunTimeVal *MerEnvi_declare_var(string name, RunTimeVal *value, vector<Variable> *variables);
+    RunTimeVal *MerEnvi_assign_var(string name, RunTimeVal *value, vector<Variable> *variables);
+    Envi MerEnvi_resolve(string name, vector<Variable> &variables);
+    RunTimeVal *MerEnvi_lookup(string name, vector<Variable> &variables);
+};
+    
+
+RunTimeVal *Envi::MerEnvi_declare_var(string name, RunTimeVal *value, vector<Variable> *variables) {
+    Variable var = declared(name, value, variables);
+    return value;
+}
+
+RunTimeVal *Envi::MerEnvi_assign_var(string name, RunTimeVal *value, vector<Variable> *variables) {
+    const Envi env = MerEnvi_resolve(name, *variables);
+    return {};
+}
+
+Envi Envi::MerEnvi_resolve(string name, vector<Variable> &variables) {
+    if (is_declared(name, &variables)) {
+        return *this;
+    }
+
+    throw runtime_error("Variable not found: " + name);
+    return Envi::MerEnvi_resolve(name, variables);
+}
+
+// eval
+
+RunTimeVal MVM_valuelize(string type, float value);
+RunTimeVal MVM_evaluate(AST_node *node);
+RunTimeVal MVM_evaluate_binary_expression(AST_node *node);
+RunTimeVal MVM_evaluate_program(AST_node *node);
+RunTimeVal MVM_evaluate_expression_statement(AST_node *node);
+RunTimeVal MVM_evaluate_total_expression(AST_node *node);
+RunTimeVal MVM_evaluate_AST(AST_node *node);
+
+RunTimeVal MVM_valuelize(string type, float value) {
+    return RunTimeVal {
+        .type = type, 
+        .value = value
+    };
+}
+
+RunTimeVal MVM_evaluate(AST_node *node) {
+    if (node->type == Literal) {
+        return MVM_valuelize(Number, node->value);
+    } else if (node->type == Program) {
+        return MVM_evaluate_program(node);
+    } else if (node->type == ExpressionStatement) {
+        return MVM_evaluate_expression_statement(node);
+    } else if (node->type == BinaryExpression) {
+        return MVM_evaluate_binary_expression(node);
+    }
+    else {
+        return MVM_valuelize(Null, 0.0);
+    }
+}
+
+RunTimeVal MVM_evaluate_program(AST_node *node) {
+    vector<AST_node*> statements = node->children;
+    RunTimeVal result = MVM_valuelize(Null, 0.0);
+    for (auto &statement : statements) {
+        result = MVM_evaluate(statement);
+    }
+    return result;
+}
+
+RunTimeVal MVM_evaluate_total_expression(AST_node *node) {
+    if (node->type == ExpressionStatement) {
+        return MVM_evaluate_expression_statement(node);
+    } 
+    return MVM_valuelize(Null, 0.0);
+}
+
+RunTimeVal MVM_evaluate_expression_statement(AST_node *node) {
+    if (node->children[0]->type == BinaryExpression) {
+        return MVM_evaluate_binary_expression(node->children[0]);
+    } else {
+        return MVM_evaluate_total_expression(node->children[0]);
+    }
+    return MVM_valuelize(Null, 0.0);
+}
+
+RunTimeVal MVM_evaluate_binary_expression(AST_node *expr) {
+    RunTimeVal left = MVM_evaluate(expr->left);
+    RunTimeVal right = MVM_evaluate(expr->right);
+
+    if (left.type != Number || right.type != Number) {
+        return MVM_valuelize(Null, 0.0);
+    }
+
+    if (expr->op == PLUS) {
+        return MVM_valuelize(Number, left.value + right.value);
+    } else if (expr->op == MINUS) {
+        return MVM_valuelize(Number, left.value - right.value);
+    } else if (expr->op == TIME) {
+        return MVM_valuelize(Number, left.value * right.value);
+    } else if (expr->op == DIV) {
+        return MVM_valuelize(Number, left.value / right.value);
+    }
+    return MVM_valuelize(Null, 0.0);
+}
+
+RunTimeVal MVM_evaluate_AST(AST_node *node) {
+    return MVM_evaluate_program(node);
+}
+
+// shell
 void print_token(string source) {
     for (auto &tok : MerLexer_tokenize(source)) {
         cout << "{ tok: " << tok.tok << ", type: " << tok.type << ", value: " << tok.value << " }" << endl;
@@ -665,18 +963,25 @@ void print_token(string source) {
 void print_ast(AST_node *node, int indent = 0) {
     if (!node) return;
 
-    cout << string(indent, ' ') << "{ type: " << node->type
-         << ", tok: " << node->tok
-         << ", value: " << node->value
-         << ", left: " << node->left
-         << ", op: " << node->op
-         << ", right: " << node->right
-         << " }" << endl;
+    if (node->type == BinaryExpression) {
+        cout << string(indent, ' ') << "{ type: BinaryExpression, op: " << node->op 
+             << ",\n" << string(indent + 2, ' ') << "left: " << node->left
+             << ",\n" << string(indent + 2, ' ') << "right: " << node->right
+             << "\n" << string(indent, ' ') << "}" << endl;
+        return;
+    }
+
+    cout << string(indent, ' ') << "{"
+         << "type: " << node->type << ","
+         << "tok: " << node->tok << ","
+         << "value: " << node->value << ","
+         << "}\n";
 
     for (auto &child : node->children) {
         print_ast(child, indent + 2);
     }
 }
+
 
 void Shell() {
     cout << "v2.0.1" << endl;
@@ -687,13 +992,32 @@ void Shell() {
         if (source == "exit") {
             break;
         }
-        vector<token> tokens = MerLexer_tokenize(source);
+
+        vector <token> tokens = MerLexer_tokenize(source);
         AST_node *ast = MerAST_make_ast(tokens);
-        print_ast(ast);
+        RunTimeVal result = MVM_evaluate_AST(ast);
+        cout << "{ type: " << result.type << ", value: " << result.value << " }" << endl;
+    }
+}
+
+void MerCompiler() {
+    cout << "v2.0.1" << endl;
+    for (;;) {
+        string source;
+        cout << ">> ";
+        getline(cin, source);
+        if (source == "exit") {
+            break;
+        }
+
+        vector <token> tokens = MerLexer_tokenize(source);
+        AST_node *ast = MerAST_make_ast(tokens);
+        RunTimeVal result = MVM_evaluate_AST(ast);
+        cout << result.value << endl;
     }
 }
 
 int main() {
-    Shell();
+    MerCompiler();
     return 0;
 }

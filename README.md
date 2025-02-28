@@ -1,5 +1,5 @@
 # NEW
-### *MercuryLang binary 2.0.1* try new version at [here](https://github.com/dinhsonhai132/Mercury-Langluage/tree/main/v2.0.1)
+### **MercuryLang binary 2.0.1** try new version at [here](https://github.com/dinhsonhai132/Mercury-Langluage/tree/main/v2.0.1)
 
 ### ⚠️ Warning: before you read this file, this language is still not in finish, that's mean it doesn't support strong library, datatype, function,... all just for test before the official version out, if you want to try the full version of the language please wait until the version 1.0.1a (beta) is out, Thanks you all for trying my language
 --------

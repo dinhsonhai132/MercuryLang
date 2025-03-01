@@ -1,0 +1,19 @@
+#Makefile
+CXX = g++
+
+CXXFLAGS = -Wall -Wextra -std=c++17 -g
+
+exec = amer
+
+source = src/main.cpp src/lexer.cpp src/parser.cpp
+
+object = $(source:.cpp=.o)
+
+$(exec): $(object)
+	$(CXX) $(CXXFLAGS) $(object) -o $(exec)
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+clean:
+	rm -f $(object) $(exec)

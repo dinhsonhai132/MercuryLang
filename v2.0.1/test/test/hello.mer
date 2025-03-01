@@ -1,0 +1,8 @@
+IMPORT "MER_IO"
+
+FUNC main() DO
+    !PRINT("Hello, World!");
+END
+
+!main();
+!INPUT();

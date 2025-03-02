@@ -1,5 +1,0 @@
-FUNC main(&x, &y) DO
-    RETURN &x - &y;
-END
-
-!main(1, 1);

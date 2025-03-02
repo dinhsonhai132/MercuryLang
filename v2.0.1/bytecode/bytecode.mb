@@ -1,8 +1,0 @@
-_Start
-    mov 0 (1.24)
-    mov 1 (2.3)
-    mov 3 (5.2)
-    add
-    div
-    print
-_end

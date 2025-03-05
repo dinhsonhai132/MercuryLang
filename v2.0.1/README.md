@@ -19,7 +19,7 @@ PROGRAM_END
 ```
 ### Why use MVM? ✅
 * Using MVM to execute code is faster and easier to manage the code 🔒
-* By not straight code from AST to value can not cause a lot of error when new version update ❌
+* By not straight code from AST to value can not cause a lot of error when new version update or run code ❌
 ## 2) How to compile code into MVM code? ♻️
 * s1: Install the language if you are not install go to the offical page for more info
 * s2: Make a ```.mer``` file and write code into it

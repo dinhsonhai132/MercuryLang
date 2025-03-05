@@ -78,6 +78,9 @@
 ## 2/1/2025
 --**New 2.0.1 (W.I.P) in test**
 
+## NEW BIG UPDATE
+-- **New compiler MVM for compiled code**
+-- **New version 2.0.1**
 # ✨ Leaked Features (Upcoming)  
 - **New Data Types**:  
   - String type in variables.  

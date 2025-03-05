@@ -1,0 +1,5 @@
+FUNC main() DO
+    !PRINT("HELLO WORLD");
+END
+
+1+2+3

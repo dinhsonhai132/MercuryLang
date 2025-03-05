@@ -4,7 +4,7 @@
 ## 1) New Compiler called Mercury Virtual Machine (MVM) 💻
 ### What's is MVM? 🔎
 * MVM is a compiler that compile low level programing language make for execute Mercury codes 🤯
-### What MVM can do 🎁 
+### What MVM can do? 🎁 
 * MVM can do a basic codes like what a basic low level programing language can do for example:
 ```MVM
 PROGRAM_START

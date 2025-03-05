@@ -1,48 +1,30 @@
-this is README for test
-# MercuryLang 2.0.1 🚀
+# MercuryLang *version 2.0.1 binary* is out! ✨
+## What's in this update? 👀
 
-MercuryLang is a fast, efficient, and versatile programming language designed for general-purpose coding. With a focus on performance and ease of use, MercuryLang enables developers to write high-quality code with minimal overhead. ⚡
+## 1) New Compiler called Mercury Virtual Machine (MVM) 💻
+### What's is MVM?
+* MVM is a compiler that compile low level programing language make for execute Mercury codes
+### What MVM can do
+* MVM can do a basic codes like what a basic low level programing language can do for example:
+```MVM
+PROGRAM_START
+PUSH_FLOAT 1.000000
+PUSH_FLOAT 1.000000
+BINARY_ADD
+PROGRAM_END
+```
+* That code is the compiled code of:
+``` MercuryLang
+1+1
+```
+### Why use MVM?
+* Using MVM to execute code is faster and easier to manage the code
+* By not straight code from AST to value can not cause a lot of error when new version update
+## 2) How to compile code into MVM code
+* 1) Install the language if you are not install go to the offical page for more info
+* 2) Make a ```.mer``` file and write code into it
+* 3) Open cmd, go to your file path and type ```./shell.exe name_of_your_file.mer```
+* 4) When done the MVM will automaticly compiled your ```.mer``` file into ```.merc``` file, that file will be your bytecode
+* 5) If you want to execute code type ```./exec.exe your_bytecode_file.merc``` and it will show the output
 
-## New Features in Version 2.0.1 ✨
-
-- **Performance Enhancements**: 🚀 Optimizations for faster execution and reduced memory usage.
-- **Bug Fixes**: 🐞 Resolved stability issues and improved reliability.
-- **Improved Libraries**: 📚 Updated libraries for handling file I/O, networking, and data structures.
-- **Enhanced Error Handling**: ⚠️ Streamlined exception handling for easier debugging.
-
----
-
-## Features 🛠️
-
-### 1. **Basic Language Constructs** 📝
-- **Variables & Constants**: you don't need to worry about data type in variable Mercury can execute it for you 🔑
-- **Conditionals**: Use `IF`, `ELIF`, `ELSE`, statement 💭
-- **Loops**: Implement `FOR`, `WHILE`, and `DO-WHILE` loops for repetitive tasks. 🔁
-- **Functions**: Modularize code with reusable functions that take arguments and return values. 🔄
-
-### 2. **Data Structures** 🗂️
-- **Arrays**: 📊 Ordered data collection.
-- **Lists**: 📋 Flexible, resizable collections of data.
-- **HashMap**: 🗣️ Key-value pairs for efficient lookups.
-
-### 3. **Mathematical & Logical Operations** ➗
-- Perform arithmetic, comparison, and logical operations in an efficient manner. ⚖️
-
-## Getting Started 🚀
-
-### Installation 💻
-
-1. **Download** the latest version of MercuryLang from the official repository. 🌐
-2. **Install** MercuryLang by following these steps:
-    - **Download** the program from the official repository
-    - **Extract** all files
-
-### Run code
-1. First you need a `C++` compiler to run code
-2. Make your `.txt` file and write then name of your `.txt` file into `shell.exe` 
-
-### Basic Example: Hello World 👋
-
-```mercury
-/* this is hello world */
-PRINT "Hello, world!";
+**And that are all the feature that the 2.0.1 MercuryLang has, have fun coding 😆**

@@ -1,4 +1,3 @@
-# BIG UPDATE 🔥🔥🔥
 # MercuryLang new version 🌟
 ***MercuryLang binary 2.0.1* try new version at [here](https://github.com/dinhsonhai132/Mercury-Langluage/tree/main/v2.0.1)**
 

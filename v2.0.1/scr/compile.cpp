@@ -60,6 +60,7 @@ char *MVM_compile_ast_let_statement(AST_node *ast) {
     char *bytecoden = new char[BYTECODE_SIZE];
     char *value = new char[BYTECODE_IDENTIFIER_CODE_SIZE];
     char *var_value = MVM_compile_ast(ast->var_value);
+    strcat(bytecoden, "\n");
     strcat(bytecoden, var_value);
     snprintf(value, BYTECODE_IDENTIFIER_CODE_SIZE, "STORE_GLOBAL %s\n", ast->var_name.c_str());
     strcat(bytecoden, value);

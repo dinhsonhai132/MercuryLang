@@ -24,8 +24,8 @@ PROGRAM_END
 ## 2) How to compile code into MVM code? ♻
 * s1: Install the language if you are not install go to the offical page for more info
 * s2: Make a ```.mer``` file and write code into it
-* s3: Open cmd, go to your file path and type ```./shell.exe name_of_your_file.mer```
+* s3: Open cmd, go to your file path and type ```./shell.exe main.mer```
 * s5: When done the MVM will automaticly compiled your ```.mer``` file into ```.merc``` file, that file will be your bytecode
-* s6: If you want to execute code type ```./exec.exe your_bytecode_file.merc``` and it will show the output
+* s6: If you want to execute code type ```./exec.exe main.merc``` and it will show the output
 
 **And that are all the feature that the 2.0.1 MercuryLang has, have fun coding 😆**

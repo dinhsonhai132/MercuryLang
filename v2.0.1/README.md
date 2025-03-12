@@ -28,5 +28,7 @@ PROGRAM_END
 * When done, creat a folder named ```Mercury``` in ```C:/```
 * Edit evironment path to your ```C:/Mercury``` folder
 * When done go to terminal type ```mer --version``` if it show 2.0.1 that means you are done
+## 3) How to execute *.mer* file
+* When setup is done just type ```mer your_project.mer``` it will execute into ```your_project.merc```, that file is your bytecode
 
 **And that are all the feature that the 2.0.1 MercuryLang has, have fun coding 😆**

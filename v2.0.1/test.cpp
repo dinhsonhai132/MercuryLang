@@ -1,3 +1,4 @@
+//eat my ass
 #include "./scr/compile.cpp"
 #include "./scr/olexer.cpp"
 #include <iostream>

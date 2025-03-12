@@ -23,10 +23,10 @@ PROGRAM_END
 * By not straight code from AST to value can not cause a lot of error when new version update or small mistake run code 
 ## 2) How to compile code into MVM code? ♻
 * First, install the program language, extract all files
-* Then, open terminal enter the ../v2.0.1 path
-* Run ```make``` to make mer.exe file
-* When done, creat a folder named *Mercury* in C:/
-* Edit evironment path to your C:/Mercury folder
+* Then, open terminal enter the ```../v2.0.1``` path
+* Run ```make``` to make ```mer.exe``` file
+* When done, creat a folder named ```Mercury``` in ```C:/```
+* Edit evironment path to your ```C:/Mercury``` folder
 * When done go to terminal type ```mer --version``` if it show 2.0.1 that means you are done
 
 **And that are all the feature that the 2.0.1 MercuryLang has, have fun coding 😆**

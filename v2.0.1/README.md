@@ -22,10 +22,11 @@ PROGRAM_END
 * Using MVM to execute code is faster and easier to manage the code 
 * By not straight code from AST to value can not cause a lot of error when new version update or small mistake run code 
 ## 2) How to compile code into MVM code? ♻
-* s1: Install the language if you are not install go to the offical page for more info
-* s2: Make a ```.mer``` file and write code into it
-* s3: Open cmd, go to your file path and type ```./shell.exe main.mer```
-* s5: When done the MVM will automaticly compiled your ```.mer``` file into ```.merc``` file, that file will be your bytecode
-* s6: If you want to execute code type ```./exec.exe main.merc``` and it will show the output
+* First, install the program language, extract all files
+* Then, open terminal enter the ../v2.0.1 path
+* Run ```make``` to make mer.exe file
+* When done, creat a folder named *Mercury* in C:/
+* Edit evironment path to your C:/Mercury folder
+* When done go to terminal type ```mer --version``` if it show 2.0.1 that means you are done
 
 **And that are all the feature that the 2.0.1 MercuryLang has, have fun coding 😆**

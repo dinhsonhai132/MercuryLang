@@ -42,6 +42,7 @@ int main(int argc, char* argv[]) {
 
     if (arg == "--version") {
         cout << "MercuryLang Version " << VERSION << endl;
+        cout << "Make by Dinh Son Hai" << endl;
         return 0;
     } 
     if (arg == "--prompt") {

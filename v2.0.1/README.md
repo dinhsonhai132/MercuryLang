@@ -22,13 +22,10 @@ PROGRAM_END
 * Using MVM to execute code is faster and easier to manage the code 
 * By not straight code from AST to value can not cause a lot of error when new version update or small mistake run code 
 ## 2) How to install and setup new version?
-* First, install the program language, extract all files
-* Then, open terminal enter the ```../v2.0.1``` path
-* Run ```make``` to make ```mer.exe``` file
-* When done, creat a folder named ```Mercury``` in ```C:/```
-* Edit evironment path to your ```C:/Mercury``` folder
-* When done go to terminal type ```mer --version``` if it show 2.0.1 that means you are done
-## 3) How to execute *.mer* file
-* When setup is done just type ```mer your_project.mer``` it will execute into ```your_project.merc```, that file is your bytecode
+* First, install the program language, extract all files to your ```C:\```
+* Second, open terminal and go to your ```v2.0.1``` MercuryLang file
+* Third, run make to make ```mer.exe``` 
+* Finally, edit environment part to your ```C:\MercuryLang-main\v2.0.1```
+* Now you can open terminal and type ```mer --version``` if it show *2.0.1* mean you are right
 
 **And that are all the feature that the 2.0.1 MercuryLang has, have fun coding 😆**

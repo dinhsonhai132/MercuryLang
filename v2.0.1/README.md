@@ -28,5 +28,5 @@ PROGRAM_END
 * Finally, edit environment part to your ```C:\MercuryLang-main\v2.0.1```
 * Now you can open terminal and type ```mer --version``` if it show *2.0.1* mean you are right
 
-## you can watch tutorial at [https://www.youtube.com/watch?v=n5wlnvAt7Ss]
+## you can watch tutorial at https://www.youtube.com/watch?v=nwyyNUNJ-FM
 **And that are all the feature that the 2.0.1 MercuryLang has, have fun coding 😆**

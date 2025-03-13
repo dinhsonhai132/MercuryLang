@@ -14,6 +14,7 @@ void print_help() {
     cout << "  --version\t\tPrint version information" << endl;
     cout << "  --prompt\t\tStart the Mercury REPL" << endl;
     cout << "  --help\t\tShow this help message" << endl;
+    cout << "  --output <filename>\tMake output file" << endl;
 }
 
 void prompt() {
@@ -40,9 +41,11 @@ int main(int argc, char* argv[]) {
 
     string arg = argv[1];
 
+    bool output = false;
+    string output_file_name;
     if (arg == "--version") {
         cout << "MercuryLang Version " << VERSION << endl;
-        cout << "Make by Dinh Son Hai" << endl;
+        cout << "Written by Dinh Son Hai" << endl;
         return 0;
     } 
     if (arg == "--prompt") {
@@ -52,6 +55,15 @@ int main(int argc, char* argv[]) {
     if (arg == "--help") {
         print_help();
         return 0;
+    } 
+    if (arg == "--output") {
+        if (argc < 3) {
+            cerr << "Error: Output file not specified" << endl;
+            return 1;
+        }
+        arg = argv[2];
+        output_file_name = argv[3];
+        output = true;
     }
 
     string inputFile = arg;
@@ -59,9 +71,12 @@ int main(int argc, char* argv[]) {
         cerr << "Error: Input file must have a .mer extension" << endl;
         return 1;
     }
-
-    string outputFile = inputFile.substr(0, inputFile.find_last_of(".")) + ".merc";
-
+    string outputFile;
+    if (!output) {
+        outputFile = inputFile.substr(0, inputFile.find_last_of(".")) + ".merc";
+    } else {
+        outputFile = output_file_name + ".merc";
+    }
     string source = MerBuffer_read_file(inputFile);
     vector<token> tokens = MerLexer_tokenize(source);
     AST_node *ast = MerAST_make_AST(tokens);

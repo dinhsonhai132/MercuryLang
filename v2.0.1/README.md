@@ -6,7 +6,7 @@
 * MVM is a compiler that compile low level programing language make for execute Mercury codes 
 ### What MVM can do? 
 * MVM can do a basic codes like what a basic low level programing language can do for example:
-```MVM
+```mercury
 PROGRAM_START
 PUSH_FLOAT 1.000000
 PUSH_FLOAT 1.000000
@@ -14,7 +14,7 @@ BINARY_ADD
 PROGRAM_END
 ```
 * That code is the compiled code of:
-``` MercuryLang
+``` mercury
 1+1
 ```
 ### Why use MVM? 

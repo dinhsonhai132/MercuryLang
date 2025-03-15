@@ -25,7 +25,7 @@ PROGRAM_END
 * First, install the program language, extract all files to your ```C:\```
 * Second, open terminal and go to your ```v2.0.1``` MercuryLang file
 * Third, run make to make ```mer.exe``` and ```merc.exe```
-* Finally, edit environment part to your ```C:\MercuryLang-main\v2.0.1```
+* Finally, edit environment part to your ```C:\MercuryLang-main\v2.0.1\usr\bin```
 * Now you can open terminal and type ```mer --version``` if it show *2.0.1* mean you are right
 
 **And that are all the feature that the 2.0.1 MercuryLang has, have fun coding 😆**

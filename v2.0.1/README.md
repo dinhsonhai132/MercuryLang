@@ -28,5 +28,5 @@ PROGRAM_END
 * Finally, edit environment part to your ```C:\MercuryLang-main\v2.0.1\usr\bin```
 * Now you can open terminal and type ```mer --version``` or ```merc --version``` if it show ```2.0.1``` mean you are right
 * Plus you can run ```merc main.merc``` to run code or ```merc --run main.merc``` to see the evaluated result
-  
+*watch tutorial [here](https://www.youtube.com/watch?v=nwyyNUNJ-FM)*  
 **And that are all the feature that the 2.0.1 MercuryLang has, have fun coding 😆**

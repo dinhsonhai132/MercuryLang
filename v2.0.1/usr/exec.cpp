@@ -16,6 +16,7 @@ void print_help() {
     cout << "  --prompt\t\tStart the Mercury REPL" << endl;
     cout << "  --help\t\tShow this help message" << endl;
     cout << "  --output <filename>\tMake output file" << endl;
+    cout << "  --run <filename>\tRun the Mercury program and output the result" << endl;
 }
 
 void prompt() {

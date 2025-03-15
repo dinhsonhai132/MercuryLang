@@ -65,6 +65,19 @@ int main(int argc, char* argv[]) {
         arg = argv[2];
         output_file_name = argv[3];
         output = true;
+    } else if (arg == "--run") {
+        string inputFile = argv[2];
+        if (inputFile.substr(inputFile.find_last_of(".") + 1) != "merc") {
+            cerr << "Error: Input file must have a .merc extension" << endl;
+            return 1;
+        }
+        char* code = MerBuffer_read_file(inputFile);
+        stack *stk = MerCompiler_Stack_new();
+        stk = MerCompiler_evaluate_program(code, stk);
+        for (int i = 0; i < stk->s_table->table.size(); i++) {
+            cout << stk->s_table->table[i]->cval << endl;
+        }
+        return 0;
     }
 
     string inputFile = arg;

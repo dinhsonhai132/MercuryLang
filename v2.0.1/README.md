@@ -28,6 +28,6 @@ PROGRAM_END
 * Now you can open terminal and type ```mer --version``` or ```merc --version``` if it show ```2.0.1``` mean you are right
 * Plus you can run ```merc main.merc``` to run code or ```merc --run main.merc``` to see the evaluated result
 
-### *If you can not setup you can watch tutorial [here](https://www.youtube.com/watch?v=nwyyNUNJ-FM)*
+ *If you can not setup you can watch tutorial [here](https://www.youtube.com/watch?v=nwyyNUNJ-FM)*
 
 **And that are all the feature that the 2.0.1 MercuryLang has, have fun coding 😆**

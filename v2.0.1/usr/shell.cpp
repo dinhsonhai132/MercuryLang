@@ -126,6 +126,5 @@ int main(int argc, char* argv[]) {
     AST_node *ast = MerAST_make_AST(tokens);
     char* code = MVM_compile_program(ast, code_address);
     MerBuffer_make_and_write_file(outputFile.c_str(), code);
-    print_ast(ast);
     return 0;
 }

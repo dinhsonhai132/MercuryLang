@@ -7,7 +7,7 @@ this is README for test
 * MVM is a compiler that compile low level programing language make for execute Mercury codes 
 ### What MVM can do? 
 * MVM can do a basic codes like what a basic low level programing language can do for example:
-```MVM
+```mercury
 PROGRAM_START
 LOAD_GLOBAL a;
 LOAD_GLOBAL c;
@@ -24,7 +24,7 @@ STORE_GLOBAL y;
 RETURN
 ```
 * That code is the compiled code of:
-``` MercuryLang
+``` mercury
 FUNC foo() DO
 LET x = 1
 LET y = 3

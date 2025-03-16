@@ -1,4 +1,4 @@
-# 🚀 MercuryLang Code of Conduct  
+# ❤️ MercuryLang Code of Conduct  
 
 ## 1. 🎉 Introduction  
 Welcome to **MercuryLang**! To ensure a welcoming and professional environment, all contributors must follow this Code of Conduct.  

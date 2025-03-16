@@ -1,0 +1,7 @@
+FUNC foo() DO
+    LET x = 1
+    LET y = 3
+    !print(x + y)
+END
+
+!foo()

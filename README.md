@@ -1,7 +1,6 @@
-### New 2.0.1 binary version is out!
 # 🪐 *Mercury Programming Language*
 
-Welcome to ```MercuryLang``` version ```1.1.1```, a simple interpreter by ```C++``` programming language inspired by Python. Mercury is designed for clean, readable, and powerful code, making it ideal for developers of all levels.
+Welcome to ```MercuryLang``` version ```2.0.1b``` a test version of ```2.0.1```, a simple interpreter by ```C++``` programming language inspired by Python. Mercury is designed for clean, readable, and powerful code, making it ideal for developers of all levels.
 
 ## 🌟 Features
 
@@ -23,110 +22,66 @@ Before using Mercury, ensure you have:
 ### Installation
 
 1. **Download** the MercuryLang [using this link](https://github.com/dinhsonhai132/Mercury-Langluage/archive/refs/heads/main.zip)
-2. **Extract** all file
-
+2. **Extract** all file to the ```C:\```
+3. **Open terminal** and go to ```C:/mercurylang-main/v2.0.1/usr/bin```, run ```make``` to make file, if it say ```Run successfully```  mean you are right
+5. **Edit enviroment path** to the ```C:/mercurylang-main/v2.0.1/usr/bin```
+   
 ### Hello, World!
-
-**Make** a ```.txt``` file and **write your first Mercury program**:
-
-```mercury
-PRINT "HELLO WORLD!";
-```
-
-**Run the program:**
-
-**Open** ```shell.exe``` at **v1.5.0** folder file and **write the name** of your ```.txt``` file or you can **open** ```shell.exe``` file and **type** ```run``` to **run code** in command line
+**Make** a ```.mer``` file 
+**Open terminal** and go to your ```.mer``` file then **run** ```mer your_file_name.mer```, It will compiled your program into ```.merc``` file
+**Run** ```merc your_file_name.merc``` to execute your program, if you want to see the result run ```merc --run your_file_name.merc``` it will execute and print the result to your screen
 
 ## 🔧 Language Syntax
-
-### Variables
-
+**Although it's still a test version of ```v2.0.1``` but it's still have a few feature of ```v1.0.1``` like**
+### Variable
 ```mercury
-LET INT x = 2;
-LET FLOAT y = 3.2;
-LET STRING z = "hello";
-PRINT x + y;
+LET x = 1
+LET y = 3
+```
+### Function call
+```mercury
+!println("hello world")
+```
+### Function statment
+```mercury
+FUNC foo() DO
+LET x = 1
+LET y = 3
+x + y
+END
+
+!foo()
 ```
 
-### Functions
-
-Define functions with parameters:
-
+### Example of bytecode
 ```mercury
-FUNC add(&x, &y) DO PRINT &x + &y END;
-!add(1, 2);
+PROGRAM_START
+LOAD_GLOBAL a;
+LOAD_GLOBAL c;
+PROGRAM_END
+
+<address of global a at 0x2AADA2A8>
+PUSH_FLOAT 1.000000;
+STORE_GLOBAL x;
+RETURN
+
+<address of global c at 0x5CBC1FFA>
+PUSH_FLOAT 1.000000;
+STORE_GLOBAL y;
+RETURN
 ```
 
-### Compair
-
-Mercury include a large compair operators
-
+**It's a compiled version of**
 ```mercury
-PRINT 1 == 1; /* value will be 1(true) or 0(false) */
-LET INT x = 2;
-LET INT y = 5;
-PRINT x <= 2;
-PRINT x > 4;
-PRINT x != y;
+FUNC a() DO
+LET x = 1
+END
+FUNC c() DO
+LET y = 1
+END
+!a()
+!b()
 ```
-
-### Control Flow
-
-Mercury includes standard control flow statements:
-
-```mercury
-LET INT x = 0;
-IF x > 0 THEN PRINT "x is greater than zero" END ELSE PRINT "x is not greater than zero" END;
-++x;
-IF x != 1 THEN PRINT "x is not 1" END ELIF x == 1 THEN PRINT "x is 1" END;
-```
-
-### Lists
-
-Create and manipulate lists:
-
-```mercury
-LIST a = [1, 2, 3, 4];
-PRINT @a -> 1; /* first element start with 1 */
-```
-
-### Math
-
-```mercury
-LET INT x = 0;
-PRINT ++x /* plus plus or minus minus will update the value */;
-PRINT --x;
-PRINT x * 2 / 3 + 1;
-```
-
-### For loop
-
-```mercury
-/* for loop in list */
-
-LIST a = [4, 3, 2, 5, 3];
-FOR i IN @a DO PRINT i;
-
-/* for loop in range */
-
-FOR i IN 1 TO 10 DO PRINT i END;
-
-```
-
-### While loop
-
-```mercury
-LET INT x = 0;
-WHILE x < 10 DO ++x; PRINT x END;
-```
-
-### Code block
-
-```mercury
-/*code block store multiline */
-... DO (code_block) END;
-```
-
 ## 🤝 Contributing
 
 We welcome contributions! Submit issues, suggest features, or contribute code:

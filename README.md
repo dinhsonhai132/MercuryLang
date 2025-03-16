@@ -90,7 +90,7 @@ FUNC add(&x, &y) DO PRINT &x + &y END;
 
 1. **Download** the MercuryLang [using this link](https://github.com/dinhsonhai132/Mercury-Langluage/archive/refs/heads/main.zip)
 2. **Extract** all file to the ```C:\```
-3. **Open terminal** and go to ```C:/mercurylang-main/v2.0.1/usr/bin```, run ```make``` to make file, if it say ```Run successfully```  mean you are right
+3. **Open terminal** and go to ```C:/mercurylang-main/v2.0.1/usr/bin```, run ```make``` to make file, if it say if it's all ```Passed!``` mean you are right
 5. **Edit enviroment path** to the ```C:/mercurylang-main/v2.0.1/usr/bin```
    
 ### Hello, World!

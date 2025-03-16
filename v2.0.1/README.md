@@ -25,13 +25,14 @@ RETURN
 ```
 * That code is the compiled code of:
 ``` mercury
-FUNC foo() DO
+FUNC a() DO
 LET x = 1
-LET y = 3
-x + y
 END
-
-!foo()
+FUNC c() DO
+LET y = 1
+END
+!a()
+!b()
 ```
 ### Why use MVM? 
 * Using MVM to execute code is faster and easier to manage the code 

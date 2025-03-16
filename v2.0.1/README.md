@@ -9,14 +9,29 @@ this is README for test
 * MVM can do a basic codes like what a basic low level programing language can do for example:
 ```MVM
 PROGRAM_START
-PUSH_FLOAT 1.000000
-PUSH_FLOAT 1.000000
-BINARY_ADD
+LOAD_GLOBAL a;
+LOAD_GLOBAL c;
 PROGRAM_END
+
+<address of global a at 0x2AADA2A8>
+PUSH_FLOAT 1.000000;
+STORE_GLOBAL x;
+RETURN
+
+<address of global c at 0x5CBC1FFA>
+PUSH_FLOAT 1.000000;
+STORE_GLOBAL y;
+RETURN
 ```
 * That code is the compiled code of:
 ``` MercuryLang
-1+1
+FUNC foo() DO
+LET x = 1
+LET y = 3
+x + y
+END
+
+!foo()
 ```
 ### Why use MVM? 
 * Using MVM to execute code is faster and easier to manage the code 

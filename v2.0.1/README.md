@@ -15,7 +15,7 @@ PROGRAM_END
 ```
 * That code is the compiled code of:
 ``` mercury
-1+1
+1 + 1
 ```
 ### Why use MVM? 
 * Using MVM to execute code is faster and easier to manage the code 

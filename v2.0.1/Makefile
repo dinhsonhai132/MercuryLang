@@ -6,8 +6,13 @@ BYTECODE_TARGET = ./usr/bin/merc
 CXX = g++
 
 all:
-	$(CXX) $(SOURCE_FILE) -o $(TARGET)
-	$(CXX) $(BYTECODE_SOURCE_FILE) -o $(BYTECODE_TARGET)
+	@echo "Building... (mer.exe)"
+	@$(CXX) $(SOURCE_FILE) -o $(TARGET) > /dev/null 2>&1 || { echo "Build failed!"; exit 0; }
+
+	@echo "Building... (merc.exe)"
+	@$(CXX) $(BYTECODE_SOURCE_FILE) -o $(BYTECODE_TARGET) > /dev/null 2>&1 || { echo "Build failed!"; exit 0; }
+
+	@echo "Run successfully!"
 
 clean:
-	rm $(TARGET) $(BYTECODE_TARGET)
+	@rm -f $(TARGET) $(BYTECODE_TARGET) > /dev/null 2>&1

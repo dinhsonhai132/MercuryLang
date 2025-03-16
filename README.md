@@ -18,7 +18,7 @@ Before using Mercury, ensure you have:
 
 - A ```C++``` compiler (Mercury is implemented in ```C++```)
 - CMake (to build from source)
-
+# For v2.0.1b
 ### Installation
 
 1. **Download** the MercuryLang [using this link](https://github.com/dinhsonhai132/Mercury-Langluage/archive/refs/heads/main.zip)

@@ -23,7 +23,7 @@ PROGRAM_END
 ## 2) How to install and setup new version?
 * First, install the program language, extract all files to your ```C:\```
 * Second, open terminal and go to your ```v2.0.1``` MercuryLang file
-* Third, run make to make ```mer.exe``` and ```merc.exe```
+* Third, run ```make``` to make ```mer.exe``` and ```merc.exe```
 * Finally, edit environment part to your ```C:\MercuryLang-main\v2.0.1\usr\bin```
 * Now you can open terminal and type ```mer --version``` or ```merc --version``` if it show ```2.0.1``` mean you are right
 * Plus you can run ```merc main.merc``` to run code or ```merc --run main.merc``` to see the evaluated result

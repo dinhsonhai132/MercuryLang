@@ -1,3 +1,5 @@
+**⚠️ Warning: Before you read this, this language is still in the test version. If you want to try a new version, wait until version 1.0.1a is out. Thanks for paying attention to my programming language.**
+
 # 🪐 *Mercury Programming Language*
 
 Welcome to ```MercuryLang``` version ```2.0.1b``` a test version of ```2.0.1```, a simple interpreter by ```C++``` programming language inspired by Python. Mercury is designed for clean, readable, and powerful code, making it ideal for developers of all levels.

@@ -20,7 +20,7 @@ void print_help() {
 void print_ast(AST_node *ast, int depth = 0) {
     if (!ast) return;
 
-    string indent(depth * 2, ' '); // Tạo khoảng trắng để thụt dòng
+    string indent(depth * 2, ' '); 
     cout << indent << "{\n";
     cout << indent << "  Node Type: " << ast->type << endl;
 

@@ -119,7 +119,7 @@ PROGRAM_END
 * Finally, edit environment part to your ```C:\MercuryLang-main\v2.0.1\usr\bin```
 * Now you can open terminal and type ```mer --version``` or ```merc --version``` if it show *2.0.1* mean you are right
 
- -------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------
 ## 🤝 Contributing
 
 We welcome contributions! Submit issues, suggest features, or contribute code:

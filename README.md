@@ -21,7 +21,7 @@ Before using Mercury, ensure you have:
 - A ```C++``` compiler (Mercury is implemented in ```C++```)
 - CMake (to build from source)
   
-**-----------------------------------------------**
+-------------------------------------------------------------------------------------------------------------------------------------------
 # For v1.5.0
 1. **Download** the MercuryLang [using this link](https://github.com/dinhsonhai132/Mercury-Langluage/archive/refs/heads/main.zip)
 2. **Extract** all file
@@ -88,7 +88,7 @@ FUNC add(&x, &y) DO PRINT &x + &y END;
  /*code block store multiline */
  ... DO (code_block) END;
  ```
- 
+ -------------------------------------------------------------------------------------------------------------------------------------------
 # For v2.0.1b
 # MercuryLang *version 2.0.1 binary* is out! ✨
 ## What's in this update? 👀
@@ -118,6 +118,7 @@ PROGRAM_END
 * Third, run make to make ```mer.exe``` and ```merc.exe```
 * Finally, edit environment part to your ```C:\MercuryLang-main\v2.0.1\usr\bin```
 * Now you can open terminal and type ```mer --version``` or ```merc --version``` if it show *2.0.1* mean you are right
+  -------------------------------------------------------------------------------------------------------------------------------------------
 ## 🤝 Contributing
 
 We welcome contributions! Submit issues, suggest features, or contribute code:

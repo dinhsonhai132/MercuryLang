@@ -135,6 +135,7 @@ For questions or suggestions, reach out:
 - GitHub: [Mercury Language Discussions](https://github.com/dinhsonhai132/Mercury-Langluage/discussions/1)
 - Youtube: https://www.youtube.com/@haidinhson
 - Gmail: dinhsonhai440@gmail.com
-  You guys can write suggestion and i will hear you all 😁)
+
+(You guys can write suggestion and i will hear you all 😁)
 
 **Author: Dinh Son Hai**

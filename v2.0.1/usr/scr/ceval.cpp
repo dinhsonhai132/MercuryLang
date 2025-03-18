@@ -55,7 +55,7 @@ stack *MerCompiler_evaluate_BINARY_SUB(bytecode_token ctoks, stack *stk) {
     stk->s_table->table.pop_back();
     table *t2 = stk->s_table->table.back();
     stk->s_table->table.pop_back();
-    stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_SUB(t1->cval, t2->cval)));
+    stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_SUB(t2->cval, t1->cval)));
     return stk;
 }
 
@@ -73,7 +73,7 @@ stack *MerCompiler_evaluate_BINARY_DIV(bytecode_token ctoks, stack *stk) {
     stk->s_table->table.pop_back();
     table *t2 = stk->s_table->table.back();
     stk->s_table->table.pop_back();
-    stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_DIV(t1->cval, t2->cval)));
+    stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_DIV(t2->cval, t1->cval)));
     return stk;
 }
 

@@ -1,4 +1,5 @@
-**⚠️ Warning: Before you read this, this language is still in working, that's mean it's not a offical version yet, all for test. If you want to try a completed version, wait until version 1.0.1a is out. Thanks for paying attention to my programming language.**
+> [!CAUTION]
+> **⚠️ Warning: Before you read this, this language is still in working, that's mean it's not a offical version yet, all for test. If you want to try a completed version, wait until version 1.0.1a is out. Thanks for paying attention to my programming language.**
 
 # 🪐 *Mercury Programming Language*
 

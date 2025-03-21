@@ -6,7 +6,6 @@ using namespace std;
 
 bool MerBuffer_create_folder(const std::string& folderName) {
     if (mkdir(folderName.c_str()) == 0) {
-        std::cout << "Folder created: " << folderName << std::endl;
         return true;
     } else {
         std::cerr << "Failed to create folder or it already exists: " << folderName << std::endl;
@@ -56,8 +55,6 @@ void MerBuffer_make_and_write_file(const char* filename, const char* content) {
     outFile << content << endl;
 
     outFile.close();
-
-    cout << "Content written to " << filename << endl;
 }
 
 void MerBuffer_bytecode(const std::string& filename, const std::vector<uint8_t>& data) {

@@ -24,7 +24,7 @@ Before using Mercury, ensure you have:
   
 -------------------------------------------------------------------------------------------------------------------------------------------
 1. **Download** the MercuryLang [using this link](https://github.com/dinhsonhai132/Mercury-Langluage/archive/refs/heads/main.zip)
-2. **Extract** all file and go to ```v1.5.0```
+2. **Extract** all file and go to ```v1.5.0``` or you can go to ```v2.0.1``` to see new version tutorial
 3. **Run** ```shell.cpp``` into ```shell.exe```
 4. **Open** ```shell.exe``` and run in prompt mode
 5. If you want to run file **creat** a ```.mer``` file

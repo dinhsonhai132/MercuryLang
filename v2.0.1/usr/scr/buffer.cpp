@@ -8,7 +8,6 @@ bool MerBuffer_create_folder(const std::string& folderName) {
     if (mkdir(folderName.c_str()) == 0) {
         return true;
     } else {
-        std::cerr << "Failed to create folder or it already exists: " << folderName << std::endl;
         return false;
     }
 }

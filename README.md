@@ -23,7 +23,6 @@ Before using Mercury, ensure you have:
 - CMake (to build from source)
   
 -------------------------------------------------------------------------------------------------------------------------------------------
-# For v1.5.0
 1. **Download** the MercuryLang [using this link](https://github.com/dinhsonhai132/Mercury-Langluage/archive/refs/heads/main.zip)
 2. **Extract** all file
 3. **Run** ```shell.cpp``` into ```shell.exe```

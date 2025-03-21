@@ -8,6 +8,7 @@ bool MerBuffer_create_folder(const std::string& folderName) {
     mkdir(folderName.c_str());
     return true;
 }
+
 char* MerBuffer_read_file_source(string file_name, string &source) {
     char *buffer = NULL;
     FILE *f = fopen(file_name.c_str(), "rb");

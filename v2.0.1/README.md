@@ -26,5 +26,5 @@ PROGRAM_END
 * Third, run make to make ```mer.exe``` and ```merc.exe``` and ```mer3.exe```
 * Finally, edit environment part to your ```C:\MercuryLang-main\v2.0.1\usr\bin```
 ## 3) How to run file?
-* Run ```mer your_file_name.mer``` to creat ```.merc``` file and then run ```merc your_bytecode_file.merc``` or ```merc --run your_bytecode_file``` to run your bytecode file
-* Or you can run ```mer3 your_file_name.mer``` to creat ```your_bytecode_file.merc-250.merc``` in your ```__mercache__``` folder
+* Run ```mer .mer``` to creat ```.merc``` file and then run ```merc .merc``` or ```merc --run name``` to run your bytecode file
+* Or you can run ```mer3 .mer``` to creat ```.merc-250.merc``` in your ```__mercache__``` folder

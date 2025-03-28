@@ -45,7 +45,7 @@ void print_logo() {
     cout << "                                                               $$    $$/                               $$    $$/  \n";
     cout << "                                                                $$$$$$/                                 $$$$$$/   \n";
     cout << COLOR_RESET;
-    cout << " MercuryLang v" << MERCURY_VERSION << " - By " << AUTHOR << endl;
+    cout << " MercuryLang v" << VERSION << " - By " << AUTHOR << endl;
 }
 
 

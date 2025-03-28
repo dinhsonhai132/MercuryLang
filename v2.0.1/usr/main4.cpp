@@ -13,7 +13,6 @@ namespace fs = std::filesystem;
 #define MERCURY_VERSION "2.1.0"
 #define AUTHOR "Dinh Son Hai"
 
-// ANSI Escape Codes for color
 #define COLOR_RESET   "\033[0m"
 #define COLOR_RED     "\033[31m"
 #define COLOR_GREEN   "\033[32m"
@@ -55,7 +54,7 @@ void print_logo() {
     cout << "                                                               $$    $$/                               $$    $$/  \n";
     cout << "                                                                $$$$$$/                                 $$$$$$/   \n";
     cout << COLOR_RESET;
-    cout << " MercuryLang v" << MERCURY_VERSION << " - By " << AUTHOR << endl;
+    cout << " MercuryLang version" << MERCURY_VERSION << " - By " << AUTHOR << endl;
 }
 
 void prompt() {

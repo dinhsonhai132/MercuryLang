@@ -148,7 +148,7 @@ int main(int argc, char* argv[]) {
         string folder_name = "__mercache__";
         if (!fs::exists(folder_name)) fs::create_directory(folder_name);
 
-        string real_outputFile = folder_name + "/" + (customOutput ? outputFile : fs::path(inputFile).stem().string() + "merc-250.merc");
+        string real_outputFile = folder_name + "/" + (customOutput ? outputFile : fs::path(inputFile).stem().string() + ".merc-250.merc");
         MerBuffer_make_and_write_file_bytecode(real_outputFile.c_str(), code);
 
         cout << COLOR_BLUE << "Compiled successfully to: " << real_outputFile << COLOR_RESET << endl;

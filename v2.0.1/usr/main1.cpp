@@ -110,7 +110,7 @@ int main(int argc, char* argv[]) {
     }
 
     string inputFile = arg;
-    string outputFile = output ? output_file_name + ".merc" : inputFile.substr(0, dot_pos) + ".merc";
+    string outputFile = output ? output_file_name + "merc-250.merc" : inputFile.substr(0, dot_pos) + "merc-250.merc";
 
     try {
         string source = MerBuffer_read_file(inputFile);

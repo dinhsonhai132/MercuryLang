@@ -1,3 +1,5 @@
+this is for test
+
 # MercuryLang *version 2.0.1 binary* is out! ✨
 ## What's in this update? 👀
 

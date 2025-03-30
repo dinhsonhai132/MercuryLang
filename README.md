@@ -110,6 +110,13 @@ PROGRAM_END
 ``` mercury
 1 + 1
 ```
+
+* syntax:
+```mercury
+LET x = 1
+LET y = 3
+x + y
+```
 ### Why use MVM? 
 * Using MVM to execute code is faster and easier to manage the code 
 * By not straight code from AST to value can not cause a lot of error when new version update or small mistake run code 

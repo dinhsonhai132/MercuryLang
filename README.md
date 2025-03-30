@@ -90,7 +90,7 @@ FUNC add(&x, &y) DO PRINT &x + &y END;
  ```
 
 -----------------------------
-# **For v2.0.1b**
+**For v2.0.1b**
 # MercuryLang *version 2.0.1 binary* is out! ✨
 ## What's in this update? 👀
 

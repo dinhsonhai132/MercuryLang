@@ -5,4 +5,4 @@
   - **Add** new **evaluate machine** for **new** bytecode
   
 **4/3/2025**
-  - **Add** new **function** and **function call** (no parameter yet)
+  - **Add** new **function** and **function call** *(no parameter yet)*

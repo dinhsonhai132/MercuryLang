@@ -4,9 +4,5 @@
   - **Remake** ```main1.cpp```, ```main2.cpp```, ```main3.cpp```
   - **Add** new **evaluate machine** for **new** bytecode
   
-**4/5/2025**
-  - **Add** new **function** and **function call**
-
-**4/25/2025**
-  - **Add** new **list** type
-  - **Add** new
+**4/3/2025**
+  - **Add** new **function** and **function call** (no parameter yet)

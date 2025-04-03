@@ -1,5 +1,5 @@
 
-# **📜 Mercury Language 2.0.1 UPDATE LOG**
+# **📜 Mercury Language 2.0.1 Update Log**
 **3/30/2025**
   - **Remake** ```main1.cpp```, ```main2.cpp```, ```main3.cpp```
   - **Add** new **evaluate machine** for **new** bytecode

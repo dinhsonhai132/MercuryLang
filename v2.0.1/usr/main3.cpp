@@ -72,6 +72,8 @@ void prompt() {
 
         if (source == "exit") break;
         if (source == "cls") input = "";
+        if (source == "help") print_help();
+        if (source == "version") cout << "MercuryLang version: " << MERCURY_VERSION << " - By " << AUTHOR << endl;
 
         input += source + "\n";
 
@@ -87,7 +89,12 @@ void prompt() {
         if (stk->s_table->table.size() == 0) {
             continue;
         } else {
-            cout << COLOR_GREEN << stk->s_table->table[stk->s_table->table.size() - 1]->cval << COLOR_RESET << endl;
+            cout << COLOR_YELLOW << "Register: [0" << COLOR_RESET;
+            for (auto &item : stk->s_table->table) {
+                cout << COLOR_YELLOW << ", " << COLOR_RESET;
+                cout << COLOR_GREEN << item->cval << COLOR_RESET;
+            }
+            cout << COLOR_YELLOW << "]" << COLOR_RESET << endl;
         }
     }
 }

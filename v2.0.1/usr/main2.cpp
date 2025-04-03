@@ -72,6 +72,8 @@ void prompt() {
 
         if (source == "exit") break;
         if (source == "cls") input = "";
+        if (source == "help") print_help();
+        if (source == "version") cout << "MercuryLang version: " << MERCURY_VERSION << " - By " << AUTHOR << endl;
 
         input += source + "\n";
 
@@ -87,7 +89,12 @@ void prompt() {
         if (stk->s_table->table.size() == 0) {
             continue;
         } else {
-            cout << COLOR_GREEN << stk->s_table->table[stk->s_table->table.size() - 1]->cval << COLOR_RESET << endl;
+            cout << COLOR_YELLOW << "Register: [0" << COLOR_RESET;
+            for (auto &item : stk->s_table->table) {
+                cout << COLOR_YELLOW << ", " << COLOR_RESET;
+                cout << COLOR_GREEN << item->cval << COLOR_RESET;
+            }
+            cout << COLOR_YELLOW << "]" << COLOR_RESET << endl;
         }
     }
 }
@@ -129,11 +136,18 @@ int main(int argc, char* argv[]) {
             }
             if (flag == OptionFlags::OUTPUT) {
                 if (i + 2 >= argc) {
-                    cerr << COLOR_RED << "Error: '-o' option requires both an output file and an input file." << COLOR_RESET << endl;
+                    cerr << COLOR_RED << "Error: '-o' option requires both an input file and an output file." << COLOR_RESET << endl;
                     return EXIT_FAILURE;
                 }
                 inputFile = argv[++i];
-                outputFile = argv[++i];
+
+                if (inputFile.substr(inputFile.find_last_of(".") + 1) != "mer") {
+                    cerr << COLOR_RED << "Error: Input file must have a .mer extension" << COLOR_RESET << endl;
+                    return EXIT_FAILURE;
+                }
+
+                string v = ".merc-250.merc";
+                outputFile = argv[++i] + v;
                 customOutput = true;
             }
             if (flag == OptionFlags::COMPILE) {

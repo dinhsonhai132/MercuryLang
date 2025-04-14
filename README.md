@@ -22,6 +22,7 @@ Before using Mercury, ensure you have:
 - CMake (version 3.10 or later) for building the project
 - A terminal or command-line environment (e.g., Bash, PowerShell)
 - Git (to clone the repository)
+
 For v2.0.1 you don't need anything just download to ```C:\``` and edit environment part to ```C:\MercuryLang-main\v2.0.1\bin```
   
 -------------------------------------------------------------------------------------------------------------------------------------------

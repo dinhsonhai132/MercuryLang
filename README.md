@@ -23,7 +23,7 @@ Before using Mercury, ensure you have:
 - A terminal or command-line environment (e.g., Bash, PowerShell)
 - Git (to clone the repository)
 
-**For v2.0.1 you don't need anything just download and extract file to ```C:\``` then edit environment part to ```C:\MercuryLang-main\v2.0.1\bin```**
+**For v2.0.1 you don't need anything just download and extract file to ```C:\``` then edit new environment part to ```C:\MercuryLang-main\v2.0.1\bin```**
   
 -------------------------------------------------------------------------------------------------------------------------------------------
 1. **Download** the MercuryLang [using this link](https://github.com/dinhsonhai132/Mercury-Langluage/archive/refs/heads/main.zip)
@@ -125,7 +125,7 @@ x + y
 * By not straight code from AST to value can not cause a lot of error when new version update or small mistake run code 
 ## 2) How to install and setup new version?
 * First, install the program language [using this link](https://github.com/dinhsonhai132/Mercury-Langluage/archive/refs/heads/main.zip) and extract all files to your ```C:\``` 
-* Finally, edit environment part to your ```C:\MercuryLang-main\v2.0.1\bin```
+* Finally, edit new environment part to  ```C:\MercuryLang-main\v2.0.1\bin```
 ## 3) How to run file?
 * Run ```mer main.mer``` to run file or ```mer3 main.mer```
 

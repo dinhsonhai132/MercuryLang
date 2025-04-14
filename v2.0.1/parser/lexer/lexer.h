@@ -39,7 +39,6 @@ struct mLexer_T {
     size_t buf_size;        // size of the buffer
 };
 
-//deepstroke
 #define GET_NEXT_TOK(lexer) (lexer->cur = lexer->buf[lexer->id++])
 #define PEEK(lexer) (lexer->buf[lexer->id])
 #define LOOK_AHEAD(lexer, n) (lexer->buf[lexer->id + n])

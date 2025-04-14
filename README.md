@@ -18,8 +18,11 @@ Welcome to ```MercuryLang``` version ```2.0.1b``` a test version of ```2.0.1```,
 ### Prerequisites
 
 Before using Mercury, ensure you have:
-
-- Nothing
+- A C++17 (or later) compatible compiler (e.g., `g++`, `clang++`, or MSVC)
+- CMake (version 3.10 or later) for building the project
+- A terminal or command-line environment (e.g., Bash, PowerShell)
+- Git (to clone the repository)
+For v2.0.1 you don't need anything just download to ```C:\``` and edit environment part to ```C:\MercuryLang-main\v2.0.1\bin```
   
 -------------------------------------------------------------------------------------------------------------------------------------------
 1. **Download** the MercuryLang [using this link](https://github.com/dinhsonhai132/Mercury-Langluage/archive/refs/heads/main.zip)

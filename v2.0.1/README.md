@@ -9,4 +9,7 @@
 
 - **Add** new **function** and **function call** _(work in progress)_
   **4/13/2025**
-- **Add** new **parser** (W.I.P)
+- **Add** new **Parser** (W.I.P)
+
+**4/14/2025**
+- **Add** new **Parser** 

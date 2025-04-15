@@ -104,9 +104,9 @@ FUNC add(&x, &y) DO PRINT &x + &y END;
 * MVM can do a basic codes like what a basic low level programing language can do for example:
 ```mercury
 PROGRAM_START
-PUSH_FLOAT 1.000000;
-PUSH_FLOAT 1.000000;
-BINARY_ADD;
+PUSH_FLOAT 1.000000
+PUSH_FLOAT 1.000000
+BINARY_ADD
 PROGRAM_END
 ```
 * That code is the compiled code of:

@@ -116,9 +116,15 @@ PROGRAM_END
 
 * syntax:
 ```mercury
+FUNC foo() DO
 LET x = 1
-LET y = 3
+LET y = 2
 x + y
+END
+
+!foo()
+!foo()
+!foo()
 ```
 ### Why use MVM? 
 * Using MVM to execute code is faster and easier to manage the code 

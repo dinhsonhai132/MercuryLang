@@ -27,6 +27,7 @@ Before using MercuryLang v1.5.0, ensure you have:
 ## ✅ Download
 **For v1.5.0 download**
  - You can download MercuryLang repositorie, then compile ```.../v1.5.0/shell.cpp``` to ```.../v1.5.0/shell.exe```
+
 **For v2.0.1 download**
  - You can download the program by download this program: **[MercuryLang-v2.0.1-binary-WIN](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-v2.0.1-binary-WINx64.exe)**
 

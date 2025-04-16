@@ -23,7 +23,7 @@ Before using MercuryLang v1.5.0, ensure you have:
 - A terminal or command-line environment (e.g., Bash, PowerShell)
 - Git (to clone the repository)
 - 
-For v2.0.1 just download the link: [MercuryLang-v2.0.1-binary-WIN](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-v2.0.1-binary-WINx64.exe)
+**For v2.0.1 just download the link: [MercuryLang-v2.0.1-binary-WIN](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-v2.0.1-binary-WINx64.exe)**
 
 *For v1.5.0*
 -------------------------------------------------------------------------------------------------------------------------------------------

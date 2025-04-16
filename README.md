@@ -32,6 +32,66 @@ You can download the program by download this program:
 
 **[MercuryLang-v2.0.1-binary-WIN](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-v2.0.1-binary-WINx64.exe)**
 
+## 🔧 Language Syntax
+### Variable
+```mercury
+ LET INT x = 2;
+ LET FLOAT y = 3.2;
+ LET STRING z = "hello";
+ PRINT x + y;
+```
+### Functions
+ Define functions with parameters:
+ ```mercury
+FUNC add(&x, &y) DO PRINT &x + &y END;
+ !add(1, 2);
+```
+ ### Compair
+ Mercury include a large compair operators
+ ```mercury
+ PRINT 1 == 1; /* value will be 1(true) or 0(false) */
+ LET INT x = 2;
+ LET INT y = 5;
+ PRINT x <= 2;
+ PRINT x > 4;
+ PRINT x != y;
+ ```
+### Control Flow
+ Mercury includes standard control flow statements:
+ ```mercury
+ LET INT x = 0;
+ IF x > 0 THEN PRINT "x is greater than zero" END ELSE PRINT "x is not greater than zero" END;
+ ++x;
+ IF x != 1 THEN PRINT "x is not 1" END ELIF x == 1 THEN PRINT "x is 1" END;
+ ```
+### For loop
+```mercury
+/* for loop in list */
+ 
+ LIST a = [4, 3, 2, 5, 3];
+ FOR i IN @a DO PRINT i;
+ 
+ /* for loop in range */
+ 
+ FOR i IN 1 TO 10 DO PRINT i END;
+ ```
+### Lists
+ Create and manipulate lists:
+ ```mercury
+ LIST a = [1, 2, 3, 4];
+ PRINT @a -> 1; /* first element start with 1 */
+ ```
+### While loop
+ ```mercury
+ LET INT x = 0;
+ WHILE x < 10 DO ++x; PRINT x END;
+ ```
+ ### Code block
+ ```mercury
+ /*code block store multiline */
+ ... DO (code_block) END;
+ ```
+
 ## 🤝 Contributing
 
 We welcome contributions! Submit issues, suggest features, or contribute code:

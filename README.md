@@ -23,7 +23,6 @@ Before using MercuryLang v1.5.0, ensure you have:
 - A terminal or command-line environment (e.g., Bash, PowerShell)
 - Git (to clone the repository)
 
-- 
 ## ✅ Download
 **For v1.5.0 download**
  - You can download MercuryLang repositorie, then compile ```.../v1.5.0/shell.cpp``` to ```.../v1.5.0/shell.exe```

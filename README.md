@@ -26,7 +26,7 @@ Before using MercuryLang v1.5.0, ensure you have:
 
 Or you can download by clicking this link
 
-**[MercuryLang-v2.0.1-binary-WIN](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-v2.0.1-binary-WINx64.exe)**
+**Download: [MercuryLang-v2.0.1-binary-WIN](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-v2.0.1-binary-WINx64.exe)**
 
 ## 🤝 Contributing
 

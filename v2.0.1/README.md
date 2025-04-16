@@ -18,4 +18,4 @@
 - **Add** new ``>``, ``<``, ``>=``, ``<=``, ``==``, ``!=`` (W.I.P)
 
 ** 4/16/2025**
-- **Add** new download.exe
+- **Add** new download

@@ -22,9 +22,10 @@ Before using MercuryLang v1.5.0, ensure you have:
 - CMake (version 3.10 or later) for building the project
 - A terminal or command-line environment (e.g., Bash, PowerShell)
 - Git (to clone the repository)
+- 
 For v2.0.1 just download the link: [MercuryLang-v2.0.1-binary-WIN](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-v2.0.1-binary-WINx64.exe)
 
-**For v1.5.0**
+*For v1.5.0*
 -------------------------------------------------------------------------------------------------------------------------------------------
 1. **Download** the MercuryLang [using this link](https://github.com/dinhsonhai132/Mercury-Langluage/archive/refs/heads/main.zip)
 2. **Extract** all file and go to ```v1.5.0``` or you can go to ```v2.0.1``` to see new version tutorial

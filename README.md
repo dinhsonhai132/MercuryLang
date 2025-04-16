@@ -25,9 +25,7 @@ Before using MercuryLang v1.5.0, ensure you have:
 - 
 
 Or you can download by clicking this link
-
-
-<a href="link_tải" style="color: white; background: green; padding: 10px; border-radius: 5px;">Tải ngay</a>
+[MercuryLang-v2.0.1-binary-WIN](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-v2.0.1-binary-WINx64.exe)
 
 ## 🤝 Contributing
 

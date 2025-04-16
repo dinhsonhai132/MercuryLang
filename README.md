@@ -30,7 +30,7 @@ You can download MercuryLang repositorie, then compile ```.../v1.5.0/shell.cpp``
 ### For v2.0.1
 You can download the program by download this program: 
 
-**(MercuryLang-v2.0.1-binary-WIN)[https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-v2.0.1-binary-WINx64.exe]**
+**[MercuryLang-v2.0.1-binary-WIN](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-v2.0.1-binary-WINx64.exe)**
 
 ## 🤝 Contributing
 

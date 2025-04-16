@@ -90,6 +90,23 @@ FUNC add(&x, &y) DO PRINT &x + &y END;
  ... DO (code_block) END;
  ```
 
+## 🔧 Language Syntax For v2.0.1 binary
+
+### Variable
+```mercury
+ LET x = 2
+ LET y = 3.2
+```
+### Functions
+ Define functions with parameters:
+ ```mercury
+FUNC foo() DO
+LET x = 1
+LET y = 2
+x + y
+END
+```
+
 ## 🤝 Contributing
 
 We welcome contributions! Submit issues, suggest features, or contribute code:

@@ -100,7 +100,7 @@ FUNC add(&x, &y) DO PRINT &x + &y END;
  LET y = 3.2
 ```
 ### Functions
- Define functions with parameters:
+ Define functions
  ```mercury
 FUNC foo() DO
 LET x = 1

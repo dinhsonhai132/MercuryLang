@@ -109,6 +109,11 @@ x + y
 END
 ```
 
+### Comparison
+```mercury
+LET x = 1
+x + 1 < 2
+```
 ## 🤝 Contributing
 
 We welcome contributions! Submit issues, suggest features, or contribute code:

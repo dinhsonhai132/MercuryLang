@@ -22,6 +22,7 @@ Before using MercuryLang v1.5.0, ensure you have:
 - CMake (version 3.10 or later) for building the project
 - A terminal or command-line environment (e.g., Bash, PowerShell)
 - Git (to clone the repository)
+If you want to use v2.0.1b you literally dont't have to need anything 
 
 ## ✅ Download
 **For v1.5.0 download**

@@ -17,13 +17,11 @@ Welcome to ```MercuryLang``` version ```2.0.1b``` a test version of ```2.0.1```,
 
 ### Prerequisites
 
-Before using MercuryLang v1.5.0, ensure you have:
+Before using MercuryLang, ensure you have:
 - A C++17 (or later) compatible compiler (e.g., `g++`, `clang++`, or MSVC)
 - CMake (version 3.10 or later) for building the project
 - A terminal or command-line environment (e.g., Bash, PowerShell)
 - Git (to clone the repository)
-
-If you want to use v2.0.1b you literally dont't have to need anything 
 
 ## ✅ Download
 **For v1.5.0 download**

@@ -26,6 +26,6 @@
 
 -- **Add** new debug (W.I.P)
 
--- **Add** new compiler
+-- **Remake** new compiler
 
 -- **If** statement comming soon...

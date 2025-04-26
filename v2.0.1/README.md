@@ -19,3 +19,8 @@
 
 ** 4/16/2025**
 - **Add** new download
+
+** 4/26/2025**
+-- **Add** new debug (W.I.P)
+-- **Add** new compiler
+-- **If** statement comming soon...

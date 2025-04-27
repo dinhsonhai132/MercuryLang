@@ -17,8 +17,8 @@ Welcome to ```MercuryLang``` a simple interpreter by ```C++``` programming langu
 ### Prerequisites
 
 Before using MercuryLang, ensure you:
-- **Enter the mercury realm**
-- **Fresh all your mind**
+- **Enter the Mercury Realm**
+- **Fresh all your MIND**
 - **Forget Python and C++**
 
 ## ✅ Download

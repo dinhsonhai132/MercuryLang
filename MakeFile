@@ -1,11 +1,11 @@
-SOURCE_FILE = C:\MercuryLang\v2.0.1\main\main1.cpp
-TARGET = C:\MercuryLang\v2.0.1\bin\mer.exe
-BYTECODE_SOURCE_FILE = C:\MercuryLang\v2.0.1\main\main2.cpp
-BYTECODE_TARGET = C:\MercuryLang\v2.0.1\bin\merc.exe
-SOURCE_3_FILE = C:\MercuryLang\v2.0.1\main\main3.cpp
-BYTECODE_3_TARGET = C:\MercuryLang\v2.0.1\bin\mer3.exe
-REALM_SOURCE = C:\MercuryLang\v2.0.1\main\main4.cpp
-REALM_SOURCE_TARGET = C:\MercuryLang\v2.0.1\bin\mercury.exe
+SOURCE_FILE = C:\MercuryLang\main\main1.cpp
+TARGET = C:\MercuryLang\bin\mer.exe
+BYTECODE_SOURCE_FILE = C:\MercuryLang\main\main2.cpp
+BYTECODE_TARGET = C:\MercuryLang\bin\merc.exe
+SOURCE_3_FILE = C:\MercuryLang\main\main3.cpp
+BYTECODE_3_TARGET = C:\MercuryLang\bin\mer3.exe
+REALM_SOURCE = C:\MercuryLang\main\main4.cpp
+REALM_SOURCE_TARGET = C:\MercuryLang\bin\mercury.exe
 
 CXX = g++
 all:

@@ -8,7 +8,6 @@ Welcome to ```MercuryLang``` a simple interpreter by ```C++``` programming langu
 ## 🌟 Features
 
 - **Python-like Syntax**: Intuitive and easy-to-read code.
-- **Datatype warring**: You don't need worry to much about datatyped
 - **Custom Functions**: Create flexible functions with ease.
 - **Error Handling**: Debug efficiently with clear error messages.
 - **Extensive Standard Library**: Tools for data manipulation, file handling, and more.

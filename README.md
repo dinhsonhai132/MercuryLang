@@ -66,4 +66,5 @@ For questions or suggestions, reach out:
 *(You guys can write suggestion and i will hear you all 😁)*
 
 **Author: dinhsonhai132**
+
 **Version: 2.1.1-alpha**

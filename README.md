@@ -17,8 +17,9 @@ Welcome to ```MercuryLang``` a simple interpreter by ```C++``` programming langu
 ### Prerequisites
 
 Before using MercuryLang, ensure you have:
-- A C++17 (or later) compatible compiler (e.g., `g++`, `clang++`, or MSVC)
-- A terminal or command-line environment (e.g., Bash, PowerShell)
+- Enter the mercury realm
+- Fresh all your mind
+- Forget python and c++
 
 ## ✅ Download
  - You can download MercuryLang by download this program: **[MercuryLang-v2.1.1-alpha](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-v2.1.1-binary-download.exe)**

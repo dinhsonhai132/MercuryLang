@@ -16,7 +16,7 @@ Welcome to ```MercuryLang``` a simple interpreter by ```C++``` programming langu
 
 ### Prerequisites
 
-Before using MercuryLang, ensure you have:
+Before using MercuryLang, ensure you:
 - Enter the mercury realm
 - Fresh all your mind
 - Forget python and c++

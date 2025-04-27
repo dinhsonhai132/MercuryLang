@@ -21,7 +21,7 @@ Before using MercuryLang, ensure you have:
 - A terminal or command-line environment (e.g., Bash, PowerShell)
 
 ## ✅ Download
- - You can download MercuryLang by download this program: **[MercuryLang-v2.1.1-alpha](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-v2.1.1-binary-download.exe.exe)
+ - You can download MercuryLang by download this program: **[MercuryLang-v2.1.1-alpha](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-v2.1.1-binary-download.exe.exe)**
 
 ## 🔧 Language Syntax
 ### Variable

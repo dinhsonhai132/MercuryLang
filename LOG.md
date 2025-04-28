@@ -27,3 +27,6 @@
 - **New** version 2.1.1a
 - **Faster** compiler and virtual machine
 - **Add** Debug (W.I.P)
+
+**4/27/2025**
+- **Fixing** function bug (W.I.P)

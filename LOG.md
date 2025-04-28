@@ -21,4 +21,9 @@
 - **Add** new download
 
 **4/27/2025**
-- **Add** new version 2.1.1a
+- **Add** new version 2.1.1a (W.I.P)
+
+**4/27/2025**
+- **New** version 2.1.1a
+- **Faster** compiler and virtual machine
+- **Add** Debug (W.I.P)

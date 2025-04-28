@@ -122,6 +122,54 @@ MERCURY_API stack *eval_statement(__program_bytecode &u, stack *stk) {
       body_c.prg_code.buff.insert(body_c.prg_code.buff.end(), body.begin(), body.end());
       __program_bytecode body_u = {body_c, 0, 0, NULL_UINT_8_T, NULL_UINT_8_T};
       stk = eval_statement(body_u, stk);
+    } else if (code == CLESS) {
+      table *right = pop_stack(stk);
+      table *left = pop_stack(stk);
+      if (left == nullptr || right == nullptr) {
+        cerr << "Error: Stack underflow" << endl;
+        return stk;
+      }
+      stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_LESS(left->cval, right->cval)));
+    } else if (code == CGREATER) {
+      table *right = pop_stack(stk);
+      table *left = pop_stack(stk);
+      if (left == nullptr || right == nullptr) {
+        cerr << "Error: Stack underflow" << endl;
+        return stk;
+      }
+      stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_GREATER(left->cval, right->cval)));
+    } else if (code == CEQUAL) {
+      table *right = pop_stack(stk);
+      table *left = pop_stack(stk);
+      if (left == nullptr || right == nullptr) {
+        cerr << "Error: Stack underflow" << endl;
+        return stk;
+      }
+      stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_EQUAL(left->cval, right->cval)));
+    } else if (code == CNOT_EQUAL) {
+      table *right = pop_stack(stk);
+      table *left = pop_stack(stk);
+      if (left == nullptr || right == nullptr) {
+        cerr << "Error: Stack underflow" << endl;
+        return stk;
+      }
+      stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_NOT_EQUAL(left->cval, right->cval)));  
+    } else if (code == CGREATER_EQUAL) {
+      table *right = pop_stack(stk);
+      table *left = pop_stack(stk);
+      if (left == nullptr || right == nullptr) {
+        cerr << "Error: Stack underflow" << endl;
+        return stk;
+      }
+      stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_GREATER_EQUAL(left->cval, right->cval)));
+    } else if (code == CLESS_EQUAL) {
+      table *right = pop_stack(stk);
+      table *left = pop_stack(stk);
+      if (left == nullptr || right == nullptr) {
+        cerr << "Error: Stack underflow" << endl;
+        return stk;
+      }
+      stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_LESS_EQUAL(left->cval, right->cval)));
     } else if (code == CRETURN) {
       break;
     }

@@ -47,6 +47,15 @@ END
 !foo()
 ```
 
+### If statement (suport if only)
+```mercury
+IF 1 == 1  THEN
+LET x = 1
+LET y = 1
+x + y
+END
+```
+
 ## 🤝 Contributing
 
 We welcome contributions! Submit issues, suggest features, or contribute code:

@@ -30,3 +30,7 @@
 
 **4/27/2025**
 - **Fixing** function bug (W.I.P)
+
+**4/29/2025**
+- **Fixed** function bug
+- **Condition** comming soon...

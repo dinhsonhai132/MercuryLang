@@ -27,7 +27,7 @@ Before using MercuryLang, ensure you:
 ## 🔧 Language Syntax
 ### Variable
 ```mercury
- LET  x = 2
+ LET x = 2
  LET y = 3
 ```
 

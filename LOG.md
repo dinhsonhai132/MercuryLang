@@ -35,5 +35,5 @@
 - **Fixed** function bug
 - **Condition** comming soon...
   
-**4/29/2025**
+**4/29/2025 (10:52 PM)**
 - **Add** new ```IF``` (W.I.P)

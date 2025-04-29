@@ -1,0 +1,5 @@
+IF 1 == 1 THEN
+    LET x = 1
+    LET y = 2
+    x + y
+END

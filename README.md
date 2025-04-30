@@ -16,10 +16,16 @@ Welcome to ```MercuryLang``` a free open source simple interpreter by ```C++``` 
 
 ### Prerequisites
 
-Before using MercuryLang, ensure you:
-- **Enter the Mercury Realm**
-- **Fresh all your MIND**
-- **Forget Python and C++**
+Before building or running MercuryLang, ensure you have the following installed:
+
+- **C++ Compiler**
+  - [MSVC](https://visualstudio.microsoft.com/)
+  - [Clang](https://clang.llvm.org/)
+  - [GCC via MSYS2](https://www.msys2.org/)
+  - [GCC](https://gcc.gnu.org/) (for Linux/macOS)
+
+- **[CMake](https://cmake.org/)** – Version 3.12 or higher
+
 
 ## ✅ Download
  - You can download MercuryLang by download this program: **[MercuryLang-init](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-init.exe)**

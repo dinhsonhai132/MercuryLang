@@ -34,3 +34,6 @@
 **4/29/2025**
 - **Fixed** function bug
 - **Add** new ```IF``` (W.I.P)
+
+**4/30/2025**
+- **Add** new if statement

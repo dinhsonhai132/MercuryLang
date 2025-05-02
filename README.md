@@ -48,6 +48,7 @@ Before building or running MercuryLang, ensure you have the following installed:
 FUNC foo() DO
     LET x = 1
     LET y = 2
+    x + y
 END
 
 !foo()
@@ -62,9 +63,9 @@ IF 1 == 1  THEN
 END
 
 ELSE
-  LET x = 1
-  LET y = 1
-  x - y
+    LET x = 1
+    LET y = 1
+    x - y
 END
 ```
 

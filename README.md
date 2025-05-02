@@ -37,9 +37,8 @@ Before building or running MercuryLang, ensure you have the following installed:
 ## 🔧 Language Syntax
 ### Variable
 ```mercury
- LET x = 2
- LET y = 3
-PRINT x + y
+LET x = 2
+LET y = 3
 ```
 
 ### Comparison

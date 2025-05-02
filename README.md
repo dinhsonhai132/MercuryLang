@@ -3,7 +3,8 @@
 
 # 🪐 *Mercury Programming Language*
 
-Welcome to ```MercuryLang``` a free open source simple interpreter by ```C++``` programming language inspired by Python. Mercury is designed for clean, readable, and powerful code, making it ideal for developers of all levels.
+Welcome to **MercuryLang** — a free and open-source lightweight interpreter written in **C++**, inspired by the simplicity of Python.  
+Mercury is designed to offer clean, readable, and expressive syntax, making it an ideal choice for developers of all experience levels.
 
 ## 🌟 Features
 

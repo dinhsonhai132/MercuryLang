@@ -53,12 +53,18 @@ END
 !foo()
 ```
 
-### If statement (suport if only)
+### If-else statement
 ```mercury
 IF 1 == 1  THEN
     LET x = 1
     LET y = 1
     x + y
+END
+
+ELSE
+  LET x = 1
+  LET y = 1
+  x - y
 END
 ```
 

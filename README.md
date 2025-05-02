@@ -41,14 +41,14 @@ Before building or running MercuryLang, ensure you have the following installed:
 ```mercury
  LET  x = 2
  LET y = 3
- x > y
+ PRINT x > y
 ```
 ### Function and function call
 ```mercury
 FUNC foo() DO
     LET x = 1
     LET y = 2
-    x + y
+    PRINT x + y
 END
 
 !foo()
@@ -59,15 +59,22 @@ END
 IF 1 == 1  THEN
     LET x = 1
     LET y = 1
-    x + y
+    PRINT x + y
 END
 
 ELSE
     LET x = 1
     LET y = 1
-    x - y
+    PRINT x - y
 END
 ```
+
+### While statement
+```mercury
+LET x = 1
+WHILE x < 2 DO
+    PRINT x + 1
+END
 
 ## 🤝 Contributing
 

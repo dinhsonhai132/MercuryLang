@@ -26,9 +26,13 @@ Before building or running MercuryLang, ensure you have the following installed:
 
 - **[CMake](https://cmake.org/)** – Version 3.12 or higher
 
-
 ## ✅ Download
  - You can download MercuryLang by download this program: **[MercuryLang-init](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-init.exe)**
+
+## ❓How to run
+
+- When installation is done, you can type ```mer``` or ```merc```, ```mer3``` to run in prompt mode
+- If you want to run file, create a file name ```.mer``` and type ```mer main.mer``` or ```merc main.mer```, ```mer3 main.mer```
 
 ## 🔧 Language Syntax
 ### Variable

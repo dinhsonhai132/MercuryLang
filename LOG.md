@@ -55,4 +55,4 @@
  
 - **Add** new **opcode** ```JUMP_IF_FALSE```, ```JUMP_IF_TRUE```
 
-- **Add** new **while** statement
+- **Add** new **while** statement (W.I.P)

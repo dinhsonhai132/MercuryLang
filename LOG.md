@@ -47,10 +47,14 @@
 
 - **Add** new ```IF``` (W.I.P)
 
-### 4/30/2025
-
-- **Add** new if statement
-
 ### 5/2/2025
 
-- **Add** new else statement
+- **Fixed** **if** bug
+
+- **Add** new **else** statement
+ 
+- **Add** new **opcode** ```JUMP_IF_FALSE```, ```JUMP_IF_TRUE```
+
+- **Add** new **while** statement
+
+- **Add** new **if** statement

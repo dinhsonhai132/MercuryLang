@@ -51,10 +51,8 @@
 
 - **Fixed** ```IF``` bug
 
-- **Add** new **else** statement
+- **Add** new **if-else** statement
  
 - **Add** new **opcode** ```JUMP_IF_FALSE```, ```JUMP_IF_TRUE```
 
 - **Add** new **while** statement
-
-- **Add** new **if** statement

@@ -75,6 +75,7 @@ LET x = 1
 WHILE x < 2 DO
     PRINT x + 1
 END
+```
 
 ## 🤝 Contributing
 

@@ -39,6 +39,7 @@ Before building or running MercuryLang, ensure you have the following installed:
 ```mercury
  LET x = 2
  LET y = 3
+PRINT x + y
 ```
 
 ### Comparison

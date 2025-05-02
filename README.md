@@ -31,7 +31,7 @@ Before building or running MercuryLang, ensure you have the following installed:
 
 ## 🚀 Execution
 
--- After installation, you can launch the interactive prompt by typing ```mer``` or ```merc```, ```mer3```
+- After installation, you can launch the interactive prompt by typing ```mer``` or ```merc```, ```mer3```
 - If you want to run file, create a file name ```.mer``` and type ```mer main.mer``` or ```merc main.mer```, ```mer3 main.mer```
 
 ## 🔧 Language Syntax

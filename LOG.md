@@ -61,7 +61,7 @@
 
 - **Add** new **Debug**
 
-- **Fixed** While loop
+- **New** While loop
 
 - **Add** new assignment statement
 

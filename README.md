@@ -81,6 +81,22 @@ WHILE x < 2 DO
 END
 ```
 
+### Assignment
+```mercury
+LET x = 1
+x = x + 1
+PRINT x
+```
+
+### While loop
+```mercury
+LET x = 0
+WHILE x < 10 DO
+    x = x + 1
+    PRINT x
+END
+```
+
 ## 🤝 Contributing
 
 We welcome contributions! Submit issues, suggest features, or contribute code:

@@ -61,4 +61,4 @@
 
 - **Add** new debug (W.I.P)
 
-- **Fixing** parser
+- **Fixing** lexer.cpp

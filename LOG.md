@@ -56,3 +56,7 @@
 - **Add** new **opcode** ```JUMP_IF_FALSE```, ```JUMP_IF_TRUE```
 
 - **Add** new **while** statement (W.I.P)
+
+### 5/4/2025
+
+- **Add** new debug (W.I.P)

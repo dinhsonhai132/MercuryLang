@@ -59,6 +59,16 @@
 
 ### 5/4/2025
 
+- **Fixed** While loop
+
+- **Add** new assignment statement
+
+- **Add** new ```PRINT```
+
+- **New** version 2.1.2-alpha
+
+### 5/4/2025
+
 - **Add** new debug (W.I.P)
 
 - **Fixing** lexer.cpp

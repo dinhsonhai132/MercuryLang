@@ -60,3 +60,5 @@
 ### 5/4/2025
 
 - **Add** new debug (W.I.P)
+
+- **Fixing** parser

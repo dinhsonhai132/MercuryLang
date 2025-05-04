@@ -59,6 +59,8 @@
 
 ### 5/4/2025
 
+- **Add** new **Debug**
+
 - **Fixed** While loop
 
 - **Add** new assignment statement
@@ -67,8 +69,3 @@
 
 - **New** version 2.1.2-alpha
 
-### 5/4/2025
-
-- **Add** new debug (W.I.P)
-
-- **Fixing** lexer.cpp

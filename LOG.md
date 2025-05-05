@@ -63,7 +63,7 @@
 
 - **New** While loop
 
-- **Add** new assignment statement
+- **Add** new assignment statement (W.I.P)
 
 - **Add** new ```PRINT```
 

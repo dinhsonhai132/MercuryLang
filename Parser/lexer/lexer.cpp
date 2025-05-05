@@ -324,15 +324,12 @@ void _MerLexer_skip_whitespace(mLexer_T *lexer)
 
 void _MerLexer_skip_comment(mLexer_T *lexer)
 {
-    if (lexer->cur == '#')
-    {
-        while (IS_SPACE(lexer))
+    char c = lexer->buf[lexer->id];
+    if (c == '#') {
+        while (c != '\n')
         {
             LEX_ADVANCE(lexer);
-            if (lexer->id >= lexer->buf_size)
-            {
-                LEX_RESET(lexer);
-            }
+            c = lexer->buf[lexer->id];
         }
     }
 }

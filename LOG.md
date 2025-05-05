@@ -69,3 +69,6 @@
 
 - **New** version 2.1.2-alpha
 
+### 5/5/2025
+
+- **Add** new comment

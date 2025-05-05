@@ -37,15 +37,17 @@ Before building or running MercuryLang, ensure you have the following installed:
 ## 🔧 Language Syntax
 ### Variable
 ```mercury
+# use LET keyword
 LET x = 2
 LET y = 3
 ```
 
 ### Comparison
 ```mercury
- LET  x = 2
- LET y = 3
- PRINT x > y
+# support >, <, <=, >=, ==, !=
+LET x = 2
+LET y = 3
+PRINT x > y
 ```
 ### Function and function call
 ```mercury
@@ -55,6 +57,7 @@ FUNC foo() DO
     PRINT x + y
 END
 
+# function call start with `!`
 !foo()
 ```
 
@@ -70,14 +73,6 @@ ELSE
     LET x = 1
     LET y = 1
     PRINT x - y
-END
-```
-
-### While statement
-```mercury
-LET x = 1
-WHILE x < 2 DO
-    PRINT x + 1
 END
 ```
 

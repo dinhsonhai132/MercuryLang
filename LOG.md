@@ -1,4 +1,4 @@
-# **📜 Mercury Language 2.1.1-alpha**
+# **📜 Mercury Language 1.0.1-alpha**
 
 ## Update Log
 
@@ -80,3 +80,7 @@
 - **Working** on new buitlin (W.I.P)
 
 - **Working** on new object (W.I.P)
+
+### 5/12/2025
+
+- **Release** new version ```1.0.1-alpha```

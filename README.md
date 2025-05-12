@@ -32,6 +32,12 @@ Before building or running MercuryLang, ensure you have the following installed:
 - If you want to run file, create a file name ```.mer``` and type ```mer main.mer``` or ```merc main.mer```, ```mer3 main.mer```
 
 ## 🔧 Language Syntax
+
+### Print function
+```python
+!write("hello")
+```
+
 ### Variable
 ```python
 # use LET keyword

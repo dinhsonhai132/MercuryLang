@@ -1,15 +1,6 @@
 > **[!IMPORTANT]**  
 > We are excited to announce that **Version 1.0.1-alpha** of the programming language is now officially out! 🚀  
 > This version marks a significant milestone in the development process, featuring several new improvements and bug fixes. While it is still in the alpha stage, it brings a more stable and functional environment for testing.  
->  
-> **What’s new in Version 1.0.1-alpha?**
-> - **Bug Fixes:** Many reported issues have been addressed.
-> - **New Features:** Introduced new commands and syntax for easier development.
-> - **Performance Improvements:** Optimizations to make the language faster and more efficient.
->  
-> Please note, as this is an alpha release, there might still be some bugs or incomplete features. We encourage you to try it out, provide feedback, and report any issues you encounter.  
->  
-> Thank you for your continued support! Stay tuned for further updates as we work towards a stable release.  
 
 # 🪐 *Mercury Programming Language*
 

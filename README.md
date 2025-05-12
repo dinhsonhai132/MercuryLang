@@ -1,6 +1,3 @@
-> [!WARNING]
-> **Before you read this, this language is still in working, that's mean it's not a offical version yet, all for test. If you want to try a completed version, wait until version 1.0.1a is out. Thanks for paying attention to my programming language.**
-
 # 🪐 *Mercury Programming Language*
 
 **Welcome to ```MercuryLang``` — a free and open-source lightweight interpreter written in **C++**, inspired by the simplicity of Python. ```MercuryLang``` is designed to offer clean, readable, and expressive syntax, making it an ideal choice for developers of all experience levels.**
@@ -36,21 +33,21 @@ Before building or running MercuryLang, ensure you have the following installed:
 
 ## 🔧 Language Syntax
 ### Variable
-```mercury
+```python
 # use LET keyword
 LET x = 2
 LET y = 3
 ```
 
 ### Comparison
-```mercury
+```python
 # support >, <, <=, >=, ==, !=
 LET x = 2
 LET y = 3
 PRINT x > y
 ```
 ### Function and function call
-```mercury
+```python
 FUNC foo() DO
     LET x = 1
     LET y = 2
@@ -62,7 +59,7 @@ END
 ```
 
 ### If-else statement
-```mercury
+```python
 IF 1 == 1  THEN
     LET x = 1
     LET y = 1
@@ -77,18 +74,33 @@ END
 ```
 
 ### Assignment
-```mercury
+```python
 LET x = 1
 x = x + 1
 PRINT x
 ```
 
 ### While loop
-```mercury
+```python
 LET x = 0
 WHILE x < 10 DO
     x = x + 1
     PRINT x
+END
+```
+
+### Example code
+```python
+# TODO: print the number from 1 to 100 that divisible by 2
+
+LET max = 100
+LET number = 0
+
+WHILE number <= max DO
+    IF number % 2 == 0 THEN
+        PRINT number
+    END
+    number = number + 1
 END
 ```
 
@@ -105,11 +117,11 @@ We welcome contributions! Submit issues, suggest features, or contribute code:
 For questions or suggestions, reach out:
 
 - GitHub: **[Mercury Language Discussions](https://github.com/dinhsonhai132/Mercury-Langluage/discussions/1)**
-- Youtube: **https://www.youtube.com/@mercurylang-official**
+- Youtube: **[@haidinhson](https://www.youtube.com/@haidinhson)**
 - Gmail: **dinhsonhai440@gmail.com**
 
 *(You guys can write suggestion and i will hear you all 😁)*
 
 **Author: dinhsonhai132**
 
-**Version: 2.1.1-alpha**
+**Version: 1.0.1-alpha**

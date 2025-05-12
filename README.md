@@ -39,6 +39,14 @@ LET x = 2
 LET y = 3
 ```
 
+### Math
+```python
+# Merucury support '+', '-', '/', '*', '%'
+2 * 2
+3 + 3 / 2
+1 % 2
+```
+
 ### Comparison
 ```python
 # support >, <, <=, >=, ==, !=

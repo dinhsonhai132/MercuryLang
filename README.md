@@ -91,7 +91,7 @@ END
 
 ### Example code
 ```python
-# TODO: print the number from 1 to 100 that mod divisible by 2
+# TODO: print the number from 1 to 100 that divisible by 2
 
 LET max = 100
 LET number = 0

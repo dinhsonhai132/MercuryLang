@@ -1,5 +1,5 @@
 > [!IMPORTANT]  
-> Version 1.0.1-alpha is out now
+> **Version 1.0.1-alpha is out now 🚀**
 
 # 🪐 *Mercury Programming Language*
 

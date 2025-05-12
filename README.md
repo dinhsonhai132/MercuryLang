@@ -1,4 +1,4 @@
-> [!IMPORTANT]
+> [!NOTICE]
 > **We are excited to announce that Version 1.0.1-alpha of the programming language is now officially out! 🚀**  
 
 # 🪐 *Mercury Programming Language*

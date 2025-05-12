@@ -40,7 +40,7 @@ LET y = 3
 ```
 
 ### Comparison
-```mercury
+```python
 # support >, <, <=, >=, ==, !=
 LET x = 2
 LET y = 3

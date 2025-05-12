@@ -84,3 +84,7 @@
 ### 5/12/2025
 
 - **Release** new version ```1.0.1-alpha```
+
+- **New** ```!write("...")``` built-in function
+
+- **New** ```!eval("...")``` built-in function

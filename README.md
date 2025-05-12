@@ -34,7 +34,7 @@ Before building or running MercuryLang, ensure you have the following installed:
 ## 🔧 Language Syntax
 
 ### Print function
-```python
+```rust
 !write("hello")
 ```
 

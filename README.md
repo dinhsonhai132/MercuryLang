@@ -1,4 +1,4 @@
-> [!WARNING]  
+> [!IMPORTANT]  
 > Version 1.0.1-alpha is out now
 
 # 🪐 *Mercury Programming Language*

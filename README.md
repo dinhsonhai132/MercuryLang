@@ -124,4 +124,4 @@ For questions or suggestions, reach out:
 
 **Author: dinhsonhai132**
 
-**Version: 2.1.1-alpha**
+**Version: 1.0.1-alpha**

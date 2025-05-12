@@ -33,7 +33,7 @@ Before building or running MercuryLang, ensure you have the following installed:
 
 ## 🔧 Language Syntax
 ### Variable
-```mercury
+```python
 # use LET keyword
 LET x = 2
 LET y = 3
@@ -47,7 +47,7 @@ LET y = 3
 PRINT x > y
 ```
 ### Function and function call
-```mercury
+```python
 FUNC foo() DO
     LET x = 1
     LET y = 2
@@ -59,7 +59,7 @@ END
 ```
 
 ### If-else statement
-```mercury
+```python
 IF 1 == 1  THEN
     LET x = 1
     LET y = 1
@@ -74,18 +74,33 @@ END
 ```
 
 ### Assignment
-```mercury
+```python
 LET x = 1
 x = x + 1
 PRINT x
 ```
 
 ### While loop
-```mercury
+```python
 LET x = 0
 WHILE x < 10 DO
     x = x + 1
     PRINT x
+END
+```
+
+### Example code
+```python
+# TODO: print the number from 1 to 100 that mod divisible by 2
+
+LET max = 100
+LET number = 0
+
+WHILE number <= max DO
+    IF number % 2 == 0 THEN
+        PRINT number
+    END
+    number = number + 1
 END
 ```
 

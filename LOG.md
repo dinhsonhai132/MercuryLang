@@ -93,4 +93,4 @@
 
 - **New** global variable
 
-- **Remake** ```!write(...)``` can not print number
+- **Remake** ```!write(...)```

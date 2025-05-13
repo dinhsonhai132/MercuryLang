@@ -48,6 +48,14 @@ LET x = 2
 LET y = 3
 ```
 
+### Global variable
+```python
+!write(pi)
+!write(euler)
+!write(golden_ratio)
+!write(tau)
+```
+
 ### Math
 ```python
 # Merucury support '+', '-', '/', '*', '%'

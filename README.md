@@ -28,6 +28,7 @@ Before building or running MercuryLang, ensure you have the following installed:
 
 ## ✅ Download
  - You can download MercuryLang by download this program: **[MercuryLang-init](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-init.exe)**
+ - Or you can go to this website (MercuryLang-website)[https://dinhsonhai132.github.io/main.html]
 
 ## 🚀 Execution
 

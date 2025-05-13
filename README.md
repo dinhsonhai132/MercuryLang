@@ -42,7 +42,7 @@ Before building or running MercuryLang, ensure you have the following installed:
 ```
 
 ### Variable
-```rust
+```python
 # use LET keyword
 LET x = 2
 LET y = 3
@@ -57,7 +57,7 @@ LET y = 3
 ```
 
 ### Math
-```rust
+```python
 # Merucury support '+', '-', '/', '*', '%'
 2 * 2
 3 + 3 / 2
@@ -65,14 +65,14 @@ LET y = 3
 ```
 
 ### Comparison
-```rust
+```python
 # support >, <, <=, >=, ==, !=
 LET x = 2
 LET y = 3
 PRINT x > y
 ```
 ### Function and function call
-```rust
+```python
 FUNC foo() DO
     LET x = 1
     LET y = 2
@@ -84,7 +84,7 @@ END
 ```
 
 ### If-else statement
-```rust
+```python
 IF 1 == 1  THEN
     LET x = 1
     LET y = 1
@@ -99,7 +99,7 @@ END
 ```
 
 ### Assignment
-```rust
+```python
 LET x = 1
 x = x + 1
 PRINT x
@@ -115,7 +115,7 @@ END
 ```
 
 ### Example code
-```rust
+```python
 # TODO: print the number from 1 to 100 that divisible by 2
 
 LET max = 100

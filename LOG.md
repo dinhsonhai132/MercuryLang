@@ -92,3 +92,5 @@
 ### 5/12/2025
 
 - **New** global variable
+
+- **Remake** ```!write(...)``` can not print number

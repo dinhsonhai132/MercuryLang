@@ -88,3 +88,7 @@
 - **New** ```!write("...")``` built-in function
 
 - **New** ```!eval("...")``` built-in function
+
+### 5/12/2025
+
+- **New** ```pi``` global variable

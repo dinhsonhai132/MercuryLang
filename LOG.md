@@ -96,6 +96,8 @@
 
 - **Remake** ```!write(...)```
 
+- **New** mercury3
+
 ### 5/14/2025
 
 - **Fixed** ```!write(...)```

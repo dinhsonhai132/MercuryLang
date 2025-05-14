@@ -129,8 +129,8 @@ WHILE number <= max DO
 END
 ```
 
-## Mercury3 syntax
-**Mecrury3 is a different version of Mercury using no capitalizing syntax make it easier to write and understand code**
+## For Mercury3 syntax ✨
+**Mercury3 is a different version of Mercury using no capitalizing syntax 🖥️, making it easier to write ✍️ and understand code 📚.**
 
 ### Print function
 ```rust

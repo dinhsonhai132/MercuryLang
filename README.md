@@ -129,6 +129,102 @@ WHILE number <= max DO
 END
 ```
 
+## Mercury3 syntax
+**Mecury3 is a different version of Mercury using no capitalizing syntax make it easier to write and understand code**
+
+### Print function
+```rust
+!write("hello")
+```
+
+### Variable
+```python
+# use LET keyword
+LET x = 2
+LET y = 3
+```
+
+### Global variable
+```rust
+!write(pi)
+!write(euler)
+!write(golden_ratio)
+!write(tau)
+```
+
+### Math
+```python
+# Merucury support '+', '-', '/', '*', '%'
+2 * 2
+3 + 3 / 2
+1 % 2
+```
+
+### Comparison
+```python
+# support >, <, <=, >=, ==, !=
+LET x = 2
+LET y = 3
+PRINT x > y
+```
+### Function and function call
+```python
+FUNC foo() DO
+    LET x = 1
+    LET y = 2
+    PRINT x + y
+END
+
+# function call start with `!`
+!foo()
+```
+
+### If-else statement
+```python
+IF 1 == 1  THEN
+    LET x = 1
+    LET y = 1
+    PRINT x + y
+END
+
+ELSE
+    LET x = 1
+    LET y = 1
+    PRINT x - y
+END
+```
+
+### Assignment
+```python
+LET x = 1
+x = x + 1
+PRINT x
+```
+
+### While loop
+```python
+LET x = 0
+WHILE x < 10 DO
+    x = x + 1
+    PRINT x
+END
+```
+
+### Example code
+```python
+# TODO: print the number from 1 to 100 that divisible by 2
+
+LET max = 100
+LET number = 0
+
+WHILE number <= max DO
+    IF number % 2 == 0 THEN
+        PRINT number
+    END
+    number = number + 1
+END
+```
+
 ## 🤝 Contributing
 
 We welcome contributions! Submit issues, suggest features, or contribute code:

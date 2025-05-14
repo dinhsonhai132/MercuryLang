@@ -130,7 +130,7 @@ END
 ```
 
 ## Mercury3 syntax
-**Mecury3 is a different version of Mercury using no capitalizing syntax make it easier to write and understand code**
+**Mecrury3 is a different version of Mercury using no capitalizing syntax make it easier to write and understand code**
 
 ### Print function
 ```rust
@@ -139,9 +139,9 @@ END
 
 ### Variable
 ```python
-# use LET keyword
-LET x = 2
-LET y = 3
+# use let keyword
+let x = 2
+let y = 3
 ```
 
 ### Global variable
@@ -163,17 +163,17 @@ LET y = 3
 ### Comparison
 ```python
 # support >, <, <=, >=, ==, !=
-LET x = 2
-LET y = 3
-PRINT x > y
+let x = 2
+let y = 3
+print x > y
 ```
 ### Function and function call
 ```python
-FUNC foo() DO
-    LET x = 1
-    LET y = 2
-    PRINT x + y
-END
+func foo() do
+    let x = 1
+    let y = 2
+    print x + y
+end
 
 # function call start with `!`
 !foo()
@@ -181,48 +181,48 @@ END
 
 ### If-else statement
 ```python
-IF 1 == 1  THEN
-    LET x = 1
-    LET y = 1
-    PRINT x + y
-END
+if 1 == 1 then
+    let x = 1
+    let y = 1
+    print x + y
+end
 
-ELSE
-    LET x = 1
-    LET y = 1
-    PRINT x - y
-END
+else
+    let x = 1
+    let y = 1
+    print x - y
+end
 ```
 
 ### Assignment
 ```python
-LET x = 1
+let x = 1
 x = x + 1
-PRINT x
+print x
 ```
 
 ### While loop
 ```python
-LET x = 0
-WHILE x < 10 DO
+let x = 0
+while x < 10 do
     x = x + 1
-    PRINT x
-END
+    print x
+end
 ```
 
 ### Example code
 ```python
 # TODO: print the number from 1 to 100 that divisible by 2
 
-LET max = 100
-LET number = 0
+let max = 100
+let number = 0
 
-WHILE number <= max DO
-    IF number % 2 == 0 THEN
-        PRINT number
-    END
+while number <= max do
+    if number % 2 == 0 then
+        print number
+    end
     number = number + 1
-END
+end
 ```
 
 ## 🤝 Contributing

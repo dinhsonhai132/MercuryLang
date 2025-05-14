@@ -89,14 +89,15 @@
 
 - **New** ```!eval("...")``` built-in function
 
+
+### 5/13/2025
+
+- **New** global variable
+
+- **Remake** ```!write(...)```
+
 ### 5/14/2025
 
 - **Fixed** ```!write(...)```
 
 - **New** ```!write(...)``` can now print number
-
-### 5/12/2025
-
-- **New** global variable
-
-- **Remake** ```!write(...)```

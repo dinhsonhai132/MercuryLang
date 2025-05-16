@@ -1,6 +1,3 @@
-> [!IMPORTANT]
-> **We are excited to announce that Version 1.0.1-alpha of the programming language is now officially out! 🚀**  
-
 # 🪐 *Mercury Programming Language*
 
 **Welcome to ```MercuryLang``` — a small free and open-source lightweight interpreter written in **C++**, inspired by the simplicity of Python. ```MercuryLang``` is designed to offer clean, readable, and expressive syntax, making it an ideal choice for developers of all experience levels.**

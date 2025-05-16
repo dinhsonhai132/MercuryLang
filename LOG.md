@@ -103,3 +103,9 @@
 - **Fixed** ```!write(...)```
 
 - **New** ```!write(...)``` can now print number
+
+### 5/16/2025
+
+- **Fixed** everything
+
+- **new** list comming soon

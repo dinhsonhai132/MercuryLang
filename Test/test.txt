@@ -1,0 +1,25 @@
+--------------------------------------------------------------------------------
+                             THIS IS A TEST FILE
+--------------------------------------------------------------------------------
+
+This folder, named `Test`, is very important.  
+It helps the program-building process by clearly identifying where errors occur.
+
+Please ensure:
+- All test cases are placed here.
+- Each test should include input and expected output.
+- If a test fails, its location and description will help with debugging.
+
+The error will be written in makefile
+
+	@cmd /c "echo|set /p=mer.exe building... & $(CXX) $(STATIC) $(SOURCE_FILE) -o $(TARGET) > nul 2>&1 && echo  [Passed] || echo  [Build failed]"
+	@cmd /c "echo|set /p=merc.exe building... & $(CXX) $(STATIC) $(BYTECODE_SOURCE_FILE) -o $(BYTECODE_TARGET) > nul 2>&1 && echo [Passed] || echo [Build failed]"
+	@cmd /c "echo|set /p=mer3.exe building... & $(CXX) $(STATIC) -DMERCURY_LANG3 $(SOURCE_3_FILE) -o $(BYTECODE_3_TARGET) > nul 2>&1 && echo [Passed] || echo [Build failed]"
+	@cmd /c "echo|set /p=mert.exe building... & $(CXX) $(STATIC) -DSYSTEM_TEST $(SOURCE_FILE_TEST) -o $(SOURCE_FILE_TEST_TARGET) > nul 2>&1 && echo [Passed] || echo [Build failed]"
+
+    	mer3 C:\MercuryLang\Test\math\add.mer
+	mer3 C:\MercuryLang\Test\math\sub.mer
+	mer3 C:\MercuryLang\Test\math\mul.mer
+	mer3 C:\MercuryLang\Test\math\div.mer
+	mer3 C:\MercuryLang\Test\math\mod.mer
+	

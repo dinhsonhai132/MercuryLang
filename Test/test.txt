@@ -9,5 +9,3 @@ Please ensure:
 - All test cases are placed here.
 - Each test should include input and expected output.
 - If a test fails, its location and description will help with debugging.
-
-The error will be written in makefile

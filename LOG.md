@@ -109,3 +109,9 @@
 - **Fixed** everything
 
 - **new** list comming soon
+
+### 5/17/2025
+
+- **Fixed** ```parser.c```
+
+- **Update** new debug

@@ -45,6 +45,27 @@ LET x = 2
 LET y = 3
 ```
 
+### List expression
+```
+# List syntax is [ e1, e2, e3, ... ] list element only suport int, float type
+[1, 2, 3, 5]
+```
+
+### List Statement
+
+```python
+# store list into variable using keyword 'LIST'
+LIST a = [1, 2, 3]
+!write(a[0])                    # you can extract the element from the list
+LET size = !size(a)             # use !size() function to get the size of the list
+!watch(a)                       # use !watch() to see every elements in the list
+!pop(a)                         # use !pop() to pop the last elements from the list
+!push(a, 1)                     # use !push() to push the value on top of the list
+```
+
+### Global function
+```
+```
 ### Global variable
 ```rust
 !write(pi)
@@ -124,102 +145,6 @@ WHILE number <= max DO
     END
     number = number + 1
 END
-```
-
-## For Mercury3 syntax ✨
-**Mercury3 is a different version of Mercury using no capitalizing syntax 🖥️, making it easier to write ✍️ and understand code 📚.**
-
-### Print function
-```rust
-!write("hello")
-```
-
-### Variable
-```python
-# use let keyword
-let x = 2
-let y = 3
-```
-
-### Global variable
-```rust
-!write(pi)
-!write(euler)
-!write(golden_ratio)
-!write(tau)
-```
-
-### Math
-```python
-# Merucury support '+', '-', '/', '*', '%'
-2 * 2
-3 + 3 / 2
-1 % 2
-```
-
-### Comparison
-```python
-# support >, <, <=, >=, ==, !=
-let x = 2
-let y = 3
-print x > y
-```
-### Function and function call
-```python
-func foo() do
-    let x = 1
-    let y = 2
-    print x + y
-end
-
-# function call start with `!`
-!foo()
-```
-
-### If-else statement
-```python
-if 1 == 1 then
-    let x = 1
-    let y = 1
-    print x + y
-end
-
-else
-    let x = 1
-    let y = 1
-    print x - y
-end
-```
-
-### Assignment
-```python
-let x = 1
-x = x + 1
-print x
-```
-
-### While loop
-```python
-let x = 0
-while x < 10 do
-    x = x + 1
-    print x
-end
-```
-
-### Example code
-```python
-# TODO: print the number from 1 to 100 that divisible by 2
-
-let max = 100
-let number = 0
-
-while number <= max do
-    if number % 2 == 0 then
-        print number
-    end
-    number = number + 1
-end
 ```
 
 ## 🤝 Contributing

@@ -136,10 +136,10 @@ LIST exp = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 LET exp_size = !size(exp)
 LET index = 0
 
-while index < exp_size do
+WHILE index < exp_size DO
     !write(exp[index])
     index = index + 1
-end
+END
 ```
 
 ## 🤝 Contributing

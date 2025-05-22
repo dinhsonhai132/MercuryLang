@@ -65,17 +65,17 @@ mAST_T *MerParser_parse_array_expression(mParser_T *parser) {
         }
 
         if (parser->token->tok == EOF_T) {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected expression, can not see the end in the list", parser->lexer->file, parser->lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression, can not see the end in the list", parser->lexer->file, parser->lexer->row + 1);
         }
 
         mAST_T *item = MerParser_parse_constructor(parser);
 
         if (!is_ast_expression(item->type)) {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected expression in list, the item is not an expression", parser->lexer->file, parser->lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression in list, the item is not an expression", parser->lexer->file, parser->lexer->row + 1);
         }
 
         if (!item) {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected expression in list", parser->lexer->file, parser->lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression in list", parser->lexer->file, parser->lexer->row + 1);
         }
 
         node->list.push_back(item);
@@ -159,7 +159,7 @@ mAST_T *MerParser_parse_print_statement(mParser_T *parser) {
         if (!is_ast_expression(node->print_v->type)) {
             string msg = "Expected expression in print statement, the print value must be an expression, wrong type ";
             string real_msg = msg + node->print_v->type;
-            MerDebug_print_error(SYNTAX_ERROR, real_msg.c_str(), parser->lexer->file, parser->lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, real_msg.c_str(), parser->lexer->file, parser->lexer->row + 1);
         }
         return node;
     }
@@ -198,7 +198,7 @@ mAST_T *MerParser_parse_comparison_expression(mParser_T *parser)
 
         if (!right)
         {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected comparison expression", parser->lexer->file, parser->lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, "Expected comparison expression", parser->lexer->file, parser->lexer->row + 1);
         }
         return MerParser_parse_compair(left, op, right);
     }
@@ -222,7 +222,7 @@ mAST_T *MerParser_parse_if_statement(mParser_T *parser)
     mAST_T *comp = MerParser_parse_comparison_expression(parser);
     if (!comp)
     {
-        MerDebug_print_error(SYNTAX_ERROR, "Expected expression after if", parser->lexer->file, parser->lexer->row);
+        MerDebug_print_error(SYNTAX_ERROR, "Expected expression after if", parser->lexer->file, parser->lexer->row + 1);
         return NULL;
     }
     node->comp = comp;
@@ -233,7 +233,7 @@ mAST_T *MerParser_parse_if_statement(mParser_T *parser)
         while (parser->token->tok != END_T)
         {
             if (parser->token->tok == EOF_T) {
-                MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing END", parser->lexer->file, parser->lexer->row);
+                MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing END", parser->lexer->file, parser->lexer->row + 1);
             }
 
             mAST_T *body = MerParser_parse(parser);
@@ -241,13 +241,13 @@ mAST_T *MerParser_parse_if_statement(mParser_T *parser)
             {
                 node->then_body.push_back(body);
             } else {
-                MerDebug_print_error(SYNTAX_ERROR, "Unexpected statement", parser->lexer->file, parser->lexer->row);
+                MerDebug_print_error(SYNTAX_ERROR, "Unexpected statement", parser->lexer->file, parser->lexer->row + 1);
             }
         }
     }
     else
     {
-        MerDebug_print_error(SYNTAX_ERROR, "Expected then", parser->lexer->file, parser->lexer->row);
+        MerDebug_print_error(SYNTAX_ERROR, "Expected then", parser->lexer->file, parser->lexer->row + 1);
         return NULL;
     }
 
@@ -258,7 +258,7 @@ mAST_T *MerParser_parse_if_statement(mParser_T *parser)
         while (parser->token->tok != END_T)
         {
             if (parser->token->tok == EOF_T) {
-                MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing END", parser->lexer->file, parser->lexer->row);
+                MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing END", parser->lexer->file, parser->lexer->row + 1);
             }
 
             mAST_T *body = MerParser_parse(parser);
@@ -266,7 +266,7 @@ mAST_T *MerParser_parse_if_statement(mParser_T *parser)
             {
                 node->else_body.push_back(body);
             } else {
-                MerDebug_print_error(SYNTAX_ERROR, "Expected statement", parser->lexer->file, parser->lexer->row);
+                MerDebug_print_error(SYNTAX_ERROR, "Expected statement", parser->lexer->file, parser->lexer->row + 1);
             }
 
         }
@@ -293,13 +293,13 @@ mAST_T *MerParser_parse_let_statement(mParser_T *parser)
             node->var_value = MerParser_parse_comparison_expression(parser);
             return node;
         } else {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected assignment, in let statement", parser->lexer->file, parser->lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, "Expected assignment, in let statement", parser->lexer->file, parser->lexer->row + 1);
         }
     } else {
 #ifdef MERCURY_LANG3
-        MerDebug_print_error(SYNTAX_ERROR, "Expected variable name, the token after 'let' is not a variable", parser->lexer->file, parser->lexer->row);
+        MerDebug_print_error(SYNTAX_ERROR, "Expected variable name, the token after 'let' is not a variable", parser->lexer->file, parser->lexer->row + 1);
 #endif
-        MerDebug_print_error(SYNTAX_ERROR, "Expected variable name, the token after 'LET' is not a variable", parser->lexer->file, parser->lexer->row);
+        MerDebug_print_error(SYNTAX_ERROR, "Expected variable name, the token after 'LET' is not a variable", parser->lexer->file, parser->lexer->row + 1);
     }
 
     return NULL;
@@ -311,7 +311,7 @@ mAST_T *MerParser_parse_while_statement(mParser_T *parser) {
     parser->token = _MerLexer_get_next_tok(parser->lexer);
     mAST_T *comp = MerParser_parse_comparison_expression(parser);
     if (!comp) {
-        MerDebug_print_error(SYNTAX_ERROR, "Expected expression after while", parser->lexer->file, parser->lexer->row);
+        MerDebug_print_error(SYNTAX_ERROR, "Expected expression after while", parser->lexer->file, parser->lexer->row + 1);
     }
     node->while_cond = comp;
 
@@ -321,9 +321,9 @@ mAST_T *MerParser_parse_while_statement(mParser_T *parser) {
         {
             if (parser->token->tok == EOF_T) {
 #ifdef MERCURY_LANG3
-                MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing 'end' keyword in the while loop", parser->lexer->file, parser->lexer->row);
+                MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing 'end' keyword in the while loop", parser->lexer->file, parser->lexer->row + 1);
 #endif
-                MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing 'END' keyword in the while loop", parser->lexer->file, parser->lexer->row);
+                MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing 'END' keyword in the while loop", parser->lexer->file, parser->lexer->row + 1);
             }
 
             mAST_T *body = MerParser_parse(parser);
@@ -336,9 +336,9 @@ mAST_T *MerParser_parse_while_statement(mParser_T *parser) {
         return node;
     } else {
 #ifdef MERCURY_LANG3
-        MerDebug_print_error(SYNTAX_ERROR, "Expected 'do', while loop body must start with keyword 'do'", parser->lexer->file, parser->lexer->row);
+        MerDebug_print_error(SYNTAX_ERROR, "Expected 'do', while loop body must start with keyword 'do'", parser->lexer->file, parser->lexer->row + 1);
 #endif
-        MerDebug_print_error(SYNTAX_ERROR, "Expected 'DO', while loop body must start with keyword 'DO'", parser->lexer->file, parser->lexer->row);
+        MerDebug_print_error(SYNTAX_ERROR, "Expected 'DO', while loop body must start with keyword 'DO'", parser->lexer->file, parser->lexer->row + 1);
         return NULL;
     }
 }
@@ -355,10 +355,10 @@ mAST_T *MerParser_parse_variable_statement(mParser_T *parser) {
             node->str_var_value = MerParser_parse_string_expression(parser);
             return node;
         } else {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected assignment", parser->lexer->file, parser->lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, "Expected assignment", parser->lexer->file, parser->lexer->row + 1);
         }
     } else {
-        MerDebug_print_error(SYNTAX_ERROR, "Expected variable name", parser->lexer->file, parser->lexer->row);
+        MerDebug_print_error(SYNTAX_ERROR, "Expected variable name", parser->lexer->file, parser->lexer->row + 1);
     }
 
     return NULL;
@@ -387,13 +387,13 @@ mAST_T *MerParser_parse_list_statement(mParser_T *parser) {
                     }
 
                     if (parser->token->tok == EOF_T) {
-                        MerDebug_print_error(SYNTAX_ERROR, "Expected expression, can not see the end in the list, list must start with keyword '[' and end with keyword ']", parser->lexer->file, parser->lexer->row);
+                        MerDebug_print_error(SYNTAX_ERROR, "Expected expression, can not see the end in the list, list must start with keyword '[' and end with keyword ']", parser->lexer->file, parser->lexer->row + 1);
                     }
 
                     mAST_T *item = MerParser_parse_constructor(parser);
 
                     if (!is_ast_expression(item->type)) {
-                        MerDebug_print_error(SYNTAX_ERROR, "Expected expression in list, the item is not an expression", parser->lexer->file, parser->lexer->row);
+                        MerDebug_print_error(SYNTAX_ERROR, "Expected expression in list, the item is not an expression", parser->lexer->file, parser->lexer->row + 1);
                     }
 
                     if (item)
@@ -401,20 +401,20 @@ mAST_T *MerParser_parse_list_statement(mParser_T *parser) {
                         node->list.push_back(item);
                         node->list_size++;
                     } else {
-                        MerDebug_print_error(SYNTAX_ERROR, "Expected expression in list", parser->lexer->file, parser->lexer->row);
+                        MerDebug_print_error(SYNTAX_ERROR, "Expected expression in list", parser->lexer->file, parser->lexer->row + 1);
                     }
                 }
                 
                 parser->token = _MerLexer_get_next_tok(parser->lexer);
                 return node;
             } else {
-                MerDebug_print_error(SYNTAX_ERROR, "Expected '[' in list", parser->lexer->file, parser->lexer->row);
+                MerDebug_print_error(SYNTAX_ERROR, "Expected '[' in list", parser->lexer->file, parser->lexer->row + 1);
             }
         } else {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected '=' in list", parser->lexer->file, parser->lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, "Expected '=' in list", parser->lexer->file, parser->lexer->row + 1);
         }
     } else {
-        MerDebug_print_error(SYNTAX_ERROR, "Expected variable name, in list", parser->lexer->file, parser->lexer->row);
+        MerDebug_print_error(SYNTAX_ERROR, "Expected variable name, in list", parser->lexer->file, parser->lexer->row + 1);
     }
 
     return NULL;
@@ -433,15 +433,15 @@ mAST_T *MerParser_parse_assignment_statement(mParser_T *parser) {
             node->assign_value = MerParser_parse(parser);
 
             if (!is_ast_expression(node->assign_value->type)) {
-                MerDebug_print_error(SYNTAX_ERROR, "Expected expression in assignment", parser->lexer->file, parser->lexer->row);
+                MerDebug_print_error(SYNTAX_ERROR, "Expected expression in assignment", parser->lexer->file, parser->lexer->row + 1);
             }
 
             return node;
         } else {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected '=' in assignment", parser->lexer->file, parser->lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, "Expected '=' in assignment", parser->lexer->file, parser->lexer->row + 1);
         }
     } else {
-        MerDebug_print_error(SYNTAX_ERROR, "Expected variable name in assignment", parser->lexer->file, parser->lexer->row);
+        MerDebug_print_error(SYNTAX_ERROR, "Expected variable name in assignment", parser->lexer->file, parser->lexer->row + 1);
     }
 
     return NULL;
@@ -456,7 +456,7 @@ mAST_T *MerParser_parse_function_statement(mParser_T *parser)
     {
         if (!parser->token->name)
         {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected function name", parser->lexer->file, parser->lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, "Expected function name", parser->lexer->file, parser->lexer->row + 1);
             return NULL;
         }
         node->func_name = parser->token->name;
@@ -470,14 +470,14 @@ mAST_T *MerParser_parse_function_statement(mParser_T *parser)
                 {
                     node->args_idens.push_back(parser->token->name);
                 } else {
-                    MerDebug_print_error(SYNTAX_ERROR, "Expected argument in function definition, argument defined must start with '&', e.g: func foo(&arg1, &arg2, ... ) do ... end", parser->lexer->file, parser->lexer->row);
+                    MerDebug_print_error(SYNTAX_ERROR, "Expected argument in function definition, argument defined must start with '&', e.g: func foo(&arg1, &arg2, ... ) do ... end", parser->lexer->file, parser->lexer->row + 1);
                 }
 
                 if (parser->token->tok == EOF_T) {
 #ifdef MERCURY_LANG3
-                    MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing 'END' of the function definition", parser->lexer->file, parser->lexer->row);
+                    MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing 'END' of the function definition", parser->lexer->file, parser->lexer->row + 1);
 #endif
-                    MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing 'end' of the function definition", parser->lexer->file, parser->lexer->row);
+                    MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing 'end' of the function definition", parser->lexer->file, parser->lexer->row + 1);
                 }    
 
                 parser->token = _MerLexer_get_next_tok(parser->lexer);
@@ -495,7 +495,7 @@ mAST_T *MerParser_parse_function_statement(mParser_T *parser)
                 while (parser->token->tok != END_T)
                 {
                     if (parser->token->tok == EOF_T) {
-                        MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing END", parser->lexer->file, parser->lexer->row);
+                        MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing END", parser->lexer->file, parser->lexer->row + 1);
                     }
         
                     node->body.push_back(MerParser_parse(parser));
@@ -504,16 +504,16 @@ mAST_T *MerParser_parse_function_statement(mParser_T *parser)
                 return node;
             } else {
 #ifdef MERCURY_LANG3
-                    MerDebug_print_error(SYNTAX_ERROR, "missing 'do' in function definition, function body defined must start with 'do'", parser->lexer->file, parser->lexer->row);
+                    MerDebug_print_error(SYNTAX_ERROR, "missing 'do' in function definition, function body defined must start with 'do'", parser->lexer->file, parser->lexer->row + 1);
 #endif
 
-                MerDebug_print_error(SYNTAX_ERROR, "missing 'DO' in function definition, function body defined must start with 'DO'", parser->lexer->file, parser->lexer->row);
+                MerDebug_print_error(SYNTAX_ERROR, "missing 'DO' in function definition, function body defined must start with 'DO'", parser->lexer->file, parser->lexer->row + 1);
             }
         } else {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected '(' in function definition", parser->lexer->file, parser->lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, "Expected '(' in function definition", parser->lexer->file, parser->lexer->row + 1);
         }
     } else {
-        MerDebug_print_error(SYNTAX_ERROR, "Expected function name", parser->lexer->file, parser->lexer->row);
+        MerDebug_print_error(SYNTAX_ERROR, "Expected function name", parser->lexer->file, parser->lexer->row + 1);
     }
 
     return NULL;
@@ -548,7 +548,7 @@ mAST_T *MerParser_parse_function_call_expression(mParser_T *parser)
             }
 
             if (parser->token->tok == EOF_T) {
-                MerDebug_print_error(SYNTAX_ERROR, "Expected expression, can not see the end in the function call arguments", parser->lexer->file, parser->lexer->row);
+                MerDebug_print_error(SYNTAX_ERROR, "Expected expression, can not see the end in the function call arguments", parser->lexer->file, parser->lexer->row + 1);
             }
 
             if (parser->token->tok != RIGHT_PAREN) {
@@ -558,20 +558,20 @@ mAST_T *MerParser_parse_function_call_expression(mParser_T *parser)
             mAST_T *arg = MerParser_parse(parser);
 
             if (!is_ast_expression(arg->type)) {
-                MerDebug_print_error(SYNTAX_ERROR, "Expected expression in function call, function call arguments must be expressions", parser->lexer->file, parser->lexer->row);
+                MerDebug_print_error(SYNTAX_ERROR, "Expected expression in function call, function call arguments must be expressions", parser->lexer->file, parser->lexer->row + 1);
             }
 
             if (arg)
             {
                 node->args.push_back(arg);
             } else {
-                MerDebug_print_error(SYNTAX_ERROR, "Expected expression in function call", parser->lexer->file, parser->lexer->row);
+                MerDebug_print_error(SYNTAX_ERROR, "Expected expression in function call", parser->lexer->file, parser->lexer->row + 1);
             }
         }
     }
     else
     {
-        MerDebug_print_error(SYNTAX_ERROR, "Expected '('", parser->lexer->file, parser->lexer->row);
+        MerDebug_print_error(SYNTAX_ERROR, "Expected '('", parser->lexer->file, parser->lexer->row + 1);
         return NULL;
     }
 
@@ -588,7 +588,7 @@ mAST_T *MerParser_parse_multiplicative_expression(mParser_T *parser)
         parser->token = _MerLexer_get_next_tok(parser->lexer);
         mAST_T *right = MerParser_parse_primary_expression(parser);
         if (!right) {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, parser->lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, parser->lexer->row + 1);
         }
         parser->token = _MerLexer_get_next_tok(parser->lexer);
         left = MerParser_parse_binary_expression(left, op, right);
@@ -605,7 +605,7 @@ mAST_T *MerParser_parse_additive_expression(mParser_T *parser)
         parser->token = _MerLexer_get_next_tok(parser->lexer);
         mAST_T *right = MerParser_parse_multiplicative_expression(parser);
         if (!right) {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, parser->lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, parser->lexer->row + 1);
         }
         left = MerParser_parse_binary_expression(left, op, right);
     }
@@ -625,11 +625,11 @@ mAST_T *MerParser_parse_extract_expression(mParser_T *parser) {
             return node;
         } else {
             string msg = "Expected ']' in extract expression. The extract value must be an expression. Wrong type in list: " + node->extract_name;
-            MerDebug_print_error(SYNTAX_ERROR, msg.c_str(), parser->lexer->file, parser->lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, msg.c_str(), parser->lexer->file, parser->lexer->row + 1);
         }
     } else {
         string msg = "Expected '[' in extract expression. The extract value must be an expression. Wrong type in list: " + node->extract_name;
-        MerDebug_print_error(SYNTAX_ERROR, msg.c_str(), parser->lexer->file, parser->lexer->row);
+        MerDebug_print_error(SYNTAX_ERROR, msg.c_str(), parser->lexer->file, parser->lexer->row + 1);
     }
 
     return NULL;
@@ -665,6 +665,6 @@ mAST_T *MerParser_parse_primary_expression(mParser_T *parser)
     
     string sym = parser->token->string_iden;
     string msg = "Unexpected primary expression near '" + sym + "'";
-    MerDebug_print_error(SYNTAX_ERROR, msg.c_str(), parser->lexer->file, parser->lexer->row);
+    MerDebug_print_error(SYNTAX_ERROR, msg.c_str(), parser->lexer->file, parser->lexer->row + 1);
     return NULL;
 }

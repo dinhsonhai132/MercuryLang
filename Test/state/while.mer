@@ -1,0 +1,6 @@
+LET x = 0
+
+WHILE x < 100 DO
+    x = x + 1
+    PRINT x
+END

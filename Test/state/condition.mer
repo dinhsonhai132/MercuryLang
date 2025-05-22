@@ -1,0 +1,10 @@
+LET x = 0
+LET y = x + 1
+
+IF x > y THEN
+    !write("x is bigger than y")
+END
+
+ELSE
+    !write("x is smaller than y")
+END

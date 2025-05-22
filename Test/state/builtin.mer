@@ -1,0 +1,4 @@
+!write("hello world")
+!size([1, 2, 3])
+!eval("1 + 2")
+!write([1])

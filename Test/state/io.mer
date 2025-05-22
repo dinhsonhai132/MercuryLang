@@ -1,0 +1,9 @@
+!write([1, 2, 3])
+!write(1)
+!write("hello")
+
+let x = 0
+while x < 10 do
+    !write([1, 2, 3])
+    x = x + 1
+end

@@ -115,3 +115,11 @@
 - **Fixed** ```parser.c```
 
 - **Update** new debug
+
+### 5/22/2025
+
+- **New** list
+
+- fix **function call** is now a primary expression
+
+- **Add** more builtin function

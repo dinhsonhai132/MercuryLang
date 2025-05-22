@@ -53,7 +53,7 @@ LET y = 3
 
 ### List Statement
 
-```python
+```rust
 # store list into variable using keyword 'LIST'
 LIST a = [1, 2, 3]
 !write(a[0])                    # you can extract the element from the list

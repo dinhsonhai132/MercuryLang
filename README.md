@@ -46,7 +46,7 @@ LET y = 3
 ```
 
 ### List expression
-```
+```python
 # List syntax is [ e1, e2, e3, ... ] list element only suport int, float type
 [1, 2, 3, 5]
 ```
@@ -63,9 +63,6 @@ LET size = !size(a)             # use !size() function to get the size of the li
 !push(a, 1)                     # use !push() to push the value on top of the list
 ```
 
-### Global function
-```
-```
 ### Global variable
 ```rust
 !write(pi)

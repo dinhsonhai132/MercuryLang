@@ -130,17 +130,16 @@ END
 
 ### Example code
 ```python
-# TODO: print the number from 1 to 100 that divisible by 2
+# TODO: print all elements of the list
 
-LET max = 100
-LET number = 0
+LIST exp = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+LET exp_size = !size(exp)
+LET index = 0
 
-WHILE number <= max DO
-    IF number % 2 == 0 THEN
-        PRINT number
-    END
-    number = number + 1
-END
+while index < exp_size do
+    !write(exp[index])
+    index = index + 1
+end
 ```
 
 ## 🤝 Contributing

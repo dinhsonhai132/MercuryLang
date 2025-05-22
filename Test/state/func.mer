@@ -1,5 +1,0 @@
-FUNC foo() DO
-    LET x = 0
-    LET y = 2
-    !write(x + y)
-END

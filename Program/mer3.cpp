@@ -19,15 +19,7 @@
 // SOFTWARE.
 
 #include "C:\MercuryLang\Mercury\ceval.cpp"
-#include <filesystem>
-#include <ctime>
-#include <iostream>
-#include <string>
-#include <fstream>
-#include <vector>
-#include <cstdlib>
-#include <unordered_map>
-#include <filesystem>
+
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -42,7 +34,7 @@ enum class OptionFlags {
 };
 
 void print_help() {
-    cout << "MercuryLang CLI - Version " << MERCURY_VERSION << endl;
+    cout << "MercuryLang CLI - Version " << MERCURY_VERSION << ", by Dinh Son Hai" << endl;
     cout << "Usage: mercury [options] <filename>.mer\n";
     cout << "Options:\n";
     cout << "  -v\t\tShow version information\n";
@@ -66,41 +58,18 @@ void prompt() {
 
     Mer_real_string input = "";
     Mer_real_string source = "";
+    sign_in_mer_libs();
     
     while (true) {
         cout << ">>> ";
         getline(cin, source);
-
-        if (source == "exit") break;
-        if (source == "cls") input = "";
-        if (source == "help") print_help();
-        if (source == "version") cout << "MercuryLang version: " << MERCURY_VERSION << " - By " << AUTHOR << endl;
-
-        input += source + "\n";
+        input = source + "\n";
 
         mLexer_T *lexer = _MerLexer_init(input.c_str());
         mParser_T *parser = _MerParser_init(lexer);
         mAST_T *ast = MerParser_parse_program(parser);
         mCode_T code = MerCompiler_compile_ast_program(ast);
         stack *stk = eval_program(code);
-
-        if (!ast) {
-            cerr << "Syntax Error!" << endl;
-            continue;
-        }
-
-        if (stk->s_table->table.empty()) {
-            cout << "Register: [0]" << endl;
-            continue;
-        } else {
-            cout << "Register: [0";
-            for (int i = 0; i < stk->s_table->table.size(); i++) {
-                cout << ", ";
-                cout << stk->s_table->table[i]->cval;
-            }
-
-            cout << "]" << endl;
-        }
     }
 }
 
@@ -172,6 +141,7 @@ int main(int argc, char* argv[]) {
                     mLexer_T *lexer = _MerLexer_init(input.c_str());
                     lexer->file = inputFile.c_str();
                     mParser_T *parser = _MerParser_init(lexer);
+                    sign_in_mer_libs();
                     mAST_T *ast = MerParser_parse_program(parser);
                     mCode_T code = MerCompiler_compile_ast_program(ast);
                     vector<Mer_uint8_t> buff = code.prg_code.buff;
@@ -203,7 +173,9 @@ int main(int argc, char* argv[]) {
         mAST_T *ast = MerParser_parse_program(parser);
         mCode_T code = MerCompiler_compile_ast_program(ast);
 
+
 #if !defined(MERCURY_EVAL_THIS_PROGRAM)
+        sign_in_mer_libs();
         stack *stk = eval_program(code);
 #endif
         vector<Mer_uint8_t> buff = code.prg_code.buff;

@@ -125,3 +125,9 @@
 - **Add** more builtin function
 
 - **Import** soon...
+
+### 5/23/2025
+
+- **Add** new pop, push
+
+- **Remake** prompt

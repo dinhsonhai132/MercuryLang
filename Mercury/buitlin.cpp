@@ -25,13 +25,8 @@ MERCURY_API __mer_core_lib_api__ void __io_write(mString_T *__string) {
 }
 
 __mer_core_api__ int __same(vector<Mer_uint8_t> a, vector<Mer_uint8_t> b) {
-    if (a.size() != b.size()) {
-        cerr << "Error: The two strings are not the same size" << endl;
-        break_point();
-    }
-
     for (int i = 0; i < a.size(); i++) {
-        if (a[i] != b[i]) {
+        if (a[i] - b[i] != 0) {
             return 0;
         }
     }
@@ -50,9 +45,6 @@ MERCURY_API __mer_core_lib_api__ void __builtin_same_string(stack *stk) {
         } else {
             stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
         }
-
-        free(top);
-        free(new_list);
     }
 }
 

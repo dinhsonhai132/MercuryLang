@@ -64,6 +64,7 @@ using namespace std;
      (type) == Identifier_ || \
      (type) == ComparisonExpression || \
      (type) == ArrayExpression || \
+     (type) == FunctionCallExpression || \
      (type) == ExtractExpression || \
      (type) == StringIdentifier)
 

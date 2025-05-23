@@ -62,6 +62,8 @@ MERCURY_API __mer_core_data__ GlobalTable GLOBAL_TABLE = {
     CREAT_GLOBAL_TABLE(PRINT_LIST_ADDRESS, "watch", "watch"),
 };
 
-
+#define __global_reg _G
+#define __local_reg _L
+#define __tempotary_reg _T
 
 #endif // MERCURY_DATA_HEADER_FILE

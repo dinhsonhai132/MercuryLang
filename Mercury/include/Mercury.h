@@ -34,6 +34,15 @@
 #include "sys.h"
 #include "define.h"
 #include "error.h"
+#include <filesystem>
+#include <ctime>
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <cstdlib>
+#include <unordered_map>
+#include <filesystem>
 
 #define MERCURY_VERSION "2.1.0"
 #define AUTHOR "Dinh Son Hai"

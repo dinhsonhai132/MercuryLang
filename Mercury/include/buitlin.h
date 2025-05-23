@@ -27,6 +27,7 @@ MERCURY_API __mer_core_lib_api__ void __builtin_size(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_push(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_pop(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_watch(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_date(stack *stk);
 
 MERCURY_API __mer_core_lib_api__ vector<Mer_Reg> mer_core_libs = {
     {IO_WRITE_ADDRESS, "write", (void*)__builtin_io_write},

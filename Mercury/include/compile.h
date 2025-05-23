@@ -40,6 +40,8 @@ struct __compiler_u {
     Mer_string type;
 };
 
+__compiler_u compiler_init(void);
+
 #define INC_U(u) (u.byte++, u.cid++)
 
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_program(mAST_T *ast);

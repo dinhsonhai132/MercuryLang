@@ -364,7 +364,7 @@ void _MerLexer_jump_to(mLexer_T *lexer, int n)
 void _MerLexer_skip_whitespace(mLexer_T *lexer)
 {
     lexer->cur = lexer->buf[lexer->id];
-    while (IS_SPACE(lexer))
+    while (IS_SPACE(lexer) || lexer->cur == ';')
     {
         LEX_ADVANCE(lexer);
     }

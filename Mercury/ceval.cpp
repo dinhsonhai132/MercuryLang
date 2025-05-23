@@ -53,7 +53,7 @@ MERCURY_API stack *eval_program(mCode_T &code) {
     __program_bytecode u_program = init_program_bytecode(code);
     stack *stk = MerCompiler_Stack_new();
     __get_label_map(u_program);
-    sign_in_mer_libs();
+
 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [eval_program] [pass]" << endl;
@@ -134,6 +134,7 @@ MERCURY_API __mer_core_api__ stack *eval_BUILD_LIST(__program_bytecode &u, stack
     top->cval = MERCURY_LIST_VALUE;
 
     stk->s_table->table.push_back(top);
+    __push(top);
 
 
     #ifdef SYSTEM_TEST
@@ -342,6 +343,7 @@ MERCURY_API stack *eval_PUSH_FLOAT(__program_bytecode &u, stack *stk) {
         memcpy(&int_repr, &u.code.prg_code.buff[u.iid], 4);
         memcpy(&float_repr, &int_repr, 4);
         stk->s_table->table.push_back(MerCompiler_table_setup(float_repr, NULL_UINT_8_T));
+        __push(MerCompiler_table_setup(float_repr, NULL_UINT_8_T));
     }
     u.iid += 4;
 
@@ -367,6 +369,7 @@ MERCURY_API stack *eval_LOAD_GLOBAL(__program_bytecode &u, stack *stk) {
             tab->address = _G[i]->address;
             tab->is_in_glb = true;
             stk->s_table->table.push_back(tab);
+            __push(tab);
             found = true;
             break;
         }

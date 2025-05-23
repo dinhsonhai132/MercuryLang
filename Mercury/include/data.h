@@ -2,6 +2,7 @@
 #define MERCURY_DATA_HEADER_FILE
 
 #include "C:\MercuryLang\Mercury\stack.cpp"
+
 #include <vector>
 using namespace std;
 

@@ -123,7 +123,7 @@ mAST_T *MerParser_parse(mParser_T *parser)
         return MerParser_parse_list_statement(parser);
     if (parser->token->tok == STR)
         return MerParser_parse_variable_statement(parser);
-        
+
     return MerParser_parse_constructor(parser);
 }
 

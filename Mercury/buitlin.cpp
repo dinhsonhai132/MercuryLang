@@ -80,8 +80,27 @@ MERCURY_API __mer_core_lib_api__ void __builtin_cls(stack *stk) {
     }
 }
 
+MERCURY_API __mer_core_lib_api__ void __builtin_date(stack *stk) {
+    table *top = stk->s_table->table.back();
+    stk->s_table->table.pop_back();
+
+    if (top->cval == 1) {
+        time_t t = time(0);
+        tm *now = localtime(&t);
+        cout << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday << endl;
+    } else if (top->cval == 2) {
+        time_t t = time(0);
+        tm *now = localtime(&t);
+        cout << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday << " " << now->tm_hour << ":" << now->tm_min << ":" << now->tm_sec << endl;
+    } else if (top->cval == 3) {
+        time_t t = time(0);
+        tm *now = localtime(&t);
+        cout << now->tm_year + 1900 << "-" << now->tm_mon + 1 << "-" << now->tm_mday << " " << now->tm_hour << ":" << now->tm_min << ":" << now->tm_sec << " " << now->tm_wday << endl;
+    }
+}
+
 MERCURY_API __mer_core_lib_api__ void __builtin_help(stack *stk) {
-    cout << "MercuryLang CLI - Version " << MERCURY_VERSION << endl;
+    cout << "MercuryLang CLI - Version " << MERCURY_VERSION << ", by Dinh Son Hai" << endl;
     cout << "Usage: mercury [options] <filename>.mer\n";
     cout << "Options:\n";
     cout << "  -v\t\tShow version information\n";
@@ -190,40 +209,9 @@ MERCURY_API __mer_core_lib_api__ void __builtin_eval(stack *stk) {
 }
 
 MERCURY_API __mer_core_lib_api__ void __builtin_push(stack *stk) {
-    table *list = stk->s_table->table.back();
-    Mer_uint8_t address = list->address;
+    table *value = stk->s_table->table.back();
     stk->s_table->table.pop_back();
 
-    if (list->is_list) {
-        table *top = stk->s_table->table.back();
-        stk->s_table->table.pop_back();
-
-        mValue_T *value = (mValue_T *)top;
-        value->f_value = top->cval;
-        value->value_t.float_value = top->cval; 
-
-        list->list_v->args.push_back(value);
-        list->list_v->size++;
-
-        table *new_list = MerCompiler_Table_new();
-        new_list->is_list = true;
-        new_list->list_v = list->list_v;
-        new_list->address = address;
-
-        for (auto &item : _G) {
-            if (item->address == address) {
-                item->tab = new_list;
-                break;
-            }
-        }
-
-        stk->s_table->table.push_back(new_list);
-    }
-
-    stk->s_table->table.push_back(list);
-}
-
-MERCURY_API __mer_core_lib_api__ void __builtin_pop(stack *stk) {
     table *list = stk->s_table->table.back();
     stk->s_table->table.pop_back();
 
@@ -236,26 +224,79 @@ MERCURY_API __mer_core_lib_api__ void __builtin_pop(stack *stk) {
                 break;
             }
         }
+    } else {
+        stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
+        return;
     }
 
     if (list->is_list) {
-        list->list_v->size--;
-        list->list_v->args.pop_back();
+        list->list_v->size++;
 
-        table *top = MerCompiler_Table_new();
-        top->is_list = true;
-        top->list_v = list->list_v;
-        top->address = list->address;
+        mValue_T *vvalue = MerCompiler_val_new();
+        vvalue->f_value = value->cval;
+        vvalue->value_t.float_value = value->cval;
 
-        if (list->is_in_glb) {
-            for (auto &item : _G) {
-                if (item->address == list->address) {
-                    item->tab = top;
-                    break;
-                }
+        list->list_v->args.push_back((mValue_T *)vvalue);
+
+        mList_T *new_list = MerCompiler_list_object_new();
+        new_list->args = list->list_v->args;
+        new_list->size = list->list_v->size;
+        new_list->ui8_address = list->address;
+
+        table *new_top = MerCompiler_Table_new();
+        new_top->is_list = true;
+        new_top->list_v = new_list;
+        new_top->list_v->size = list->list_v->size;
+        new_top->cval = MERCURY_LIST_VALUE;
+
+        stk->s_table->table.push_back(new_top);
+    }
+
+    stk->s_table->table.push_back(list);
+
+    #ifdef SYSTEM_TEST
+    cout << "[buitlin.cpp] [__builtin_push] [pass]" << endl;
+    #endif
+}
+
+MERCURY_API __mer_core_lib_api__ void __builtin_pop(stack *stk) {
+    table *list = stk->s_table->table.back();
+    stk->s_table->table.pop_back();
+
+    if (list->is_in_glb) {
+        Mer_uint8_t address = list->address;
+
+        for (auto &item : _G) {
+            if (item->address == address) {
+                list = item->tab; // point to the list in global
+                break;
             }
         }
     }
+
+    if (list->is_list) {
+        mList_T *new_list = MerCompiler_list_object_new();
+        list->list_v->size--; // change the real list, this part got me 1 month to understand how pointer work
+
+        if (list->list_v->size <= 0) {
+            list->list_v->size = 0;
+        } else {
+            list->list_v->args.pop_back(); // change the list
+        }
+
+        new_list->args = list->list_v->args;
+        new_list->size = list->list_v->size;
+        new_list->ui8_address = list->address;
+
+        table *new_table = MerCompiler_Table_new(); // creat a new list value because this function return a list value
+        new_table->is_list = true;
+        new_table->list_v = new_list;
+        new_table->address = list->address;
+
+        stk->s_table->table.push_back(new_table);
+    }
+
+    stk->s_table->table.push_back(list);
 }
 
 MERCURY_API __mer_core_lib_api__ void __builtin_pause(stack *stk) {

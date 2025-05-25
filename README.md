@@ -24,7 +24,7 @@ Before building or running MercuryLang, ensure you have the following installed:
 - **[CMake](https://cmake.org/)** – Version 3.12 or higher
 
 ## ✅ Download
- - You can download by go to this website **[MercuryLang-website](https://dinhsonhai132.github.io/main.html)**
+ - You can download by go to this link **[MercuryLang-download](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-init.exe)**
 
 ## 🚀 Execution
 

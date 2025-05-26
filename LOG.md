@@ -131,3 +131,9 @@
 - **Add** new pop, push
 
 - **Remake** prompt
+
+### 4/26/2025
+
+- **Remake** virtual machine
+
+- **Add** ```!cos```, ```!sin```, ```!tan```, ```!cot``` buitlin

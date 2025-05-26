@@ -76,7 +76,7 @@ LET size = !size(a)             # use !size() function to get the size of the li
 1 % 2
 
 # Or you can use buitlin function
-let x = pi
+LET x = pi
 !cos(x)
 !sin(x)
 !tan(x)

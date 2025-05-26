@@ -127,6 +127,13 @@ mAST_T *MerParser_parse(mParser_T *parser)
     return MerParser_parse_constructor(parser);
 }
 
+mAST_T *MerParser_parse_store_index_statement(mParser_T *parser) {
+    mAST_T *node = _MerAST_make_parent(StoreIndexStatement);
+
+    node->extract_assign = MerParser_parse_comparison_expression(parser);
+    return node;
+}
+
 mAST_T *parser_string_identifier_primary(mToken_T *token) {
     mAST_T *node = _MerAST_make_parent(StringIdentifier);
 
@@ -141,7 +148,6 @@ mAST_T *MerParser_parse_string_expression(mParser_T *parser) {
     node->str_v = parser->token->name;
     node->is_string = true;
     parser->token = _MerLexer_get_next_tok(parser->lexer);
-
     return node;
 }
 
@@ -182,6 +188,26 @@ mAST_T *MerParser_parse_return_statement(mParser_T *parser)
         node->return_v = MerParser_parse(parser);
     }
     
+    return node;
+}
+
+mAST_T *MerParser_parse_string_statement(mParser_T *parser) {
+    mAST_T *node = _MerAST_make_parent(StringVariableStatement);
+    parser->token = _MerLexer_get_next_tok(parser->lexer);
+    if (parser->token->tok == VARIABLE) {
+        node->str_var_name = parser->token->name;
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+        if (parser->token->tok == ASSIGN) {
+            parser->token = _MerLexer_get_next_tok(parser->lexer);
+            node->str_var_value = MerParser_parse_string_expression(parser);
+            return node;
+        } else {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected assignment", parser->lexer->file, parser->lexer->row + 1);
+        }
+    } else {
+        MerDebug_print_error(SYNTAX_ERROR, "Expected variable name", parser->lexer->file, parser->lexer->row + 1);
+    }
+
     return node;
 }
 
@@ -622,6 +648,17 @@ mAST_T *MerParser_parse_extract_expression(mParser_T *parser) {
         node->is_extract = true;
         node->extract_value = MerParser_parse_comparison_expression(parser);
         if (parser->token->tok == RIGHT_BRACKET) {
+            parser->next = _MerLexer_look_ahead(parser->lexer);
+            if (parser->next->tok == ASSIGN) {
+                node->type = StoreIndexStatement;
+                parser->token = _MerLexer_get_next_tok(parser->lexer);
+                parser->token = _MerLexer_get_next_tok(parser->lexer);
+                node->extract_assign = MerParser_parse_comparison_expression(parser);
+                node->is_extract_statement = true;
+                node->is_extract = false;
+                cout << node->extract_name << endl;
+                return node;
+            }
             return node;
         } else {
             string msg = "Expected ']' in extract expression. The extract value must be an expression. Wrong type in list: " + node->extract_name;

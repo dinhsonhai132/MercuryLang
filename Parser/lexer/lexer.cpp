@@ -131,40 +131,44 @@ mToken_T *_MerLexer_get_next_tok(mLexer_T *lexer)
         
         if (is_potential_identifier_char(c))
         {
-            return _MerLexer_tokenize_syntax(lexer);
-        }
-
-        if (c == ';') {
-            LEX_ADVANCE(lexer);
-            lexer->cur = lexer->buf[lexer->id];
-            if (lexer->cur == '\n') {
-                LEX_NEWLINE(lexer);
-            }
+            mToken_T *token = _MerLexer_tokenize_syntax(lexer);
+            token->index++;
+            return token;
         }
 
         if (c == '!' && isalpha(lexer->buf[lexer->id + 1]))
         {
-            return _MerLexer_tokenize_function_call(lexer);
+            mToken_T *token = _MerLexer_tokenize_function_call(lexer);
+            token->index++;
+            return token;
         }
 
         if (c == '$' && isalpha(lexer->buf[lexer->id + 1]))
         {
-            return _MerLexer_tokenize_extract(lexer);
+            mToken_T *token = _MerLexer_tokenize_extract(lexer);
+            token->index++;
+            return token;
         }
 
         if (c == '"')
         {
-            return _MerLexer_tokenize_string(lexer);
+            mToken_T *token = _MerLexer_tokenize_string(lexer);
+            token->index++;
+            return token;
         }
 
         if (is_digit(c))
         {
-            return _MerLexer_tokenize_number(lexer);
+            mToken_T *token = _MerLexer_tokenize_number(lexer);
+            token->index++;
+            return token;
         }
 
         if (is_keywords(c))
         {
-            return _MerLexer_tokenize_keyword(lexer);
+            mToken_T *token = _MerLexer_tokenize_keyword(lexer);
+            token->index++;
+            return token;
         }
 
         if (is_keywords(c) && lexer->col == 1)
@@ -174,12 +178,16 @@ mToken_T *_MerLexer_get_next_tok(mLexer_T *lexer)
 
         if (c == '(')
         {
-            return _MerInit_token(LEFT_PAREN, NULL_T, 0.0, "(", ")", ")");
+            mToken_T *token = _MerInit_token(LEFT_PAREN, NULL_T, 0.0, "(", "(", "(");
+            token->index++;
+            return token;
         }
 
         else if (c == ')')
         {
-            return _MerInit_token(RIGHT_PAREN, NULL_T, 0.0, ")", ")", ")");
+            mToken_T *token = _MerInit_token(RIGHT_PAREN, NULL_T, 0.0, ")", ")", ")");
+            token->index++;
+            return token;
         }
 
         else if (c == '\0')

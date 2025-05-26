@@ -402,8 +402,6 @@ inline const char* GET_2_CHAR(char c1, char c2) {
     return NULL_T;
 }
 
-
-
 #define REGULAR_TOKEN 20
 #define NONE_TOKEN 21
 
@@ -412,6 +410,7 @@ struct mToken_T {
     mToken_T *next;
     const char* type;
     float value;
+    size_t index;
     const char* name;
     const char* symbol;
     const char* string_iden;

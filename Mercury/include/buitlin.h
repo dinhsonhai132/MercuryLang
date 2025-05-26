@@ -14,6 +14,7 @@
 __mer_core_lib_api__ const char* to_char(Mer_uint8_t c);
 __mer_core_lib_api__ void __builtin_print(mObject_T *str);
 __mer_core_lib_api__ void __io_write(mString_T *__string);
+__mer_core_lib_api__ void __io_puts(mString_T *__string);
 __mer_core_lib_api__  Mer_real_string hash_to_string(mString_T *str);
 
 MERCURY_API __mer_core_lib_api__ void __builtin_io_write(stack *stk);
@@ -28,6 +29,14 @@ MERCURY_API __mer_core_lib_api__ void __builtin_push(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_pop(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_watch(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_date(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_puts_val(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_is_my_fav_number(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_mer_sqrt(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_mer_cos(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_mer_tan(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_mer_cot(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_mer_sin(stack *stk);
+
 
 MERCURY_API __mer_core_lib_api__ vector<Mer_Reg> mer_core_libs = {
     {IO_WRITE_ADDRESS, "write", (void*)__builtin_io_write},
@@ -41,6 +50,12 @@ MERCURY_API __mer_core_lib_api__ vector<Mer_Reg> mer_core_libs = {
     {PUSH_ADDRESS, "push", (void*)__builtin_push},
     {POP_ADDRESS, "pop", (void*)__builtin_pop},
     {PRINT_LIST_ADDRESS, "watch", (void*)__builtin_watch},
+    {PUTS_ADDRESS, "puts", (void*)__builtin_puts_val},
+    {0x0001, "my_fav_number", (void*)__builtin_is_my_fav_number},
+    {COS_ADDRESS, "cos", (void*)__builtin_mer_cos},
+    {TAN_ADDRESS, "tan", (void*)__builtin_mer_tan},
+    {COT_ADDRESS, "cot", (void*)__builtin_mer_cot},
+    {SQRT_ADDRESS, "sqrt", (void*)__builtin_mer_sqrt},
     {0, "null", NULL_PTR},
 }; 
 

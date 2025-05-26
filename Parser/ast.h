@@ -39,6 +39,7 @@ using namespace std;
 #define ImportStatement "ImportStatement"
 #define BlockStatement "BlockStatement"
 #define ReturnStatement "ReturnStatement"
+#define StoreIndexStatement "StoreIndexStatement"
 #define ExtractExpression "ExtractExpression"
 #define StringExpression "StringExpression"
 #define ExtractExpression "ExtractExpression"
@@ -78,6 +79,7 @@ struct mAST_T
     string string_iden;
     mAST_T *poutput;
 
+    bool is_at_start;
     bool is_if;
     bool is_while;
     bool is_for;
@@ -107,6 +109,10 @@ struct mAST_T
     bool is_string;
     string str_v;
     vector<mAST_T *> str_children;
+
+    // for string statement
+    string str_iden;
+    mAST_T *str_value;
 
     //for print
     string str_print_v;
@@ -161,11 +167,13 @@ struct mAST_T
     bool is_alone_val;
     size_t list_size;
 
-    // for extract expression
+    // for extract expression and statement
     string extract_name;
     mAST_T *extract_value;
+    mAST_T *extract_assign;
     bool is_extract;
     bool is_string_extract;
+    bool is_extract_statement;
 
     // for string variable
     string str_var_name;

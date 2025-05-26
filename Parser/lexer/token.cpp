@@ -6,6 +6,7 @@ mToken_T *_MerToken_new(void) {
     token->type = NULL;
     token->value = 0.0;
     token->name = NULL;
+    token->index = 0;
     token->symbol = NULL;
     token->string_iden = NULL;
     return token;

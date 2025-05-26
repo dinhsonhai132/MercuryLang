@@ -22,6 +22,7 @@
 #define MECURY_EVALUATE_H
 
 #include "C:\MercuryLang\Mercury\compile.cpp"
+#include "C:\MercuryLang\Mercury\string.cpp"
 #include "compiler_unit.h"
 
 #include <stdlib.h>
@@ -54,6 +55,7 @@ MERCURY_API __mer_core_api__ stack *eval_PRINT(__program_bytecode &u, stack *stk
 MERCURY_API __mer_core_api__ stack *eval_JUMP_IF_FALSE(__program_bytecode &u, stack *stk);
 MERCURY_API __mer_core_api__ stack *eval_BUILD_LIST(__program_bytecode &u, stack *stk);
 MERCURY_API __mer_core_api__ stack *eval_GET_ITEM(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *eval_STORE_INDEX(__program_bytecode &u, stack *stk);
 MERCURY_API __mer_core_api__ stack *eval_program(mCode_T &code);
 MERCURY_API __mer_core_api__ stack *eval_statement(__program_bytecode &u, stack *stk);
 

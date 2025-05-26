@@ -25,6 +25,12 @@ using namespace std;
 #define PUSH_ADDRESS                0xA3
 #define POP_ADDRESS                 0xA4
 #define PRINT_LIST_ADDRESS          0xA5
+#define PUTS_ADDRESS                0xA6
+#define COS_ADDRESS                 0xA7
+#define SIN_ADDRESS                 0xA8
+#define TAN_ADDRESS                 0xA9
+#define COT_ADDRESS                 0xAA
+#define SQRT_ADDRESS                0xAB
 
 MERCURY_API __mer_core_data__ vector<symtable *> _G = {
     MerCompiler_symboltable_setup("pi", PI, "float", PI_ADDRESS),
@@ -39,7 +45,7 @@ MERCURY_API __mer_core_data__ vector<symtable *> _G = {
 MERCURY_API __mer_core_data__ vector<symtable *> _L = {};
 MERCURY_API __mer_core_data__ vector<symtable *> _T = {};
 
-MERCURY_API __mer_core_data__ vector<mString_T *> STRING_ENTRY = {};
+MERCURY_API __mer_core_data__ vector<Mer_string_entry*> STRING_ENTRY = {};
 
 MERCURY_API __mer_core_data__ GlobalTable GLOBAL_TABLE = {
     CREAT_GLOBAL_TABLE(IO_WRITE_ADDRESS, "write", "write"),
@@ -60,6 +66,13 @@ MERCURY_API __mer_core_data__ GlobalTable GLOBAL_TABLE = {
     CREAT_GLOBAL_TABLE(PUSH_ADDRESS, "push", "push"),
     CREAT_GLOBAL_TABLE(POP_ADDRESS, "pop", "pop"),
     CREAT_GLOBAL_TABLE(PRINT_LIST_ADDRESS, "watch", "watch"),
+    CREAT_GLOBAL_TABLE(PUTS_ADDRESS, "puts", "puts"),
+    CREAT_GLOBAL_TABLE(0x0001, "my_fav_number", "my_fav_number"),
+    CREAT_GLOBAL_TABLE(COS_ADDRESS, "cos", "cos"),
+    CREAT_GLOBAL_TABLE(SIN_ADDRESS, "sin", "sin"),
+    CREAT_GLOBAL_TABLE(TAN_ADDRESS, "tan", "tan"),
+    CREAT_GLOBAL_TABLE(COT_ADDRESS, "cot", "cot"),
+    CREAT_GLOBAL_TABLE(SQRT_ADDRESS, "sqrt", "sqrt"),
 };
 
 #define __global_reg _G

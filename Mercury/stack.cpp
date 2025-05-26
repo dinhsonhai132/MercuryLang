@@ -39,11 +39,11 @@ table *MerCompiler_Table_new(void) {
     t->size = 0;
     t->str_v = "";
     t->list_v = MerCompiler_list_object_new();
-    t->f_str_v = nullptr;
-    t->code_v = nullptr;
-    t->type_v = nullptr;
-    t->func_v = nullptr;
-    t->obj_v = nullptr;
+    t->f_str_v = MerCompiler_string_new();
+    t->code_v = MerCompiler_pcode_new();
+    t->type_v = MerCompiler_type_new();
+    t->func_obj_v = MerCompiler_func_object_new();
+    t->obj_v = MerCompiler_object_new();
     t->opcode_v = nullptr;
     t->table = vector<table*>();
     t->tbody = vector<uint8_t>();
@@ -72,11 +72,11 @@ symtable *MerCompiler_SymbolTable_new(void) {
     s->is_local = false;
     s->list_v = MerCompiler_list_object_new();
     s->var_v = nullptr;
-    s->f_str_v = nullptr;
-    s->code_v = nullptr;
-    s->type_v = nullptr;
-    s->func_v = nullptr;
-    s->obj_v = nullptr;
+    s->f_str_v = MerCompiler_string_new();
+    s->code_v = MerCompiler_pcode_new();
+    s->type_v = MerCompiler_type_new();
+    s->func_obj_v = MerCompiler_func_object_new();
+    s->obj_v = MerCompiler_object_new();
     s->is_in_glb = false;
     s->opcode_v = nullptr;
     s->tab = MerCompiler_Table_new();
@@ -89,22 +89,49 @@ symtable *MerCompiler_SymbolTable_new(void) {
 
 int MerCompiler_free_stack(stack *s) {
     if (!s) return __FAILURE__;
+
     MerCompiler_free_table(s->s_table);
     MerCompiler_free_symboltable(s->s_symtable);
-    s->code.clear();
-    s->iden.clear();
-    delete[] s;
+    MerCompiler_free_symboltable(s->s_global);
+    MerCompiler_free_symboltable(s->s_local);
+
+    delete s;
     return __SUCCESS__;
 }
+
 int MerCompiler_free_table(table *t) {
     if (!t) return __FAILURE__;
+
+    if (t->list_v) delete t->list_v;
+    if (t->f_str_v) delete t->f_str_v;
+    if (t->code_v) delete t->code_v;
+    if (t->type_v) delete t->type_v;
+    if (t->func_obj_v) delete t->func_obj_v;
+    if (t->obj_v) delete t->obj_v;
+    if (t->opcode_v) delete t->opcode_v;
+
+    for (table* sub : t->table) {
+        MerCompiler_free_table(sub);
+    }
     t->table.clear();
-    delete[] t;
+
+    delete t;
     return __SUCCESS__;
 }
+
 int MerCompiler_free_symboltable(symtable *s) {
     if (!s) return __FAILURE__;
-    delete[] s;
+
+    if (s->list_v) delete s->list_v;
+    if (s->f_str_v) delete s->f_str_v;
+    if (s->code_v) delete s->code_v;
+    if (s->type_v) delete s->type_v;
+    if (s->func_obj_v) delete s->func_obj_v;
+    if (s->obj_v) delete s->obj_v;
+    if (s->opcode_v) delete s->opcode_v;
+    if (s->tab) MerCompiler_free_table(s->tab);
+
+    delete s;
     return __SUCCESS__;
 }
 
@@ -127,6 +154,7 @@ symtable *MerCompiler_symboltable_setup(string name, float value, string type, u
     symtable *s = MerCompiler_SymbolTable_new();
     s->name = name;
     s->value = value;
+    s->cval = value;
     s->type = type;
     s->address = address;
     return s;

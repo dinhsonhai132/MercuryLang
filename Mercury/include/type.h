@@ -33,6 +33,11 @@ struct Mer_Reg {
     void* func;
 };
 
+struct Mer_string_entry {
+    vector<Mer_uint8_t> contents;
+    hash_t hash_key;
+};
+
 struct _val {
     union
     {
@@ -49,28 +54,6 @@ struct _val {
 
     Mer_float f_value;
 };
-
-#define get_v(o) ((o)->f_value)
-
-#define get_f(o) ((o)->value_t.float_value)
-
-#define get_i(o) ((o)->value_t.int_value)
-
-#define get_b(o) ((o)->value_t.bool_value)
-
-#define get_c(o) ((o)->value_t.char_value)
-
-#define get_s(o) ((o)->value_t.string_value)
-
-#define get_l(o) ((o)->value_t.long_value)
-
-#define get_ll(o) ((o)->value_t.longlong_value)
-
-#define get_by(o) ((o)->value_t.byte_value)
-
-#define get_sb(o) ((o)->value_t.sbyte_value)
-
-#define back_insrt(v, s) (v.insert(v.begin(), s))
 
 struct _code
 {
@@ -253,5 +236,29 @@ int MerCompiler_free_func_object(_func_object *f);
 int MerCompiler_free_list_object(_list_object *l);
 int MerCompiler_free_variable(_variable *v);
 int MerCompiler_free_val(_val *v);
+
+#define get_v(o) ((o)->f_value)
+
+#define get_f(o) ((o)->value_t.float_value)
+
+#define get_i(o) ((o)->value_t.int_value)
+
+#define get_b(o) ((o)->value_t.bool_value)
+
+#define get_c(o) ((o)->value_t.char_value)
+
+#define get_s(o) ((o)->value_t.string_value)
+
+#define get_l(o) ((o)->value_t.long_value)
+
+#define get_ll(o) ((o)->value_t.longlong_value)
+
+#define get_by(o) ((o)->value_t.byte_value)
+
+#define get_sb(o) ((o)->value_t.sbyte_value)
+
+#define back_insrt(v, s) (v.insert(v.begin(), s))
+
+#define front_insrt(v, s) (v.insert(v.end(), s))
 
 #endif // MERCURY_TYPE_HEADER_FILE

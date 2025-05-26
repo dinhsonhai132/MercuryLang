@@ -34,6 +34,7 @@
 #include "sys.h"
 #include "define.h"
 #include "error.h"
+#include "C:\MercuryLang\Mercury\math.cpp"
 #include <filesystem>
 #include <ctime>
 #include <iostream>
@@ -75,6 +76,8 @@
     #define __mer_core_api__        extern
     #define __mer_core_lib_api__    extern
 #endif
+
+
 
 // #define SYSTEM_TESTm
 

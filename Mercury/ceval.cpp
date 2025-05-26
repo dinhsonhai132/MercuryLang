@@ -28,7 +28,7 @@ unordered_map<Mer_uint8_t, Mer_size_t> __get_label_map(__program_bytecode &u) {
         code = __get_next_code_in_prg_code(u);
     }
 
-    u.iid = 0;
+    u.iid = 0; // reset it
 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [__get_label_map] [pass]" << endl;
@@ -60,6 +60,33 @@ MERCURY_API stack *eval_program(mCode_T &code) {
     #endif
 
     return eval_statement(u_program, stk);
+}
+
+MERCURY_API __mer_core_api__ stack *eval_STORE_INDEX(__program_bytecode &u, stack *stk) {
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [eval_STORE_INDEX] [building...]" << endl;
+    #endif
+
+    table *val_assign = POP_STACK(stk);
+    table *index = POP_STACK(stk);
+    table *list = POP_STACK(stk);
+
+    Mer_float real_idx = index->cval;
+
+    if (!list->is_list) {
+        MerDebug_system_error(SYSTEM_ERROR, "Error while storing index to a list object", u.file);
+    }
+
+    mValue_T *value = MerCompiler_val_new();
+    value->f_value = val_assign->cval;
+    value->value_t.float_value = val_assign->cval;
+    list->list_v->args[real_idx] = value;
+
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [eval_STORE_INDEX] [pass]" << endl;
+    #endif
+
+    return stk;
 }
 
 MERCURY_API stack *eval_POP_JUMP_IF_FALSE(__program_bytecode &u, stack *stk) {
@@ -134,7 +161,6 @@ MERCURY_API __mer_core_api__ stack *eval_BUILD_LIST(__program_bytecode &u, stack
     top->cval = MERCURY_LIST_VALUE;
 
     stk->s_table->table.push_back(top);
-    __push(top);
 
 
     #ifdef SYSTEM_TEST
@@ -170,10 +196,16 @@ MERCURY_API __mer_core_api__ stack *eval_PUSH_NORMAL_MODE(__program_bytecode &u,
     u.hash += 0x01;
     str_v->size = size;
 
-    STRING_ENTRY.push_back(str_v);
+    hash_t hash = __hash(str_v);
+
+    Mer_string_entry *entry = new Mer_string_entry();
+    entry->hash_key = hash;
+    entry->contents = str_v->buff;
+    STRING_ENTRY.push_back(entry);
     
     table *top = MerCompiler_Table_new();
     top->f_str_v = str_v;
+    top->cval = MERCURY_STRING_VALUE;
     top->is_str = true;
 
     stk->s_table->table.push_back(top);
@@ -191,16 +223,7 @@ MERCURY_API stack *eval_GET_ITEM(__program_bytecode &u, stack *stk) {
     #endif
     
     table *extract_val = POP_STACK(stk);
-    table *list = POP_STACK(stk);
-    table *obj = MerCompiler_Table_new(); 
-    Mer_uint8_t address = list->address;
-
-    for (auto &item : _G) {
-        if (item->address == address) {
-            obj = item->tab;
-            break;
-        }
-    }
+    table *obj = POP_STACK(stk);
 
     if (extract_val->cval >= obj->list_v->size) {
         MerDebug_system_error(SYSTEM_ERROR, "Index out of range", u.file);
@@ -213,8 +236,8 @@ MERCURY_API stack *eval_GET_ITEM(__program_bytecode &u, stack *stk) {
         MerDebug_system_error(SYSTEM_ERROR, "Error while getting item from a list object", u.file);
     }
 
-    free(extract_val);
-    free(list);
+    MerCompiler_free_table(extract_val);
+    MerCompiler_free_table(obj);
 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [eval_GET_ITEM] [pass]" << endl;
@@ -260,6 +283,8 @@ MERCURY_API stack *eval_statement(__program_bytecode &u, stack *stk) {
             stk = eval_GET_ITEM(u, stk);
         } else if (code == CRETURN || code == CEND_BLOCK || code == CPROGRAM_END) {
             break;
+        } else if (code == CSTORE_INDEX) {
+            stk = eval_STORE_INDEX(u, stk);
         }
     }
 
@@ -343,7 +368,6 @@ MERCURY_API stack *eval_PUSH_FLOAT(__program_bytecode &u, stack *stk) {
         memcpy(&int_repr, &u.code.prg_code.buff[u.iid], 4);
         memcpy(&float_repr, &int_repr, 4);
         stk->s_table->table.push_back(MerCompiler_table_setup(float_repr, NULL_UINT_8_T));
-        __push(MerCompiler_table_setup(float_repr, NULL_UINT_8_T));
     }
     u.iid += 4;
 
@@ -364,12 +388,14 @@ MERCURY_API stack *eval_LOAD_GLOBAL(__program_bytecode &u, stack *stk) {
     Mer_size_t idx;
     for (Mer_size_t i = 0; i < _G.size(); i++) {
         if (_G[i]->address == code) {
-            table *tab = MerCompiler_Table_new();
-            tab->cval = _G[i]->value;
-            tab->address = _G[i]->address;
-            tab->is_in_glb = true;
-            stk->s_table->table.push_back(tab);
-            __push(tab);
+            if (!_G[i]->tab) {
+                MerDebug_system_error(SYSTEM_ERROR, "Global variable is not initialized", u.file);
+            }
+
+            _G[i]->tab->cval = _G[i]->value;
+            _G[i]->tab->address = _G[i]->address;
+            _G[i]->tab->is_in_glb = true;
+            stk->s_table->table.push_back(_G[i]->tab);
             found = true;
             break;
         }

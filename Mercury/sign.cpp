@@ -91,5 +91,41 @@ int sign_in_mer_libs() {
     sign->func_v = (mFunc_T)__builtin_watch;
     _G.push_back(sign);
 
+    sign = MerCompiler_SymbolTable_new();
+    sign->address = PUTS_ADDRESS;
+    sign->is_builtin = true;
+    sign->func_v = (mFunc_T)__builtin_puts_val;
+    _G.push_back(sign);
+
+    sign = MerCompiler_SymbolTable_new();
+    sign->address = 0x0001;
+    sign->is_builtin = true;
+    sign->func_v = (mFunc_T)__builtin_is_my_fav_number;
+    _G.push_back(sign);
+
+    sign = MerCompiler_SymbolTable_new();
+    sign->address = COS_ADDRESS;
+    sign->is_builtin = true;
+    sign->func_v = (mFunc_T)__builtin_mer_cos;
+    _G.push_back(sign);
+
+    sign = MerCompiler_SymbolTable_new();
+    sign->address = SIN_ADDRESS;
+    sign->is_builtin = true;
+    sign->func_v = (mFunc_T)__builtin_mer_sin;
+    _G.push_back(sign);
+
+    sign = MerCompiler_SymbolTable_new();
+    sign->address = TAN_ADDRESS;
+    sign->is_builtin = true;
+    sign->func_v = (mFunc_T)__builtin_mer_tan;
+    _G.push_back(sign);
+
+    sign = MerCompiler_SymbolTable_new();
+    sign->address = SQRT_ADDRESS;
+    sign->is_builtin = true;
+    sign->func_v = (mFunc_T)__builtin_mer_sqrt;
+    _G.push_back(sign);
+
     return 0;
 }

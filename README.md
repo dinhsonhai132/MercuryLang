@@ -56,8 +56,10 @@ LET y = 3
 # store list into variable using keyword 'LIST'
 LIST a = [1, 2, 3]
 !write(a[0])                    # you can extract the element from the list
+!push(1, a)                     # use push to push the item into top of the list
+!pop(a)                         # remove the top of the list
 LET size = !size(a)             # use !size() function to get the size of the list
-!watch(a)                       # use !watch() to see every elements in the list
+!write(a)                       # print the list
 ```
 
 ### Global variable

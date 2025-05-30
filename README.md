@@ -53,8 +53,7 @@ LET y = 3
 
 ### List Statement
 ```python 
-# store list into variable
-LET a = [1, 2, 3]
+LET a = [1, 2, 3]               # store list into variable
 !write(a[0])                    # you can extract the element from the list
 !push(1, a)                     # use push to push the item into top of the list
 !pop(a)                         # remove the top of the list

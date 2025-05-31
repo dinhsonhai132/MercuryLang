@@ -662,6 +662,15 @@ mAST_T *MerParser_parse_extract_expression(mParser_T *parser) {
         node->is_extract = true;
         node->extract_value = MerParser_parse_comparison_expression(parser);
         if (parser->token->tok == RIGHT_BRACKET) {
+            parser->next = _MerLexer_look_ahead(parser->lexer);
+            if (parser->next->tok == ASSIGN) {
+                node->type = StoreIndexStatement;
+                node->is_extract_statement = true;
+                node->is_extract = false;
+                node->extract_assign = MerParser_parse_comparison_expression(parser);
+                parser->token = _MerLexer_get_next_tok(parser->lexer);
+                return node;
+            }
             return node;
         } else {
             string msg = "Expected ']' in extract expression. The extract value must be an expression. Wrong type in list: " + node->extract_name;

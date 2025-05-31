@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include "syntax.cpp"
 #include "../../Parser/war.cpp"
 #include "../../Mercury/error.cpp"
 
@@ -270,75 +271,73 @@ inline const char* GET_SYNTAX(string c) {
 }
 #else
 
-inline bool is_identifier(string c) {
-    return (c == "LET")
-    || (c == "PRINT")
-    || (c == "IF")
-    || (c == "DO")
-    || (c == "END")
-    || (c == "BREAK")
-    || (c == "CONTINUE")
-    || (c == "AUTO")
-    || (c == "FLOAT")
-    || (c == "DOUBLE")
-    || (c == "CHAR")
-    || (c == "LIST")
-    || (c == "SHORT")
-    || (c == "LONG")
-    || (c == "VOID")
-    || (c == "BOOL")
-    || (c == "STR")
-    || (c == "STRING")
-    || (c == "INCLUDE")
-    || (c == "ELSE")
-    || (c == "FOR")
-    || (c == "WHILE")
-    || (c == "RETURN")
-    || (c == "FUNC")
-    || (c == "CLASS")
-    || (c == "STRUCT")
-    || (c == "INTERFACE")
-    || (c == "NEW")
-    || (c == "DELETE")
-    || (c == "CAST")
-    || (c == "CONST")
-    || (c == "THEN");
+inline bool is_identifier(const std::string& c) {
+    return (c == LET_S)
+    || (c == PRINT_S)
+    || (c == IF_S)
+    || (c == DO_S)
+    || (c == END_S)
+    || (c == BREAK_S)
+    || (c == CONTINUE_S)
+    || (c == AUTO_S)
+    || (c == FLOAT_S)
+    || (c == DOUBLE_S)
+    || (c == CHAR_S)
+    || (c == LIST_S)
+    || (c == SHORT_S)
+    || (c == LONG_S)
+    || (c == VOID_S)
+    || (c == BOOL_S)
+    || (c == STR_S)
+    || (c == STRING_S)
+    || (c == INCLUDE_S)
+    || (c == ELSE_S)
+    || (c == FOR_S)
+    || (c == WHILE_S)
+    || (c == RETURN_S)
+    || (c == FUNCTION_S)
+    || (c == CLASS_S)
+    || (c == STRUCT_S)
+    || (c == INTERFACE_S)
+    || (c == NEW_S)
+    || (c == DELETE_S)
+    || (c == CAST_S)
+    || (c == CONST_S)
+    || (c == THEN_S);
 }
 
-inline const char* GET_SYNTAX(string c) {
-    if (c == "LET") return LET;
-    else if (c == "PRINT") return PRINT;
-    else if (c == "IF") return IF;
-    else if (c == "ELSE") return ELSE;
-    else if (c == "FOR") return FOR;
-    else if (c == "WHILE") return WHILE;
-    else if (c == "RETURN") return RETURN;
-    else if (c == "FUNC") return FUNCTION;
-    else if (c == "DO") return DO_T;
-    else if (c == "END") return END_T;
-    else if (c == "BREAK") return BREAK;
-    else if (c == "CONTINUE") return CONTINUE;
-    else if (c == "CLASS") return CLASS;
-    else if (c == "INTERFACE") return INTERFACE_;
-    else if (c == "STRUCT") return STRUCT;
-    else if (c == "NEW") return NEW;
-    else if (c == "LIST") return LIST;
-    else if (c == "DELETE") return DELETE_;
-    else if (c == "CAST") return CAST;
-    else if (c == "FLOAT") return FLOAT_;
-    else if (c == "DOUBLE") return DOUBLE_;
-    else if (c == "CHAR") return CHAR_;
-    else if (c == "SHORT") return SHORT_;
-    else if (c == "LONG") return LONG_;
-    else if (c == "AUTO") return AUTO_;
-    else if (c == "VOID") return VOID_T;
-    else if (c == "THEN") return THEN;
-    else if (c == "ELSE") return ELSE;
-    else if (c == "BOOL") return BOOL_;
-    else if (c == "STRING") return STR;
+inline const char* GET_SYNTAX(const std::string& c) {
+    if (c == LET_S) return LET;
+    else if (c == PRINT_S) return PRINT;
+    else if (c == IF_S) return IF;
+    else if (c == ELSE_S) return ELSE;
+    else if (c == FOR_S) return FOR;
+    else if (c == WHILE_S) return WHILE;
+    else if (c == RETURN_S) return RETURN;
+    else if (c == FUNCTION_S) return FUNCTION;
+    else if (c == DO_S) return DO_T;
+    else if (c == END_S) return END_T;
+    else if (c == BREAK_S) return BREAK;
+    else if (c == CONTINUE_S) return CONTINUE;
+    else if (c == CLASS_S) return CLASS;
+    else if (c == INTERFACE_S) return INTERFACE_;
+    else if (c == STRUCT_S) return STRUCT;
+    else if (c == NEW_S) return NEW;
+    else if (c == LIST_S) return LIST;
+    else if (c == DELETE_S) return DELETE_;
+    else if (c == CAST_S) return CAST;
+    else if (c == FLOAT_S) return FLOAT_;
+    else if (c == DOUBLE_S) return DOUBLE_;
+    else if (c == CHAR_S) return CHAR_;
+    else if (c == SHORT_S) return SHORT_;
+    else if (c == LONG_S) return LONG_;
+    else if (c == AUTO_S) return AUTO_;
+    else if (c == VOID_S) return VOID_T;
+    else if (c == THEN_S) return THEN;
+    else if (c == BOOL_S) return BOOL_;
+    else if (c == STRING_S) return STR;
     return NULL_T;
 }
-
 #endif
 
 inline const char* GET_1_CHAR(char c) {

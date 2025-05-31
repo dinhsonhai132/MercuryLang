@@ -158,7 +158,7 @@ MERCURY_API __mer_core_lib_api__ void __builtin_date(stack *stk) {
 }
 
 MERCURY_API __mer_core_lib_api__ void __builtin_help(stack *stk) {
-    cout << "MercuryLang CLI - Version " << MERCURY_VERSION << ", by Dinh Son Hai" << endl;
+    cout << "MercuryLang CLI - Version " << CUSTOM_VERSION << ", by Dinh Son Hai" << endl;
     cout << "Usage: mercury [options] <filename>.mer\n";
     cout << "Options:\n";
     cout << "  -v\t\tShow version information\n";

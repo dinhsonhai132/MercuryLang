@@ -45,8 +45,19 @@
 #include <unordered_map>
 #include <filesystem>
 
-#define MERCURY_VERSION "2.1.0"
-#define AUTHOR "Dinh Son Hai"
+const char* CUSTOM_VERSION = "2.1.0";
+const char* CUSTOM_BINARY_OUTPUT = "merc-250.merc";
+const char* CUSTOM_BINARY_OUT_OUTPUT = "merc-250.out.merc";
+const char* CUSTOM_INPUT = "mer";
+const char* CUSTOME_BINARY_FOLDER = "__mercache__";
+const char* AUTHOR = "Dinh Son Hai";
+const char* LANGUAGE = "MercuryLang";
+
+#define TAG_1 "-v"
+#define TAG_2 "-h"
+#define TAG_3 "-p"
+#define TAG_4 "-o"
+#define TAG_5 "-m"
 
 #define MERCURY_VERSION_1_5_0                   "1.5.0"
 #define MERCURY_VERSION_2_0_1                   "2.0.1"

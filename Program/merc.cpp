@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include "..\Mercury\ceval.cpp"
+#include "..\Mercury\out.cpp"
 
 using namespace std;
 namespace fs = std::filesystem;
@@ -31,48 +31,6 @@ enum class OptionFlags {
     OUTPUT,
     COMPILE
 };
-
-void print_help() {
-    cout << "MercuryLang CLI - Version " << MERCURY_VERSION << ", by Dinh Son Hai" << endl;
-    cout << "Usage: mercury [options] <filename>.mer\n";
-    cout << "Options:\n";
-    cout << "  -v\t\tShow version information\n";
-    cout << "  -p\t\tStart the Mercury REPL\n";
-    cout << "  -h\t\tShow this help message\n";
-    cout << "  -o <filename> <target>\tCompile to a specific output file\n";
-    cout << "  -m\t\tCompiled into readable mercury bytecode\n";
-}
-
-Mer_real_string get_time() {
-    time_t now = time(0);
-    tm *ltm = localtime(&now);
-    char buf[64];
-    strftime(buf, sizeof(buf), "%a %b %d %H:%M:%S %Y", ltm); // không có \n
-    return Mer_real_string(buf);
-}
-
-void prompt() {
-    cout << "MercuryLang v2.1.1a (main, " << get_time() << ") [Mercury-Virtal-Machine-v4.0 64-bit]\n";
-    cout << "'!help()' for help, '!cls()' for reset stack, '!exit()' for exit\n";
-
-    Mer_real_string input = "";
-    Mer_real_string source = "";
-    sign_in_mer_libs();
-
-    __compiler_u glb = compiler_init();
-    
-    while (true) {
-        cout << ">>> ";
-        getline(cin, source);
-        input = source + "\n";
-
-        mLexer_T *lexer = _MerLexer_init(input.c_str());
-        mParser_T *parser = _MerParser_init(lexer);
-        mAST_T *ast = MerParser_parse_program(parser);
-        mCode_T code = MerCompiler_compile_ast_program(ast, glb);
-        stack *stk = eval_program(code);
-    }
-}
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
@@ -98,7 +56,7 @@ int main(int argc, char* argv[]) {
         if (options.find(arg) != options.end()) {
             flag = options[arg];
             if (flag == OptionFlags::VERSION) {
-                cout << "MercuryLang Version " << MERCURY_VERSION << " by " << AUTHOR << endl;
+                cout << LANGUAGE << " Version " << CUSTOM_VERSION << " by " << AUTHOR << endl;
                 return EXIT_SUCCESS;
             }
             if (flag == OptionFlags::HELP) {
@@ -116,12 +74,12 @@ int main(int argc, char* argv[]) {
                 }
                 inputFile = argv[++i];
 
-                if (inputFile.substr(inputFile.find_last_of(".") + 1) != "mer") {
-                    cerr << "Error: Input file must have a .mer extension" << endl;
+                if (inputFile.substr(inputFile.find_last_of(".") + 1) != CUSTOM_INPUT) {
+                    cerr << "Error: Input file must have a ." << CUSTOM_INPUT << " extension" << endl;
                     return EXIT_FAILURE;
                 }
 
-                Mer_real_string v = ".merc-250.merc";
+                Mer_real_string v = CUSTOM_BINARY_OUTPUT;
                 outputFile = argv[++i] + v;
                 customOutput = true;
             }
@@ -132,8 +90,8 @@ int main(int argc, char* argv[]) {
                 }
                 inputFile = argv[++i];
 
-                if (inputFile.substr(inputFile.find_last_of(".") + 1) != "mer") {
-                    cerr << "Error: Input file must have a .mer extension" << endl;
+                if (inputFile.substr(inputFile.find_last_of(".") + 1) != CUSTOM_INPUT) {
+                    cerr << "Error: Input file must have a ." << CUSTOM_INPUT << " extension" << endl;
                     return EXIT_FAILURE;
                 }
 
@@ -150,7 +108,7 @@ int main(int argc, char* argv[]) {
                     vector<Mer_uint8_t> buff = code.prg_code.buff;
                     vector<Mer_uint8_t> out_buff = code.out_code.buff;
                     stack *stk = eval_program(code);
-                    outputFile = inputFile.substr(0, inputFile.find_last_of(".")) + ".merc";
+                    outputFile = inputFile.substr(0, inputFile.find_last_of(".")) + CUSTOM_INPUT;
                     MerBuffer_make_and_write_file_bytecode(outputFile, buff);
                     return EXIT_SUCCESS;
                 } catch (exception &e) {
@@ -163,8 +121,8 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    if (inputFile.empty() || inputFile.substr(inputFile.find_last_of(".") + 1) != "mer") {
-        cerr << "Error: Input file must have a .mer extension" << endl;
+    if (inputFile.empty() || inputFile.substr(inputFile.find_last_of(".") + 1) != CUSTOM_INPUT) {
+        cerr << "Error: Input file must have a ." << CUSTOM_INPUT << " extension" << endl;
         return EXIT_FAILURE;
     }
 
@@ -177,12 +135,8 @@ int main(int argc, char* argv[]) {
         mParser_T *parser = _MerParser_init(lexer);
         mAST_T *ast = MerParser_parse_program(parser);
         mCode_T code = MerCompiler_compile_ast_program(ast, glb);
-
-
-#if !defined(MERCURY_EVAL_THIS_PROGRAM)
         sign_in_mer_libs();
         stack *stk = eval_program(code);
-#endif
         vector<Mer_uint8_t> buff = code.prg_code.buff;
         vector<Mer_uint8_t> out_buff = code.out_code.buff;
 
@@ -191,11 +145,11 @@ int main(int argc, char* argv[]) {
             return EXIT_FAILURE;
         }
 
-        Mer_real_string folder_name = "__mercache__";
+        Mer_real_string folder_name = CUSTOME_BINARY_FOLDER;
         if (!fs::exists(folder_name)) fs::create_directory(folder_name);
 
-        Mer_real_string real_outputFile = folder_name + "/" + (customOutput ? outputFile : fs::path(inputFile).stem().string() + ".merc-250.merc");
-        Mer_real_string real_outputFile_out_code = folder_name + "/" + (customOutput ? outputFile : fs::path(inputFile).stem().string() + ".merc-250.out.merc");
+        Mer_real_string real_outputFile = folder_name + "/" + (customOutput ? outputFile : fs::path(inputFile).stem().string() + "." + CUSTOM_BINARY_OUTPUT);
+        Mer_real_string real_outputFile_out_code = folder_name + "/" + (customOutput ? outputFile : fs::path(inputFile).stem().string() + "." + CUSTOM_BINARY_OUT_OUTPUT);
         MerBuffer_make_and_write_file_bytecode(real_outputFile.c_str(), buff);
         MerBuffer_make_and_write_file_bytecode(real_outputFile_out_code.c_str(), out_buff);
     } 

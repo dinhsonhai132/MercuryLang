@@ -67,17 +67,18 @@ MERCURY_API __mer_core_api__ stack *eval_STORE_INDEX(__program_bytecode &u, stac
     cout << "[ceval.cpp] [eval_STORE_INDEX] [building...]" << endl;
     #endif
 
-    table *val_assign = POP_STACK(stk);
-    table *index      = POP_STACK(stk);
-    table *list       = POP_STACK(stk);
+    table *item = POP_STACK(stk);
+    table *index = POP_STACK(stk); 
+    table *value = POP_STACK(stk);
 
-    if (!list->is_list) {
-        MerDebug_system_error(SYSTEM_ERROR, "Error while storing index to a list object", u.file);
+    if (value->is_list) {
+        mValue_T *vvalue = (mValue_T *)value->list_v->args[index->cval];
+        vvalue->f_value = item->cval;
+        vvalue->value_t.float_value = item->cval;
+        stk->s_table->table.push_back(item);
+    } else {
+        stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
     }
-
-    mValue_T *value = (mValue_T *) list->list_v->args[index->cval];
-    value->f_value = val_assign->cval;
-    value->value_t.float_value = val_assign->cval;
 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [eval_STORE_INDEX] [pass]" << endl;

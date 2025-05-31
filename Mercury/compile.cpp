@@ -52,6 +52,14 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_store_ind
     }
   }
 
+  if (!ast->extract_assign) {
+    MerDebug_system_error(COMPILER_ERROR, "Assign value is null", glb.file);
+  }
+
+  if (!ast->extract_value) {
+    MerDebug_system_error(COMPILER_ERROR, "Extract value is null", glb.file);
+  }
+
   PUSH(result, CLOAD_GLOBAL);
   PUSH(result, address);
   INSERT_VEC(result, extract_index);

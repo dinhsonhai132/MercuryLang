@@ -148,8 +148,8 @@ WHILE index < exp_size DO
     index = index + 1
 END
 ```
-
-## Advance
+-----
+## 🔋 Advance
 
 If you want to creat your own language using ```Mercury.h``` just follow these step
 - Go to ```C:\MercuryLang\...``` and run ```make``` to build

@@ -137,3 +137,7 @@
 - **Remake** virtual machine
 
 - **Add** ```!cos```, ```!sin```, ```!tan```, ```!cot``` buitlin
+
+### 5/31/2025
+
+- you can make your language using ```#include <Mercury.h>```

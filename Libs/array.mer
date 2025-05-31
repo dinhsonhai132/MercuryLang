@@ -1,0 +1,10 @@
+let a = [0]
+
+let i = 0
+
+while i < 100 do
+ !push(a, i)
+ i = i + 1
+end
+
+!write(a)

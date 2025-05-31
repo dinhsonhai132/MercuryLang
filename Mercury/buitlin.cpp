@@ -283,27 +283,20 @@ MERCURY_API __mer_core_lib_api__ void __builtin_push(stack *stk) {
     stk->s_table->table.pop_back();
 
     if (list->is_list) {
-        list->list_v->size++;
-
         mValue_T *vvalue = MerCompiler_val_new();
         vvalue->f_value = value->cval;
         vvalue->value_t.float_value = value->cval;
 
         list->list_v->args.push_back((mValue_T *)vvalue);
-
-        mList_T *new_list = MerCompiler_list_object_new();
-        new_list->args = list->list_v->args;
-        new_list->size = list->list_v->size;
-        new_list->ui8_address = list->address;
+        list->list_v->size++;
 
         table *new_top = MerCompiler_Table_new();
         new_top->is_list = true;
-        new_top->list_v = new_list;
-        new_top->list_v->size = list->list_v->size;
+        new_top->list_v = list->list_v;
         new_top->cval = MERCURY_LIST_VALUE;
+        new_top->address = list->address;
 
         stk->s_table->table.push_back(new_top);
-        MerCompiler_free_list_object(new_list);
     } else {
         stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
     }
@@ -314,12 +307,47 @@ MERCURY_API __mer_core_lib_api__ void __builtin_push(stack *stk) {
     #endif
 }
 
+MERCURY_API __mer_core_lib_api__ void __builtin_type(stack *stk) {
+    table *top = stk->s_table->table.back();
+    if (top->is_list) {
+        stk->s_table->table.push_back(MerCompiler_table_setup(MER_LIST_TYPE, NULL_UINT_8_T));
+    } else if (top->is_str) {
+        stk->s_table->table.push_back(MerCompiler_table_setup(MER_STRING_TYPE, NULL_UINT_8_T));
+    } else if (top->is_func) {
+        stk->s_table->table.push_back(MerCompiler_table_setup(MER_FUNCTION_TYPE, NULL_UINT_8_T));
+    } else if (top->is_code) {
+        stk->s_table->table.push_back(MerCompiler_table_setup(MER_CODE_TYPE, NULL_UINT_8_T));
+    } else {
+        stk->s_table->table.push_back(MerCompiler_table_setup(MER_FLOAT_TYPE, NULL_UINT_8_T));
+    }
+}
+
+MERCURY_API __mer_core_lib_api__ void __builtin_change_item(stack *stk) {
+    table *item = stk->s_table->table.back();
+    stk->s_table->table.pop_back();
+
+    table *index = stk->s_table->table.back();
+    stk->s_table->table.pop_back();
+
+    table *value = stk->s_table->table.back();
+    stk->s_table->table.pop_back();
+
+
+    if (value->is_list) {
+        mValue_T *vvalue = (mValue_T *)value->list_v->args[index->cval];
+        vvalue->f_value = item->cval;
+        vvalue->value_t.float_value = item->cval;
+        stk->s_table->table.push_back(item);
+    } else {
+        stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
+    }
+}
+
 MERCURY_API __mer_core_lib_api__ void __builtin_pop(stack *stk) {
     table *list = stk->s_table->table.back();
     stk->s_table->table.pop_back();
 
     if (list->is_list) {
-        mList_T *new_list = MerCompiler_list_object_new();
         list->list_v->size--;
 
         if (list->list_v->size <= 0) {
@@ -328,18 +356,13 @@ MERCURY_API __mer_core_lib_api__ void __builtin_pop(stack *stk) {
             list->list_v->args.pop_back();
         }
 
-        new_list->args = list->list_v->args;
-        new_list->size = list->list_v->size;
-        new_list->ui8_address = list->address;
+        table *new_top = MerCompiler_Table_new();
+        new_top->is_list = true;
+        new_top->list_v = list->list_v;
+        new_top->cval = MERCURY_LIST_VALUE;
+        new_top->address = list->address;
 
-        table *new_table = MerCompiler_Table_new();
-        new_table->is_list = true;
-        new_table->list_v = new_list;
-        new_table->address = list->address;
-
-        stk->s_table->table.push_back(new_table);
-
-        MerCompiler_free_list_object(new_list);
+        stk->s_table->table.push_back(list);
     }
     
     stk->s_table->table.push_back(list);

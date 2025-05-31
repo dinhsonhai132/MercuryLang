@@ -38,6 +38,8 @@ MERCURY_API __mer_core_lib_api__ void __builtin_mer_tan(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_mer_cot(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_mer_sin(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_print_global_stack(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_change_item(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_type(stack *stk);
 
 
 MERCURY_API __mer_core_lib_api__ vector<Mer_Reg> mer_core_libs = {
@@ -59,6 +61,8 @@ MERCURY_API __mer_core_lib_api__ vector<Mer_Reg> mer_core_libs = {
     {SQRT_ADDRESS, "sqrt", (void*)__builtin_mer_sqrt},
     {SIN_ADDRESS, "sin", (void*)__builtin_mer_sin},
     {PRINT_GLOBAL_ADDRESS, "glb", (void*)__builtin_print_global_stack},
+    {CHANGE_ITEM_ADDRESS, "ch", (void*)__builtin_change_item},
+    {TYPE_ADDRESS, "type", (void*)__builtin_type},
 }; 
 
 

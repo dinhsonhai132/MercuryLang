@@ -127,5 +127,17 @@ int sign_in_mer_libs() {
     sign->func_v = (mFunc_T)__builtin_print_global_stack;
     _G.push_back(sign);
 
+    sign = MerCompiler_SymbolTable_new();
+    sign->address = CHANGE_ITEM_ADDRESS;
+    sign->is_builtin = true;
+    sign->func_v = (mFunc_T)__builtin_change_item;
+    _G.push_back(sign);
+
+    sign = MerCompiler_SymbolTable_new();
+    sign->address = TYPE_ADDRESS;
+    sign->is_builtin = true;
+    sign->func_v = (mFunc_T)__builtin_type;
+    _G.push_back(sign);
+
     return 0;
 }

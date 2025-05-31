@@ -46,7 +46,7 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_store_ind
   Mer_uint8_t address = NULL_UINT_8_T;
 
   for (auto &item : GLOBAL_TABLE) {
-    if (item->__Name = ast->extract_name.c_str()) {
+    if (item->__name == ast->extract_name) {
       address = item->__Address;
       break;
     }
@@ -573,6 +573,14 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_function(
   GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(func_address, func_name, name));
 
   for (auto child : ast->body) {
+    if (child->type == ReturnStatement) {
+      cout << "return" << endl;
+      __Mer_return_Code _code = MerCompiler_compile_ast_id(child, glb);
+      INSERT_VEC(body, _code);
+      _code.prg_code.buff.clear();
+      break;
+    }
+
     __Mer_return_Code _code = MerCompiler_compile_ast_id(child, glb);
     INSERT_VEC(body, _code);
     _code.prg_code.buff.clear();

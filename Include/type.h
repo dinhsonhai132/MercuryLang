@@ -10,6 +10,21 @@
 #include <cstdint>
 using namespace std;
 
+#define MER_INT_TYPE 0
+#define MER_FLOAT_TYPE 1
+#define MER_BOOL_TYPE 2
+#define MER_CHAR_TYPE 3
+#define MER_STRING_TYPE 4
+#define MER_LIST_TYPE 5
+#define MER_LONG_TYPE 6
+#define MER_LONG_LONG_TYPE 7
+#define MER_BYTE_TYPE 8
+#define MER_SBYTE_TYPE 9
+#define MER_VARIABLE_TYPE 10
+#define MER_FUNCTION_TYPE 11
+#define MER_PCODE_TYPE 12
+#define MER_CODE_TYPE 13
+
 #define FLAG_HEAD \
     bool f_str = false; \
     bool f_hash = false; \
@@ -26,6 +41,7 @@ using namespace std;
     bool f_pcode = false; \
     bool f_code = false; \
     bool f_builtin = false;
+
 
 struct Mer_Reg {
     Mer_uint8_t address;
@@ -53,6 +69,7 @@ struct _val {
     } value_t;
 
     Mer_float f_value;
+    int type;
 };
 
 struct _code

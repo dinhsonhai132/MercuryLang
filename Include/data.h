@@ -32,6 +32,8 @@ using namespace std;
 #define COT_ADDRESS                 0xAA
 #define SQRT_ADDRESS                0xAB
 #define PRINT_GLOBAL_ADDRESS        0xAC
+#define CHANGE_ITEM_ADDRESS         0xAD
+#define TYPE_ADDRESS                0xAE
 
 MERCURY_API __mer_core_data__ vector<symtable *> _G = {
     MerCompiler_symboltable_setup("pi", PI, "float", PI_ADDRESS),
@@ -42,6 +44,7 @@ MERCURY_API __mer_core_data__ vector<symtable *> _G = {
     MerCompiler_symboltable_setup("true", 1, "bool", THE_TRUE_ADDRESS),
     MerCompiler_symboltable_setup("false", 0, "bool", THE_FALSE_ADDRESS)
 };
+
 MERCURY_API __mer_core_data__ vector<symtable *> _L = {};
 MERCURY_API __mer_core_data__ vector<symtable *> _T = {};
 
@@ -73,6 +76,8 @@ MERCURY_API __mer_core_data__ GlobalTable GLOBAL_TABLE = {
     CREAT_GLOBAL_TABLE(COT_ADDRESS, "cot", "cot"),
     CREAT_GLOBAL_TABLE(SQRT_ADDRESS, "sqrt", "sqrt"),
     CREAT_GLOBAL_TABLE(PRINT_GLOBAL_ADDRESS, "glb", "glb"),
+    CREAT_GLOBAL_TABLE(CHANGE_ITEM_ADDRESS, "ch", "ch"),
+    CREAT_GLOBAL_TABLE(TYPE_ADDRESS, "type", "type"),
 };
 
 MERCURY_API __mer_core_data__ GlobalTable LOCAL_TABLE = {};

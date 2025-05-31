@@ -68,8 +68,8 @@ MERCURY_API __mer_core_api__ stack *eval_STORE_INDEX(__program_bytecode &u, stac
     #endif
 
     table *val_assign = POP_STACK(stk);
-    table *index = POP_STACK(stk);
-    table *list = POP_STACK(stk);
+    table *index      = POP_STACK(stk);
+    table *list       = POP_STACK(stk);
 
     Mer_float real_idx = index->cval;
 

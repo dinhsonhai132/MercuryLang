@@ -142,11 +142,41 @@ END
 LIST exp = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 LET exp_size = !size(exp)
 LET index = 0
-
+ 
 WHILE index < exp_size DO
     !write(exp[index])
     index = index + 1
 END
+```
+
+## Advance
+
+If you want to creat your own language using ```Mercury.h``` just follow these step
+- Go to ```C:\MercuryLang\...``` and run ```make``` to build
+- Creat a ```.cpp``` file and then you can make your own language
+
+**Example:**
+```cpp
+#include <Mercury.h> // make your own language using library 'Mercury.h'
+
+int main() {
+    // you can change the syntax
+
+    LET_S = "gan";
+    WHILE_S = "lap";
+    PRINT_S = "in";
+    DO_S = "lam";
+    END_S = "ketthuc";
+    IF_S = "neu";
+    THEN_S = "thi";
+    ELSE_S = "nguoclai";
+
+    // also you can change the language information
+    LANGUAGE = "MercuryLangTiengViet";
+    AUTHOR = "Dinh son ha";
+
+    prompt();
+}
 ```
 
 ## 🤝 Contributing

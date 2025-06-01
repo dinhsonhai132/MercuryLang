@@ -44,12 +44,18 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_store_ind
   __Mer_return_Code extract_index = MerCompiler_compile_ast_id(ast->extract_value, glb);
 
   Mer_uint8_t address = NULL_UINT_8_T;
+  bool found = false;
 
   for (auto &item : GLOBAL_TABLE) {
     if (item->__name == ast->extract_name) {
       address = item->__Address;
+      found = true;
       break;
     }
+  }
+
+  if (!found) {
+    MerDebug_system_error(COMPILER_ERROR, "List not found, can not extract value from list", glb.file);
   }
 
   if (!ast->extract_assign) {

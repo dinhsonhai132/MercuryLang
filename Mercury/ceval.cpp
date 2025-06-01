@@ -75,9 +75,6 @@ MERCURY_API __mer_core_api__ stack *eval_STORE_INDEX(__program_bytecode &u, stac
         mValue_T *vvalue = (mValue_T *)value->list_v->args[index->cval];
         vvalue->f_value = item->cval;
         vvalue->value_t.float_value = item->cval;
-        stk->s_table->table.push_back(item);
-    } else {
-        stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
     }
 
     #ifdef SYSTEM_TEST

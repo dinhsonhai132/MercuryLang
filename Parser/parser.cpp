@@ -570,11 +570,6 @@ mAST_T *MerParser_parse_function_call_expression(mParser_T *parser)
 
     node->func_call = parser->token->name;
     
-    if (node->func_call == "print") {
-        node->is_built_in_func = true;
-        node->built_in_func_name = node->func_call;
-    }
-
     parser->token = _MerLexer_get_next_tok(parser->lexer);
     if (parser->token->tok == LEFT_PAREN)
     {

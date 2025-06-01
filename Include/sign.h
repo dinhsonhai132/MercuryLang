@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std;
 
-#include "..\Mercury\buitlin.cpp"
+#include "..\Mercury\initialize.cpp"
 #include "data.h"
 
 void __mer_sign(mObject_T *obj, Mer_uint8_t address, bool is_builtin);

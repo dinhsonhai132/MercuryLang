@@ -10,7 +10,19 @@
 
 #define __io_cout_stdout(x) \
     cout << x;
-    
+
+unordered_map<string, Mer_uint8_t> lib_hashmap = {
+    {"write", IO_WRITE_ADDRESS}, {"eval", EVAL_ADDRESS}, {"pause", PAUSE_ADDRESS}, {"exit", EXIT_ADDRESS},
+    {"cls", CLS_ADDRESS}, {"help", HELP_ADDRESS}, {"same", SAME_STRING_ADDRESS}, {"size", SIZE_ADDRESS}, {"push", PUSH_ADDRESS},
+    {"pop", POP_ADDRESS}, {"watch", PRINT_LIST_ADDRESS}, {"puts", PUTS_ADDRESS}, {"cos", COS_ADDRESS}, {"tan", TAN_ADDRESS},
+    {"cot", COT_ADDRESS}, {"sqrt", SQRT_ADDRESS}, {"sin", SIN_ADDRESS}, {"glb", PRINT_GLOBAL_ADDRESS}, {"ch", CHANGE_ITEM_ADDRESS},
+    {"type", TYPE_ADDRESS}
+};
+
+unordered_map<string, Mer_uint8_t> global_hashmap = {
+    {"pi", PI_ADDRESS}, {"e", EULER_ADDRESS}, {"true", TRUE_ADDRESS}, {"false", FALSE_ADDRESS}, {"inf", INFINITY_ADDRESS},
+    {"tau", TAU_ADDRESS}, {"gr", GOLDEN_RATIO_ADDRESS}
+};
 
 __mer_core_lib_api__ const char* to_char(Mer_uint8_t c);
 __mer_core_lib_api__ void __builtin_print(mObject_T *str);
@@ -63,7 +75,6 @@ MERCURY_API __mer_core_lib_api__ vector<Mer_Reg> mer_core_libs = {
     {PRINT_GLOBAL_ADDRESS, "glb", (void*)__builtin_print_global_stack},
     {CHANGE_ITEM_ADDRESS, "ch", (void*)__builtin_change_item},
     {TYPE_ADDRESS, "type", (void*)__builtin_type},
-}; 
-
+};
 
 #endif // MERCURY_BUILTIN_HEADER_FILE

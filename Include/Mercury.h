@@ -45,12 +45,8 @@
 #include <unordered_map>
 #include <filesystem>
 
-const char* CUSTOM_VERSION = "2.1.0";
-const char* CUSTOM_BINARY_OUTPUT = "merc-250.merc";
-const char* CUSTOM_BINARY_OUT_OUTPUT = "merc-250.out.merc";
-const char* CUSTOM_INPUT = "mer";
-const char* CUSTOME_BINARY_FOLDER = "__mercache__";
-const char* AUTHOR = "Dinh Son Hai";
+const char* CUSTOM_VERSION = "2.0.1";
+const char* AUTHOR = "dinhsonhai132";
 const char* LANGUAGE = "MercuryLang";
 
 #define TAG_1 "-v"

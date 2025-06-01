@@ -318,15 +318,8 @@ mToken_T *_MerLexer_tokenize_keyword(mLexer_T *lexer)
     if (is_keywords(c))
     {
         keyword += c;
-        ++idx;
-
-        if (idx > 4300) {
-            cout << idx << endl;
-            MerDebug_print_error(SYSTEM_WARNING, "The number of keyword is too large, this can cause a crash", "stdin", lexer->row);
-        }
-
         char c2 = LEX_STAY(lexer);
-        if (is_keywords(c2))
+        if (is_keywords(c2) && GET_2_CHAR(c, c2))
         {
             keyword += c2;
             const char *temp = strdup(keyword.c_str());
@@ -343,9 +336,15 @@ mToken_T *_MerLexer_tokenize_string(mLexer_T *lexer)
 {
     string str;
     lexer->cur = lexer->buf[lexer->id];
+    int idx = 0;
 
     while (lexer->cur != '"') {
         str += lexer->cur;
+        ++idx;
+
+        if (idx > 4300) {
+            MerDebug_print_error(SYSTEM_WARNING, "The number of keyword in string is too large, this can cause a crash", "stdin", lexer->row);
+        }
 
         LEX_ADVANCE(lexer);
     }

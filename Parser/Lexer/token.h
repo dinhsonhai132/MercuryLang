@@ -363,7 +363,6 @@ inline const char* GET_1_CHAR(char c) {
     return NULL_T;
 }
 
-
 inline const char* GET_2_CHAR(char c1, char c2) {
     switch (c1) {
         case '=':
@@ -398,7 +397,7 @@ inline const char* GET_2_CHAR(char c1, char c2) {
             break;
     }
 
-    return NULL_T;
+    return 0;
 }
 
 #define REGULAR_TOKEN 20

@@ -11,26 +11,18 @@ void print_help() {
     cout << "  -m\t\tCompiled into readable mercury bytecode\n";
 }
 
-Mer_real_string get_time() {
-    time_t now = time(0);
-    tm *ltm = localtime(&now);
-    char buf[64];
-    strftime(buf, sizeof(buf), "%a %b %d %H:%M:%S %Y", ltm);
-    return Mer_real_string(buf);
-}
-
 void prompt() {
-    cout << LANGUAGE << " " << CUSTOM_VERSION << " (main, " << get_time() << ") [Mercury-Virtal-Machine-v4.0 64-bit]\n";
-    cout << "'!help()' for help, '!cls()' for reset stack, '!exit()' for exit\n";
+    cout << LANGUAGE << " " << CUSTOM_VERSION << " Copyright (c) 2025-present, " << AUTHOR << endl;
 
     Mer_real_string input = "";
     Mer_real_string source = "";
-    sign_in_mer_libs();
 
     __compiler_u glb = compiler_init();
+
+    MerCore_initialize();
     
     while (true) {
-        cout << ">>> ";
+        cout << "> ";
         getline(cin, source);
         input = source + "\n";
 
@@ -40,4 +32,6 @@ void prompt() {
         mCode_T code = MerCompiler_compile_ast_program(ast, glb);
         stack *stk = eval_program(code);
     }
+
+    MerCore_Finalize();
 }

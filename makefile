@@ -1,15 +1,9 @@
-SOURCE_FILE = C:\MercuryLang\Program\mer.cpp
-TARGET = C:\MercuryLang\bin\mer.exe
-
-BYTECODE_SOURCE_FILE = C:\MercuryLang\Program\merc.cpp
-BYTECODE_TARGET = C:\MercuryLang\bin\merc.exe
-
-SOURCE_3_FILE = C:\MercuryLang\Program\mer3.cpp
-BYTECODE_3_TARGET = C:\MercuryLang\bin\mer3.exe
-
-SOURCE_FILE_TEST_TARGET = C:\MercuryLang\bin\mert.exe
-SOURCE_FILE_TEST_TARGET2 = C:\MercuryLang\bin\test.exe
-
+SOURCE_FILE = ./Program/mer.cpp
+TARGET = ./bin/mer.exe
+BYTECODE_SOURCE_FILE = ./Program/merc.cpp
+BYTECODE_TARGET = ./bin/merc.exe
+SOURCE_3_FILE = ./Program/mer3.cpp
+BYTECODE_3_TARGET = ./bin/mer3.exe
 
 STATIC = --static
 CXX = g++

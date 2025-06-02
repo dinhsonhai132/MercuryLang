@@ -58,11 +58,6 @@ mAST_T *MerParser_parse_array_expression(mParser_T *parser) {
 
     parser->token = _MerLexer_get_next_tok(parser->lexer);
     while (parser->token->tok != RIGHT_BRACKET) {
-        if (parser->token->tok == COMMA)
-        {
-            parser->token = _MerLexer_get_next_tok(parser->lexer);
-            continue;
-        }
 
         if (parser->token->tok == EOF_T) {
             MerDebug_print_error(SYNTAX_ERROR, "Expected expression, can not see the end in the list", parser->lexer->file, parser->lexer->row + 1);
@@ -79,6 +74,12 @@ mAST_T *MerParser_parse_array_expression(mParser_T *parser) {
         }
 
         node->list.push_back(item);
+
+        if (parser->token->tok == COMMA)
+        {
+            parser->token = _MerLexer_get_next_tok(parser->lexer);
+            continue;
+        }
     }
 
     node->is_list = true;

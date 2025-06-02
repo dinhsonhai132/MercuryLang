@@ -1,4 +1,4 @@
-#include "..\Mercury\out.cpp"
+#include "..\Mercury\Mercury.cpp"
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {

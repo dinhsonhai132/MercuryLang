@@ -1,2 +1,2 @@
 @echo off
-copy usr\include\Mercury.h C:\msys64\ucrt64\include\
+copy C:\MercuryLang\Usr\Mercury.h C:\msys64\ucrt64\include\

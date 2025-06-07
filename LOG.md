@@ -149,3 +149,5 @@
 - **Add** new assignment features
 
 - **Add** new do loop
+
+- **Add** more function

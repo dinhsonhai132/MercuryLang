@@ -123,6 +123,10 @@ END
 ```python
 LET x = 1
 x = x + 1
+x += 1
+x -= 1
+x *= 1
+x /= 1
 PRINT x
 ```
 
@@ -135,6 +139,15 @@ WHILE x < 10 DO
 END
 ```
 
+### Do loop
+```python
+LET x = 0
+
+LOOP
+    x += 1
+    !write(x)
+END
+
 ### Example code
 ```python
 # TODO: print all elements of the list
@@ -145,7 +158,7 @@ LET index = 0
  
 WHILE index < exp_size DO
     !write(exp[index])
-    index = index + 1
+    index += 1
 END
 ```
 

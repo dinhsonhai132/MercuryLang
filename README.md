@@ -147,6 +147,7 @@ LOOP
     x += 1
     !write(x)
 END
+```
 
 ### Example code
 ```python

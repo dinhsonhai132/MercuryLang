@@ -1,0 +1,59 @@
+# use sub to sub 2 type toghether
+let x = [1, 2, 3]
+let y = [1, 2]
+!sub(x, y) # result [1, 2, 3, 1, 2]
+
+let a = "Hello, "
+let b = "World!"
+!sub(a, b) # result "Hello, World!"
+
+
+!puts("hello") # print the output but ignore '\n'
+!write("hello") # print the output 
+
+
+let c = [1, 2, 3]
+!push(c, 1) # result [1, 2, 3, 1] using this function to push element into the list
+!pop(c) # result [1, 2, 3] using this function to pop element from the list
+
+
+# math function
+!sin(90)
+!cos(90)
+!tan(90)
+!cot(90)
+!sqrt(90)
+
+
+let d = [1, 2, 3]
+!type(d) # result 5 because 5 is a type for list
+
+
+let _list = [1, 2, 3]
+!ch(_list,      1,      5) # result [1, 5, 2]
+#    ^          ^       ^
+#   list      index   value
+# its same as _list[1] = 5
+
+
+let f = "hello"
+!size(f) # result 5
+# size also caculate size of list too
+f = [1, 2, 3]
+!size(f)
+# with float size will return 4 because float size is 4 byte
+
+
+let lstr = "hello"
+let rstr = "hello"
+if !same(lstr, rstr) then !write("same") end
+else !write("not same") end
+# use same to check if this string is equal as that string
+# same as python
+# if lstr == rstr: print("same")
+# else: print("end")
+
+
+let rang = !range(0, 1000) # creat a list from 0 to 1000
+!write(rang) # result [0, 1, 2, ..., 1000]
+

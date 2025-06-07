@@ -141,3 +141,11 @@
 ### 5/31/2025
 
 - you can make your language using ```#include <Mercury.h>```
+
+### 6/7/2025
+
+- **Fixed** function
+
+- **Add** new assignment features
+
+- **Add** new do loop

@@ -93,6 +93,7 @@ using namespace std;
 #define SEMICOLON "SEMICOLON"
 #define COLON "COLON"
 #define ARROW "ARROW"
+#define LOOP "LOOP"
 #define COMMENT "COMMENT"
 #define INCLUDE "INCLUDE"
 #define EXTERN_T "EXTERN_T"
@@ -107,6 +108,12 @@ using namespace std;
 #define PLUS_PLUS "PLUS_PLUS"
 #define MINUS_MINUS "MINUS_MINUS"
 #define THEN "THEN"
+#define IN "IN"
+#define PLUS_EQUAL "PLUS_EQUAL"
+#define MINUS_EQUAL "MINUS_EQUAL"
+#define TIMES_EQUAL "TIMES_EQUAL"
+#define DIV_EQUAL "DIV_EQUAL"
+#define MOD_EQUAL "MOD_EQUAL"
 
 #define INT_T "INT_T"
 #define FLOAT_T "FLOAT_T"
@@ -221,10 +228,12 @@ inline bool is_identifier(string c) {
     || (c == "bool")
     || (c == "str")
     || (c == "string")
+    || (c == "loop")
     || (c == "include")
     || (c == "else")
     || (c == "for")
     || (c == "while")
+    || (c == "in")
     || (c == "return")
     || (c == "func")
     || (c == "class")
@@ -244,11 +253,13 @@ inline const char* GET_SYNTAX(string c) {
     else if (c == "else") return ELSE;
     else if (c == "for") return FOR;
     else if (c == "while") return WHILE;
+    else if (c == "in") return IN;
     else if (c == "return") return RETURN;
     else if (c == "func") return FUNCTION;
     else if (c == "do") return DO_T;
     else if (c == "end") return END_T;
     else if (c == "break") return BREAK;
+    else if (c == "loop") return LOOP;
     else if (c == "continue") return CONTINUE;
     else if (c == "class") return CLASS;
     else if (c == "interface") return INTERFACE_;
@@ -289,6 +300,7 @@ inline bool is_identifier(const std::string& c) {
     || (c == VOID_S)
     || (c == BOOL_S)
     || (c == STR_S)
+    || (c == LOOP_S)
     || (c == STRING_S)
     || (c == INCLUDE_S)
     || (c == ELSE_S)
@@ -296,6 +308,7 @@ inline bool is_identifier(const std::string& c) {
     || (c == WHILE_S)
     || (c == RETURN_S)
     || (c == FUNCTION_S)
+    || (c == IN_S)
     || (c == CLASS_S)
     || (c == STRUCT_S)
     || (c == INTERFACE_S)
@@ -313,6 +326,8 @@ inline const char* GET_SYNTAX(const std::string& c) {
     else if (c == ELSE_S) return ELSE;
     else if (c == FOR_S) return FOR;
     else if (c == WHILE_S) return WHILE;
+    else if (c == IN_S) return IN;
+    else if (c == LOOP_S) return LOOP;
     else if (c == RETURN_S) return RETURN;
     else if (c == FUNCTION_S) return FUNCTION;
     else if (c == DO_S) return DO_T;
@@ -376,9 +391,11 @@ inline const char* GET_2_CHAR(char c1, char c2) {
             break;
         case '+':
             if (c2 == '+') return PLUS_PLUS;
+            if (c2 == '=') return PLUS_EQUAL;
             break;
         case '-':
             if (c2 == '-') return MINUS_MINUS;
+            if (c2 == '=') return MINUS_EQUAL;
             break;
         case '&':
             if (c2 == '&') return AND;
@@ -388,12 +405,17 @@ inline const char* GET_2_CHAR(char c1, char c2) {
             break;
         case '*':
             if (c2 == '*') return POW;
+            if (c2 == '=') return TIMES_EQUAL;
             break;
         case '!':
             if (c2 == '=') return NOT_EQUAL;
             break;
         case '/':
             if (c2 == '/') return COMMENT;
+            if (c2 == '=') return DIV_EQUAL;
+            break;
+        case '%':
+            if (c2 == '=') return MOD_EQUAL;
             break;
     }
 

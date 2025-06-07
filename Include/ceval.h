@@ -38,27 +38,29 @@ __program_bytecode init_program_bytecode(mCode_T &code);
 #define EAT_STACK(stk) eat_stack(stk)
 #define PUSH_STACK(stk, value) push_stack(stk, value)
 
-MERCURY_API unordered_map<Mer_uint8_t, Mer_size_t> __get_label_map(__program_bytecode &u);
+MERCURY_API unordered_map<Mer_uint8_t, Mer_size_t> __get_label_map(__program_bytecode &u, string mode);
+
 MERCURY_API Mer_uint8_t __get_next_code_in_prg_code(__program_bytecode &u);
 MERCURY_API Mer_uint8_t __get_next_code_in_out_code(__program_bytecode &u);
 
-MERCURY_API __mer_core_api__ stack *eval_PUSH_FLOAT(__program_bytecode &u, stack *stk);
-MERCURY_API __mer_core_api__ stack *eval_PUSH_NORMAL_MODE(__program_bytecode &u, stack *stk);
-MERCURY_API __mer_core_api__ stack *eval_LOAD_GLOBAL(__program_bytecode &u, stack *stk);
-MERCURY_API __mer_core_api__ stack *eval_COMPARE(__program_bytecode &u, stack *stk, Mer_uint8_t op);
-MERCURY_API __mer_core_api__ stack *eval_BINARY_OPER(__program_bytecode &u, stack *stk, Mer_uint8_t op);
-MERCURY_API __mer_core_api__ stack *eval_STORE_GLOBAL(__program_bytecode &u, stack *stk);
-MERCURY_API __mer_core_api__ stack *eval_MAKE_BLOCK(__program_bytecode &u, stack *stk);
-MERCURY_API __mer_core_api__ stack *eval_MAKE_FUNCTION(__program_bytecode &u, stack *stk);
-MERCURY_API __mer_core_api__ stack *eval_FUNCTION_CALL(__program_bytecode &u, stack *stk);
-MERCURY_API __mer_core_api__ stack *eval_PRINT(__program_bytecode &u, stack *stk);
-MERCURY_API __mer_core_api__ stack *eval_JUMP_IF_FALSE(__program_bytecode &u, stack *stk);
-MERCURY_API __mer_core_api__ stack *eval_BUILD_LIST(__program_bytecode &u, stack *stk);
-MERCURY_API __mer_core_api__ stack *eval_GET_ITEM(__program_bytecode &u, stack *stk);
-MERCURY_API __mer_core_api__ stack *eval_STORE_INDEX(__program_bytecode &u, stack *stk);
-MERCURY_API __mer_core_api__ stack *eval_program(mCode_T &code);
-MERCURY_API __mer_core_api__ stack *eval_statement(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_program(mCode_T &code);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_statement(__program_bytecode &u, stack *stk);
 
-MERCURY_API __mer_core_api__ stack *eval_function(mFunc_object_T *func_obj, stack *stk, __program_bytecode &u);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_PUSH_FLOAT(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_PUSH_NORMAL_MODE(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_LOAD_GLOBAL(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_COMPARE(__program_bytecode &u, stack *stk, Mer_uint8_t op);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_BINARY_OPER(__program_bytecode &u, stack *stk, Mer_uint8_t op);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_STORE_GLOBAL(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_MAKE_BLOCK(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_MAKE_FUNCTION(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_FUNCTION_CALL(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_PRINT(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_JUMP_IF_FALSE(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_BUILD_LIST(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_GET_ITEM(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_STORE_INDEX(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_FOR_ITERATOR(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_GET_ITERATOR(__program_bytecode &u, stack *stk);
 
 #endif // MERCURY_EVALUATE_H

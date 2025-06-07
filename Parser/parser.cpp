@@ -53,6 +53,19 @@ mAST_T *MerParser_parse_expression_statement(mParser_T *parser)
     return node;
 }
 
+mAST_T *MerParser_parse_loop_statement(mParser_T *parser) {
+    mAST_T *node = _MerAST_make_parent(LoopStatement);
+
+    parser->token = _MerLexer_get_next_tok(parser->lexer);
+
+    while (parser->token->tok != END_T) {
+        node->do_body.push_back(MerParser_parse(parser));
+    }
+
+    parser->token = _MerLexer_get_next_tok(parser->lexer);
+    return node;
+}
+
 mAST_T *MerParser_parse_array_expression(mParser_T *parser) {
     mAST_T *node = _MerAST_make_parent(ArrayExpression);
 
@@ -114,18 +127,94 @@ mAST_T *MerParser_parse(mParser_T *parser)
         return MerParser_parse_while_statement(parser);
     if (parser->token->tok == VARIABLE) {
         parser->next = _MerLexer_look_ahead(parser->lexer);
-        if (parser->next->tok == ASSIGN) {
+        if (parser->next->tok == ASSIGN 
+            || parser->next->tok == PLUS_EQUAL 
+            || parser->next->tok == MINUS_EQUAL 
+            || parser->next->tok == TIMES_EQUAL 
+            || parser->next->tok == DIV_EQUAL 
+            || parser->next->tok == MOD_EQUAL) {
             return MerParser_parse_assignment_statement(parser);
         } else {
             return MerParser_parse_constructor(parser);
         }
     }
+
+    if (parser->token->tok == LOOP) {
+        return MerParser_parse_loop_statement(parser);
+    }
     if (parser->token->tok == LIST)
         return MerParser_parse_list_statement(parser);
     if (parser->token->tok == STR)
         return MerParser_parse_variable_statement(parser);
+    if (parser->token->tok == FOR)
+        return MerParser_parse_for_statement(parser);
 
     return MerParser_parse_constructor(parser);
+}
+
+mAST_T *MerParser_parse_for_statement(mParser_T *parser) {
+    mAST_T *node = _MerAST_make_parent(ForInStatement);
+
+    parser->token = _MerLexer_get_next_tok(parser->lexer);
+
+    if (parser->token->tok == VARIABLE) {
+        node->in_iden = parser->token->string_iden;
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+    } else {
+        MerDebug_print_error(SYNTAX_ERROR, "Expected variable name in for in statement", parser->lexer->file, parser->lexer->row + 1);
+    }
+
+    if (parser->token->tok == IN) {
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+        node->in_value = MerParser_parse(parser);
+
+        if (node->in_value->type == Literal) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression in for in statement, the item can not be a literal", parser->lexer->file, parser->lexer->row + 1);
+        }
+
+        if (node->in_value->type == BinaryExpression || node->in_value->type == ComparisonExpression) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression in for in statement, the item can not be a comparison expression or binary expression", parser->lexer->file, parser->lexer->row + 1);
+        }
+
+        if (!node->in_value) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression in for in statement", parser->lexer->file, parser->lexer->row + 1);
+        }
+
+        if (!is_ast_expression(node->in_value->type)) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression in for in statement", parser->lexer->file, parser->lexer->row + 1);
+        }
+    } else {
+#ifdef MERCURY_LANG3
+        MerDebug_print_error(SYNTAX_ERROR, "Expected 'in' keyword in for in statement", parser->lexer->file, parser->lexer->row + 1);
+#else
+        MerDebug_print_error(SYNTAX_ERROR, "Expected 'IN' keyword in for in statement", parser->lexer->file, parser->lexer->row + 1);
+#endif
+    }
+
+    if (parser->token->tok == DO_T) {
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+        while (parser->token->tok != END_T) {
+            if (parser->token->tok == EOF_T) {
+                MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing 'end' keyword in the for loop", parser->lexer->file, parser->lexer->row + 1);
+            }
+
+            mAST_T *body = MerParser_parse(parser);
+            if (body) {
+                node->in_body.push_back(body);
+            } else {
+                MerDebug_print_error(SYNTAX_ERROR, "Unexpected statement", parser->lexer->file, parser->lexer->row + 1);
+            }
+        }
+    } else {
+#ifdef MERCURY_LANG3
+        MerDebug_print_error(SYNTAX_ERROR, "Expected 'do' keyword in for in statement", parser->lexer->file, parser->lexer->row + 1);
+#else
+        MerDebug_print_error(SYNTAX_ERROR, "Expected 'DO' keyword in for in statement", parser->lexer->file, parser->lexer->row + 1);
+#endif
+    }
+
+    parser->token = _MerLexer_get_next_tok(parser->lexer);
+    return node;
 }
 
 mAST_T *MerParser_parse_store_index_statement(mParser_T *parser) {
@@ -478,7 +567,36 @@ mAST_T *MerParser_parse_assignment_statement(mParser_T *parser) {
             }
 
             return node;
-        } else {
+        } 
+
+        else if (parser->token->tok == PLUS_EQUAL || parser->token->tok == MINUS_EQUAL || parser->token->tok == TIMES_EQUAL || parser->token->tok == DIV_EQUAL || parser->token->tok == MOD_EQUAL) {
+
+            if (parser->token->tok == PLUS_EQUAL) {
+                node->is_plus_assign = true;
+            } else if (parser->token->tok == MINUS_EQUAL) {
+                node->is_minus_assign = true;
+            } else if (parser->token->tok == TIMES_EQUAL) {
+                node->is_mul_assign = true;
+            } else if (parser->token->tok == DIV_EQUAL) {
+                node->is_div_assign = true;
+            } else if (parser->token->tok == MOD_EQUAL) {
+                node->is_mod_assign = true;
+            }
+
+            node->is_assign_operator = true;
+
+            parser->token = _MerLexer_get_next_tok(parser->lexer);
+
+            node->assign_value = MerParser_parse(parser);
+
+            if (!is_ast_expression(node->assign_value->type)) {
+                MerDebug_print_error(SYNTAX_ERROR, "Expected expression in assignment", parser->lexer->file, parser->lexer->row + 1);
+            }
+
+            return node;
+        }
+        
+        else {
             MerDebug_print_error(SYNTAX_ERROR, "Expected '=' in assignment", parser->lexer->file, parser->lexer->row + 1);
         }
     } else {

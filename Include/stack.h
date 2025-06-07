@@ -30,6 +30,9 @@
 
 using namespace std;
 
+#define GC_HEAD \
+    int ref_count = 1;
+
 #define OTHER \
     bool is_in_glb; \
     bool is_in_lc; \
@@ -54,6 +57,7 @@ using namespace std;
     bool is_func; \
     bool is_code; \
     bool is_type; \
+    bool is_iter; \
     bool is_list; \
     bool is_obj; \
     bool is_opcode;
@@ -63,6 +67,7 @@ using namespace std;
     mVariable_T *var_v; \
     mFunc_T func_v; \
     mCode_T *code_v; \
+    mIter_T *iter_v; \
     mType_T *type_v; \
     mList_T *list_v; \
     mObject_T *obj_v; \
@@ -88,7 +93,9 @@ using namespace std;
 
 typedef struct __table
 {
-    HEAD_STACK HEAD_OBJ
+    GC_HEAD
+    HEAD_STACK 
+    HEAD_OBJ
     HEAD_VALUE
     FLAG
     OTHER
@@ -97,6 +104,7 @@ typedef struct __table
 
 typedef struct __symboltable
 {
+    GC_HEAD
     HEAD_STACK;
     HEAD_OBJ;
     HEAD_VALUE;

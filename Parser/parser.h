@@ -64,5 +64,7 @@ mAST_T *MerParser_parse_string_statement(mParser_T *parser);
 mAST_T *MerParser_parse_store_index_statement(mParser_T *parser);
 mAST_T *MerParser_parse_constructor(mParser_T *parser);
 mAST_T *MerParser_parse_array_expression(mParser_T *parser);
+mAST_T *MerParser_parse_for_statement(mParser_T *parser);
+mAST_T *MerParser_parse_loop_statement(mParser_T *parser);
 
 #endif // MERCURY_PARSER_HEADER_FILE

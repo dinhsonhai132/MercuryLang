@@ -26,6 +26,21 @@ _code MerCompiler_code_new(void) {
     return c;
 }
 
+__iter *MerCompiler_iter_new(void) {
+    __iter *it = new __iter();
+
+    it->index = 0;
+    it->size = 0;
+    it->ui8_address = NULL_UINT_8_T;
+    it->ui16_address = NULL_UINT_16_T;
+    it->ui32_address = NULL_UINT_32_T;
+
+    it->loop_obj.list = NULL_PTR;
+    it->loop_obj.list = NULL_PTR;
+
+    return it;
+}
+
 _code *MerCompiler_code_new_as_ptr(void) {
     _code *c = new _code;
     c->code = NULL_UINT_8_T;
@@ -54,7 +69,7 @@ _pcode *MerCompiler_pcode_new(void) {
     p->out_code = MerCompiler_code_new();
 
     p->scode = NULL_PTR;
-    p->cfile = NULL_PTR;
+    p->cfile = "stdin";
     p->csize = 0;
     p->raw.clear();
     p->raw_in_buff[0] = NULL_UINT_8_T;

@@ -7,18 +7,20 @@
 
 #define CBUILD_LIST                             0x1A
 #define CGET_ITEM                               0xF2
-#define CGET_ITER                               0xF3
 #define CSTORE_INDEX                            0xF1
 #define CBINARY_SUBSCRIBE                       0xF4
 
 #define CLOAD_GLOBAL                            0x9F
 #define CSTORE_GLOBAL                           0xFF
 
-#define CBINARY_ADD                             0x1F
-#define CBINARY_SUB                             0x2F
-#define CBINARY_MUL                             0x3F
-#define CBINARY_DIV                             0x4F
-#define CBINARY_MOD                             0x5F
+#define CBINARY_ADD                             0xE1
+#define CBINARY_SUB                             0xE2
+#define CBINARY_MUL                             0xE3
+#define CBINARY_DIV                             0xE4
+#define CBINARY_MOD                             0xE5
+
+#define CGET_ITERATOR                           0x19
+#define CFOR_ITERATOR                           0x20
 
 #define TRUE_ADDRESS                            0x1A
 #define FALSE_ADDRESS                           0x2A
@@ -28,8 +30,8 @@
 #define CLESS                                   0x3B
 #define CLESS_EQUAL                             0x4B
 #define CGREATER                                0x5B
-#define CGREATER_EQUAL                          0x6B
-#define CNOT                                    0x7B
+#define CGREATER_EQUAL                          0x0B
+#define CNOT                                    0xE1
 
 #define CAND                                    0x1C
 #define COR                                     0x2C

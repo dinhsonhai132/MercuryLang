@@ -1,6 +1,6 @@
-let x = 0
+x = 0
 
 while x < 10000 do
     x = x + 1
-    !write(x)
+    print(x)
 end

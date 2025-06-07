@@ -11,12 +11,14 @@
 #define __io_cout_stdout(x) \
     cout << x;
 
+
+
 unordered_map<string, Mer_uint8_t> lib_hashmap = {
     {"write", IO_WRITE_ADDRESS}, {"eval", EVAL_ADDRESS}, {"pause", PAUSE_ADDRESS}, {"exit", EXIT_ADDRESS},
     {"cls", CLS_ADDRESS}, {"help", HELP_ADDRESS}, {"same", SAME_STRING_ADDRESS}, {"size", SIZE_ADDRESS}, {"push", PUSH_ADDRESS},
     {"pop", POP_ADDRESS}, {"watch", PRINT_LIST_ADDRESS}, {"puts", PUTS_ADDRESS}, {"cos", COS_ADDRESS}, {"tan", TAN_ADDRESS},
     {"cot", COT_ADDRESS}, {"sqrt", SQRT_ADDRESS}, {"sin", SIN_ADDRESS}, {"glb", PRINT_GLOBAL_ADDRESS}, {"ch", CHANGE_ITEM_ADDRESS},
-    {"type", TYPE_ADDRESS}
+    {"type", TYPE_ADDRESS}, {"range", RANGE_ADDRESS}, {"random", RANDOM_ADDRESS}, {"randint", RANDINT_ADDRESS}, {"sub", SUB_STR}
 };
 
 unordered_map<string, Mer_uint8_t> global_hashmap = {
@@ -28,6 +30,7 @@ __mer_core_lib_api__ const char* to_char(Mer_uint8_t c);
 __mer_core_lib_api__ void __builtin_print(mObject_T *str);
 __mer_core_lib_api__ void __io_write(mString_T *__string);
 __mer_core_lib_api__ void __io_puts(mString_T *__string);
+__mer_core_data__ float __randint(int a, int b);
 __mer_core_lib_api__  Mer_real_string hash_to_string(mString_T *str);
 
 MERCURY_API __mer_core_lib_api__ void __builtin_io_write(stack *stk);
@@ -52,29 +55,11 @@ MERCURY_API __mer_core_lib_api__ void __builtin_mer_sin(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_print_global_stack(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_change_item(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_type(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_random(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_randint(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_range(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_mer_sub_str(stack *stk);
 
-
-MERCURY_API __mer_core_lib_api__ vector<Mer_Reg> mer_core_libs = {
-    {IO_WRITE_ADDRESS, "write", (void*)__builtin_io_write},
-    {EVAL_ADDRESS, "eval", (void*)__builtin_eval},
-    {PAUSE_ADDRESS, "pause", (void*)__builtin_pause},
-    {EXIT_ADDRESS, "exit", (void*)(void(*)(int))__builtin_exit},
-    {CLS_ADDRESS, "cls", (void*)__builtin_cls},
-    {HELP_ADDRESS, "help", (void*)__builtin_help},
-    {SAME_STRING_ADDRESS, "same", (void*)__builtin_same_string},
-    {SIZE_ADDRESS, "size", (void*)__builtin_size},
-    {PUSH_ADDRESS, "push", (void*)__builtin_push},
-    {POP_ADDRESS, "pop", (void*)__builtin_pop},
-    {PRINT_LIST_ADDRESS, "watch", (void*)__builtin_watch},
-    {PUTS_ADDRESS, "puts", (void*)__builtin_puts_val},
-    {COS_ADDRESS, "cos", (void*)__builtin_mer_cos},
-    {TAN_ADDRESS, "tan", (void*)__builtin_mer_tan},
-    {COT_ADDRESS, "cot", (void*)__builtin_mer_cot},
-    {SQRT_ADDRESS, "sqrt", (void*)__builtin_mer_sqrt},
-    {SIN_ADDRESS, "sin", (void*)__builtin_mer_sin},
-    {PRINT_GLOBAL_ADDRESS, "glb", (void*)__builtin_print_global_stack},
-    {CHANGE_ITEM_ADDRESS, "ch", (void*)__builtin_change_item},
-    {TYPE_ADDRESS, "type", (void*)__builtin_type},
-};
+MERCURY_API __mer_core_lib_api__ vector<Mer_Reg> mer_core_libs = {};
 
 #endif // MERCURY_BUILTIN_HEADER_FILE

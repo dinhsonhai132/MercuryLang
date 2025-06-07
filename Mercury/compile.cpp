@@ -34,8 +34,31 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_id(mAST_T
   if (ast->type == ArrayExpression)         return MerCompiler_compile_ast_array(ast, glb);
   if (ast->type == ExtractExpression)       return MerCompiler_compile_ast_extract(ast, glb);
   if (ast->type == StoreIndexStatement)     return MerCompiler_compile_ast_store_index_statement(ast, glb);
+  if (ast->type == ForInStatement)          return MerCompiler_compile_ast_for_in_statement(ast, glb);
+  if (ast->type == LoopStatement)           return MerCompiler_compile_ast_loop(ast, glb);
 
   return NULL_CODE;
+}
+
+MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_loop(mAST_T *ast, __compiler_u &glb) {
+  __Mer_return_Code result = NULL_CODE;
+  __Mer_return_Code body = NULL_CODE;
+
+  for (auto &node : ast->do_body) {
+    __Mer_return_Code _code = MerCompiler_compile_ast_id(node, glb);
+    INSERT_VEC(body, _code);
+    _code.prg_code.buff.clear();
+  }
+
+  ++glb.address;
+
+  PUSH(result, CADDRESS);
+  PUSH(result, glb.address);
+  INSERT_VEC(result, body);
+  PUSH(result, CJUMP_TO);
+  PUSH(result, glb.address); 
+
+  return result;
 }
 
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_store_index_statement(mAST_T *ast, __compiler_u &glb) {
@@ -199,7 +222,7 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_string_id
 }
 
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_assign(mAST_T *ast, __compiler_u &glb) {
-  __Mer_return_Code _ass = MerCompiler_compile_ast_id(ast->assign_value, glb);
+  __Mer_return_Code _ass = NULL_CODE;
   if (!ast->assign_value) {
     MerDebug_system_error(COMPILER_ERROR, "Assign value is null", glb.file);
   }
@@ -223,9 +246,39 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_assign(mA
     return NULL_CODE;
   }
 
-  INSERT_VEC(result, _ass);
-  PUSH(result, CSTORE_GLOBAL);
-  PUSH(result, address);
+  if (ast->is_assign_operator) {
+    Mer_uint8_t opcode = NULL_UINT_8_T;
+    if (ast->is_plus_assign) {
+      opcode = CBINARY_ADD;
+    } else if (ast->is_minus_assign) {
+      opcode = CBINARY_SUB;
+    } else if (ast->is_mul_assign) {
+      opcode = CBINARY_MUL;
+    } else if (ast->is_div_assign) {
+      opcode = CBINARY_DIV;
+    } else if (ast->is_mod_assign) {
+      opcode = CBINARY_MOD;
+    } else {
+      MerDebug_system_error(COMPILER_ERROR, "Invalid assign operator", glb.file);
+    }
+
+    PUSH(_ass, CLOAD_GLOBAL);
+    PUSH(_ass, address);
+
+    __Mer_return_Code _code = MerCompiler_compile_ast_id(ast->assign_value, glb);
+    INSERT_VEC(_ass, _code);
+
+    PUSH(_ass, opcode);
+
+    INSERT_VEC(result, _ass);
+    PUSH(result, CSTORE_GLOBAL);
+    PUSH(result, address);
+  } else {
+    _ass = MerCompiler_compile_ast_id(ast->assign_value, glb);
+    INSERT_VEC(result, _ass);
+    PUSH(result, CSTORE_GLOBAL);
+    PUSH(result, address);
+  }
 
   #ifdef SYSTEM_TEST
   cout << "[compiler.cpp] [MerCompiler_compile_ast_assign] [pass]" << endl;
@@ -272,6 +325,57 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_while(mAS
 
   #ifdef SYSTEM_TEST
   cout << "[compiler.cpp] [MerCompiler_compile_ast_while] [pass]" << endl;
+  #endif
+  
+  return result;
+}
+
+MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_for_in_statement(mAST_T *ast, __compiler_u &glb) {
+  __Mer_return_Code result = NULL_CODE;
+  __Mer_return_Code for_in_loop_val = MerCompiler_compile_ast_id(ast->in_value, glb);
+  __Mer_return_Code for_in_body = NULL_CODE;
+
+  for (auto &item : GLOBAL_TABLE) {
+    if (item->__name == ast->in_iden) {
+      MerDebug_system_error(COMPILER_ERROR, "Variable already exist", glb.file);
+      break;
+    }
+  }
+  
+  Mer_uint8_t address = ++glb.address;
+  GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(address, ast->in_iden.c_str(), ast->in_iden));
+
+  for (auto child : ast->in_body) {
+    __Mer_return_Code _code = MerCompiler_compile_ast_id(child, glb);
+    INSERT_VEC(for_in_body, _code);
+    _code.prg_code.buff.clear();
+  }
+  
+  Mer_uint8_t end_loop = ++glb.address;
+  Mer_uint8_t start_loop = ++glb.address;
+
+  INSERT_VEC(result, for_in_loop_val);
+  PUSH(result, CGET_ITERATOR);
+
+  PUSH(result, CADDRESS);
+  PUSH(result, start_loop);
+
+  PUSH(result, CFOR_ITERATOR);
+  PUSH(result, end_loop);
+
+  PUSH(result, CSTORE_GLOBAL);
+  PUSH(result, address);  
+
+  INSERT_VEC(result, for_in_body);
+
+  PUSH(result, CJUMP_TO);
+  PUSH(result, start_loop);
+
+  PUSH(result, CADDRESS);
+  PUSH(result, end_loop);
+
+  #ifdef SYSTEM_TEST
+  cout << "[compiler.cpp] [MerCompiler_compile_ast_for_in_statement] [pass]" << endl;
   #endif
   
   return result;

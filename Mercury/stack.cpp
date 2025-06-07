@@ -38,13 +38,6 @@ table *MerCompiler_Table_new(void) {
     t->address = 0x01;
     t->size = 0;
     t->str_v = "";
-    t->list_v = MerCompiler_list_object_new();
-    t->f_str_v = MerCompiler_string_new();
-    t->code_v = MerCompiler_pcode_new();
-    t->type_v = MerCompiler_type_new();
-    t->func_obj_v = MerCompiler_func_object_new();
-    t->obj_v = MerCompiler_object_new();
-    t->opcode_v = nullptr;
     t->table = vector<table*>();
     t->tbody = vector<uint8_t>();
     t->is_in_glb = false;
@@ -70,20 +63,13 @@ symtable *MerCompiler_SymbolTable_new(void) {
     s->is_var = false;
     s->is_builtin = false;
     s->is_local = false;
-    s->list_v = MerCompiler_list_object_new();
     s->var_v = nullptr;
-    s->f_str_v = MerCompiler_string_new();
-    s->code_v = MerCompiler_pcode_new();
-    s->type_v = MerCompiler_type_new();
-    s->func_obj_v = MerCompiler_func_object_new();
-    s->obj_v = MerCompiler_object_new();
     s->is_in_glb = false;
-    s->opcode_v = nullptr;
-    s->tab = MerCompiler_Table_new();
     s->err = "";
     s->tbody = vector<uint8_t>();
     s->cidx = 0;
     s->address = 0x01;
+    s->tab = MerCompiler_Table_new();
     return s;
 }
 
@@ -202,4 +188,3 @@ table *eat_stack(stack *stk) {
 
     return top;
 }
-

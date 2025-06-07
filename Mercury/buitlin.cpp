@@ -1,5 +1,12 @@
 #include "../Include/buitlin.h"
 
+__mer_core_data__ float __randint(int a, int b) {
+    static std::random_device rd;   // dùng để seed
+    static std::mt19937 gen(rd());  // máy phát số ngẫu nhiên
+    std::uniform_int_distribution<> dis(a, b); // phân phối số nguyên đều
+    return dis(gen);
+}
+
 MERCURY_API __mer_core_lib_api__ const char* to_char(Mer_uint8_t c) {
     static char s[1];
     s[0] = c;
@@ -42,6 +49,28 @@ MERCURY_API __mer_core_lib_api__ void __builtin_print_global_stack(stack *stk) {
     }
 }
 
+MERCURY_API __mer_core_lib_api__ void __builtin_mer_sub_str(stack *stk) {
+    table *lstr = pop_stack(stk);
+    table *rstr = pop_stack(stk);
+
+    if (!lstr || !rstr) stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
+    if (lstr->is_str && lstr->is_str) {
+        rstr->f_str_v->buff.insert(rstr->f_str_v->buff.end(), lstr->f_str_v->buff.begin(), lstr->f_str_v->buff.end());
+        rstr->f_str_v->size += lstr->f_str_v->size;
+        stk->s_table->table.push_back(rstr);
+        return;
+    } else if (lstr->is_list && lstr->is_list) {
+        rstr->list_v->args.insert(rstr->list_v->args.end(), lstr->list_v->args.begin(), lstr->list_v->args.end());
+        rstr->list_v->size += lstr->list_v->size;
+        stk->s_table->table.push_back(rstr);
+        return;
+    } else {
+        rstr->cval += lstr->cval;
+        rstr->value += lstr->value;
+        stk->s_table->table.push_back(rstr);
+    }
+}
+
 MERCURY_API __mer_core_lib_api__ void __builtin_mer_sqrt(stack *stk) {
     table *num = pop_stack(stk);
     stk->s_table->table.push_back(MerCompiler_table_setup(fsqrt(num->cval), NULL_UINT_8_T));
@@ -62,6 +91,16 @@ MERCURY_API __mer_core_lib_api__ void __builtin_mer_cot(stack *stk) {
     stk->s_table->table.push_back(MerCompiler_table_setup(fcot(num->cval), NULL_UINT_8_T));
 }
 
+MERCURY_API __mer_core_lib_api__ void __builtin_random(stack *stk) {
+    stk->s_table->table.push_back(MerCompiler_table_setup(__randint(0 - INT_MAX, INT_MAX), NULL_UINT_8_T));    
+}
+
+MERCURY_API __mer_core_lib_api__ void __builtin_randint(stack *stk) {
+    table *start = pop_stack(stk);
+    table *end = pop_stack(stk);
+    stk->s_table->table.push_back(MerCompiler_table_setup(__randint(start->cval, end->cval), NULL_UINT_8_T));
+}
+
 MERCURY_API __mer_core_lib_api__ void __builtin_mer_sin(stack *stk) {
     table *num = pop_stack(stk);
     stk->s_table->table.push_back(MerCompiler_table_setup(fsin(num->cval), NULL_UINT_8_T));
@@ -77,6 +116,39 @@ MERCURY_API __mer_core_lib_api__ void __builtin_is_my_fav_number(stack *stk) {
         stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
     }
 
+}
+
+MERCURY_API __mer_core_lib_api__ void __builtin_range(stack *stk) {
+    table *start = pop_stack(stk);
+    table *end = pop_stack(stk);
+
+    Mer_size_t start_int = start->cval;
+    Mer_size_t end_int = end->cval;
+
+    mList_T *list = MerCompiler_list_object_new();
+
+    if (start_int > end_int) {
+        for (Mer_size_t i = start_int; i > end_int; i--) {
+            mValue_T *v = MerCompiler_val_new();
+            get_f(v) = i;
+            get_v(v) = i;
+            back_insrt(list->args, v);
+        }
+    } else {
+        for (Mer_size_t i = start_int; i < end_int; i++) {
+            mValue_T *v = MerCompiler_val_new();
+            get_f(v) = i;
+            get_v(v) = i;
+            back_insrt(list->args, v);
+        }
+    }
+
+    table *list_table = MerCompiler_Table_new();
+    list_table->is_list = true;
+    list_table->list_v = list;
+    list_table->list_v->size = list->args.size();
+    list_table->cval = MERCURY_LIST_VALUE;
+    stk->s_table->table.push_back(list_table);
 }
 
 __mer_core_api__ int __same(vector<Mer_uint8_t> a, vector<Mer_uint8_t> b) {
@@ -196,10 +268,12 @@ MERCURY_API __mer_core_lib_api__ void __builtin_io_write(stack *stk) {
         
         __io_cout_stdout("]");
         __io_cout_stdout("\n");
+
+        stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
     }  else {
         __io_cout_stdout(top->cval);
         __io_cout_stdout("\n");
-        stk->s_table->table.push_back(top);
+        stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
     }
 
     
@@ -283,7 +357,6 @@ MERCURY_API __mer_core_lib_api__ void __builtin_push(stack *stk) {
         stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
     }
 
-
     #ifdef SYSTEM_TEST
     cout << "[buitlin.cpp] [__builtin_push] [pass]" << endl;
     #endif
@@ -309,13 +382,15 @@ MERCURY_API __mer_core_lib_api__ void __builtin_change_item(stack *stk) {
     table *index = pop_stack(stk);
     table *value = pop_stack(stk);
 
-
     if (value->is_list) {
         mValue_T *vvalue = (mValue_T *)value->list_v->args[index->cval];
         vvalue->f_value = item->cval;
         vvalue->value_t.float_value = item->cval;
     }
     
+    free(item);
+    free(index);
+
     stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
 }
 

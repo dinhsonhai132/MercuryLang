@@ -35,6 +35,10 @@ using namespace std;
 #define CHANGE_ITEM_ADDRESS         0xAD
 #define TYPE_ADDRESS                0xAE
 #define NULL_GLOBAL_ADDRESS         0xAF
+#define RANGE_ADDRESS               0xB0
+#define RANDOM_ADDRESS              0xB1
+#define RANDINT_ADDRESS             0xB1
+#define SUB_STR                     0xF1
 
 MERCURY_API __mer_core_data__ vector<symtable *> _G = {};
 MERCURY_API __mer_core_data__ vector<symtable *> _L = {};

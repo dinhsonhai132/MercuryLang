@@ -25,6 +25,9 @@ using namespace std;
 #define MER_PCODE_TYPE 12
 #define MER_CODE_TYPE 13
 
+#define GC_HEAD \
+    int ref_count = 1; \
+
 #define FLAG_HEAD \
     bool f_str = false; \
     bool f_hash = false; \
@@ -55,6 +58,8 @@ struct Mer_string_entry {
 };
 
 struct _val {
+    GC_HEAD;
+
     union
     {
         Mer_int int_value;
@@ -74,6 +79,7 @@ struct _val {
 
 struct _code
 {
+    GC_HEAD;
     Mer_uint8_t code;
     Mer_uint8_t byte;
     Mer_uint8_t address;
@@ -89,6 +95,7 @@ struct _code
 };
 
 struct _string {
+    GC_HEAD;
     Mer_size_t size;
     hash_t hash = 0x00;
     char contents[MAX_CODE_LEN];
@@ -98,6 +105,7 @@ struct _string {
 
 struct _pcode
 {
+    GC_HEAD;
     _code prg_code;
     _code out_code;
     const char *scode;
@@ -110,6 +118,7 @@ struct _pcode
 };
 
 struct _func_object {
+    GC_HEAD;
     Mer_uint8_t ui8_address;
     Mer_uint16_t ui16_address;
     Mer_uint32_t ui32_address;
@@ -131,12 +140,12 @@ struct _func_object {
     Mer_size_t args_size;
 
     float f_value;
-    _val *ret_val;
 
     vector<void*> args;
 };
 
 struct block_obj  {
+    GC_HEAD;
     Mer_uint8_t ui8_address;
     Mer_uint16_t ui16_address;
     Mer_uint32_t ui32_address;
@@ -146,7 +155,9 @@ struct block_obj  {
     _code *bs_bc;
 };
 
+
 struct _list_object {
+    GC_HEAD;
     Mer_uint8_t ui8_address;
     Mer_uint16_t ui16_address;
     Mer_uint32_t ui32_address;
@@ -155,7 +166,24 @@ struct _list_object {
     vector<void*> args;
 };
 
+struct __iter {
+    GC_HEAD;
+    Mer_uint8_t ui8_address;
+    Mer_uint16_t ui16_address;
+    Mer_uint32_t ui32_address;
+    
+    union
+    {
+        _list_object *list;
+        _string *str;
+    } loop_obj;
+    
+    Mer_size_t index;
+    Mer_size_t size;
+};
+
 struct _variable {
+    GC_HEAD;
     Mer_string name;
     Mer_string type;
     _val *val;
@@ -168,8 +196,25 @@ struct _variable {
     bool _is_global;
 };
 
+struct _type_obj {
+    FLAG_HEAD;
+    GC_HEAD;
+
+    _func_object *func;
+    _variable *variable;
+    _string *str;
+    _pcode *pcode;
+    _code *code;
+    _list_object *list;
+    block_obj *block;
+    _val *val;
+    Mer_Reg *reg;
+    Mer_string_entry *str_entry;
+};
+
 struct _type
 {
+    GC_HEAD;
     FLAG_HEAD;
     _func_object *func;
     _variable *variable;
@@ -187,12 +232,16 @@ struct _type
 
 struct _object
 {
+    GC_HEAD;
     _type *type;
     _type *data_type;
     _type *value;
     _type *file_name;
     _type *name;
     _pcode *code;
+
+    _type_obj *obj_val;
+    Mer_size_t size;
 
     unordered_map<string, _object *> attributes;
 };
@@ -243,7 +292,6 @@ _variable *MerCompiler_variable_new(void);
 _type *MerCompiler_type_new(void);
 _object *MerCompiler_object_new(void);
 _code *MerCompiler_code_new_as_ptr(void);
-
 
 int MerCompiler_free_object(_object *o);
 int MerCompiler_free_type(_type *t);

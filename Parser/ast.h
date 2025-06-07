@@ -53,11 +53,15 @@ using namespace std;
 #define StringVariableStatement "StringVariableStatement"
 #define Literal "Literal"
 #define IntegerLiteral "IntegerLiteral"
+#define LoopStatement "LoopStatement"
+#define BreakStatement "BreakStatement"
+#define ContinueStatement "ContinueStatement"
 #define BinaryExpression "BinaryExpression"
 #define StringExpression "StringExpression"
 #define ListStatement "ListStatement"
 #define ListExpression "ListExpression"
 #define ArrayStoreElementExpression "ArrayStoreElementExpression"
+#define ForInStatement "ForInStatement"
 
 #define is_ast_expression(type) \
     ((type) == BinaryExpression || \
@@ -95,6 +99,12 @@ struct mAST_T
     // assginment
     string assign_iden;
     mAST_T *assign_value;
+    bool is_assign_operator;
+    bool is_plus_assign;
+    bool is_minus_assign;
+    bool is_mul_assign;
+    bool is_div_assign;
+    bool is_mod_assign;
 
     // for built-in function
     string built_in_func_name;
@@ -132,6 +142,20 @@ struct mAST_T
     string comp_op;
     mAST_T *comp_left;
     mAST_T *comp_right;
+
+    // break or continue
+    bool is_break;
+    bool is_continue;
+
+    // for do while loop
+    vector<mAST_T *> do_body;
+
+    // for in statement
+    string in_iden;
+    mAST_T *in_value;
+    vector<mAST_T *> in_body;   
+    bool for_is_having_else;
+    vector<mAST_T *> in_else_body; 
 
     // For variable
     string var_name;

@@ -182,27 +182,27 @@ end
 
 # evaluate the tokens
 let result = 0
-let index = 0
+let stack_index = 0
 
-while index < size(tokens) do
-    if index < size(tokens) then let current = tokens[index] end
+while stack_index < size(tokens) do
+    if stack_index < size(tokens) then let current = tokens[stack_index] end
+
     if same(current, plus) then
-        let left = tokens[index - 1]
-        let right = tokens[index + 1]
+        let left = tokens[stack_index - 1]
+        let right = tokens[stack_index + 1]
         result += to_int(left) + to_int(right)
     end
 
     if same(current, minus) then
-        let left = tokens[index - 1]
-        let right = tokens[index + 1]
+        let left = tokens[stack_index - 1]
+        let right = tokens[stack_index + 1]
         result += to_int(left) - to_int(right)
     end
 
-    if index < size(tokens) then index += 1 end
+    if stack_index < size(tokens) then stack_index += 1 end
 end
 
-puts("Result: ")
-puts(result)
+print(result)
 ```
 
 ## 🔋 Advance

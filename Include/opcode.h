@@ -27,10 +27,10 @@
 
 #define CEQUAL                                  0x1B
 #define CNOT_EQUAL                              0x2B
-#define CLESS                                   0x3B
+#define CLESS                                   0x8B
 #define CLESS_EQUAL                             0x4B
 #define CGREATER                                0x5B
-#define CGREATER_EQUAL                          0x0B
+#define CGREATER_EQUAL                          0x9B
 #define CNOT                                    0xE1
 
 #define CAND                                    0x1C
@@ -38,6 +38,7 @@
 #define CNOT_OR                                 0x3C
 #define CAND_OR                                 0x4C
 #define CNOT_AND_OR                             0x5C
+#define CLEN                                    0x6C
 
 #define CJUMP_IF_FALSE                          0x1D
 #define CJUMP_IF_TRUE                           0x2D
@@ -53,8 +54,12 @@
 #define CFUNCTION_CALL                          0x6E
 #define CRETURN                                 0x9E
 
-#define CPRINT                                  0xFC
 #define CADDRESS                                0xFA
 #define CNONE                                   0xFD
+
+#define NUMBER_0 {0x00, 0x00, 0x00, 0x00}
+#define NUMBER_1 {0x00, 0x00, 0x80, 0x3F}
+#define NUMBER_2 {0x00, 0x00, 0x00, 0x40}
+#define NUMBER_3 {0x00, 0x00, 0x40, 0x40}
 
 #endif // MERCURY_OPCODE_H

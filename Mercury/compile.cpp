@@ -27,7 +27,6 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_id(mAST_T
   if (ast->type == FunctionStatement)       return MerCompiler_compile_ast_function(ast, glb); 
   if (ast->type == ComparisonExpression)    return MerCompiler_compile_ast_comparison_expression(ast, glb);
   if (ast->type == AssignStatement)         return MerCompiler_compile_ast_assign(ast, glb);
-  if (ast->type == PrintStatement)          return MerCompiler_compile_ast_print(ast, glb);
   if (ast->type == WhileStatement)          return MerCompiler_compile_ast_while(ast, glb);
   if (ast->type == StringIdentifier)        return MerCompiler_compile_ast_string_identifier(ast, glb);
   if (ast->type == ListStatement)           return MerCompiler_compile_ast_list(ast, glb);
@@ -36,27 +35,62 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_id(mAST_T
   if (ast->type == StoreIndexStatement)     return MerCompiler_compile_ast_store_index_statement(ast, glb);
   if (ast->type == ForInStatement)          return MerCompiler_compile_ast_for_in_statement(ast, glb);
   if (ast->type == LoopStatement)           return MerCompiler_compile_ast_loop(ast, glb);
+  if (ast->type == BreakStatement)          return MerCompiler_compile_ast_break(ast, glb);
+  if (ast->type == ContinueStatement)       return MerCompiler_compile_ast_continue(ast, glb);
 
   return NULL_CODE;
+}
+
+MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_break(mAST_T *ast, __compiler_u &glb) {
+    __Mer_return_Code result = NULL_CODE;
+    if (glb.loop.empty()) {
+        cerr << "[compile_break] Error: break outside of loop\n";
+        return result;
+    }
+
+    PUSH(result, CJUMP_TO);
+    PUSH(result, glb.loop.back().break_label);
+    return result;
+}
+
+MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_continue(mAST_T *ast, __compiler_u &glb) {
+    __Mer_return_Code result = NULL_CODE;
+    if (glb.loop.empty()) {
+        cerr << "[compile_break] Error: break outside of loop\n";
+        return result;
+    }
+
+    PUSH(result, CJUMP_TO);
+    PUSH(result, glb.loop.back().continue_label);
+    return result;
 }
 
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_loop(mAST_T *ast, __compiler_u &glb) {
   __Mer_return_Code result = NULL_CODE;
   __Mer_return_Code body = NULL_CODE;
+  __Mer_return_Code _code = NULL_CODE;
+
+  Mer_uint8_t label_start = create_label(glb);
+  Mer_uint8_t label_end = create_label(glb);
+  glb.loop.push_back(loop_stack { label_start, label_end });
 
   for (auto &node : ast->do_body) {
-    __Mer_return_Code _code = MerCompiler_compile_ast_id(node, glb);
+    _code = MerCompiler_compile_ast_id(node, glb);
     INSERT_VEC(body, _code);
     _code.prg_code.buff.clear();
   }
 
-  ++glb.address;
-
   PUSH(result, CADDRESS);
-  PUSH(result, glb.address);
+  PUSH(result, label_start);
+  
   INSERT_VEC(result, body);
   PUSH(result, CJUMP_TO);
-  PUSH(result, glb.address); 
+  PUSH(result, label_start); 
+
+  PUSH(result, CADDRESS);
+  PUSH(result, label_end);
+
+  glb.loop.pop_back();
 
   return result;
 }
@@ -78,15 +112,15 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_store_ind
   }
 
   if (!found) {
-    MerDebug_system_error(COMPILER_ERROR, "List not found, can not extract value from list", glb.file);
+    MerDebug_print_error(COMPILER_ERROR, "List not found, can not extract value from list", glb.file, ast->true_line);
   }
 
   if (!ast->extract_assign) {
-    MerDebug_system_error(COMPILER_ERROR, "Assign value is null", glb.file);
+    MerDebug_print_error(COMPILER_ERROR, "Extract assign is null", glb.file, ast->true_line);
   }
 
   if (!ast->extract_value) {
-    MerDebug_system_error(COMPILER_ERROR, "Extract value is null", glb.file);
+    MerDebug_print_error(COMPILER_ERROR, "Extract value is null", glb.file, ast->true_line);
   }
 
   PUSH(result, CLOAD_GLOBAL);
@@ -113,7 +147,7 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_extract(m
   }
 
   if (!found) {
-    MerDebug_system_error(COMPILER_ERROR, "List not found, can not extract value from list", glb.file);
+    MerDebug_print_error(COMPILER_ERROR, "List not found, can not extract value from list", glb.file, ast->true_line);
   }
 
   __Mer_return_Code _code = MerCompiler_compile_ast_id(ast->extract_value, glb);
@@ -131,11 +165,11 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_array(mAS
   __Mer_return_Code array = NULL_CODE;
 
   if (ast->type != ArrayExpression) {
-    MerDebug_system_error(COMPILER_ERROR, "Invalid creating array", glb.file);
+    MerDebug_print_error(COMPILER_ERROR, "Invalid creating array", glb.file, ast->true_line);
   }
   
   if (!ast->is_alone_val) {
-    MerDebug_system_error(COMPILER_ERROR, "Invalid creating array", glb.file);
+    MerDebug_print_error(COMPILER_ERROR, "Invalid creating array", glb.file, ast->true_line);
   }
 
   Mer_uint8_t size = ast->list.size();
@@ -161,11 +195,11 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_list(mAST
   __Mer_return_Code list = NULL_CODE;
 
   if (ast->type != ListStatement) {
-    MerDebug_system_error(COMPILER_ERROR, "Invalid creating list", glb.file);
+    MerDebug_print_error(COMPILER_ERROR, "Invalid creating list", glb.file, ast->true_line);
   }
 
   Mer_uint8_t size = ast->list.size();
-  Mer_uint8_t address = ++glb.address;
+  Mer_uint8_t address = create_label(glb);
 
   for (auto &item : ast->list) {
     __Mer_return_Code _code = MerCompiler_compile_ast_id(item, glb);
@@ -177,13 +211,6 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_list(mAST
   PUSH(result, size);
   PUSH(result, CSTORE_GLOBAL);
   PUSH(result, address);
-
-  for (auto &item : GLOBAL_TABLE) {
-    if (item->__name == ast->list_name) {
-      string msg = "List name already exist: '" + ast->list_name + "'";
-      MerDebug_system_error(COMPILER_ERROR, msg.c_str(), glb.file);
-    }
-  }
 
   GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(address, ast->list_name.c_str(), ast->list_name));
 
@@ -199,7 +226,7 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_string_id
   __Mer_return_Code str = NULL_CODE;
   
   if (ast->type != StringIdentifier) {
-    MerDebug_system_error(COMPILER_ERROR, "Invalid creating string identifier", glb.file);
+    MerDebug_print_error(COMPILER_ERROR, "Invalid creating string identifier", glb.file, ast->true_line);
   }
 
   Mer_uint8_t size = ast->str_v.size();
@@ -224,7 +251,7 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_string_id
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_assign(mAST_T *ast, __compiler_u &glb) {
   __Mer_return_Code _ass = NULL_CODE;
   if (!ast->assign_value) {
-    MerDebug_system_error(COMPILER_ERROR, "Assign value is null", glb.file);
+    MerDebug_print_error(COMPILER_ERROR, "Invalid assign statement", glb.file, ast->true_line);
   }
 
   __Mer_return_Code result = NULL_CODE;
@@ -242,7 +269,7 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_assign(mA
   if (!found) {
     Mer_real_string str = ast->assign_iden.c_str();
     Mer_real_string msg = "Variable not found " + str;
-    MerDebug_system_error(COMPILER_ERROR, msg.c_str(), glb.file);
+    MerDebug_print_error(COMPILER_ERROR, msg.c_str(), glb.file, ast->true_line);
     return NULL_CODE;
   }
 
@@ -286,31 +313,22 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_assign(mA
   return result;
 }
 
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_print(mAST_T *ast, __compiler_u &glb) {
-  __Mer_return_Code result = NULL_CODE;
-  __Mer_return_Code _code = MerCompiler_compile_ast_id(ast->print_v, glb);
-  INSERT_VEC(result, _code);
-  PUSH(result, CPRINT);
-
-  #ifdef SYSTEM_TEST
-  cout << "[compiler.cpp] [MerCompiler_compile_ast_print] [pass]" << endl;
-  #endif
-  return result;
-}
-
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_while(mAST_T *ast, __compiler_u &glb) {
   __Mer_return_Code result = NULL_CODE;
   __Mer_return_Code while_cond = MerCompiler_compile_ast_id(ast->while_cond, glb);
   __Mer_return_Code while_body = NULL_CODE;
+  __Mer_return_Code _code = NULL_CODE;
+
+  Mer_uint8_t while_begin = create_label(glb);
+  Mer_uint8_t while_end = create_label(glb);
+
+  glb.loop.push_back(loop_stack { while_begin, while_end });
 
   for (auto child : ast->while_body) {
-    __Mer_return_Code _code = MerCompiler_compile_ast_id(child, glb);
+    _code = MerCompiler_compile_ast_id(child, glb);
     INSERT_VEC(while_body, _code);
     _code.prg_code.buff.clear();
   }
-  
-  Mer_uint8_t while_begin = ++glb.address;
-  Mer_uint8_t while_end = ++glb.address;
 
   PUSH(result, CADDRESS);
   PUSH(result, while_begin);
@@ -323,6 +341,8 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_while(mAS
   PUSH(result, CADDRESS);
   PUSH(result, while_end);
 
+  glb.loop.pop_back();
+
   #ifdef SYSTEM_TEST
   cout << "[compiler.cpp] [MerCompiler_compile_ast_while] [pass]" << endl;
   #endif
@@ -332,47 +352,93 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_while(mAS
 
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_for_in_statement(mAST_T *ast, __compiler_u &glb) {
   __Mer_return_Code result = NULL_CODE;
-  __Mer_return_Code for_in_loop_val = MerCompiler_compile_ast_id(ast->in_value, glb);
-  __Mer_return_Code for_in_body = NULL_CODE;
-
-  for (auto &item : GLOBAL_TABLE) {
-    if (item->__name == ast->in_iden) {
-      MerDebug_system_error(COMPILER_ERROR, "Variable already exist", glb.file);
-      break;
-    }
-  }
+  __Mer_return_Code for_body = NULL_CODE;
+  __Mer_return_Code for_loop_iter = NULL_CODE;
   
-  Mer_uint8_t address = ++glb.address;
-  GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(address, ast->in_iden.c_str(), ast->in_iden));
+  Mer_uint8_t __iter = create_label(glb);
+  Mer_uint8_t __i = create_label(glb);
+  Mer_uint8_t __value = create_label(glb);
+
+  Mer_uint8_t loop_start = create_label(glb);
+  Mer_uint8_t loop_end = create_label(glb);
+
+  glb.loop.push_back(loop_stack { loop_start, loop_end });
+
+  GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(__iter, __iter__, __iter__));
+  GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(__i, __i__, __i__));
+  GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(__value, ast->in_iden.c_str(), ast->in_iden));
 
   for (auto child : ast->in_body) {
     __Mer_return_Code _code = MerCompiler_compile_ast_id(child, glb);
-    INSERT_VEC(for_in_body, _code);
+    INSERT_VEC(for_body, _code);
     _code.prg_code.buff.clear();
   }
-  
-  Mer_uint8_t end_loop = ++glb.address;
-  Mer_uint8_t start_loop = ++glb.address;
 
-  INSERT_VEC(result, for_in_loop_val);
-  PUSH(result, CGET_ITERATOR);
+  for_loop_iter = MerCompiler_compile_ast_id(ast->in_value, glb);
 
-  PUSH(result, CADDRESS);
-  PUSH(result, start_loop);
+  INSERT_VEC(result, for_loop_iter);
+  PUSH(result, CSTORE_GLOBAL);
+  PUSH(result, __iter);
 
-  PUSH(result, CFOR_ITERATOR);
-  PUSH(result, end_loop);
+  PUSH(result, CPUSH_FLOAT);
+  PUSH(result, 0x00);
+  PUSH(result, 0x00);
+  PUSH(result, 0x00);
+  PUSH(result, 0x00);
 
   PUSH(result, CSTORE_GLOBAL);
-  PUSH(result, address);  
-
-  INSERT_VEC(result, for_in_body);
-
-  PUSH(result, CJUMP_TO);
-  PUSH(result, start_loop);
+  PUSH(result, __i);
 
   PUSH(result, CADDRESS);
-  PUSH(result, end_loop);
+  PUSH(result, loop_start);
+
+  PUSH(result, CLOAD_GLOBAL);
+  PUSH(result, __i);
+
+  PUSH(result, CLOAD_GLOBAL);
+  PUSH(result, __iter);
+
+  PUSH(result, CLEN);
+  
+  PUSH(result, CLESS);
+
+  PUSH(result, CPOP_JUMP_IF_FALSE);
+  PUSH(result, loop_end);
+
+  PUSH(result, CLOAD_GLOBAL);
+  PUSH(result, __iter);
+
+  PUSH(result, CLOAD_GLOBAL);
+  PUSH(result, __i);
+
+  PUSH(result, CGET_ITEM);
+
+  PUSH(result, CSTORE_GLOBAL);
+  PUSH(result, __value);
+
+  INSERT_VEC(result, for_body);
+
+  PUSH(result, CLOAD_GLOBAL);
+  PUSH(result, __i);
+
+  PUSH(result, CPUSH_FLOAT);
+  PUSH(result, 0x00);
+  PUSH(result, 0x00);
+  PUSH(result, 0x80);
+  PUSH(result, 0x3F);
+
+  PUSH(result, CBINARY_ADD);
+
+  PUSH(result, CSTORE_GLOBAL);
+  PUSH(result, __i);
+
+  PUSH(result, CJUMP_TO);
+  PUSH(result, loop_start);
+
+  PUSH(result, CADDRESS);
+  PUSH(result, loop_end);
+
+  glb.loop.pop_back();  
 
   #ifdef SYSTEM_TEST
   cout << "[compiler.cpp] [MerCompiler_compile_ast_for_in_statement] [pass]" << endl;
@@ -442,7 +508,7 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_function_
   if (!found) {
     Mer_real_string str = ast->func_call.c_str();
     Mer_real_string msg = "Function not found " + str;
-    MerDebug_system_error(COMPILER_ERROR, msg.c_str(), glb.file);
+    MerDebug_print_error(COMPILER_ERROR, msg.c_str(), glb.file, ast->true_line);
     return NULL_CODE;
   }
 
@@ -473,9 +539,11 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_if(mAST_T
   
   comp = MerCompiler_compile_ast_id(ast->comp, glb);
   
-  if (!ast->comp) MerDebug_system_error(COMPILER_ERROR, "Condition not found", glb.file);
+  if (!ast->comp) {
+    MerDebug_print_error(COMPILER_ERROR, "Invalid if statement", glb.file, ast->true_line);
+  }
 
-  ++glb.address;
+  create_label(glb);
   Mer_uint8_t end_if = glb.address;
   glb.byte += 0x0002;
   glb.line += 0x0001;
@@ -493,7 +561,7 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_if(mAST_T
       _code.prg_code.buff.clear();
     }
 
-    Mer_uint8_t label_else = ++glb.address;
+    Mer_uint8_t label_else = create_label(glb);
 
     INSERT_VEC(result, comp);
     PUSH(result, CPOP_JUMP_IF_FALSE);
@@ -530,25 +598,30 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_if(mAST_T
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_let(mAST_T *ast, __compiler_u &glb) {
   Mer_string name = strdup(ast->var_name.c_str());
   Mer_real_string real_name = ast->var_name;
-  ++glb.address;
+  Mer_uint8_t address = NULL_UINT_8_T;
+  bool found = false;
+
+  for (auto &item : GLOBAL_TABLE) {
+    if (item->__name == real_name) {
+      found = true;
+      address = item->__Address;
+    }
+  }
+
+  if (!found) {
+    address = create_label(glb);
+    GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(address, name, real_name));
+  }
+
   glb.byte += 0x0002;
   glb.line += 0x0001;
 
   __Mer_return_Code var_val = MerCompiler_compile_ast_id(ast->var_value, glb);
   __Mer_return_Code result = NULL_CODE;
 
-  for (auto &item : GLOBAL_TABLE) {
-    if (item->__name == name) {
-      string msg = "Variable already exist: '" + string(name) + "'"; 
-      MerDebug_system_error(COMPILER_ERROR, msg.c_str(), glb.file);
-    }
-  }
-
-  GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(glb.address, name, real_name));
-
   INSERT_VEC(result, var_val);
   PUSH(result, CSTORE_GLOBAL);
-  PUSH(result, glb.address);
+  PUSH(result, address);
 
   #ifdef SYSTEM_TEST
   cout << "[compiler.cpp] [MerCompiler_compile_ast_let] [pass]" << endl;
@@ -595,8 +668,8 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_identifie
   }
 
   if (!found) {
-    Mer_real_string msg = "Variable not found " + ast->string_iden;
-    MerDebug_system_error(COMPILER_ERROR, msg.c_str(), glb.file);
+    string msg = "Variable not found " + ast->string_iden;
+    MerDebug_print_error(COMPILER_ERROR, msg.c_str(), glb.file, ast->true_line);
     return NULL_CODE;
   }
 
@@ -672,7 +745,7 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_string_va
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_function(mAST_T *ast, __compiler_u &glb) {
   __Mer_return_Code result = NULL_CODE;
   __Mer_return_Code body = NULL_CODE;
-  ++glb.address;
+  create_label(glb);
   Mer_uint8_t func_address = glb.address;
   Mer_real_string name = ast->func_name;
   Mer_string func_name = strdup(ast->func_name.c_str());
@@ -683,7 +756,7 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_function(
   for (auto &item : GLOBAL_TABLE) {
     if (item->__name == func_name) {
       Mer_real_string msg = "Function already exist: '" + ast->func_name + "'";
-      MerDebug_system_error(COMPILER_ERROR, msg.c_str(), glb.file);
+      MerDebug_print_error(COMPILER_ERROR, msg.c_str(), glb.file, ast->true_line);
     }
   }
   

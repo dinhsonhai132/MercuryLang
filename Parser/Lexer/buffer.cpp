@@ -14,8 +14,7 @@ char *MerBuffer_read_file_source(const string &file_name, string &source)
 {
     char *buffer = NULL;
     FILE *f = fopen(file_name.c_str(), "rb");
-    if (f == NULL)
-        return NULL;
+    if (f == NULL) return NULL;
     fseek(f, 0, SEEK_END);
     size_t length = ftell(f);
     rewind(f);
@@ -31,8 +30,10 @@ const char *MerBuffer_read_file(const string &file_name)
 {
     char *buffer = NULL;
     FILE *f = fopen(file_name.c_str(), "rb");
-    if (f == NULL)
+    if (f == NULL) {
+        cerr << "Error: Could not open file " << file_name << ", this file name does not exist" << endl;
         return NULL;
+    };
     fseek(f, 0, SEEK_END);
     size_t length = ftell(f);
     rewind(f);

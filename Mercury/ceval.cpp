@@ -77,6 +77,24 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_program(mCode_T &code) {
     return MerVM_evaluate_statement(u_program, stk);
 }
 
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_CLEN(__program_bytecode &u, stack *stk) {
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_evaluate_GET_ITERATOR] [building...]" << endl;
+    #endif
+
+    table *value = POP_STACK(stk);
+
+    if (value->is_list) stk->s_table->table.push_back(MerCompiler_table_setup(value->list_v->size, NULL_UINT_8_T));
+    else if (value->is_str) stk->s_table->table.push_back(MerCompiler_table_setup(value->f_str_v->size, NULL_UINT_8_T));
+    else stk->s_table->table.push_back(MerCompiler_table_setup(4, NULL_UINT_8_T));
+
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_evaluate_GET_ITERATOR] [pass]" << endl;
+    #endif
+
+    return stk;
+}
+
 MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_STORE_INDEX(__program_bytecode &u, stack *stk) {
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [MerVM_evaluate_STORE_INDEX] [building...]" << endl;
@@ -87,61 +105,14 @@ MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_STORE_INDEX
     table *value = POP_STACK(stk);
 
     if (value->is_list) {
-        mValue_T *vvalue = (mValue_T *)value->list_v->args[index->cval];
-        vvalue->f_value = item->cval;
-        vvalue->value_t.float_value = item->cval;
+        table *vvalue = (table *) value->list_v->args[index->cval];
+        vvalue = item;
     }
 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [MerVM_evaluate_STORE_INDEX] [pass]" << endl;
     #endif
 
-    return stk;
-}
-
-MERCURY_API __mer_core_api__ stack *MerVM_evaluate_FOR_ITERATOR(__program_bytecode &u, stack *stk) {
-    #ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_FOR_ITERATOR] [building...]" << endl;
-    #endif
-
-    Mer_uint8_t code = __get_next_code_in_prg_code(u);
-    table *iter_top = EAT_STACK(stk);
-    mIter_T *iter = iter_top->iter_v;
-    
-    mValue_T *value = (mValue_T *)iter->loop_obj.list->args[iter->index++];
-    table *val = MerCompiler_table_setup(value->f_value, NULL_UINT_8_T);
-    val->ref_count++;
-    stk->s_table->table.push_back(val);
-
-    if (iter->index >= iter->size) {
-        u.iid = u.label_map[code];
-    }
-
-    #ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_FOR_ITERATOR] [pass]" << endl;
-    #endif
-
-    return stk;
-}
-
-MERCURY_API __mer_core_api__ stack *MerVM_evaluate_GET_ITERATOR(__program_bytecode &u, stack *stk) {
-    table *top = POP_STACK(stk);
-    mIter_T *iter = MerCompiler_iter_new();
-    if (top->is_list) {
-        iter->loop_obj.list = top->list_v;
-        iter->size = top->list_v->size;
-    } else if (top->is_str) {
-        iter->loop_obj.str = top->f_str_v;
-        iter->size = top->f_str_v->size;
-    }
-
-    table *iter_top = MerCompiler_Table_new();
-    iter_top->cval = MERCURY_ITERATOR_VALUE;
-    iter_top->iter_v = iter;
-    iter_top->is_iter = true;
-    iter_top->ref_count++;
-
-    stk->s_table->table.push_back(iter_top);
     return stk;
 }
 
@@ -203,12 +174,7 @@ MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_BUILD_LIST(
     
     for (Mer_size_t i = 0; i < size; i++) {
         table *top = POP_STACK(stk);
-
-        mValue_T *v = MerCompiler_val_new();
-        get_f(v) = top->cval;
-        get_v(v) = top->cval;
-        back_insrt(list->args, v);
-        delete top;
+        back_insrt(list->args, top);
     }
 
     table *top = MerCompiler_Table_new();
@@ -284,15 +250,16 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_GET_ITEM(__program_bytecode 
     table *extract_val = POP_STACK(stk);
     table *obj = POP_STACK(stk);
 
-    if (extract_val->cval >= obj->list_v->size) {
+    if (extract_val->cval > obj->list_v->size) {
         MerDebug_system_error(SYSTEM_ERROR, "Index out of range", u.file);
     }
 
     if (obj->is_list) {
-        mValue_T *value = (mValue_T *) obj->list_v->args[extract_val->cval];
-        table *val = MerCompiler_table_setup(value->f_value, NULL_UINT_8_T);
-        val->ref_count++;
-        stk->s_table->table.push_back(val);
+        table *value = (table *) obj->list_v->args[extract_val->cval];
+        if (!value) {
+            MerDebug_system_error(SYSTEM_ERROR, "Error while getting item from a list object", u.file);
+        }
+        stk->s_table->table.push_back(value);
     } else {
         MerDebug_system_error(SYSTEM_ERROR, "Error while getting item from a list object", u.file);
     }
@@ -352,18 +319,10 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
             stk = MerVM_evaluate_JUMP_TO(u, stk);
         } 
         
-        else if (code == CFOR_ITERATOR) {
-            stk = MerVM_evaluate_FOR_ITERATOR(u, stk);
+        else if (code == CLEN) {
+            stk = MerVM_evaluate_CLEN(u, stk);
         }
 
-        else if (code == CGET_ITERATOR) {
-            stk = MerVM_evaluate_GET_ITERATOR(u, stk);
-        }
-
-        else if (code == CPRINT) {
-            stk = MerVM_evaluate_PRINT(u, stk);
-        } 
-        
         else if (code == CBUILD_LIST) {
             stk = MerVM_evaluate_BUILD_LIST(u, stk);
         } 
@@ -646,21 +605,6 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_MAKE_BLOCK(__program_bytecod
     }
     block->tbody.push_back(CEND_BLOCK);
     return stk;
-}
-
-MERCURY_API __mer_core_data__ stack *MerVM_evaluate_PRINT(__program_bytecode &u, stack *stk) {
-    #ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_PRINT] [building...]" << endl;
-    #endif
-
-    table *top = POP_STACK(stk);
-    cout << top->cval << endl;
-    return stk;
-
-    #ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_PRINT] [pass]" << endl;
-    #endif
-
 }
 
 MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_function(mFunc_object_T *func_obj, stack *stk, __program_bytecode &u) {

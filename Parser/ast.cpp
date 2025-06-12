@@ -33,9 +33,15 @@ mAST_T *_MerAST_new(void)
     node->is_minus_assign = false;
     node->is_mul_assign = false;
     node->is_div_assign = false;
+    node->is_class = false;
     node->is_mod_assign = false;
     node->is_assign_operator = false;
+    node->is_break = false;
+    node->is_continue = false;
+    node->is_dad = false;
 
+    node->attr = nullptr;
+    node->attr_value = nullptr;
     node->poutput = nullptr;
     node->comp = nullptr;
     node->assign_value = nullptr;
@@ -50,6 +56,8 @@ mAST_T *_MerAST_new(void)
     node->extract_value = nullptr;
     node->str_var_value = nullptr;
     node->extract_assign = nullptr;
+
+    node->true_line = 0;
 
     return node;
 }

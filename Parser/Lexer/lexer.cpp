@@ -136,13 +136,6 @@ mToken_T *_MerLexer_get_next_tok(mLexer_T *lexer)
             return token;
         }
 
-        if (c == '!' && isalpha(lexer->buf[lexer->id + 1]))
-        {
-            mToken_T *token = _MerLexer_tokenize_function_call(lexer);
-            token->index++;
-            return token;
-        }
-
         if (c == '$' && isalpha(lexer->buf[lexer->id + 1]))
         {
             mToken_T *token = _MerLexer_tokenize_extract(lexer);
@@ -220,22 +213,6 @@ mToken_T *_MerLexer_tokenize_extract(mLexer_T *lexer)
     return _MerInit_token(EXTRACT, "AUTO_T", 0.0, extract_name_c, extract_name_c, extract_name_c);
 }
 
-mToken_T *_MerLexer_tokenize_function_call(mLexer_T *lexer)
-{
-    lexer->cur = lexer->buf[lexer->id++];
-    string func_name = "";
-    while (is_potential_identifier_char(lexer->cur))
-    {
-        func_name += lexer->cur;
-        LEX_PRE_ADVANCE(lexer);
-    }
-
-    LEX_DECR(lexer);
-
-    const char *func_name_c = strdup(func_name.c_str());
-    return _MerInit_token(FUNCTION_CALL, "AUTO_T", 0.0, func_name_c, func_name_c, func_name_c);
-}
-
 mToken_T *_MerLexer_tokenize_number(mLexer_T *lexer)
 {
     string num = "";
@@ -281,20 +258,18 @@ mToken_T *_MerLexer_tokenize_syntax(mLexer_T *lexer)
     string keyword = "";
 
     LEX_DECR_ADVANCE(lexer);
-    while (is_potential_identifier_char(lexer->cur))
+    while (is_potential_identifier_char(lexer->cur) || is_digit(lexer->cur))
     {
         if (IS_SPACE(lexer))
         {
             break;
         }
 
-        if (is_potential_identifier_char(lexer->cur))
+        if (is_potential_identifier_char(lexer->cur) || is_digit(lexer->cur))
         {
             keyword += lexer->cur;
-        }
-        else
-        {
-            mer_run_time_error(to_string(lexer->line), "Syntax error: invalid syntax: " + to_string(lexer->id) + " Char starter: " + lexer->buf[lexer->id], lexer->inp, "main.mer");
+        } else {
+            MerDebug_print_error(SYNTAX_ERROR, "Invalid character", "stdin", lexer->row);
         }
         LEX_ADVANCE(lexer);
     }
@@ -380,11 +355,21 @@ void _MerLexer_skip_whitespace(mLexer_T *lexer)
 void _MerLexer_skip_comment(mLexer_T *lexer)
 {
     char c = lexer->buf[lexer->id];
-    if (c == '#') {
+    if (c == '#' || c == '@') {
         while (c != '\n')
         {
             LEX_ADVANCE(lexer);
             c = lexer->buf[lexer->id];
+        }
+    } else if (c == '/') {
+        c = lexer->buf[lexer->id + 1];
+        if (c == '*')  {
+            while (c != '*' || lexer->buf[lexer->id + 1] != '/')
+            {
+                LEX_ADVANCE(lexer);
+                c = lexer->buf[lexer->id];
+            }
+            LEX_ADVANCE(lexer);
         }
     }
 }

@@ -142,4 +142,13 @@ table *pop_stack(stack *stk);
 table *eat_stack(stack *stk);
 void push_stack(stack *stk, int value);
 
+#define STACK_PUSH(stk, value) \
+    stk->s_table->table.push_back(value);
+
+#define STACK_POP(stk) \
+    stk->s_table->table.pop_back();
+
+#define STACK_VAL(a) \
+    MerCompiler_table_setup(a, NULL_UINT_8_T);
+
 #endif // MERCURY_STACK_CORE_HEADER

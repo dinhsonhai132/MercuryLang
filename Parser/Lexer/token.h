@@ -35,6 +35,7 @@ using namespace std;
 #define EOL_T "EOL"
 #define ASSIGN "ASSIGN"
 #define MOD "MOD"
+#define IS "IS"
 #define INT_ "INT_"
 #define PLUS "PLUS"
 #define MINUS "MINUS"
@@ -45,7 +46,6 @@ using namespace std;
 #define TIME "TIME"
 #define VARIABLE "VARIABLE"
 #define STRING "STRING"
-#define PRINT "PRINT"
 #define LET "LET"
 #define DOT "DOT"
 #define COMMA "COMMA"
@@ -202,8 +202,8 @@ using namespace std;
 
 #define is_keywords(c) (c == '+' || c == '-' || c == '*' || c == '/' || c == ',' \
     || c == ':' || c == '=' || c == '!' || c == '%' \
-    || c == '<' || c == '>' || c == '&' \
-    || c == '^' || c == ';' \
+    || c == '<' || c == '>' || c == '&' || c== '\\' \ 
+    || c == '^' || c == ';' || c == '!' \
     || c == '[' || c == ']' || c == '.' \
     || c == '|')
 
@@ -211,13 +211,13 @@ using namespace std;
 #ifdef MERCURY_LANG3
 inline bool is_identifier(string c) {
     return (c == "let")
-    || (c == "print")
     || (c == "if")
     || (c == "do")
     || (c == "end")
     || (c == "break")
     || (c == "continue")
     || (c == "auto")
+    || (c == "is")
     || (c == "float")
     || (c == "double")
     || (c == "char")
@@ -229,6 +229,7 @@ inline bool is_identifier(string c) {
     || (c == "str")
     || (c == "string")
     || (c == "loop")
+    || (c == "not")
     || (c == "include")
     || (c == "else")
     || (c == "for")
@@ -243,20 +244,27 @@ inline bool is_identifier(string c) {
     || (c == "delete")
     || (c == "cast")
     || (c == "const")
+    || (c == "and")
+    || (c == "or")
+    || (c == "not")
     || (c == "then");
 }
 
 inline const char* GET_SYNTAX(string c) {
     if (c == "let") return LET;
-    else if (c == "print") return PRINT;
     else if (c == "if") return IF;
     else if (c == "else") return ELSE;
     else if (c == "for") return FOR;
     else if (c == "while") return WHILE;
     else if (c == "in") return IN;
+    else if (c == "not") return NOT;
     else if (c == "return") return RETURN;
     else if (c == "func") return FUNCTION;
+    else if (c == "include") return INCLUDE;
+    else if (c == "and") return AND;
+    else if (c == "or") return OR;
     else if (c == "do") return DO_T;
+    else if (c == "is") return EQUAL;
     else if (c == "end") return END_T;
     else if (c == "break") return BREAK;
     else if (c == "loop") return LOOP;
@@ -284,7 +292,6 @@ inline const char* GET_SYNTAX(string c) {
 
 inline bool is_identifier(const std::string& c) {
     return (c == LET_S)
-    || (c == PRINT_S)
     || (c == IF_S)
     || (c == DO_S)
     || (c == END_S)
@@ -295,7 +302,11 @@ inline bool is_identifier(const std::string& c) {
     || (c == DOUBLE_S)
     || (c == CHAR_S)
     || (c == LIST_S)
+    || (c == NOT_S)
+    || (c == AND_S)
+    || (c == OR_S)
     || (c == SHORT_S)
+    || (c == IS_S)
     || (c == LONG_S)
     || (c == VOID_S)
     || (c == BOOL_S)
@@ -321,17 +332,21 @@ inline bool is_identifier(const std::string& c) {
 
 inline const char* GET_SYNTAX(const std::string& c) {
     if (c == LET_S) return LET;
-    else if (c == PRINT_S) return PRINT;
     else if (c == IF_S) return IF;
     else if (c == ELSE_S) return ELSE;
     else if (c == FOR_S) return FOR;
     else if (c == WHILE_S) return WHILE;
     else if (c == IN_S) return IN;
+    else if (c == NOT_S) return NOT;
     else if (c == LOOP_S) return LOOP;
     else if (c == RETURN_S) return RETURN;
     else if (c == FUNCTION_S) return FUNCTION;
+    else if (c == IS_S) return EQUAL;
     else if (c == DO_S) return DO_T;
     else if (c == END_S) return END_T;
+    else if (c == INCLUDE_S) return INCLUDE;
+    else if (c == AND_S) return AND;
+    else if (c == OR_S) return OR;
     else if (c == BREAK_S) return BREAK;
     else if (c == CONTINUE_S) return CONTINUE;
     else if (c == CLASS_S) return CLASS;
@@ -365,6 +380,7 @@ inline const char* GET_1_CHAR(char c) {
         case '/': return DIV;
         case ';': return SEMICOLON;
         case ':': return COLON;
+        case '!': return NOT;
         case ',': return COMMA;
         case '%': return MOD;
         case '*': return TIME;

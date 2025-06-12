@@ -94,6 +94,12 @@ struct _code
     _code *scr[MAX_CODE_LEN];
 };
 
+struct _char {
+    GC_HEAD;
+    char item;
+    Mer_uint8_t citem;
+};
+
 struct _string {
     GC_HEAD;
     Mer_size_t size;
@@ -155,7 +161,6 @@ struct block_obj  {
     _code *bs_bc;
 };
 
-
 struct _list_object {
     GC_HEAD;
     Mer_uint8_t ui8_address;
@@ -195,6 +200,21 @@ struct _variable {
     bool _is_local;
     bool _is_global;
 };
+
+struct _class {
+    GC_HEAD;
+
+    Mer_string name;
+    Mer_string base_name;
+
+    unordered_map<Mer_uint8_t, _func_object*> methods;
+
+    _code *class_code;
+
+    bool has_constructor = false;
+    _func_object* constructor = nullptr;
+};
+
 
 struct _type_obj {
     FLAG_HEAD;

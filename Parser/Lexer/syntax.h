@@ -6,15 +6,18 @@
 #endif
 
 STANDARD_SYNTAX const char* LET_S = "LET";
-STANDARD_SYNTAX const char* PRINT_S = "PRINT";
 STANDARD_SYNTAX const char* LOOP_S = "LOOP";
 STANDARD_SYNTAX const char* FUNCTION_S = "FUNC";
 STANDARD_SYNTAX const char* RETURN_S = "RETURN";
 STANDARD_SYNTAX const char* DO_S = "DO";
 STANDARD_SYNTAX const char* END_S = "END";
 STANDARD_SYNTAX const char* IF_S = "IF";
+STANDARD_SYNTAX const char* AND_S = "AND";
+STANDARD_SYNTAX const char* OR_S = "OR";
+STANDARD_SYNTAX const char* NOT_S = "NOT";
 STANDARD_SYNTAX const char* ELSE_S = "ELSE";
 STANDARD_SYNTAX const char* FOR_S = "FOR";
+STANDARD_SYNTAX const char* IS_S = "IS";
 STANDARD_SYNTAX const char* IN_S = "IN";
 STANDARD_SYNTAX const char* WHILE_S = "WHILE";
 STANDARD_SYNTAX const char* BREAK_S = "BREAK";

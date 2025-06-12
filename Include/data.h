@@ -14,11 +14,15 @@ using namespace std;
 #define CLS_ADDRESS                 0xF7
 #define HELP_ADDRESS                0xF8
 #define PI_ADDRESS                  0xF9
+#define SPLIT_ADDRESS               0x0F
 #define TAU_ADDRESS                 0xFA
 #define GOLDEN_RATIO_ADDRESS        0xFB
 #define EULER_ADDRESS               0xFC
+#define SLEEP_ADDRESS               0xFC
 #define INFINITY_ADDRESS            0xFD
 #define THE_TRUE_ADDRESS            0xFE
+#define TO_STRING_ADDRESS           0xA0
+#define TO_INT_ADDRESS              0xA0
 #define THE_FALSE_ADDRESS           0xFF
 #define SAME_STRING_ADDRESS         0xA1
 #define SIZE_ADDRESS                0xA2
@@ -26,6 +30,7 @@ using namespace std;
 #define POP_ADDRESS                 0xA4
 #define PRINT_LIST_ADDRESS          0xA5
 #define PUTS_ADDRESS                0xA6
+#define ISDIGIT_ADDRESS             0xF2
 #define COS_ADDRESS                 0xA7
 #define SIN_ADDRESS                 0xA8
 #define TAN_ADDRESS                 0xA9

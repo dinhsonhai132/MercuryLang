@@ -31,7 +31,6 @@ using namespace std;
 #define Program "Program"
 #define LetStatement "LetStatement"
 #define ExpressionStatement "ExpressionStatement"
-#define PrintStatement "PrintStatement"
 #define IfStatement "IfStatement"
 #define AssignStatement "AssignStatement"
 #define WhileStatement "WhileStatement"
@@ -83,6 +82,8 @@ struct mAST_T
     string string_iden;
     mAST_T *poutput;
 
+    int true_line;
+
     bool is_at_start;
     bool is_if;
     bool is_while;
@@ -105,6 +106,10 @@ struct mAST_T
     bool is_mul_assign;
     bool is_div_assign;
     bool is_mod_assign;
+    
+    // for break and continue
+    bool is_break;
+    bool is_continue;
 
     // for built-in function
     string built_in_func_name;
@@ -138,14 +143,20 @@ struct mAST_T
     bool is_list;
     bool is_None;
 
+    // for class
+    string class_name;
+    bool is_class;
+    vector<mAST_T *> class_body;
+
+    // for attr System.out.println("hello");
+    mAST_T *attr;
+    mAST_T *attr_value;
+    bool is_dad;
+
     // for comparison expression
     string comp_op;
     mAST_T *comp_left;
     mAST_T *comp_right;
-
-    // break or continue
-    bool is_break;
-    bool is_continue;
 
     // for do while loop
     vector<mAST_T *> do_body;

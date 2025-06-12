@@ -18,6 +18,8 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <chrono>
+#include <thread>
 #include <cstdlib>
 #include <unordered_map>
 #include <filesystem>
@@ -26,6 +28,9 @@
 const char* CUSTOM_VERSION = "2.0.1";
 const char* AUTHOR = "dinhsonhai132";
 const char* LANGUAGE = "MercuryLang";
+
+#define __iter__ "__iter__version_2_5_0_global_variable"
+#define __i__ "__i__version_2_5_0_global_variable"
 
 #ifdef _WIN32
     #ifndef __API

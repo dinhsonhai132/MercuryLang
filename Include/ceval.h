@@ -55,12 +55,10 @@ MERCURY_API __mer_core_api__ stack *MerVM_evaluate_STORE_GLOBAL(__program_byteco
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_MAKE_BLOCK(__program_bytecode &u, stack *stk);
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_MAKE_FUNCTION(__program_bytecode &u, stack *stk);
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_FUNCTION_CALL(__program_bytecode &u, stack *stk);
-MERCURY_API __mer_core_api__ stack *MerVM_evaluate_PRINT(__program_bytecode &u, stack *stk);
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_JUMP_IF_FALSE(__program_bytecode &u, stack *stk);
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_BUILD_LIST(__program_bytecode &u, stack *stk);
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_GET_ITEM(__program_bytecode &u, stack *stk);
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_STORE_INDEX(__program_bytecode &u, stack *stk);
-MERCURY_API __mer_core_api__ stack *MerVM_evaluate_FOR_ITERATOR(__program_bytecode &u, stack *stk);
-MERCURY_API __mer_core_api__ stack *MerVM_evaluate_GET_ITERATOR(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_CLEN(__program_bytecode &u, stack *stk);
 
 #endif // MERCURY_EVALUATE_H

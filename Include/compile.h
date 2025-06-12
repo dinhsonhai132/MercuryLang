@@ -31,6 +31,11 @@
 
 using namespace std;
 
+struct loop_stack {
+    Mer_uint8_t continue_label;
+    Mer_uint8_t break_label;
+};
+
 struct __compiler_u {
     const char* file;
     Mer_uint8_t address;
@@ -39,11 +44,14 @@ struct __compiler_u {
     Mer_uint8_t cid;
     Mer_string name;
     Mer_string type;
+    vector<loop_stack> loop;
 };
 
 __compiler_u compiler_init(void);
 
 #define INC_U(u) (u.byte++, u.cid++)
+
+#define create_label(glb) ++glb.address;
 
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_program(mAST_T *ast, __compiler_u &glb);
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_id(mAST_T *ast, __compiler_u &glb);
@@ -68,5 +76,7 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_extract(m
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_store_index_statement(mAST_T *ast, __compiler_u &glb);
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_for_in_statement(mAST_T *ast, __compiler_u &glb);
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_loop(mAST_T *ast, __compiler_u &glb);
+MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_break(mAST_T *ast, __compiler_u &glb);
+MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_continue(mAST_T *ast, __compiler_u &glb);
 
 #endif // MERCURY_BYTECODE_COMPILER_HEADER

@@ -10,6 +10,7 @@ void print_help() {
     cout << "  -h\t\tShow this help message\n";
     cout << "  -o <filename> <target>\tCompile to a specific output file\n";
     cout << "  -m\t\tCompiled into readable mercury bytecode\n";
+    cout << "  -c\t\tCompile and run\n";
 }
 
 string time_date() {

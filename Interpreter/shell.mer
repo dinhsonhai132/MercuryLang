@@ -1,0 +1,61 @@
+# This is a simple shell interpreter that tokenizes a mathematical expression.
+# It recognizes numbers and basic arithmetic operators (+, -, *, /).
+# # The code is written in a hypothetical language Mer, which is similar to Python.
+
+func break_point() do
+    while 1 do end
+end
+
+let plus = "plus"
+let minus = "minus"
+
+let tokens = []
+
+let buffer = "1 + 1"
+buffer = split(buffer)
+
+let index = 0
+
+while index < size(buffer) do
+    if index < size(buffer) then let current = buffer[index] end
+
+    if same(current, "+") then push(tokens, plus) end
+    if same(current, "-") then push(tokens, minus) end
+
+    if isdigit(current) then
+        let num_str = ""
+        while isdigit(current) do
+            if index < size(buffer) then current = buffer[index] end else break end
+            if isdigit(current) then sub(num_str, current) end
+            if index < size(buffer) then index += 1 end else break end
+        end
+        push(tokens, num_str)
+        continue
+    end
+
+    if index < size(buffer) then index += 1 end
+end
+
+# evaluate the tokens
+let result = 0
+let index = 0
+
+while index < size(tokens) do
+    if index < size(tokens) then let current = tokens[index] end
+    if same(current, plus) then
+        let left = tokens[index - 1]
+        let right = tokens[index + 1]
+        result += to_int(left) + to_int(right)
+    end
+
+    if same(current, minus) then
+        let left = tokens[index - 1]
+        let right = tokens[index + 1]
+        result += to_int(left) - to_int(right)
+    end
+
+    if index < size(tokens) then index += 1 end
+end
+
+puts("Result: ")
+puts(result)

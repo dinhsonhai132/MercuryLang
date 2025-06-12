@@ -35,6 +35,8 @@ struct mParser_T {
 
 #define point(a, b) (a->b)
 
+#define TRUE_LINE(parser) (parser->lexer->row)
+
 mParser_T *_MerParser_new(void);
 mParser_T *_MerParser_init(mLexer_T *lexer);
 int _MerParser_free(mParser_T *parser);
@@ -53,7 +55,6 @@ mAST_T *MerParser_parse_return_statement(mParser_T *parser);
 mAST_T *MerParser_parse_comparison_expression(mParser_T *parser);
 mAST_T *MerParser_parse_compair(mAST_T *left, string op, mAST_T *right);
 mAST_T *MerParser_parse_if_statement(mParser_T *parser);
-mAST_T *MerParser_parse_print_statement(mParser_T *parser);
 mAST_T *MerParser_parse_while_statement(mParser_T *parser);
 mAST_T *MerParser_parse_assignment_statement(mParser_T *parser);
 mAST_T *MerParser_parse_string_expression(mParser_T *parser);

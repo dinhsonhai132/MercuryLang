@@ -2,6 +2,7 @@
 
 MERCURY_API void MerCore_initialize() {
     BUILD_LIB_FUNC("write", __builtin_io_write);
+    BUILD_LIB_FUNC("print", __builtin_io_write);
     BUILD_LIB_FUNC("eval", __builtin_eval);
     BUILD_LIB_FUNC("pause", __builtin_pause);
     BUILD_LIB_FUNC("exit", __mer_builtin_exit);
@@ -17,6 +18,7 @@ MERCURY_API void MerCore_initialize() {
     BUILD_LIB_FUNC("tan", __builtin_mer_tan);
     BUILD_LIB_FUNC("cot", __builtin_mer_cot);
     BUILD_LIB_FUNC("sqrt", __builtin_mer_sqrt);
+    BUILD_LIB_FUNC("sleep", __builtin_mer_sleep);
     BUILD_LIB_FUNC("sin", __builtin_mer_sin);
     BUILD_LIB_FUNC("glb", __builtin_print_global_stack);
     BUILD_LIB_FUNC("ch", __builtin_change_item);
@@ -24,7 +26,11 @@ MERCURY_API void MerCore_initialize() {
     BUILD_LIB_FUNC("range", __builtin_range);
     BUILD_LIB_FUNC("random", __builtin_random);
     BUILD_LIB_FUNC("randint", __builtin_randint);
-    BUILD_LIB_FUNC("sub", __builtin_mer_sub_str);
+    BUILD_LIB_FUNC("sub", __builtin_mer_sub);
+    BUILD_LIB_FUNC("split", __builtin_mer_split);
+    BUILD_LIB_FUNC("isdigit", __builtin_mer_is_digit);
+    BUILD_LIB_FUNC("to_str", __builtin_to_string);
+    BUILD_LIB_FUNC("to_int", __builtin_to_int);
 
     BUILD_GLOBAL_VARIABLE("pi", 3.1415926535897932384626433832795);
     BUILD_GLOBAL_VARIABLE("e", 2.7182818284590452353602874713527);

@@ -123,6 +123,13 @@ while x < 100 do
 end
 ```
 
+### For loop
+```python
+for i in range(0, 100) do
+    if i % 2 == 0 then print(i) end
+end
+```
+
 ### Do loop
 ```python
 let x = 0

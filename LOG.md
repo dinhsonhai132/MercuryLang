@@ -151,3 +151,17 @@
 - **Add** new do loop
 
 - **Add** more function
+
+### 6/12/2025
+
+- **Add** for loop
+
+- **list** store multi value
+
+- **remake** function
+
+- **Add** more buitlin func
+
+- **remake** compiler
+
+- **Add** new ```is```

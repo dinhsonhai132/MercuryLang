@@ -34,39 +34,29 @@ Before building or running MercuryLang, ensure you have the following installed:
 ## 🔧 Language Syntax
 
 ### Print function
-```rust
-!write("hello")
+```python
+print("hello world")
 ```
 
 ### Variable
 ```python
-# use LET keyword
-LET x = 2
-LET y = 3
+let x = 1
+let y = 2
 ```
 
 ### List expression
 ```python
-# List syntax is [ e1, e2, e3, ... ] list element only suport int, float type
-[1, 2, 3, 5]
-```
-
-### List Statement
-```python 
-LET a = [1, 2, 3]               # store list into variable
-!write(a[0])                    # you can extract the element from the list
-!push(a, 1)                     # use push to push the item into top of the list
-!pop(a)                         # remove the top of the list
-LET size = !size(a)             # use !size() function to get the size of the list
-!write(a)                       # print the list
+let x = ["apple", "pineapple", "orange"]
+print(x[1])
+x[1] = "watermelon"
 ```
 
 ### Global variable
-```rust
-!write(pi)
-!write(euler)
-!write(golden_ratio)
-!write(tau)
+```python
+write(pi)
+write(euler)
+write(golden_ratio)
+write(tau)
 ```
 
 ### Math
@@ -77,90 +67,135 @@ LET size = !size(a)             # use !size() function to get the size of the li
 1 % 2
 
 # Or you can use buitlin function
-LET x = pi
-!cos(x)
-!sin(x)
-!tan(x)
-!cot(x)
-!sqrt(x)
+let x = pi
+cos(x)
+sin(x)
+tan(x)
+cot(x)
+sqrt(x)
 ```
 
 ### Comparison
 ```python
 # support >, <, <=, >=, ==, !=
-LET x = 2
-LET y = 3
-PRINT x > y
+let x = 2
+let y = 3
+print(x < y)
 ```
 ### Function and function call
 ```python
-FUNC foo() DO
-    LET x = 1
-    LET y = 2
-    PRINT x + y
-END
+func foo() do
+    let x = 1
+    let y = 2
+    print(x + y)
+end
 
-# function call start with `!`
-!foo()
+foo()
 ```
 
 ### If-else statement
 ```python
-IF 1 == 1  THEN
-    LET x = 1
-    LET y = 1
-    PRINT x + y
-END
-
-ELSE
-    LET x = 1
-    LET y = 1
-    PRINT x - y
-END
+if 1 is 1 then print("1 == 1") end
+else print("1 != 1") end
 ```
 
 ### Assignment
 ```python
-LET x = 1
+let x = 1
 x = x + 1
 x += 1
 x -= 1
 x *= 1
 x /= 1
-PRINT x
+print(x)
 ```
 
 ### While loop
 ```python
-LET x = 0
-WHILE x < 10 DO
-    x = x + 1
-    PRINT x
-END
+let x = 0
+while x < 100 do
+    x += 1
+    print(x)
+
+    if x == 5 then
+        break
+    end
+end
 ```
 
 ### Do loop
 ```python
-LET x = 0
+let x = 0
 
-LOOP
-    x += 1
-    !write(x)
-END
+loop
+    if x is 5 then break end
+    else x += 1; continue end
+end
 ```
 
 ### Example code
 ```python
-# TODO: print all elements of the list
+# This is a simple shell interpreter that tokenizes a mathematical expression.
+# It recognizes numbers and basic arithmetic operators (+, -, *, /).
+# # The code is written in a hypothetical language Mer, which is similar to Python.
 
-LIST exp = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-LET exp_size = !size(exp)
-LET index = 0
- 
-WHILE index < exp_size DO
-    !write(exp[index])
-    index += 1
-END
+func break_point() do
+    while 1 do end
+end
+
+let plus = "plus"
+let minus = "minus"
+
+let tokens = []
+
+let buffer = "1 + 1"
+buffer = split(buffer)
+
+let index = 0
+
+while index < size(buffer) do
+    if index < size(buffer) then let current = buffer[index] end
+
+    if same(current, "+") then push(tokens, plus) end
+    if same(current, "-") then push(tokens, minus) end
+
+    if isdigit(current) then
+        let num_str = ""
+        while isdigit(current) do
+            if index < size(buffer) then current = buffer[index] end else break end
+            if isdigit(current) then sub(num_str, current) end
+            if index < size(buffer) then index += 1 end else break end
+        end
+        push(tokens, num_str)
+        continue
+    end
+
+    if index < size(buffer) then index += 1 end
+end
+
+# evaluate the tokens
+let result = 0
+let index = 0
+
+while index < size(tokens) do
+    if index < size(tokens) then let current = tokens[index] end
+    if same(current, plus) then
+        let left = tokens[index - 1]
+        let right = tokens[index + 1]
+        result += to_int(left) + to_int(right)
+    end
+
+    if same(current, minus) then
+        let left = tokens[index - 1]
+        let right = tokens[index + 1]
+        result += to_int(left) - to_int(right)
+    end
+
+    if index < size(tokens) then index += 1 end
+end
+
+puts("Result: ")
+puts(result)
 ```
 
 ## 🔋 Advance

@@ -1,4 +1,4 @@
-SOURCE_FILE = ./Program/mer.cpp
+SOURCE_FILE = ./Program/main.cpp
 
 TARGET = ./bin/mer.exe
 BYTECODE_TARGET = ./bin/merc.exe

@@ -165,3 +165,11 @@
 - **remake** compiler
 
 - **Add** new ```is```
+
+### 6/16/2025
+
+- **remake** parser
+
+- **Fix** every jump opcode
+
+- **new branch** ```v2.0.1```

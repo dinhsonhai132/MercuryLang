@@ -23,6 +23,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 using namespace std;
 
 #define _SUCCESS 1
@@ -51,6 +52,8 @@ using namespace std;
 #define ComparisonExpression "ComparisonExpression"
 #define StringVariableStatement "StringVariableStatement"
 #define Literal "Literal"
+#define TrueExpression "TrueExpression"
+#define FalseExpression "FalseExpression"
 #define IntegerLiteral "IntegerLiteral"
 #define LoopStatement "LoopStatement"
 #define BreakStatement "BreakStatement"
@@ -70,6 +73,8 @@ using namespace std;
      (type) == ArrayExpression || \
      (type) == FunctionCallExpression || \
      (type) == ExtractExpression || \
+     (type) == TrueExpression || \
+     (type) == FalseExpression || \
      (type) == StringIdentifier)
 
 struct mAST_T
@@ -226,6 +231,7 @@ struct mAST_T
 mAST_T *_MerAST_new(void);
 mAST_T *_MerAST_make_parent(string type);
 mAST_T *_MerAST_make(string type, string tok, float value, const char *dt, const char *iden);
+void MerAST_print_ast(mAST_T *ast, int indent = 0);
 int _MerAST_free(mAST_T *ast);
 
 #endif // MERCURY_ABSTRACT_SYNTAX_TREE_HEADER_FILE

@@ -58,6 +58,7 @@ using namespace std;
     bool is_code; \
     bool is_type; \
     bool is_iter; \
+    bool is_bool; \
     bool is_list; \
     bool is_obj; \
     bool is_opcode;
@@ -66,6 +67,7 @@ using namespace std;
     mString_T *f_str_v; \
     mVariable_T *var_v; \
     mFunc_T func_v; \
+    mBool_T *bool_v; \
     mCode_T *code_v; \
     mIter_T *iter_v; \
     mType_T *type_v; \
@@ -75,57 +77,49 @@ using namespace std;
     mFunc_object_T *func_obj_v; \
 
 #define HEAD_STACK \
-    float cval; \
-    int cidx; \
-    float cbuf; \
-    uint8_t address; \
-    string err; \
-    bool is_builtin; \
-    string name; \
-    float value; \
-    int size; \
-    bool is_same; \
-    string type; \
-    bool is_local; \
+    Mer_number_t cbuf; \
+    Mer_number_t value; \
+    Mer_number_t cval; \
+    Mer_index_t size; \
+    Mer_index_t cidx; \
+    Mer_uint8_t address; \
+    Mer_real_string name; \
+    Mer_real_string type; \
     Mer_real_string str_v; \
-    vector<uint8_t> tbody;
+    Mer_real_string err; \
+    Mer_flag_t is_builtin; \
+    Mer_flag_t is_same; \
+    Mer_flag_t is_local; \
+    vector<Mer_uint8_t> tbody;
 
 
 typedef struct __table
 {
-    GC_HEAD
-    HEAD_STACK 
-    HEAD_OBJ
-    HEAD_VALUE
-    FLAG
-    OTHER
+    GC_HEAD HEAD_STACK HEAD_OBJ HEAD_VALUE FLAG OTHER
     vector<__table *> table;
+
 } table;
 
 typedef struct __symboltable
 {
-    GC_HEAD
-    HEAD_STACK;
-    HEAD_OBJ;
-    HEAD_VALUE;
-    FLAG
-    OTHER
+    GC_HEAD HEAD_STACK HEAD_OBJ HEAD_VALUE FLAG OTHER
     table *tab;
 } symtable;
 
 typedef struct __stack
 {
-    string code;
-    string bcode;
-    int cvalue;
-    string iden;
-    string err;
-
     table *s_table;
     symtable *s_symtable;
     symtable *s_global;
     symtable *s_local;
+
+    size_t code_idx; // Debug
+    string code_name; // Debug
+    Mer_uint8_t raw_debug; // Debug
 } stack;
+
+#define incr_stk_idx(stk) \
+    stk->code_idx++; \
 
 stack *MerCompiler_Stack_new(void);
 table *MerCompiler_Table_new(void);

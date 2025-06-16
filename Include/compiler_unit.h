@@ -17,6 +17,7 @@ struct __program_bytecode {
     Mer_size_t loop_size;
     bool is_in_func;
     const char *file;
+    bool is_label = false;
 };
 
 #endif // MERCURY_COMPILER_UNIT_H

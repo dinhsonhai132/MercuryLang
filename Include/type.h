@@ -89,6 +89,8 @@ struct _code
     vector<Mer_uint8_t> buff;
     vector<Mer_uint8_t> raw;
 
+    size_t belong_line;
+
     Mer_uint8_t cbuff[MAX_CODE_LEN];
     Mer_uint8_t raw_buff[MAX_CODE_LEN];
     _code *scr[MAX_CODE_LEN];
@@ -98,6 +100,11 @@ struct _char {
     GC_HEAD;
     char item;
     Mer_uint8_t citem;
+};
+
+struct _bool {
+    GC_HEAD;
+    Mer_bool value;
 };
 
 struct _string {
@@ -118,6 +125,8 @@ struct _pcode
     const char *cfile;
     ssize_t csize;
     vector<Mer_uint8_t> raw;
+
+    size_t belong_line;
 
     Mer_uint8_t raw_in_buff[MAX_CODE_LEN];
     Mer_uint8_t raw_out_buff[MAX_CODE_LEN];
@@ -226,6 +235,7 @@ struct _type_obj {
     _pcode *pcode;
     _code *code;
     _list_object *list;
+    _bool *bool_obj;
     block_obj *block;
     _val *val;
     Mer_Reg *reg;

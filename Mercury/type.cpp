@@ -14,6 +14,12 @@ _val *MerCompiler_val_new(void) {
     return v;
 }
 
+_bool *MerCompiler_bool_new(void) {
+    _bool *b = new _bool;
+    b->value = false;
+    return b;
+}
+
 _code MerCompiler_code_new(void) {
     _code c = {};
     c.code = NULL_UINT_8_T;

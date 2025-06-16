@@ -1,61 +1,52 @@
 #ifndef MERCURY_OPCODE_H
 #define MERCURY_OPCODE_H
 
-#define CPUSH_FLOAT                             0xAB
-#define CPUSH_NORMAL_MODE                       0xAA
-#define CFREE                                   0x18
+#define CPUSH_FLOAT                             0x01
+#define CPUSH_NORMAL_MODE                       0x02
+#define CSTORE_GLOBAL                           0x03
+#define CLOAD_GLOBAL                            0x04
+#define CLOAD_ARGS                              0x05
 
-#define CBUILD_LIST                             0x1A
-#define CGET_ITEM                               0xF2
-#define CSTORE_INDEX                            0xF1
-#define CBINARY_SUBSCRIBE                       0xF4
+#define CBINARY_ADD                             0x10
+#define CBINARY_SUB                             0x11
+#define CBINARY_MUL                             0x12
+#define CBINARY_DIV                             0x13
+#define CBINARY_MOD                             0x14
+#define CBINARY_SUBSCRIBE                       0x15
 
-#define CLOAD_GLOBAL                            0x9F
-#define CSTORE_GLOBAL                           0xFF
+#define TRUE_ADDRESS                            0x20
+#define FALSE_ADDRESS                           0x21
+#define CEQUAL                                  0x22
+#define CNOT_EQUAL                              0x23
+#define CLESS                                   0x24
+#define CLESS_EQUAL                             0x25
+#define CGREATER                                0x26
+#define CGREATER_EQUAL                          0x27
+#define CNOT                                    0x28
+#define CLEN                                    0x29
 
-#define CBINARY_ADD                             0xE1
-#define CBINARY_SUB                             0xE2
-#define CBINARY_MUL                             0xE3
-#define CBINARY_DIV                             0xE4
-#define CBINARY_MOD                             0xE5
+#define CFUNCTION_CALL_WITH_ARGS                0x30
+#define CMAKE_FUNCTION_WITH_ARGS                0x31
+#define CMAKE_FUNCTION                          0x32
+#define CFUNCTION_CALL                          0x33
+#define CRETURN                                 0x34
 
-#define CGET_ITERATOR                           0x19
-#define CFOR_ITERATOR                           0x20
+#define CJUMP_IF_FALSE                          0x40
+#define CJUMP_IF_TRUE                           0x41
+#define CPOP_JUMP_IF_FALSE                      0x42
+#define CPOP_JUMP_IF_TRUE                       0x43
+#define CJUMP_TO                                0x44
 
-#define TRUE_ADDRESS                            0x1A
-#define FALSE_ADDRESS                           0x2A
+#define CBUILD_LIST                             0x50
+#define CGET_ITEM                               0x51
+#define CSTORE_INDEX                            0x52
 
-#define CEQUAL                                  0x1B
-#define CNOT_EQUAL                              0x2B
-#define CLESS                                   0x8B
-#define CLESS_EQUAL                             0x4B
-#define CGREATER                                0x5B
-#define CGREATER_EQUAL                          0x9B
-#define CNOT                                    0xE1
+#define CPROGRAM_START                          0x60
+#define CPROGRAM_END                            0x61
+#define CADDRESS                                0x62
 
-#define CAND                                    0x1C
-#define COR                                     0x2C
-#define CNOT_OR                                 0x3C
-#define CAND_OR                                 0x4C
-#define CNOT_AND_OR                             0x5C
-#define CLEN                                    0x6C
-
-#define CJUMP_IF_FALSE                          0x1D
-#define CJUMP_IF_TRUE                           0x2D
-#define CPOP_JUMP_IF_FALSE                      0x3D
-#define CPOP_JUMP_IF_TRUE                       0x4D
-#define CJUMP_TO                                0x5D
-
-#define CPROGRAM_START                          0x1E
-#define CPROGRAM_END                            0x2E
-#define CMAKE_BLOCK                             0x3E
-#define CEND_BLOCK                              0x4E
-#define CMAKE_FUNCTION                          0x5E
-#define CFUNCTION_CALL                          0x6E
-#define CRETURN                                 0x9E
-
-#define CADDRESS                                0xFA
-#define CNONE                                   0xFD
+#define CLOAD_TRUE                              0x63
+#define CLOAD_FALSE                             0x64
 
 #define NUMBER_0 {0x00, 0x00, 0x00, 0x00}
 #define NUMBER_1 {0x00, 0x00, 0x80, 0x3F}

@@ -33,7 +33,6 @@ unordered_map<string, Mer_uint8_t> lib_hashmap = {
     {"ch", CHANGE_ITEM_ADDRESS},
     {"type", TYPE_ADDRESS}, 
     {"range", RANGE_ADDRESS},
-    {"random", RANDOM_ADDRESS}, 
     {"randint", RANDINT_ADDRESS},
     {"sub", SUB_STR}, 
     {"print", PRINT_ADDRESS}, 
@@ -42,13 +41,12 @@ unordered_map<string, Mer_uint8_t> lib_hashmap = {
     {"isdigit", ISDIGIT_ADDRESS},
     {"to_str", TO_STRING_ADDRESS},
     {"to_int", TO_INT_ADDRESS},
+    {"input", INPUT_ADDRESS},
 };
 
 unordered_map<string, Mer_uint8_t> global_hashmap = {
     {"pi", PI_ADDRESS}, 
     {"e", EULER_ADDRESS}, 
-    {"true", TRUE_ADDRESS}, 
-    {"false", FALSE_ADDRESS}, 
     {"inf", INFINITY_ADDRESS},
     {"tau", TAU_ADDRESS}, 
     {"gr", GOLDEN_RATIO_ADDRESS}
@@ -92,6 +90,7 @@ MERCURY_API __mer_core_lib_api__ void __builtin_mer_split(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_mer_is_digit(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_to_string(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_to_int(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_mer_read_line(stack *stk);
 
 MERCURY_API __mer_core_lib_api__ vector<Mer_Reg> mer_core_libs = {};
 

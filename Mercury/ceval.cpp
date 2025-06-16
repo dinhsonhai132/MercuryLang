@@ -1,3 +1,4 @@
+#include <iomanip>
 #include "../Include/ceval.h"
 
 __program_bytecode init_program_bytecode(mCode_T & code)
@@ -22,6 +23,7 @@ unordered_map<Mer_uint8_t, Mer_size_t> __get_label_map(__program_bytecode &u, st
     #endif
 
     Mer_uint8_t end = CPROGRAM_END;
+    u.is_label = true;
 
     if (mode == "function") end = CRETURN;
 
@@ -46,10 +48,6 @@ unordered_map<Mer_uint8_t, Mer_size_t> __get_label_map(__program_bytecode &u, st
 }
 
 MERCURY_API Mer_uint8_t __get_next_code_in_prg_code(__program_bytecode &u) {
-    if (u.iid > u.code.prg_code.buff.size()) {
-        MerDebug_system_error(SYSTEM_ERROR, "pointer of program is out of range", u.file);
-    }
-
     return u.code.prg_code.buff[u.iid++];
 }
 
@@ -75,6 +73,115 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_program(mCode_T &code) {
     #endif
 
     return MerVM_evaluate_statement(u_program, stk);
+}
+
+MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode &u, stack *stk) {
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_evaluate_statement] [building...]" << endl;
+    #endif
+
+    for (;;) {
+        Mer_uint8_t code = __get_next_code_in_prg_code(u);
+
+        if (code == CPUSH_FLOAT) {
+            stk = MerVM_evaluate_PUSH_FLOAT(u, stk);
+        }
+        
+        else if (code == CBINARY_ADD || code == CBINARY_SUB || code == CBINARY_MUL || code == CBINARY_DIV || code == CBINARY_MOD) {
+            stk = MerVM_evaluate_BINARY_OPER(u, stk, code);
+        } 
+        
+        else if (code == CLOAD_GLOBAL) {
+            stk = MerVM_evaluate_LOAD_GLOBAL(u, stk);
+        } 
+        
+        else if (code == CSTORE_GLOBAL) {
+            stk = MerVM_evaluate_STORE_GLOBAL(u, stk);
+        } 
+        
+        else if (code == CMAKE_FUNCTION) {
+            stk = MerVM_evaluate_MAKE_FUNCTION(u, stk);
+        } 
+        
+        else if (code == CFUNCTION_CALL) {
+            stk = MerVM_evaluate_FUNCTION_CALL(u, stk);
+        } 
+        
+        else if (code == CGREATER || code == CEQUAL || code == CNOT_EQUAL || code == CGREATER_EQUAL || code == CLESS_EQUAL || code == CLESS) {
+            stk = MerVM_evaluate_COMPARE(u, stk, code);
+        } 
+        
+        else if (code == CJUMP_TO) {
+            stk = MerVM_evaluate_JUMP_TO(u, stk);
+        } 
+        
+        else if (code == CLEN) {
+            stk = MerVM_evaluate_CLEN(u, stk);
+        }
+
+        else if (code == CBUILD_LIST) {
+            stk = MerVM_evaluate_BUILD_LIST(u, stk);
+        } 
+        
+        else if (code == CPUSH_NORMAL_MODE) {
+            stk = MerVM_evaluate_PUSH_NORMAL_MODE(u, stk);
+        } 
+        
+        else if (code == CPOP_JUMP_IF_FALSE) {
+            stk = MerVM_evaluate_POP_JUMP_IF_FALSE(u, stk);
+        } 
+        
+        else if (code == CGET_ITEM) {
+            stk = MerVM_evaluate_GET_ITEM(u, stk);
+        } 
+
+        else if (code == CLOAD_TRUE) {
+            stk = MerVM_evaluate_LOAD_TRUE(u, stk);
+        } 
+        
+        else if (code == CLOAD_FALSE) {
+            stk = MerVM_evaluate_LOAD_FALSE(u, stk);
+        }
+        
+        else if (code == CRETURN || code == CPROGRAM_END) {
+            break;
+        } 
+        
+        else if (code == CSTORE_INDEX) {
+            stk = MerVM_evaluate_STORE_INDEX(u, stk);
+        }
+
+        else if (code == CADDRESS) {
+            code = __get_next_code_in_prg_code(u);
+            continue;
+        }
+
+        else {
+            continue;
+        }
+    }
+
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_evaluate_statement] [pass]" << endl;
+    #endif
+
+    return stk;
+}
+
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_LOAD_TRUE(__program_bytecode &u, stack *stk) {
+    table *bool_obj = MerCompiler_Table_new();
+    bool_obj->bool_v = MerCompiler_bool_new();
+    bool_obj->bool_v->value = true;
+    bool_obj->is_bool = true;
+    stk->s_table->table.push_back(bool_obj);
+}
+
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_LOAD_FALSE(__program_bytecode &u, stack *stk) {
+    table *bool_obj = MerCompiler_Table_new();
+    bool_obj->bool_v = MerCompiler_bool_new();
+    bool_obj->bool_v->value = false;
+    bool_obj->is_bool = true;
+    stk->s_table->table.push_back(bool_obj);
 }
 
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_CLEN(__program_bytecode &u, stack *stk) {
@@ -122,8 +229,9 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_POP_JUMP_IF_FALSE(__program_
     #endif
 
     table *top = POP_STACK(stk);
+    Mer_uint8_t address = __get_next_code_in_prg_code(u);
+
     if (IS_FALSE(top->cval)) {
-        Mer_uint8_t address = __get_next_code_in_prg_code(u);
         u.iid = u.label_map[address];
     }
 
@@ -140,8 +248,9 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_JUMP_IF_FALSE(__program_byte
     #endif
 
     table *top = EAT_STACK(stk);
+    Mer_uint8_t address = __get_next_code_in_prg_code(u);
+
     if (IS_FALSE(top->cval)) {
-        Mer_uint8_t address = __get_next_code_in_prg_code(u);
         u.iid = u.label_map[address];
     }
 
@@ -181,7 +290,7 @@ MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_BUILD_LIST(
     top->is_list = true;
     top->list_v = list;
     top->list_v->size = size;
-    top->cval = MERCURY_LIST_VALUE;
+    top->cval = MAKE_LIST_VALUE(top->list_v);
     top->ref_count++;
 
     stk->s_table->table.push_back(top);
@@ -216,10 +325,10 @@ MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_PUSH_NORMAL
     mString_T *str_v = MerCompiler_string_new();
     str_v->buff = result;
     str_v->hash = u.hash;
-    u.hash += 0x01;
     str_v->size = size;
 
     hash_t hash = __hash(str_v);
+    float f_hash = static_cast<float>(hash);
 
     Mer_string_entry *entry = new Mer_string_entry();
     entry->hash_key = hash;
@@ -229,8 +338,8 @@ MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_PUSH_NORMAL
     table *top = MerCompiler_Table_new();
     top->f_str_v = str_v;
     top->f_str_v->ref_count++;
-    top->cval = MERCURY_STRING_VALUE;
     top->is_str = true;
+    top->cval = f_hash; // store hash as cval
     top->ref_count++;
 
     stk->s_table->table.push_back(top);
@@ -250,6 +359,14 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_GET_ITEM(__program_bytecode 
     table *extract_val = POP_STACK(stk);
     table *obj = POP_STACK(stk);
 
+    if (!extract_val) {
+        MerDebug_system_error(SYSTEM_ERROR, "Error while getting item from a list object", u.file);
+    }
+
+    if (!obj) {
+        MerDebug_system_error(SYSTEM_ERROR, "Error while getting item from a list object", u.file);
+    }
+
     if (extract_val->cval > obj->list_v->size) {
         MerDebug_system_error(SYSTEM_ERROR, "Index out of range", u.file);
     }
@@ -266,94 +383,6 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_GET_ITEM(__program_bytecode 
 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [MerVM_evaluate_GET_ITEM] [pass]" << endl;
-    #endif
-
-    return stk;
-}
-
-MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode &u, stack *stk) {
-    #ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_statement] [building...]" << endl;
-    #endif
-
-    for (;;) {
-        Mer_uint8_t code = __get_next_code_in_prg_code(u);
-        if (code == CPUSH_FLOAT) {
-            stk = MerVM_evaluate_PUSH_FLOAT(u, stk);
-        } 
-        
-        else if (code == CBINARY_ADD 
-            || code == CBINARY_SUB 
-            || code == CBINARY_MUL 
-            || code == CBINARY_DIV 
-            || code == CBINARY_MOD) {
-            stk = MerVM_evaluate_BINARY_OPER(u, stk, code);
-        } 
-        
-        else if (code == CLOAD_GLOBAL) {
-            stk = MerVM_evaluate_LOAD_GLOBAL(u, stk);
-        } 
-        
-        else if (code == CSTORE_GLOBAL) {
-            stk = MerVM_evaluate_STORE_GLOBAL(u, stk);
-        } 
-        
-        else if (code == CMAKE_FUNCTION) {
-            stk = MerVM_evaluate_MAKE_FUNCTION(u, stk);
-        } 
-        
-        else if (code == CFUNCTION_CALL) {
-            stk = MerVM_evaluate_FUNCTION_CALL(u, stk);
-        } 
-        
-        else if (code == CGREATER 
-            || code == CEQUAL 
-            || code == CNOT_EQUAL 
-            || code == CGREATER_EQUAL 
-            || code == CLESS_EQUAL 
-            || code == CLESS) {
-            stk = MerVM_evaluate_COMPARE(u, stk, code);
-        } 
-        
-        else if (code == CJUMP_TO) {
-            stk = MerVM_evaluate_JUMP_TO(u, stk);
-        } 
-        
-        else if (code == CLEN) {
-            stk = MerVM_evaluate_CLEN(u, stk);
-        }
-
-        else if (code == CBUILD_LIST) {
-            stk = MerVM_evaluate_BUILD_LIST(u, stk);
-        } 
-        
-        else if (code == CPUSH_NORMAL_MODE) {
-            stk = MerVM_evaluate_PUSH_NORMAL_MODE(u, stk);
-        } 
-        
-        else if (code == CMAKE_BLOCK) {
-            stk = MerVM_evaluate_MAKE_BLOCK(u, stk);
-        } 
-        
-        else if (code == CPOP_JUMP_IF_FALSE) {
-            stk = MerVM_evaluate_POP_JUMP_IF_FALSE(u, stk);
-        } 
-        
-        else if (code == CGET_ITEM) {
-            stk = MerVM_evaluate_GET_ITEM(u, stk);
-        } 
-        
-        else if (code == CRETURN || code == CEND_BLOCK || code == CPROGRAM_END) {
-            break;
-        } 
-        
-        else if (code == CSTORE_INDEX) {
-            stk = MerVM_evaluate_STORE_INDEX(u, stk);
-        }
-    }
-
-    #ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_statement] [pass]" << endl;
     #endif
 
     return stk;
@@ -434,6 +463,8 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_PUSH_FLOAT(__program_bytecod
         memcpy(&int_repr, &u.code.prg_code.buff[u.iid], 4);
         memcpy(&float_repr, &int_repr, 4);
         stk->s_table->table.push_back(MerCompiler_table_setup(float_repr, NULL_UINT_8_T));
+    } else {
+        MerDebug_system_error(SYSTEM_ERROR, "Stack underflow", u.file);
     }
     u.iid += 4;
 
@@ -450,14 +481,22 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_LOAD_GLOBAL(__program_byteco
     #endif
 
     Mer_uint8_t code = __get_next_code_in_prg_code(u);
+    bool found = false;
 
     for (Mer_size_t i = 0; i < _G.size(); i++) {
         if (_G[i]->address == code) {
             _G[i]->tab->cval = _G[i]->value;
             _G[i]->tab->address = _G[i]->address;
             stk->s_table->table.push_back(_G[i]->tab);
+            found = true;
             break;
         }
+    }
+
+    if (!found) {
+        cout << "Global not found: ";
+        cout << " 0x" << hex << setfill('0') << setw(2) << (int)code << endl;
+        break_point();
     }
 
     #ifdef SYSTEM_TEST
@@ -589,21 +628,6 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_FUNCTION_CALL(__program_byte
     cout << "[ceval.cpp] [MerVM_evaluate_FUNCTION_CALL] [pass]" << endl;
     #endif
 
-    return stk;
-}
-
-MERCURY_API __mer_core_data__ stack *MerVM_evaluate_MAKE_BLOCK(__program_bytecode &u, stack *stk) {
-    #ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_MAKE_BLOCK] [building...]" << endl;
-    #endif
-
-    Mer_uint8_t code = __get_next_code_in_prg_code(u);
-    symtable *block = MerCompiler_symboltable_setup("<address...>", 0, "AUTO_T", code);
-    while (code != CEND_BLOCK) {
-        code = __get_next_code_in_prg_code(u);
-        block->tbody.push_back(code);
-    }
-    block->tbody.push_back(CEND_BLOCK);
     return stk;
 }
 

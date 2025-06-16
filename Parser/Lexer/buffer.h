@@ -41,5 +41,6 @@ char* MerBuffer_read_file_source(const string& file_name, string &source);
 const char* MerBuffer_read_file(const string& file_name);
 void MerBuffer_make_and_write_file(const string& filename, const char* content);
 void MerBuffer_make_and_write_file_bytecode(const string& filename, const vector<uint8_t>& data);
+vector<uint8_t> MerBuffer_read_file_bytecode(const string& file_name);
 
 #endif // MERCURY_BUFFER_HEADER_FILE

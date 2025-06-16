@@ -2,15 +2,13 @@
 
 stack *MerCompiler_Stack_new(void) {
     stack *s = new stack;
-    s->code = "";
-    s->cvalue = 0;
-    s->iden = "";
-    s->bcode = "";
-    s->err = "";
     s->s_table = MerCompiler_Table_new();
     s->s_symtable = MerCompiler_SymbolTable_new();
     s->s_global = MerCompiler_SymbolTable_new();
     s->s_local = MerCompiler_SymbolTable_new();
+    s->code_idx = 0; // Debug
+    s->code_name = ""; // Debug
+    s->raw_debug = NULL_UINT_8_T; // Debug
     return s;
 }
 
@@ -145,23 +143,18 @@ symtable *MerCompiler_symboltable_setup(string name, float value, string type, u
     return s;
 }
 
-table *pop_stack(stack *stk) {
+table *pop_stack(stack *stk) { 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [pop_stack] [start]" << endl;
     #endif
 
     if (stk->s_table->table.empty()) {
-        cerr << "Error: Stack underflow in pop_stack" << endl;
+        cerr << "Error: Stack is empty, can not pop while using pop_stack" << endl;
         break_point();
     }
     
     table *top = stk->s_table->table.back();
     stk->s_table->table.pop_back();
-
-    if (!top) {
-        cerr << "Error: Stack underflow in pop_stack" << endl;
-        break_point();
-    }
 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [pop_stack] [pass]" << endl;
@@ -177,8 +170,6 @@ table *eat_stack(stack *stk) {
     
     if (stk->s_table->table.empty()) {
         cerr << "Error: Stack underflow in eat_stack" << endl;
-        cerr << "eat_stack" << endl;
-        return nullptr;
     }
     table *top = stk->s_table->table.back();
 

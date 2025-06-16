@@ -20,10 +20,12 @@
 #include <vector>
 #include <chrono>
 #include <thread>
+#include <cstring>
 #include <cstdlib>
 #include <unordered_map>
 #include <filesystem>
 #include <random>
+#include <functional>
 
 const char* CUSTOM_VERSION = "2.0.1";
 const char* AUTHOR = "dinhsonhai132";

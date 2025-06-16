@@ -8,12 +8,18 @@ MERCURY_API __mer_core_api__ void __register_global(Mer_uint8_t address, Mer_str
     GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(address, name, name));
 }
 
+MERCURY_API __mer_core_api__ void __register_lib_to_global(Mer_uint8_t address, Mer_string name) {
+    __global *item = CREAT_GLOBAL_TABLE(address, name, name);
+    item->is_let = false;
+    GLOBAL_TABLE.push_back(item);
+}
+
 MERCURY_API __mer_core_api__ void __register_global_data(symtable *item) {
     if (!item) return;
     _G.push_back(item);
 }
 
-MERCURY_API __mer_core_api__ void __register_lib_to_global(Mer_uint8_t address, mFunc_T func) {
+MERCURY_API __mer_core_api__ void __register_lib_to_global_stack(Mer_uint8_t address, mFunc_T func) {
     symtable *item = MerCompiler_SymbolTable_new();
     item->address = address;
     item->is_builtin = true;

@@ -57,4 +57,10 @@
 #define __Mer_return_Mer_char_t Mer_char_t
 #define __Mer_return_Mer_char_t_ptr Mer_char_t *
 
+typedef long double Mer_number_t;
+typedef long double *Mer_number_t_ptr;
+typedef size_t Mer_index_t;
+typedef size_t *Mer_index_t_ptr;
+typedef bool Mer_flag_t;
+
 #endif // MERCURY_TYPEDEF_HEADER_FILE

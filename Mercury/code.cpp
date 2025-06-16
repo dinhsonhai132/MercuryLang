@@ -41,3 +41,4 @@ int _MerCode_insert_vec_code_to_prg_code_by_out_code(mCode_T &code, mCode_T &ins
     code.prg_code.buff.insert(code.prg_code.buff.end(), ins.out_code.buff.begin(), ins.out_code.buff.end());
     return 0;
 }
+

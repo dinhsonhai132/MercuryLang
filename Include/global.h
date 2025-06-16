@@ -10,6 +10,7 @@ struct __global {
     Mer_uint8_t __Address;
     Mer_string __Name;
     Mer_real_string __name;
+    bool is_let = true;
 };
 
 #define NULL_GLOBAL __global()

@@ -51,7 +51,7 @@ __compiler_u compiler_init(void);
 
 #define INC_U(u) (u.byte++, u.cid++)
 
-#define create_label(glb) ++glb.address;
+#define create_label(glb) ++glb.address
 
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_program(mAST_T *ast, __compiler_u &glb);
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_id(mAST_T *ast, __compiler_u &glb);
@@ -78,5 +78,7 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_for_in_st
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_loop(mAST_T *ast, __compiler_u &glb);
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_break(mAST_T *ast, __compiler_u &glb);
 MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_continue(mAST_T *ast, __compiler_u &glb);
+MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_true(mAST_T *ast, __compiler_u &glb);
+MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_false(mAST_T *ast, __compiler_u &glb);
 
 #endif // MERCURY_BYTECODE_COMPILER_HEADER

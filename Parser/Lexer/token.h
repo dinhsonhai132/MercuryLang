@@ -20,11 +20,12 @@
 
 #ifndef MERCURY_TOKEN_HEADER_FILE
 #define MERCURY_TOKEN_HEADER_FILE
+#define MERCURY_LANG3
 #include <string>
 #include <vector>
 #include <iostream>
 #include "syntax.cpp"
-#include "../../Parser/war.cpp"
+#include "../../Parser/error.cpp"
 #include "../../Mercury/error.cpp"
 
 using namespace std;
@@ -99,6 +100,8 @@ using namespace std;
 #define EXTERN_T "EXTERN_T"
 #define USING "USING"
 #define VOID_T "VOID_T"
+#define TRUE_T "TRUE_T"
+#define FALSE_T "FALSE_T"
 #define BREAK_T "BREAK_T"
 #define POW "POW"
 #define CONST_ "CONST"
@@ -202,7 +205,7 @@ using namespace std;
 
 #define is_keywords(c) (c == '+' || c == '-' || c == '*' || c == '/' || c == ',' \
     || c == ':' || c == '=' || c == '!' || c == '%' \
-    || c == '<' || c == '>' || c == '&' || c== '\\' \ 
+    || c == '<' || c == '>' || c == '&' || c == '\\' \
     || c == '^' || c == ';' || c == '!' \
     || c == '[' || c == ']' || c == '.' \
     || c == '|')
@@ -223,6 +226,8 @@ inline bool is_identifier(string c) {
     || (c == "char")
     || (c == "list")
     || (c == "short")
+    || (c == "true")
+    || (c == "false")
     || (c == "long")
     || (c == "void")    
     || (c == "bool")
@@ -262,6 +267,8 @@ inline const char* GET_SYNTAX(string c) {
     else if (c == "func") return FUNCTION;
     else if (c == "include") return INCLUDE;
     else if (c == "and") return AND;
+    else if (c == "true") return TRUE_T;
+    else if (c == "false") return FALSE_T;
     else if (c == "or") return OR;
     else if (c == "do") return DO_T;
     else if (c == "is") return EQUAL;

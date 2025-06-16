@@ -1,16 +1,50 @@
 #include "../Include/buitlin.h"
 
 __mer_core_data__ float __randint(int a, int b) {
-    static std::random_device rd;
-    static std::mt19937 gen(rd()); 
-    std::uniform_int_distribution<> dis(a, b);
+    static random_device rd;
+    static mt19937 gen(rd()); 
+    uniform_int_distribution<> dis(a, b);
     return dis(gen);
 }
 
-MERCURY_API __mer_core_lib_api__ const char* to_char(Mer_uint8_t c) {
+ __mer_core_lib_api__ const char* to_char(Mer_uint8_t c) {
     static char s[1];
     s[0] = c;
     return s;
+}
+
+const float to_float(string c) {
+    int idx = 0;
+    float value = 0.0f;
+    bool is_negative = false;
+    if (c[idx] == '-') {
+        is_negative = true;
+        idx++;
+    }
+    for (; idx < c.length(); idx++) {
+        value = value * 10 + (c[idx] - '0');
+    }
+    if (is_negative) {
+        value = -value;
+    }
+    return value;
+}
+
+MERCURY_API __mer_core_lib_api__ void __builtin_mer_read_line(stack *stk) {
+    string input_line;
+    getline(cin, input_line);
+
+    mString_T* str = MerCompiler_string_new();
+    for (char ch : input_line) {
+        str->buff.push_back(ch);
+    }
+    str->size = str->buff.size();
+
+    table* tab = MerCompiler_Table_new();
+    tab->is_str = true;
+    tab->f_str_v = str;
+
+    stk->s_table->table.push_back(tab);
 }
 
 int ISDIGIT(string str) {
@@ -70,8 +104,6 @@ MERCURY_API __mer_core_lib_api__ void __builtin_to_string(stack *stk) {
         stk->s_table->table.push_back(top);
         return;
     }
-
-    // in process... cuz lazy da
 }
 
 MERCURY_API __mer_core_lib_api__ void __builtin_to_int(stack *stk) {
@@ -80,7 +112,7 @@ MERCURY_API __mer_core_lib_api__ void __builtin_to_int(stack *stk) {
     if (top->is_str) {
         string str = __convert_to_string(top->f_str_v);
         if (ISDIGIT(str)) {
-            stk->s_table->table.push_back(MerCompiler_table_setup(stoi(str), NULL_UINT_8_T));
+            stk->s_table->table.push_back(MerCompiler_table_setup(to_float(str), NULL_UINT_8_T));
         } else {
             stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
         }
@@ -171,7 +203,7 @@ MERCURY_API __mer_core_lib_api__ void __builtin_mer_sub(stack *stk) {
 
 void sleep_ms(int num) {
     num *= 1000;
-    std::this_thread::sleep_for(std::chrono::milliseconds((num)));
+    this_thread::sleep_for(chrono::milliseconds((num)));
 }
 
 MERCURY_API __mer_core_lib_api__ void __builtin_mer_sleep(stack *stk) {
@@ -353,7 +385,6 @@ MERCURY_API __mer_core_lib_api__ void __builtin_io_write(stack *stk) {
     if (top->is_str) {
         mString_T *str_v = top->f_str_v;
         __io_write(str_v);
-        stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
     } else if (top->is_list) {
         __io_cout_stdout("[")
 
@@ -386,14 +417,15 @@ MERCURY_API __mer_core_lib_api__ void __builtin_io_write(stack *stk) {
         
         __io_cout_stdout("]");
         __io_cout_stdout("\n");
-
-        stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
-    }  else {
+    } else if (top->is_bool) {
+        __io_cout_stdout(top->bool_v->value ? "true" : "false");
+        __io_cout_stdout("\n");
+    } else {
         __io_cout_stdout(top->cval);
         __io_cout_stdout("\n");
-        stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
     }
 
+    stk->s_table->table.push_back(MerCompiler_table_setup(0, NULL_UINT_8_T));
     
     #ifdef SYSTEM_TEST
     cout << "[buitlin.cpp] [__builtin_io_write] [pass]" << endl;

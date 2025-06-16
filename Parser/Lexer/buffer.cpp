@@ -30,10 +30,7 @@ const char *MerBuffer_read_file(const string &file_name)
 {
     char *buffer = NULL;
     FILE *f = fopen(file_name.c_str(), "rb");
-    if (f == NULL) {
-        cerr << "Error: Could not open file " << file_name << ", this file name does not exist" << endl;
-        return NULL;
-    };
+    if (f == NULL) return NULL;
     fseek(f, 0, SEEK_END);
     size_t length = ftell(f);
     rewind(f);
@@ -64,4 +61,22 @@ void MerBuffer_make_and_write_file_bytecode(const string &filename, const vector
     ofstream file(filename, ios::binary);
     file.write(reinterpret_cast<const char *>(data.data()), data.size());
     file.close();
+}
+
+vector<uint8_t> MerBuffer_read_file_bytecode(const string &file_name)
+{
+    vector<uint8_t> data;
+    ifstream file(file_name, ios::binary);
+    if (!file)
+    {
+        cerr << "Error: Could not open file " << file_name << endl;
+        return data;
+    }
+    file.seekg(0, ios::end);
+    size_t size = file.tellg();
+    file.seekg(0, ios::beg);
+    data.resize(size);
+    file.read(reinterpret_cast<char *>(data.data()), size);
+    file.close();
+    return data;
 }

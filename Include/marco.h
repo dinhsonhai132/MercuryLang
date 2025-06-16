@@ -46,65 +46,44 @@
 #define CONSTEXPR(x) constexpr x
 #define EXTERN(x) extern x
 
-#define OPCODE(x) \
-    switch (x) { \
-        case CPUSH_FLOAT: return "PUSH_FLOAT"; \
-        case CADDRESS: return "ADDRESS"; \
-        case CPOP_JUMP_IF_FALSE: return "POP_JUMP_IF_FALSE"; \
-        case CJUMP_TO: return "JUMP_TO"; \
-        case CPOP_JUMP_IF_TRUE: return "POP_JUMP_IF_TRUE"; \
-        case CPOP_JUMP_IF_FALSE: return "POP_JUMP_IF_FALSE"; \
-        case CPOP_JUMP_IF_TRUE: return "POP_JUMP_IF_TRUE"; \
-        case CPOP_GLOBAL: return "POP_GLOBAL"; \
-        case CPOP_LOCAL: return "POP_LOCAL"; \
-        case CPOP_TEMP: return "POP_TEMP"; \
-        case CPOP_NORMAL: return "POP_NORMAL"; \
-        case CPOP_STRING: return "POP_STRING"; \
-        case CPOP_FLOAT: return "POP_FLOAT"; \
-        case CPOP_NORMAL_MODE: return "POP_NORMAL_MODE"; \
-        case CPOP_TEMP_MODE: return "POP_TEMP_MODE"; \
-        case CPOP_GLOBAL: return "POP_GLOBAL"; \
-        case CPOP_LOCAL: return "POP_LOCAL"; \
-        case CPOP_TEMP: return "POP_TEMP"; \
-        case CPOP_NORMAL: return "POP_NORMAL"; \
-        case CPOP_STRING: return "POP_STRING"; \
-        case CPOP_FLOAT: return "POP_FLOAT"; \
-        case CPUSH_NORMAL_MODE: return "PUSH_NORMAL_MODE"; \
-        case CPUSH_TEMP_MODE: return "PUSH_TEMP_MODE"; \
-        case CLOAD_GLOBAL: return "LOAD_GLOBAL"; \
-        case CSTORE_GLOBAL: return "STORE_GLOBAL"; \
-        case CBINARY_ADD: return "BINARY_ADD"; \
-        case CBINARY_SUB: return "BINARY_SUB"; \
-        case CBINARY_MUL: return "BINARY_MUL"; \
-        case CBINARY_DIV: return "BINARY_DIV"; \
-        case CBINARY_MOD: return "BINARY_MOD"; \
-        case CEQUAL: return "EQUAL"; \
-        case CNOT_EQUAL: return "NOT_EQUAL"; \
-        case CLESS: return "LESS"; \
-        case CLESS_EQUAL: return "LESS_EQUAL"; \
-        case CGREATER: return "GREATER"; \
-        case CGREATER_EQUAL: return "GREATER_EQUAL"; \
-        case CNOT: return "NOT"; \
-        case CAND: return "AND"; \
-        case COR: return "OR"; \
-        case CNOT_OR: return "NOT_OR"; \
-        case CAND_OR: return "AND_OR"; \
-        case CNOT_AND_OR: return "NOT_AND_OR"; \
-        case CJUMP_IF_FALSE: return "JUMP_IF_FALSE"; \
-        case CJUMP_IF_TRUE: return "JUMP_IF_TRUE"; \
-        case CPOP_JUMP_IF_FALSE: return "POP_JUMP_IF_FALSE"; \
-        case CPOP_JUMP_IF_TRUE: return "POP_JUMP_IF_TRUE"; \
-        case CJUMP_TO: return "JUMP_TO"; \
-        case CPOINT_TO: return "POINT_TO"; \
-        case CPROGRAM_START: return "PROGRAM_START"; \
-        case CPROGRAM_END: return "PROGRAM_END"; \
-        case CMAKE_BLOCK: return "MAKE_BLOCK"; \
-        case CEND_BLOCK: return "END_BLOCK"; \
-        case CMAKE_FUNCTION: return "MAKE_FUNCTION"; \
-        case CFUNCTION_CALL: return "FUNCTION_CALL"; \
-        case CRETURN: return "RETURN"; \
-        case CPRINT: return "PRINT"; \
-        case CNONE: return "NONE"; \
-    }   
+const char* show_opcode_name(uint8_t x) {
+    if (x == CPUSH_FLOAT)         return "PUSH_FLOAT";
+    else if (x == CPUSH_NORMAL_MODE) return "PUSH_NORMAL_MODE";
+    else if (x == CBUILD_LIST)    return "BUILD_LIST";
+    else if (x == CGET_ITEM)      return "GET_ITEM";
+    else if (x == CSTORE_INDEX)   return "STORE_INDEX";
+    else if (x == CBINARY_SUBSCRIBE) return "BINARY_SUBSCRIBE";
+    else if (x == CLOAD_GLOBAL)   return "LOAD_GLOBAL";
+    else if (x == CSTORE_GLOBAL)  return "STORE_GLOBAL";
+    else if (x == CBINARY_ADD)    return "BINARY_ADD";
+    else if (x == CBINARY_SUB)    return "BINARY_SUB";
+    else if (x == CBINARY_MUL)    return "BINARY_MUL";
+    else if (x == CBINARY_DIV)    return "BINARY_DIV";
+    else if (x == CBINARY_MOD)    return "BINARY_MOD";
+    else if (x == TRUE_ADDRESS)   return "TRUE_ADDRESS";
+    else if (x == FALSE_ADDRESS)  return "FALSE_ADDRESS";
+    else if (x == CEQUAL)         return "EQUAL";
+    else if (x == CNOT_EQUAL)     return "NOT_EQUAL";
+    else if (x == CLESS)          return "LESS";
+    else if (x == CLESS_EQUAL)    return "LESS_EQUAL";
+    else if (x == CGREATER)       return "GREATER";
+    else if (x == CGREATER_EQUAL) return "GREATER_EQUAL";
+    else if (x == CNOT)           return "NOT";
+    else if (x == CLEN)           return "LEN";
+    else if (x == CJUMP_IF_FALSE) return "JUMP_IF_FALSE";
+    else if (x == CJUMP_IF_TRUE)  return "JUMP_IF_TRUE";
+    else if (x == CPOP_JUMP_IF_FALSE) return "POP_JUMP_IF_FALSE";
+    else if (x == CPOP_JUMP_IF_TRUE)  return "POP_JUMP_IF_TRUE";
+    else if (x == CJUMP_TO)       return "JUMP_TO";
+    else if (x == CPROGRAM_START) return "PROGRAM_START";
+    else if (x == CPROGRAM_END)   return "PROGRAM_END";
+    else if (x == CMAKE_FUNCTION) return "MAKE_FUNCTION";
+    else if (x == CFUNCTION_CALL) return "FUNCTION_CALL";
+    else if (x == CRETURN)        return "RETURN";
+    else if (x == CADDRESS)       return "ADDRESS";
+    else                          return "UNKNOWN_OPCODE";
+}
+
+#define LIST_VALUE(size_of_list, first_element_value, last_element_value) (size_of_list * (first_element_value + last_element_value) / 2)
 
 #endif

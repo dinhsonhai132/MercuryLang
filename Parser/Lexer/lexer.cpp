@@ -126,7 +126,7 @@ mToken_T *_MerLexer_get_next_tok(mLexer_T *lexer)
         char c = _MerLexer_get_next_char(lexer)->cur;
 
         if (WEIRD_CHAR(c)) {
-            MerDebug_print_error(SYNTAX_ERROR, "Invalid character", "stdin", lexer->row + 1);
+            MerDebug_print_error(SYNTAX_ERROR, "Invalid character", lexer->file, lexer->row + 1);
         }
         
         if (is_potential_identifier_char(c))
@@ -166,7 +166,7 @@ mToken_T *_MerLexer_get_next_tok(mLexer_T *lexer)
 
         if (is_keywords(c) && lexer->col == 1)
         {
-            MerDebug_print_error(SYNTAX_ERROR, "Invalid character at start", "stdin", lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, "Invalid character at start", lexer->file, lexer->row);
         }
 
         if (c == '(')
@@ -225,7 +225,7 @@ mToken_T *_MerLexer_tokenize_number(mLexer_T *lexer)
         ++idx;
 
         if (idx > 4300) {
-            MerDebug_print_error(SYSTEM_WARNING, "The number of keyword in number is too large, this can cause a crash", "stdin", lexer->row);
+            MerDebug_print_error(SYSTEM_WARNING, "The number of keyword in number is too large, this can cause a crash", lexer->file, lexer->row);
         }
 
         if (lexer->cur == '.')
@@ -269,7 +269,7 @@ mToken_T *_MerLexer_tokenize_syntax(mLexer_T *lexer)
         {
             keyword += lexer->cur;
         } else {
-            MerDebug_print_error(SYNTAX_ERROR, "Invalid character", "stdin", lexer->row);
+            MerDebug_print_error(SYNTAX_ERROR, "Invalid character", lexer->file, lexer->row);
         }
         LEX_ADVANCE(lexer);
     }
@@ -312,16 +312,40 @@ mToken_T *_MerLexer_tokenize_string(mLexer_T *lexer)
     string str;
     lexer->cur = lexer->buf[lexer->id];
     int idx = 0;
+    char string_start = lexer->buf[lexer->id - 1];
 
     while (lexer->cur != '"') {
         str += lexer->cur;
         ++idx;
 
         if (idx > 4300) {
-            MerDebug_print_error(SYSTEM_WARNING, "The number of keyword in string is too large, this can cause a crash", "stdin", lexer->row);
+            MerDebug_print_error(SYSTEM_WARNING, "The number of keyword in string is too large, this can cause a crash", lexer->file, lexer->row);
         }
 
         LEX_ADVANCE(lexer);
+
+        if (lexer->cur == '\\') {
+            LEX_ADVANCE(lexer);
+            if (lexer->cur == 'n') {
+                str += '\n';
+            } else if (lexer->cur == 't') {
+                str += '\t';
+            } else if (lexer->cur == 'r') {
+                str += '\r';
+            } else if (lexer->cur == '\\') {
+                str += '\\';
+            } else if (lexer->cur == '\'') {
+                str += '\'';
+            } else if (lexer->cur == '"') {
+                str += '"';
+            } else if (lexer->cur == '0') {
+                str += '\0';
+            } else {
+                MerDebug_print_error(SYNTAX_ERROR, "Invalid escape sequence", lexer->file, lexer->row);
+            }
+
+            LEX_ADVANCE(lexer);
+        }
     }
 
     LEX_ADVANCE(lexer);

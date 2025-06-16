@@ -31,9 +31,43 @@ struct mParser_T {
     mLexer_T *lexer;
     mToken_T *token;
     mToken_T *next;
+    bool is_eof = false;
 };
 
-#define point(a, b) (a->b)
+static inline vector<string> lib_iden = {
+    "write",
+    "eval",
+    "pause",
+    "exit",
+    "cls",
+    "help",
+    "same",
+    "size",
+    "push",
+    "pop",
+    "watch",
+    "puts",
+    "cos",
+    "tan",
+    "cot",
+    "sqrt",
+    "sin",
+    "glb",
+    "ch",
+    "type",
+    "range",
+    "randint",
+    "sub",
+    "print",
+    "sleep",
+    "split",
+    "isdigit",
+    "to_str",
+    "to_int",
+    "input",
+};
+
+static inline vector<string> tem_glb = {};
 
 #define TRUE_LINE(parser) (parser->lexer->row)
 

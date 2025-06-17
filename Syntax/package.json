@@ -1,0 +1,34 @@
+{
+  "name": "mercury-lang",
+  "displayName": "MercuryLang",
+  "description": "Syntax highlighting for .mer files (MercuryLang)",
+  "version": "0.0.1",
+  "publisher": "your-name",
+  "engines": {
+    "vscode": "^1.50.0"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "mercury",
+        "aliases": ["MercuryLang", "mercury"],
+        "extensions": [".mer"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "mercury",
+        "scopeName": "source.mercury",
+        "path": "./syntaxes/mercury.tmLanguage.json"
+      }
+    ],
+    "iconThemes": [
+    {
+      "id": "mercury-icons",
+      "label": "Mercury File Icons",
+      "path": "./icons/mercury-icon-theme.json"
+    }
+    ]
+  }
+}

@@ -677,7 +677,7 @@ MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_identifie
 
   if (!found) {
     string msg = "Variable not found '" + ast->string_iden + "'";
-    MerDebug_print_error(COMPILER_ERROR, msg.c_str(), glb.file, ast->true_line);
+    MerDebug_system_error(COMPILER_ERROR, msg.c_str(), glb.file);
     return NULL_CODE;
   }
 

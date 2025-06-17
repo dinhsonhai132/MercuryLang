@@ -27,6 +27,7 @@ const float to_float(string c) {
     if (is_negative) {
         value = -value;
     }
+
     return value;
 }
 
@@ -39,10 +40,12 @@ MERCURY_API __mer_core_lib_api__ void __builtin_mer_read_line(stack *stk) {
         str->buff.push_back(ch);
     }
     str->size = str->buff.size();
+    str->hash = __hash(str);
 
     table* tab = MerCompiler_Table_new();
     tab->is_str = true;
     tab->f_str_v = str;
+    tab->cval = static_cast<float>(str->hash);
 
     stk->s_table->table.push_back(tab);
 }
@@ -144,7 +147,7 @@ MERCURY_API __mer_core_lib_api__ void __builtin_mer_is_digit(stack *stk) {
     }
 }
 
-MERCURY_API __mer_core_lib_api__ void __builtin_mer_split(stack *stk) {
+MERCURY_API __mer_core_lib_api__ void __builtin_mer_list(stack *stk) {
     table *list = pop_stack(stk);
     table *val = MerCompiler_Table_new();
 
@@ -169,6 +172,56 @@ MERCURY_API __mer_core_lib_api__ void __builtin_mer_split(stack *stk) {
     }
     
     stk->s_table->table.push_back(val);
+}
+
+vector<string> __split(string a, char b) {
+    vector<string> result;
+    string temp = "";
+
+    for (char ch : a) {
+        if (ch == b) {
+            result.push_back(temp);
+            temp.clear();
+        } else {
+            temp += ch;
+        }
+    }
+
+    result.push_back(temp);
+    return result;
+}
+
+mString_T *make_str_obj(string str) {
+    mString_T *str_obj = MerCompiler_string_new();
+    str_obj->buff.insert(str_obj->buff.end(), str.begin(), str.end());
+    str_obj->size = str.size();
+    str_obj->hash = __hash(str_obj);
+    return str_obj;
+}
+
+MERCURY_API __mer_core_lib_api__ void __builtin_mer_split(stack *stk) {
+    table *charac = pop_stack(stk);
+    table *str = pop_stack(stk);
+
+    string charac_str = __convert_to_string(charac->f_str_v);
+    string str_str = __convert_to_string(str->f_str_v);
+    char char_split = charac_str[0];
+    vector<string> str_split = __split(str_str, char_split);
+    table *list = MerCompiler_Table_new();
+    list->is_list = true;
+    list->list_v = MerCompiler_list_object_new();
+
+    for (auto &item : str_split) {
+        mString_T *str_obj = make_str_obj(item);
+        table *str_tab = MerCompiler_Table_new();
+        str_tab->is_str = true;
+        str_tab->f_str_v = str_obj;
+        str_tab->cval = static_cast<float>(str_obj->hash);
+        list->list_v->args.push_back(str_tab);
+        list->list_v->size++;
+    }
+
+    stk->s_table->table.push_back(list);
 }
 
 MERCURY_API __mer_core_lib_api__ void __builtin_mer_sub(stack *stk) {
@@ -418,7 +471,11 @@ MERCURY_API __mer_core_lib_api__ void __builtin_io_write(stack *stk) {
         __io_cout_stdout("]");
         __io_cout_stdout("\n");
     } else if (top->is_bool) {
-        __io_cout_stdout(top->bool_v->value ? "true" : "false");
+        if (top->bool_v->value) {
+            __io_cout_stdout("true");
+        } else {
+            __io_cout_stdout("false");
+        }
         __io_cout_stdout("\n");
     } else {
         __io_cout_stdout(top->cval);

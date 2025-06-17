@@ -22,8 +22,6 @@
 #define MECURY_EVALUATE_H
 
 #include "../Mercury/compile.cpp"
-#include "../Mercury/string.cpp"
-#include "../Mercury/list.cpp"
 
 #include <stdlib.h>
 #include <algorithm>
@@ -80,5 +78,8 @@ MERCURY_API __mer_core_api__ stack *MerVM_evaluate_JUMP_TO(__program_bytecode &u
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_POP_JUMP_IF_FALSE(__program_bytecode &u, stack *stk); // 15
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_LOAD_TRUE(__program_bytecode &u, stack *stk); // 15
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_LOAD_FALSE(__program_bytecode &u, stack *stk); // 16
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_AND(__program_bytecode &u, stack *stk); // 16
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_OR(__program_bytecode &u, stack *stk); // 17
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_NOT(__program_bytecode &u, stack *stk); // 18
 
 #endif // MERCURY_EVALUATE_H

@@ -168,12 +168,76 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
     return stk;
 }
 
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_AND(__program_bytecode &u, stack *stk) {
+    table *left = POP_STACK(stk);
+    table *right = POP_STACK(stk);
+
+    if (left->bool_v->value && right->bool_v->value) {
+        table *bool_obj = MerCompiler_Table_new();
+        bool_obj->bool_v = MerCompiler_bool_new();
+        bool_obj->bool_v->value = true;
+        bool_obj->is_bool = true;
+        bool_obj->cval = 1;
+        stk->s_table->table.push_back(bool_obj);
+    } else {
+        table *bool_obj = MerCompiler_Table_new();
+        bool_obj->bool_v = MerCompiler_bool_new();
+        bool_obj->bool_v->value = false;
+        bool_obj->is_bool = true;
+        bool_obj->cval = 0;
+        stk->s_table->table.push_back(bool_obj);
+    }
+}
+
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_OR(__program_bytecode &u, stack *stk) {
+    table *left = POP_STACK(stk);
+    table *right = POP_STACK(stk);
+
+    if (left->bool_v->value || right->bool_v->value) {
+        table *bool_obj = MerCompiler_Table_new();
+        bool_obj->bool_v = MerCompiler_bool_new();
+        bool_obj->bool_v->value = true;
+        bool_obj->is_bool = true;
+        bool_obj->cval = 1;
+        stk->s_table->table.push_back(bool_obj);
+    } else {
+        table *bool_obj = MerCompiler_Table_new();
+        bool_obj->bool_v = MerCompiler_bool_new();
+        bool_obj->bool_v->value = false;
+        bool_obj->is_bool = true;
+        bool_obj->cval = 0;
+        stk->s_table->table.push_back(bool_obj);
+    }
+}
+
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_NOT(__program_bytecode &u, stack *stk) {
+    table *left = POP_STACK(stk);
+
+    if (left->bool_v->value) {
+        table *bool_obj = MerCompiler_Table_new();
+        bool_obj->bool_v = MerCompiler_bool_new();
+        bool_obj->bool_v->value = false;
+        bool_obj->is_bool = true;
+        bool_obj->cval = 0;
+        stk->s_table->table.push_back(bool_obj);
+    } else {
+        table *bool_obj = MerCompiler_Table_new();
+        bool_obj->bool_v = MerCompiler_bool_new();
+        bool_obj->bool_v->value = true;
+        bool_obj->is_bool = true;
+        bool_obj->cval = 1;
+        stk->s_table->table.push_back(bool_obj);
+    }
+}
+
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_LOAD_TRUE(__program_bytecode &u, stack *stk) {
     table *bool_obj = MerCompiler_Table_new();
     bool_obj->bool_v = MerCompiler_bool_new();
     bool_obj->bool_v->value = true;
     bool_obj->is_bool = true;
+    bool_obj->cval = 1;
     stk->s_table->table.push_back(bool_obj);
+    return stk;
 }
 
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_LOAD_FALSE(__program_bytecode &u, stack *stk) {
@@ -181,7 +245,9 @@ MERCURY_API __mer_core_api__ stack *MerVM_evaluate_LOAD_FALSE(__program_bytecode
     bool_obj->bool_v = MerCompiler_bool_new();
     bool_obj->bool_v->value = false;
     bool_obj->is_bool = true;
+    bool_obj->cval = 0;
     stk->s_table->table.push_back(bool_obj);
+    return stk;
 }
 
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_CLEN(__program_bytecode &u, stack *stk) {

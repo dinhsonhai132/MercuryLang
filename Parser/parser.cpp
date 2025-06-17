@@ -101,8 +101,6 @@ mAST_T *MerParser_parse_array_expression(mParser_T *parser) {
 }
 
 mAST_T *MerParser_parse_constructor(mParser_T *parser) {
-
-
     return MerParser_parse_comparison_expression(parser);
 }
 
@@ -772,6 +770,7 @@ mAST_T *MerParser_parse_multiplicative_expression(mParser_T *parser)
         parser->token = _MerLexer_get_next_tok(parser->lexer);
         left = MerParser_parse_binary_expression(left, op, right);
     }
+    left->true_line = TRUE_LINE(parser);
     return left;
 }
 
@@ -788,6 +787,8 @@ mAST_T *MerParser_parse_additive_expression(mParser_T *parser)
         }
         left = MerParser_parse_binary_expression(left, op, right);
     }
+
+    left->true_line = TRUE_LINE(parser);
     return left;
 }
 
@@ -828,8 +829,8 @@ mAST_T *MerParser_parse_extract_expression(mParser_T *parser) {
 
 mAST_T *MerParser_parse_primary_expression(mParser_T *parser)
 {
-    if (parser->token->tok == TRUE_T) return _MerAST_make(TrueExpression, TRUE_T, 1, "AUTO_T", "");
-    if (parser->token->tok == FALSE_T) return _MerAST_make(FalseExpression, FALSE_T, 0, "AUTO_T", "");
+    if (parser->token->tok == TRUE_T) return _MerAST_make(TrueExpression, TRUE_T, 1, "AUTO_T", "", TRUE_LINE(parser));
+    if (parser->token->tok == FALSE_T) return _MerAST_make(FalseExpression, FALSE_T, 0, "AUTO_T", "", TRUE_LINE(parser));
     if (parser->token->tok == STRING) return MerParser_parse_string_expression(parser);
     if (parser->token->tok == LEFT_BRACKET) return MerParser_parse_array_expression(parser);
     if (parser->token->tok == VARIABLE) {
@@ -841,8 +842,8 @@ mAST_T *MerParser_parse_primary_expression(mParser_T *parser)
         }
     }
 
-    if (is_tok_identifier(parser->token->tok)) return _MerAST_make(Identifier_, parser->token->tok, 0, "AUTO_T", parser->token->string_iden);
-    if (is_tok_literal(parser->token->tok)) return _MerAST_make(Literal, parser->token->tok, parser->token->value, "AUTO_T", "");
+    if (is_tok_identifier(parser->token->tok)) return _MerAST_make(Identifier_, parser->token->tok, 0, "AUTO_T", parser->token->string_iden, TRUE_LINE(parser));
+    if (is_tok_literal(parser->token->tok)) return _MerAST_make(Literal, parser->token->tok, parser->token->value, "AUTO_T", "", TRUE_LINE(parser));
     if (parser->token->tok == EOF_T 
         || parser->token->tok == DO_T 
         || parser->token->tok == EOL_T 

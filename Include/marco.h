@@ -86,4 +86,6 @@ const char* show_opcode_name(uint8_t x) {
 
 #define LIST_VALUE(size_of_list, first_element_value, last_element_value) (size_of_list * (first_element_value + last_element_value) / 2)
 
+#define PRINT_VECTOR(vec) for (int i = 0; i < vec.size(); i++) { cout << vec[i] << endl; }
+
 #endif

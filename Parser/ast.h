@@ -64,6 +64,9 @@ using namespace std;
 #define ListExpression "ListExpression"
 #define ArrayStoreElementExpression "ArrayStoreElementExpression"
 #define ForInStatement "ForInStatement"
+#define AndExpression "AndExpression"
+#define OrExpression "OrExpression"
+#define NotExpression "NotExpression"
 
 #define is_ast_expression(type) \
     ((type) == BinaryExpression || \
@@ -230,7 +233,7 @@ struct mAST_T
 
 mAST_T *_MerAST_new(void);
 mAST_T *_MerAST_make_parent(string type);
-mAST_T *_MerAST_make(string type, string tok, float value, const char *dt, const char *iden);
+mAST_T *_MerAST_make(string type, string tok, float value, const char *dt, const char *iden, int row);
 void MerAST_print_ast(mAST_T *ast, int indent = 0);
 int _MerAST_free(mAST_T *ast);
 

@@ -70,7 +70,7 @@ mAST_T *_MerAST_make_parent(string type)
     return node;
 }
 
-mAST_T *_MerAST_make(string type, string tok, float value, const char *dt, const char *iden)
+mAST_T *_MerAST_make(string type, string tok, float value, const char *dt, const char *iden, int row)
 {
     mAST_T *node = _MerAST_new();
     node->tok = tok;

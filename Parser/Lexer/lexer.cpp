@@ -19,7 +19,7 @@ mLexer_T *_MerLexer_init(const char *buf)
     lexer->cur = '\0';
     lexer->ncur = '\0';
     lexer->col = 0;
-    lexer->row = 0;
+    lexer->row = 1;
     lexer->line = 0;
     lexer->blk = 0;
     lexer->size = 0;

@@ -14,7 +14,7 @@ using namespace std;
 #define CLS_ADDRESS                        0x76
 #define HELP_ADDRESS                       0x77
 #define PI_ADDRESS                         0x78
-#define SPLIT_ADDRESS                      0x79
+#define LIST_ADDRESS                       0x79
 #define TAU_ADDRESS                        0x7A
 #define GOLDEN_RATIO_ADDRESS               0x7B
 #define EULER_ADDRESS                      0x7C
@@ -43,6 +43,7 @@ using namespace std;
 #define RANGE_ADDRESS                      0x93
 #define RANDINT_ADDRESS                    0x94
 #define SUB_STR                            0x95
+#define SPLIT_ADDRESS                      0x96
 
 MERCURY_API __mer_core_data__ vector<symtable *> _G = {};
 MERCURY_API __mer_core_data__ vector<symtable *> _L = {};

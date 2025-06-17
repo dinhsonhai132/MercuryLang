@@ -4,6 +4,8 @@
 #include "Mercury.h"
 #include "..\Mercury\evallib.cpp"
 #include "..\Mercury\ram.cpp"
+#include "../Mercury/string.cpp"
+#include "../Mercury/list.cpp"
 
 #define __io_cout_int(x) \
     cout << x << endl;
@@ -37,11 +39,12 @@ unordered_map<string, Mer_uint8_t> lib_hashmap = {
     {"sub", SUB_STR}, 
     {"print", PRINT_ADDRESS}, 
     {"sleep", SLEEP_ADDRESS},
-    {"split", SPLIT_ADDRESS},
+    {"to_list", LIST_ADDRESS},
     {"isdigit", ISDIGIT_ADDRESS},
     {"to_str", TO_STRING_ADDRESS},
     {"to_int", TO_INT_ADDRESS},
     {"input", INPUT_ADDRESS},
+    {"split", SPLIT_ADDRESS}
 };
 
 unordered_map<string, Mer_uint8_t> global_hashmap = {
@@ -86,11 +89,13 @@ MERCURY_API __mer_core_lib_api__ void __builtin_randint(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_range(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_mer_sub(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_mer_sleep(stack *stk);
-MERCURY_API __mer_core_lib_api__ void __builtin_mer_split(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_mer_list(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_mer_is_digit(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_to_string(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_to_int(stack *stk);
 MERCURY_API __mer_core_lib_api__ void __builtin_mer_read_line(stack *stk);
+MERCURY_API __mer_core_lib_api__ void __builtin_mer_split(stack *stk);
+
 
 MERCURY_API __mer_core_lib_api__ vector<Mer_Reg> mer_core_libs = {};
 

@@ -142,67 +142,79 @@ end
 
 ### Example code
 ```python
-# This is a simple shell interpreter that tokenizes a mathematical expression.
-# It recognizes numbers and basic arithmetic operators (+, -, *, /).
-# # The code is written in a hypothetical language Mer, which is similar to Python.
-
-func break_point() do
-    while 1 do end
-end
-
-let plus = "plus"
-let minus = "minus"
-
-let tokens = []
-
-let buffer = "1 + 1"
-buffer = split(buffer)
-
-let index = 0
-
-while index < size(buffer) do
-    if index < size(buffer) then let current = buffer[index] end
-
-    if same(current, "+") then push(tokens, plus) end
-    if same(current, "-") then push(tokens, minus) end
-
-    if isdigit(current) then
-        let num_str = ""
-        while isdigit(current) do
-            if index < size(buffer) then current = buffer[index] end else break end
-            if isdigit(current) then sub(num_str, current) end
-            if index < size(buffer) then index += 1 end else break end
+loop
+    puts("expr> ")
+    buff = input()
+    
+    plus = "plus"
+    minus = "minus"
+    
+    stack = []
+    buff = to_list(buff)
+    id = 0
+    number = "" 
+    
+    while id < size(buff) do
+        cur = buff[id]
+    
+        if isdigit(cur) then
+            sub(number, cur)
         end
-        push(tokens, num_str)
-        continue
+        
+        else
+            if size(number) > 0 then
+                push(stack, number)
+                number = ""
+            end
+    
+            if same(cur, "+") then
+                push(stack, plus)
+            end
+            if same(cur, "-") then
+                push(stack, minus)
+            end
+        end
+    
+        id += 1
     end
-
-    if index < size(buffer) then index += 1 end
+    
+    if size(number) > 0 then
+        push(stack, number)
+    end
+    
+    result = 0
+    num = 0
+    tok_idx = 0
+    op = "plus"
+    
+    while tok_idx < size(stack) do
+        cur = stack[tok_idx]
+    
+        if isdigit(cur) then
+            num = to_int(cur)
+    
+            if same(op, plus) then
+                result += num
+            end
+            
+            if same(op, minus) then
+                result -= num
+            end
+        end
+        
+        if same(cur, plus) then
+            op = plus
+        end
+        
+        if same(cur, minus) then
+            op = minus
+        end
+    
+        tok_idx += 1
+    end
+    
+    print(result)
 end
-
-# evaluate the tokens
-let result = 0
-let stack_index = 0
-
-while stack_index < size(tokens) do
-    if stack_index < size(tokens) then let current = tokens[stack_index] end
-
-    if same(current, plus) then
-        let left = tokens[stack_index - 1]
-        let right = tokens[stack_index + 1]
-        result += to_int(left) + to_int(right)
-    end
-
-    if same(current, minus) then
-        let left = tokens[stack_index - 1]
-        let right = tokens[stack_index + 1]
-        result += to_int(left) - to_int(right)
-    end
-
-    if stack_index < size(tokens) then stack_index += 1 end
-end
-
-print(result)
 ```
 
 ## 🔋 Advance

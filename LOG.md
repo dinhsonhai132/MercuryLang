@@ -172,8 +172,6 @@
 
 - **Fix** every jump opcode
 
-- **new branch** ```v2.0.1```
-
 ### 6/17/2025
 
 - **Add** ```true```, ```false```

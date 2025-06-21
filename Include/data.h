@@ -44,6 +44,9 @@ using namespace std;
 #define RANDINT_ADDRESS                    0x94
 #define SUB_STR                            0x95
 #define SPLIT_ADDRESS                      0x96
+#define HASH_ADDRESS                       0x97
+#define EMPTY_ADDRESS                      0x98
+#define FACTORIAL_ADDRESS                  0x99
 
 MERCURY_API __mer_core_data__ vector<symtable *> _G = {};
 MERCURY_API __mer_core_data__ vector<symtable *> _L = {};

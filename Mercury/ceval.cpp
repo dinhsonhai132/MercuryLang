@@ -1,4 +1,3 @@
-#include <iomanip>
 #include "../Include/ceval.h"
 
 __program_bytecode init_program_bytecode(mCode_T & code)
@@ -90,7 +89,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
         else if (code == CBINARY_ADD || code == CBINARY_SUB || code == CBINARY_MUL || code == CBINARY_DIV || code == CBINARY_MOD) {
             stk = MerVM_evaluate_BINARY_OPER(u, stk, code);
         } 
-        
+
         else if (code == CLOAD_GLOBAL) {
             stk = MerVM_evaluate_LOAD_GLOBAL(u, stk);
         } 
@@ -115,13 +114,17 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
             stk = MerVM_evaluate_JUMP_TO(u, stk);
         } 
         
+        else if (code == CNOT) {
+            stk = MerVM_evaluate_NOT(u, stk);
+        }
+
         else if (code == CLEN) {
             stk = MerVM_evaluate_CLEN(u, stk);
         }
 
         else if (code == CBUILD_LIST) {
             stk = MerVM_evaluate_BUILD_LIST(u, stk);
-        } 
+        }
         
         else if (code == CPUSH_NORMAL_MODE) {
             stk = MerVM_evaluate_PUSH_NORMAL_MODE(u, stk);
@@ -131,6 +134,14 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
             stk = MerVM_evaluate_POP_JUMP_IF_FALSE(u, stk);
         } 
         
+        else if (code == CINC) {
+            stk = MerVM_evaluate_INC(u, stk);
+        }
+
+        else if (code == CDEC) {
+            stk = MerVM_evaluate_DEC(u, stk);
+        }
+
         else if (code == CGET_ITEM) {
             stk = MerVM_evaluate_GET_ITEM(u, stk);
         } 
@@ -138,6 +149,10 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
         else if (code == CLOAD_TRUE) {
             stk = MerVM_evaluate_LOAD_TRUE(u, stk);
         } 
+
+        else if (code == CIS) {
+            stk = MerVM_evaluate_IS(u, stk);
+        }
         
         else if (code == CLOAD_FALSE) {
             stk = MerVM_evaluate_LOAD_FALSE(u, stk);
@@ -151,13 +166,28 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
             stk = MerVM_evaluate_STORE_INDEX(u, stk);
         }
 
-        else if (code == CADDRESS) {
-            code = __get_next_code_in_prg_code(u);
-            continue;
+        // else if (code == CFUNCTION_CALL_WITH_ARGS) {
+        //     stk = MerVM_evaluate_FUNCTION_CALL_WITH_ARGS(u, stk);
+        // }
+
+        // else if (code = CMAKE_FUNCTION_WITH_ARGS) {
+        //     stk = MerVM_evaluate_MAKE_FUNCTION_WITH_ARGS(u, stk);
+        // }
+
+        else if (code == CDELETE) {
+            stk = MerVM_evaluate_DELETE(u, stk);
         }
 
-        else {
-            continue;
+        else if (code == CADDRESS) {
+            code = __get_next_code_in_prg_code(u);
+        }
+
+        else if (code == CAND) {
+            stk = MerVM_evaluate_AND(u, stk);
+        }
+
+        else if (code == COR) {
+            stk = MerVM_evaluate_OR(u, stk);
         }
     }
 
@@ -168,66 +198,221 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
     return stk;
 }
 
-MERCURY_API __mer_core_api__ stack *MerVM_evaluate_AND(__program_bytecode &u, stack *stk) {
-    table *left = POP_STACK(stk);
-    table *right = POP_STACK(stk);
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_IS(__program_bytecode &u, stack *stk) {
+    table *lhs = POP();
+    table *rhs = POP();
+    if (lhs == rhs) {
+        push_true_to_stack();
+    } else {
+        push_false_to_stack();
+    }
 
-    if (left->bool_v->value && right->bool_v->value) {
+    return stk;
+}
+
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_DELETE(__program_bytecode &u, stack *stk) {
+    table *del = POP();
+    bool found = false;
+
+    for (auto &item : _G) {
+        if (item->address == del->address) {
+            found = true;
+            MerCompiler_free_symboltable(item);
+        }
+    }
+
+    if (!found) {
+        MerDebug_system_error(SYSTEM_ERROR, "no global variable to delete", u.file);
+    }
+    return stk;
+}
+
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_FUNCTION_CALL_WITH_ARGS(__program_bytecode &u, stack *stk) {
+#ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_evaluate_FUNCTION_CALL_WITH_ARGS] [building...]" << endl;
+#endif
+
+    Mer_uint8_t address = __get_next_code_in_prg_code(u);
+    Mer_uint8_t argc = __get_next_code_in_prg_code(u);
+
+    vector<table*> args = {};
+
+    for (int i = 0; i < argc; ++i) {
+        table *arg = POP();
+        args.insert(args.begin(), arg);
+    }
+
+    symtable *target_func = nullptr;
+
+    for (auto &sym : _G) {
+        if (sym->address == address && sym->tab->is_func) {
+            target_func = sym;
+            break;
+        }
+    }
+
+    if (!target_func) {
+        MerDebug_system_error(SYSTEM_ERROR, "Function not found or not callable", u.file);
+        return stk;
+    }
+
+    mFunc_object_T *func_obj = target_func->tab->func_obj_v;
+
+    mCode_T func_code = NULL_CODE;
+    func_code.prg_code.buff = func_obj->f_bc->buff;
+    func_code.prg_code.raw = func_obj->f_bc->buff;
+
+    for (int i = 0; i < argc; ++i) {
+        Mer_uint8_t arg_addr = i;
+        symtable *arg_sym = MerCompiler_SymbolTable_new();
+        arg_sym->address = arg_addr;
+        arg_sym->value = args[i]->cval;
+        arg_sym->tab = args[i];
+        _G.push_back(arg_sym);
+    }
+
+    __program_bytecode new_u = init_program_bytecode(func_code);
+    __get_label_map(new_u, "function");
+
+    stk = MerVM_evaluate_statement(new_u, stk);
+
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_evaluate_FUNCTION_CALL_WITH_ARGS] [pass]" << endl;
+    #endif
+
+    return stk;
+}
+
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_MAKE_FUNCTION_WITH_ARGS(__program_bytecode &u, stack *stk) {
+#ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_evaluate_MAKE_FUNCTION_WITH_ARGS] [building...]" << endl;
+#endif
+
+    Mer_uint8_t address = __get_next_code_in_prg_code(u); 
+    Mer_uint8_t argc = __get_next_code_in_prg_code(u); 
+
+    vector<Mer_uint8_t> body;
+
+    Mer_uint8_t code = __get_next_code_in_prg_code(u);
+    while (code != CRETURN) {
+        body.push_back(code);
+        code = __get_next_code_in_prg_code(u);
+    }
+
+    body.push_back(CRETURN);
+
+    mFunc_object_T *func_obj = MerCompiler_func_object_new();
+    func_obj->f_bc = MerCompiler_code_new_as_ptr();
+    func_obj->f_bc->buff = body;
+    func_obj->f_bc->raw = body;
+    func_obj->raw_body = body;
+    func_obj->body_size = body.size();
+    func_obj->args_size = argc;
+    func_obj->is_return = true;
+    func_obj->is_global = true;
+    func_obj->f_value = 0.0;
+
+    symtable *func_sym = MerCompiler_SymbolTable_new();
+    func_sym->address = address;
+    func_sym->value = MERCURY_FUNCTION_VALUE;
+    func_sym->cval = MERCURY_FUNCTION_VALUE;
+    func_sym->tab->cval = MERCURY_FUNCTION_VALUE;
+    func_sym->tab->address = address;
+    func_sym->tab->func_obj_v = func_obj;
+    func_sym->tab->is_func = true;
+
+    _G.push_back(func_sym);
+
+#ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_evaluate_MAKE_FUNCTION_WITH_ARGS] [pass]" << endl;
+#endif
+
+    return stk;
+}
+
+
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_INC(__program_bytecode &u, stack *stk) {
+    table *value = POP();
+    value->cval += 1;
+    value->value = value->cval;
+    stack_push(value);
+    return stk;
+}
+
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_DEC(__program_bytecode &u, stack *stk) {
+    table *value = POP();
+    value->cval -= 1;
+    value->value = value->cval;
+    stack_push(value);
+    return stk;
+}
+
+MERCURY_API __mer_core_api__ stack *MerVM_evaluate_AND(__program_bytecode &u, stack *stk) {
+    table *left = POP();
+    table *right = POP();
+
+    if (left->cval && right->cval) {
         table *bool_obj = MerCompiler_Table_new();
         bool_obj->bool_v = MerCompiler_bool_new();
         bool_obj->bool_v->value = true;
         bool_obj->is_bool = true;
         bool_obj->cval = 1;
-        stk->s_table->table.push_back(bool_obj);
+        stack_push(bool_obj);
     } else {
         table *bool_obj = MerCompiler_Table_new();
         bool_obj->bool_v = MerCompiler_bool_new();
         bool_obj->bool_v->value = false;
         bool_obj->is_bool = true;
         bool_obj->cval = 0;
-        stk->s_table->table.push_back(bool_obj);
+        stack_push(bool_obj);
     }
+
+    return stk;
 }
 
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_OR(__program_bytecode &u, stack *stk) {
-    table *left = POP_STACK(stk);
-    table *right = POP_STACK(stk);
+    table *left = POP();
+    table *right = POP();
 
-    if (left->bool_v->value || right->bool_v->value) {
+    if (left->cval || right->cval) {
         table *bool_obj = MerCompiler_Table_new();
         bool_obj->bool_v = MerCompiler_bool_new();
         bool_obj->bool_v->value = true;
         bool_obj->is_bool = true;
         bool_obj->cval = 1;
-        stk->s_table->table.push_back(bool_obj);
+        stack_push(bool_obj);
     } else {
         table *bool_obj = MerCompiler_Table_new();
         bool_obj->bool_v = MerCompiler_bool_new();
         bool_obj->bool_v->value = false;
         bool_obj->is_bool = true;
         bool_obj->cval = 0;
-        stk->s_table->table.push_back(bool_obj);
+        stack_push(bool_obj);
     }
+
+    return stk;
 }
 
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_NOT(__program_bytecode &u, stack *stk) {
-    table *left = POP_STACK(stk);
+    table *left = POP();
 
-    if (left->bool_v->value) {
+    if (left->cval) {
         table *bool_obj = MerCompiler_Table_new();
         bool_obj->bool_v = MerCompiler_bool_new();
         bool_obj->bool_v->value = false;
         bool_obj->is_bool = true;
         bool_obj->cval = 0;
-        stk->s_table->table.push_back(bool_obj);
+        stack_push(bool_obj);
     } else {
         table *bool_obj = MerCompiler_Table_new();
         bool_obj->bool_v = MerCompiler_bool_new();
         bool_obj->bool_v->value = true;
         bool_obj->is_bool = true;
         bool_obj->cval = 1;
-        stk->s_table->table.push_back(bool_obj);
+        stack_push(bool_obj);
     }
+
+    return stk;
 }
 
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_LOAD_TRUE(__program_bytecode &u, stack *stk) {
@@ -236,7 +421,7 @@ MERCURY_API __mer_core_api__ stack *MerVM_evaluate_LOAD_TRUE(__program_bytecode 
     bool_obj->bool_v->value = true;
     bool_obj->is_bool = true;
     bool_obj->cval = 1;
-    stk->s_table->table.push_back(bool_obj);
+    stack_push(bool_obj);
     return stk;
 }
 
@@ -246,7 +431,7 @@ MERCURY_API __mer_core_api__ stack *MerVM_evaluate_LOAD_FALSE(__program_bytecode
     bool_obj->bool_v->value = false;
     bool_obj->is_bool = true;
     bool_obj->cval = 0;
-    stk->s_table->table.push_back(bool_obj);
+    stack_push(bool_obj);
     return stk;
 }
 
@@ -255,11 +440,11 @@ MERCURY_API __mer_core_api__ stack *MerVM_evaluate_CLEN(__program_bytecode &u, s
     cout << "[ceval.cpp] [MerVM_evaluate_GET_ITERATOR] [building...]" << endl;
     #endif
 
-    table *value = POP_STACK(stk);
+    table *value = POP();
 
-    if (value->is_list) stk->s_table->table.push_back(MerCompiler_table_setup(value->list_v->size, NULL_UINT_8_T));
-    else if (value->is_str) stk->s_table->table.push_back(MerCompiler_table_setup(value->f_str_v->size, NULL_UINT_8_T));
-    else stk->s_table->table.push_back(MerCompiler_table_setup(4, NULL_UINT_8_T));
+    if (value->is_list) stack_push(MerCompiler_table_setup(value->list_v->size, NULL_UINT_8_T));
+    else if (value->is_str) stack_push(MerCompiler_table_setup(value->f_str_v->size, NULL_UINT_8_T));
+    else stack_push(MerCompiler_table_setup(4, NULL_UINT_8_T));
 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [MerVM_evaluate_GET_ITERATOR] [pass]" << endl;
@@ -273,9 +458,9 @@ MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_STORE_INDEX
     cout << "[ceval.cpp] [MerVM_evaluate_STORE_INDEX] [building...]" << endl;
     #endif
 
-    table *item = POP_STACK(stk);
-    table *index = POP_STACK(stk); 
-    table *value = POP_STACK(stk);
+    table *item = POP();
+    table *index = POP(); 
+    table *value = POP();
 
     if (value->is_list) {
         table *vvalue = (table *) value->list_v->args[index->cval];
@@ -291,10 +476,10 @@ MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_STORE_INDEX
 
 MERCURY_API __mer_core_data__ stack *MerVM_evaluate_POP_JUMP_IF_FALSE(__program_bytecode &u, stack *stk) {
     #ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_POP_JUMP_IF_FALSE] [building...]" << endl;
+    cout << "[ceval.cpp] [MerVM_evaluate_POP();_JUMP_IF_FALSE] [building...]" << endl;
     #endif
 
-    table *top = POP_STACK(stk);
+    table *top = POP();
     Mer_uint8_t address = __get_next_code_in_prg_code(u);
 
     if (IS_FALSE(top->cval)) {
@@ -302,7 +487,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_POP_JUMP_IF_FALSE(__program_
     }
 
     #ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_POP_JUMP_IF_FALSE] [pass]" << endl;
+    cout << "[ceval.cpp] [MerVM_evaluate_POP();_JUMP_IF_FALSE] [pass]" << endl;
     #endif
 
     return stk;
@@ -348,7 +533,7 @@ MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_BUILD_LIST(
     mList_T *list = MerCompiler_list_object_new();
     
     for (Mer_size_t i = 0; i < size; i++) {
-        table *top = POP_STACK(stk);
+        table *top = POP();
         back_insrt(list->args, top);
     }
 
@@ -359,7 +544,7 @@ MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_BUILD_LIST(
     top->cval = MAKE_LIST_VALUE(top->list_v);
     top->ref_count++;
 
-    stk->s_table->table.push_back(top);
+    stack_push(top);
 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [MerVM_evaluate_BUILD_LIST] [pass]" << endl;
@@ -393,8 +578,7 @@ MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_PUSH_NORMAL
     str_v->hash = u.hash;
     str_v->size = size;
 
-    hash_t hash = __hash(str_v);
-    float f_hash = static_cast<float>(hash);
+    float hash = __hash(str_v);
 
     Mer_string_entry *entry = new Mer_string_entry();
     entry->hash_key = hash;
@@ -405,10 +589,11 @@ MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_PUSH_NORMAL
     top->f_str_v = str_v;
     top->f_str_v->ref_count++;
     top->is_str = true;
-    top->cval = f_hash; // store hash as cval
+    top->cval = hash;
+    top->value = top->cval;
     top->ref_count++;
 
-    stk->s_table->table.push_back(top);
+    stack_push(top);
     
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [MerVM_evaluate_PUSH_NORMAL_MODE] [pass]" << endl;
@@ -422,8 +607,8 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_GET_ITEM(__program_bytecode 
     cout << "[ceval.cpp] [MerVM_evaluate_GET_ITEM] [building...]" << endl;
     #endif
     
-    table *extract_val = POP_STACK(stk);
-    table *obj = POP_STACK(stk);
+    table *extract_val = POP();
+    table *obj = POP();
 
     if (!extract_val) {
         MerDebug_system_error(SYSTEM_ERROR, "Error while getting item from a list object", u.file);
@@ -442,7 +627,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_GET_ITEM(__program_bytecode 
         if (!value) {
             MerDebug_system_error(SYSTEM_ERROR, "Error while getting item from a list object", u.file);
         }
-        stk->s_table->table.push_back(value);
+        stack_push(value);
     } else {
         MerDebug_system_error(SYSTEM_ERROR, "Error while getting item from a list object", u.file);
     }
@@ -459,25 +644,49 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_COMPARE(__program_bytecode &
     cout << "[ceval.cpp] [MerVM_evaluate_COMPARE] [building...]" << endl;
     #endif
 
-    table *right = POP_STACK(stk);
-    table *left = POP_STACK(stk);
+    table *right = POP();
+    table *left = POP();
     
     if (left == nullptr || right == nullptr) {
         MerDebug_system_error(SYSTEM_ERROR, "Stack underflow", u.file);
     }
 
     if (op == CLESS) {
-        stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_LESS(left->cval, right->cval)));
+        if (MERCURY_BINARY_LESS(left->cval, right->cval)) {
+            push_true_to_stack();
+        } else {
+            push_false_to_stack();
+        }
     } else if (op == CGREATER) {
-        stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_GREATER(left->cval, right->cval)));
+        if (MERCURY_BINARY_GREATER(left->cval, right->cval)) {
+            push_true_to_stack();
+        } else {
+            push_false_to_stack();
+        }
     } else if (op == CEQUAL) {
-        stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_EQUAL(left->cval, right->cval)));
+        if (MERCURY_BINARY_EQUAL(left->cval, right->cval)) {
+            push_true_to_stack();
+        } else {
+            push_false_to_stack();
+        }
     } else if (op == CNOT_EQUAL) {
-        stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_NOT_EQUAL(left->cval, right->cval)));
+        if (MERCURY_BINARY_NOT_EQUAL(left->cval, right->cval)) {
+            push_true_to_stack();
+        } else {
+            push_false_to_stack();
+        }
     } else if (op == CGREATER_EQUAL) {
-        stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_GREATER_EQUAL(left->cval, right->cval)));
+        if (MERCURY_BINARY_GREATER_EQUAL(left->cval, right->cval)) {
+            push_true_to_stack();
+        } else {
+            push_false_to_stack();
+        }
     } else if (op == CLESS_EQUAL) {
-        stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_LESS_EQUAL(left->cval, right->cval)));
+        if (MERCURY_BINARY_LESS_EQUAL(left->cval, right->cval)) {
+            push_true_to_stack();
+        } else {
+            push_false_to_stack();
+        }
     }
 
     #ifdef SYSTEM_TEST
@@ -492,23 +701,23 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_BINARY_OPER(__program_byteco
     cout << "[ceval.cpp] [MerVM_evaluate_BINARY_OPER] [building...]" << endl;
     #endif
 
-    table *right = POP_STACK(stk);
-    table *left = POP_STACK(stk);
+    table *right = POP();
+    table *left = POP();
 
     if (left == nullptr || right == nullptr) {
         MerDebug_system_error(SYSTEM_ERROR, "Stack underflow", u.file);
     }
 
     if (op == CBINARY_ADD) {
-        stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_ADD(left->cval, right->cval)));
+        stack_push(MerCompiler_table_setup(MERCURY_BINARY_ADD(left->cval, right->cval)));
     } else if (op == CBINARY_SUB) {
-        stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_SUB(left->cval, right->cval)));
+        stack_push(MerCompiler_table_setup(MERCURY_BINARY_SUB(left->cval, right->cval)));
     } else if (op == CBINARY_MUL) {
-        stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_MUL(left->cval, right->cval)));
+        stack_push(MerCompiler_table_setup(MERCURY_BINARY_MUL(left->cval, right->cval)));
     } else if (op == CBINARY_DIV) {
-        stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_DIV(left->cval, right->cval)));
+        stack_push(MerCompiler_table_setup(MERCURY_BINARY_DIV(left->cval, right->cval)));
     } else if (op == CBINARY_MOD) {
-        stk->s_table->table.push_back(MerCompiler_table_setup(MERCURY_BINARY_MOD(static_cast<int>(left->cval), static_cast<int>(right->cval))));
+        stack_push(MerCompiler_table_setup(MERCURY_BINARY_MOD(static_cast<int>(left->cval), static_cast<int>(right->cval))));
     }
 
     #ifdef SYSTEM_TEST
@@ -528,7 +737,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_PUSH_FLOAT(__program_bytecod
         Mer_float float_repr;
         memcpy(&int_repr, &u.code.prg_code.buff[u.iid], 4);
         memcpy(&float_repr, &int_repr, 4);
-        stk->s_table->table.push_back(MerCompiler_table_setup(float_repr, NULL_UINT_8_T));
+        stack_push(MerCompiler_table_setup(float_repr, NULL_UINT_8_T));
     } else {
         MerDebug_system_error(SYSTEM_ERROR, "Stack underflow", u.file);
     }
@@ -553,7 +762,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_LOAD_GLOBAL(__program_byteco
         if (_G[i]->address == code) {
             _G[i]->tab->cval = _G[i]->value;
             _G[i]->tab->address = _G[i]->address;
-            stk->s_table->table.push_back(_G[i]->tab);
+            stack_push(_G[i]->tab);
             found = true;
             break;
         }
@@ -579,7 +788,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_STORE_GLOBAL(__program_bytec
 
     Mer_uint8_t code = __get_next_code_in_prg_code(u);
 
-    table *top = POP_STACK(stk);
+    table *top = POP();
 
     for (auto &sym : _G) {
         if (sym->address == code) {
@@ -662,7 +871,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_FUNCTION_CALL(__program_byte
     cout << "[ceval.cpp] [MerVM_evaluate_FUNCTION_CALL] [building...]" << endl;
     #endif
 
-    table *func = POP_STACK(stk);
+    table *func = POP();
 
     Mer_uint8_t func_address = func->address;
     if (func->is_func) {

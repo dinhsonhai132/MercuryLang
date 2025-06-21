@@ -28,7 +28,7 @@ int _MerParser_free(mParser_T *parser)
 
 mAST_T *MerParser_parse_binary_expression(mAST_T *left, string op, mAST_T *right)
 {
-    mAST_T *node = _MerAST_make_parent(BinaryExpression);
+    mAST_T *node = MerAST_make_parent(BinaryExpression);
     node->left = left;
     node->op = op;
     node->right = right;
@@ -37,7 +37,7 @@ mAST_T *MerParser_parse_binary_expression(mAST_T *left, string op, mAST_T *right
 
 mAST_T *MerParser_parse_program(mParser_T *parser)
 {
-    mAST_T *node = _MerAST_make_parent(Program);
+    mAST_T *node = MerAST_make_parent(Program);
     node->file = parser->lexer->file;
     node->children.push_back(MerParser_parse_expression_statement(parser));
     return node;
@@ -45,63 +45,12 @@ mAST_T *MerParser_parse_program(mParser_T *parser)
 
 mAST_T *MerParser_parse_expression_statement(mParser_T *parser)
 {
-    mAST_T *node = _MerAST_make_parent(ExpressionStatement);
+    mAST_T *node = MerAST_make_parent(ExpressionStatement);
     parser->token = _MerLexer_get_next_tok(parser->lexer);
     while (parser->token->tok != EOF_T)
         node->children.push_back(MerParser_parse(parser));
 
     return node;
-}
-
-mAST_T *MerParser_parse_loop_statement(mParser_T *parser) {
-    mAST_T *node = _MerAST_make_parent(LoopStatement);
-    parser->token = _MerLexer_get_next_tok(parser->lexer);
-
-    while (parser->token->tok != END_T) {
-        node->do_body.push_back(MerParser_parse(parser));
-    }
-    
-    parser->token = _MerLexer_get_next_tok(parser->lexer);
-    return node;
-}
-
-mAST_T *MerParser_parse_array_expression(mParser_T *parser) {
-    mAST_T *node = _MerAST_make_parent(ArrayExpression);
-
-    parser->token = _MerLexer_get_next_tok(parser->lexer);
-    while (parser->token->tok != RIGHT_BRACKET) {
-
-        if (parser->token->tok == EOF_T) {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected expression, reached <EOF> in the end of list", parser->lexer->file, TRUE_LINE(parser));
-        }
-
-        mAST_T *item = MerParser_parse_constructor(parser);
-
-        if (!is_ast_expression(item->type)) {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected expression in list", parser->lexer->file, TRUE_LINE(parser));
-        }
-
-        if (!item) {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected expression in list", parser->lexer->file, TRUE_LINE(parser));
-        }
-
-        node->list.push_back(item);
-
-        if (parser->token->tok == COMMA)
-        {
-            parser->token = _MerLexer_get_next_tok(parser->lexer);
-            continue;
-        }
-    }
-
-    node->is_list = true;
-    node->is_alone_val = true;
-
-    return node;
-}
-
-mAST_T *MerParser_parse_constructor(mParser_T *parser) {
-    return MerParser_parse_comparison_expression(parser);
 }
 
 mAST_T *MerParser_parse(mParser_T *parser)
@@ -126,7 +75,7 @@ mAST_T *MerParser_parse(mParser_T *parser)
             || parser->next->tok == MOD_EQUAL) {
             return MerParser_parse_assignment_statement(parser);
         } else {
-            return MerParser_parse_constructor(parser);
+            return MerParser_parse_logical_expression(parser);
         }
     }
 
@@ -141,17 +90,68 @@ mAST_T *MerParser_parse(mParser_T *parser)
         return MerParser_parse_for_statement(parser);
     if (parser->token->tok == CONTINUE) {
         parser->token = _MerLexer_get_next_tok(parser->lexer);
-        return _MerAST_make_parent(ContinueStatement);
+        mAST_T *node = MerAST_make_parent(ContinueStatement);
+        node->true_line = TRUE_LINE(parser);
+        return node;
     } if (parser->token->tok == BREAK) {
         parser->token = _MerLexer_get_next_tok(parser->lexer);
-        return _MerAST_make_parent(BreakStatement);
+        mAST_T *node = MerAST_make_parent(BreakStatement);
+        node->true_line = TRUE_LINE(parser);
+        return node;
     }
 
-    return MerParser_parse_constructor(parser);
+    return MerParser_parse_logical_expression(parser);
+}
+
+mAST_T *MerParser_parse_loop_statement(mParser_T *parser) {
+    mAST_T *node = MerAST_make_parent(LoopStatement);
+    parser->token = _MerLexer_get_next_tok(parser->lexer);
+
+    while (parser->token->tok != END_T) {
+        node->do_body.push_back(MerParser_parse(parser));
+    }
+    
+    parser->token = _MerLexer_get_next_tok(parser->lexer);
+    return node;
+}
+
+mAST_T *MerParser_parse_array_expression(mParser_T *parser) {
+    mAST_T *node = MerAST_make_parent(ArrayExpression);
+
+    parser->token = _MerLexer_get_next_tok(parser->lexer);
+    while (parser->token->tok != RIGHT_BRACKET) {
+
+        if (parser->token->tok == EOF_T) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression, reached <EOF> in the end of list", parser->lexer->file, TRUE_LINE(parser));
+        }
+
+        mAST_T *item = MerParser_parse(parser);
+
+        if (!is_ast_expression(item->type)) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression in list", parser->lexer->file, TRUE_LINE(parser));
+        }
+
+        if (!item) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression in list", parser->lexer->file, TRUE_LINE(parser));
+        }
+
+        node->list.push_back(item);
+
+        if (parser->token->tok == COMMA)
+        {
+            parser->token = _MerLexer_get_next_tok(parser->lexer);
+            continue;
+        }
+    }
+
+    node->is_list = true;
+    node->is_alone_val = true;
+
+    return node;
 }
 
 mAST_T *MerParser_parse_for_statement(mParser_T *parser) {
-    mAST_T *node = _MerAST_make_parent(ForInStatement);
+    mAST_T *node = MerAST_make_parent(ForInStatement);
 
     parser->token = _MerLexer_get_next_tok(parser->lexer);
 
@@ -217,15 +217,20 @@ mAST_T *MerParser_parse_for_statement(mParser_T *parser) {
 }
 
 mAST_T *MerParser_parse_store_index_statement(mParser_T *parser) {
-    mAST_T *node = _MerAST_make_parent(StoreIndexStatement);
+    mAST_T *node = MerAST_make_parent(StoreIndexStatement);
 
-    node->extract_assign = MerParser_parse_comparison_expression(parser);
+    node->extract_assign = MerParser_parse(parser);
+
+    if (!is_ast_expression(node->extract_assign->type)) {
+        MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, TRUE_LINE(parser));
+    }
+    
     node->true_line = TRUE_LINE(parser);
     return node;
 }
 
 mAST_T *parser_string_identifier_primary(mToken_T *token) {
-    mAST_T *node = _MerAST_make_parent(StringIdentifier);
+    mAST_T *node = MerAST_make_parent(StringIdentifier);
 
     node->str_v = token->string_iden;
     node->is_string = true;
@@ -233,7 +238,7 @@ mAST_T *parser_string_identifier_primary(mToken_T *token) {
 }
 
 mAST_T *MerParser_parse_string_expression(mParser_T *parser) {
-    mAST_T *node = _MerAST_make_parent(StringIdentifier);
+    mAST_T *node = MerAST_make_parent(StringIdentifier);
 
     node->str_v = parser->token->name;
     node->is_string = true;
@@ -243,7 +248,7 @@ mAST_T *MerParser_parse_string_expression(mParser_T *parser) {
 
 mAST_T *MerParser_parse_return_statement(mParser_T *parser)
 {
-    mAST_T *node = _MerAST_make_parent(ReturnStatement);
+    mAST_T *node = MerAST_make_parent(ReturnStatement);
     parser->token = _MerLexer_get_next_tok(parser->lexer);
     if (parser->token->tok == VOID_T)
     {
@@ -262,7 +267,7 @@ mAST_T *MerParser_parse_return_statement(mParser_T *parser)
 }
 
 mAST_T *MerParser_parse_string_statement(mParser_T *parser) {
-    mAST_T *node = _MerAST_make_parent(StringVariableStatement);
+    mAST_T *node = MerAST_make_parent(StringVariableStatement);
     parser->token = _MerLexer_get_next_tok(parser->lexer);
     if (parser->token->tok == VARIABLE) {
         node->str_var_name = parser->token->name;
@@ -281,43 +286,16 @@ mAST_T *MerParser_parse_string_statement(mParser_T *parser) {
     return node;
 }
 
-mAST_T *MerParser_parse_comparison_expression(mParser_T *parser)
-{
-    mAST_T *left = MerParser_parse_additive_expression(parser);
-    if (parser->token->tok == EQUAL || parser->token->tok == NOT_EQUAL ||
-        parser->token->tok == LESS || parser->token->tok == LESS_EQUAL ||
-        parser->token->tok == GREATER || parser->token->tok == GREATER_EQUAL)
-    {
-        string op = parser->token->tok;
-        parser->token = _MerLexer_get_next_tok(parser->lexer);
-        mAST_T *right = MerParser_parse_additive_expression(parser);
-
-        if (!right)
-        {
-            MerDebug_print_error(SYNTAX_ERROR, "Expected comparison expression", parser->lexer->file, TRUE_LINE(parser));
-        }
-        return MerParser_parse_compair(left, op, right);
-    }
-
-    left->true_line = TRUE_LINE(parser);
-    return left;
-}
-
-mAST_T *MerParser_parse_compair(mAST_T *left, string op, mAST_T *right)
-{
-    mAST_T *node = _MerAST_make_parent(ComparisonExpression);
-    node->comp_left = left;
-    node->comp_op = op;
-    node->comp_right = right;
-    return node;
-}
-
 mAST_T *MerParser_parse_if_statement(mParser_T *parser)
 {
-    mAST_T *node = _MerAST_make_parent(IfStatement);
+    mAST_T *node = MerAST_make_parent(IfStatement);
 
     parser->token = _MerLexer_get_next_tok(parser->lexer);
-    mAST_T *comp = MerParser_parse_comparison_expression(parser);
+    mAST_T *comp = MerParser_parse(parser);
+    if (!is_ast_expression(comp->type)) {
+        MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, TRUE_LINE(parser));
+    }
+    
     if (!comp)
     {
     #ifdef MERCURY_LANG3
@@ -392,7 +370,7 @@ mAST_T *MerParser_parse_if_statement(mParser_T *parser)
 
 mAST_T *MerParser_parse_let_statement(mParser_T *parser)
 {
-    mAST_T *node = _MerAST_make_parent(LetStatement);
+    mAST_T *node = MerAST_make_parent(LetStatement);
     node->true_line = TRUE_LINE(parser);
     parser->token = _MerLexer_get_next_tok(parser->lexer);
     if (parser->token->tok == VARIABLE)
@@ -440,11 +418,20 @@ mAST_T *MerParser_parse_let_statement(mParser_T *parser)
 }
 
 mAST_T *MerParser_parse_while_statement(mParser_T *parser) {
-    mAST_T *node = _MerAST_make_parent(WhileStatement);
+    mAST_T *node = MerAST_make_parent(WhileStatement);
     node->true_line = TRUE_LINE(parser);
 
     parser->token = _MerLexer_get_next_tok(parser->lexer);
-    mAST_T *comp = MerParser_parse_comparison_expression(parser);
+    mAST_T *comp = MerParser_parse(parser);
+
+    if (!is_ast_expression(comp->type)) {
+#ifdef MERCURY_LANG3
+        MerDebug_print_error(SYNTAX_ERROR, "Expected expression after 'while'", parser->lexer->file, TRUE_LINE(parser));
+#endif
+        MerDebug_print_error(SYNTAX_ERROR, "Expected expression after 'WHILE'", parser->lexer->file, TRUE_LINE(parser));
+        return NULL;
+    }
+
     if (!comp) {
 #ifdef MERCURY_LANG3
         MerDebug_print_error(SYNTAX_ERROR, "Expected expression after 'while'", parser->lexer->file, TRUE_LINE(parser));
@@ -489,7 +476,7 @@ mAST_T *MerParser_parse_while_statement(mParser_T *parser) {
 }
 
 mAST_T *MerParser_parse_variable_statement(mParser_T *parser) {
-    mAST_T *node = _MerAST_make_parent(StringVariableStatement);
+    mAST_T *node = MerAST_make_parent(StringVariableStatement);
     node->true_line = TRUE_LINE(parser);
 
     parser->token = _MerLexer_get_next_tok(parser->lexer);
@@ -511,7 +498,7 @@ mAST_T *MerParser_parse_variable_statement(mParser_T *parser) {
 }
 
 mAST_T *MerParser_parse_list_statement(mParser_T *parser) {
-    mAST_T *node = _MerAST_make_parent(ListStatement);
+    mAST_T *node = MerAST_make_parent(ListStatement);
     node->true_line = TRUE_LINE(parser);
 
     parser->token = _MerLexer_get_next_tok(parser->lexer);
@@ -537,7 +524,7 @@ mAST_T *MerParser_parse_list_statement(mParser_T *parser) {
                         MerDebug_print_error(SYNTAX_ERROR, "Expected expression, reached <EOF>", parser->lexer->file, TRUE_LINE(parser));
                     }
 
-                    mAST_T *item = MerParser_parse_constructor(parser);
+                    mAST_T *item = MerParser_parse(parser);
 
                     if (!is_ast_expression(item->type)) {
                         MerDebug_print_error(SYNTAX_ERROR, "Expected expression in list", parser->lexer->file, TRUE_LINE(parser));
@@ -568,7 +555,7 @@ mAST_T *MerParser_parse_list_statement(mParser_T *parser) {
 }
 
 mAST_T *MerParser_parse_assignment_statement(mParser_T *parser) {
-    mAST_T *node = _MerAST_make_parent(AssignStatement);
+    mAST_T *node = MerAST_make_parent(AssignStatement);
     node->true_line = TRUE_LINE(parser);
 
     if (parser->token->tok == VARIABLE) {
@@ -626,7 +613,7 @@ mAST_T *MerParser_parse_assignment_statement(mParser_T *parser) {
 
 mAST_T *MerParser_parse_function_statement(mParser_T *parser)
 {
-    mAST_T *node = _MerAST_make_parent(FunctionStatement);
+    mAST_T *node = MerAST_make_parent(FunctionStatement);
     node->true_line = TRUE_LINE(parser);
 
     parser->token = _MerLexer_get_next_tok(parser->lexer);
@@ -702,7 +689,7 @@ mAST_T *MerParser_parse_function_statement(mParser_T *parser)
 
 mAST_T *MerParser_parse_function_call_expression(mParser_T *parser)
 {
-    mAST_T *node = _MerAST_make_parent(FunctionCallExpression);
+    mAST_T *node = MerAST_make_parent(FunctionCallExpression);
     node->true_line = TRUE_LINE(parser);
 
     if (!parser->token->name)
@@ -735,7 +722,8 @@ mAST_T *MerParser_parse_function_call_expression(mParser_T *parser)
             mAST_T *arg = MerParser_parse(parser);
 
             if (!is_ast_expression(arg->type)) {
-                MerDebug_print_error(SYNTAX_ERROR, "Expected expression in function call", parser->lexer->file, TRUE_LINE(parser));
+                cout << arg->type << endl;
+                MerDebug_print_error(SYNTAX_ERROR, "Expected expression in function call, not an expression", parser->lexer->file, TRUE_LINE(parser));
             }
 
             if (arg)
@@ -753,6 +741,29 @@ mAST_T *MerParser_parse_function_call_expression(mParser_T *parser)
     }
 
     return node;
+}
+
+mAST_T *MerParser_parse_comparison_expression(mParser_T *parser)
+{
+    mAST_T *left = MerParser_parse_additive_expression(parser);
+
+    while (parser->token->tok == EQUAL || parser->token->tok == NOT_EQUAL ||
+           parser->token->tok == LESS || parser->token->tok == LESS_EQUAL ||
+           parser->token->tok == GREATER || parser->token->tok == GREATER_EQUAL || parser->token->tok == IS)
+    {
+        string op = parser->token->tok;
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+        mAST_T *right = MerParser_parse_additive_expression(parser);
+
+        if (!right)
+        {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected comparison expression", parser->lexer->file, TRUE_LINE(parser));
+        }
+        left = MerParser_parse_compair(left, op, right);
+    }
+
+    left->true_line = TRUE_LINE(parser);
+    return left;
 }
 
 mAST_T *MerParser_parse_multiplicative_expression(mParser_T *parser)
@@ -786,6 +797,7 @@ mAST_T *MerParser_parse_additive_expression(mParser_T *parser)
             MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, TRUE_LINE(parser));
         }
         left = MerParser_parse_binary_expression(left, op, right);
+        left->true_line = TRUE_LINE(parser);
     }
 
     left->true_line = TRUE_LINE(parser);
@@ -793,7 +805,7 @@ mAST_T *MerParser_parse_additive_expression(mParser_T *parser)
 }
 
 mAST_T *MerParser_parse_extract_expression(mParser_T *parser) {
-    mAST_T *node = _MerAST_make_parent(ExtractExpression);
+    mAST_T *node = MerAST_make_parent(ExtractExpression);
     node->extract_name = parser->token->string_iden;
     parser->token = _MerLexer_get_next_tok(parser->lexer);
 
@@ -813,6 +825,8 @@ mAST_T *MerParser_parse_extract_expression(mParser_T *parser) {
                 if (!node->extract_assign) {
                     MerDebug_print_error(SYNTAX_ERROR, "Expected extract statement", parser->lexer->file, TRUE_LINE(parser));
                 }
+                
+                return node;
             }
             return node;
         } else {
@@ -827,10 +841,59 @@ mAST_T *MerParser_parse_extract_expression(mParser_T *parser) {
     return NULL;
 }
 
+mAST_T *MerParser_parse_compair(mAST_T *left, string op, mAST_T *right)
+{
+    mAST_T *node = MerAST_make_parent(ComparisonExpression);
+    node->comp_left = left;
+    node->comp_op = op;
+    node->comp_right = right;
+    return node;
+}
+
+mAST_T *MerParser_parse_or_expression(mParser_T *parser) {
+    mAST_T *left = MerParser_parse_and_expression(parser);
+    while (parser->token->tok == OR) {
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+        mAST_T *right = MerParser_parse_and_expression(parser);
+        left = MerParser_parse_operator_expression(left, OR, right, OrExpression);
+    }
+
+    return left;
+}
+
+mAST_T *MerParser_parse_and_expression(mParser_T *parser) {
+    mAST_T *left = MerParser_parse_not_expression(parser);
+    while (parser->token->tok == AND) {
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+        mAST_T *right = MerParser_parse_not_expression(parser);
+        left = MerParser_parse_operator_expression(left, AND, right, AndExpression);
+    }
+    
+    return left;
+}
+
+mAST_T *MerParser_parse_not_expression(mParser_T *parser) {
+    if (parser->token->tok == NOT) {
+        mAST_T *node = MerAST_make_parent(NotExpression);
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+        node->not_expr = MerParser_parse_not_expression(parser);
+        if (!node->not_expr) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression after 'not'", parser->lexer->file, TRUE_LINE(parser));
+        }
+        return node;
+    }
+    
+    return MerParser_parse_comparison_expression(parser);
+}
+
+mAST_T *MerParser_parse_logical_expression(mParser_T *parser) {
+    return MerParser_parse_or_expression(parser);
+}
+
 mAST_T *MerParser_parse_primary_expression(mParser_T *parser)
 {
-    if (parser->token->tok == TRUE_T) return _MerAST_make(TrueExpression, TRUE_T, 1, "AUTO_T", "", TRUE_LINE(parser));
-    if (parser->token->tok == FALSE_T) return _MerAST_make(FalseExpression, FALSE_T, 0, "AUTO_T", "", TRUE_LINE(parser));
+    if (parser->token->tok == TRUE_T) return MerAST_make(TrueExpression, TRUE_T, 1, "AUTO_T", "", TRUE_LINE(parser));
+    if (parser->token->tok == FALSE_T) return MerAST_make(FalseExpression, FALSE_T, 0, "AUTO_T", "", TRUE_LINE(parser));
     if (parser->token->tok == STRING) return MerParser_parse_string_expression(parser);
     if (parser->token->tok == LEFT_BRACKET) return MerParser_parse_array_expression(parser);
     if (parser->token->tok == VARIABLE) {
@@ -841,9 +904,8 @@ mAST_T *MerParser_parse_primary_expression(mParser_T *parser)
             return MerParser_parse_function_call_expression(parser);
         }
     }
-
-    if (is_tok_identifier(parser->token->tok)) return _MerAST_make(Identifier_, parser->token->tok, 0, "AUTO_T", parser->token->string_iden, TRUE_LINE(parser));
-    if (is_tok_literal(parser->token->tok)) return _MerAST_make(Literal, parser->token->tok, parser->token->value, "AUTO_T", "", TRUE_LINE(parser));
+    if (is_tok_identifier(parser->token->tok)) return MerAST_make(Identifier_, parser->token->tok, 0, "AUTO_T", parser->token->string_iden, TRUE_LINE(parser));
+    if (is_tok_literal(parser->token->tok)) return MerAST_make(Literal, parser->token->tok, parser->token->value, "AUTO_T", "", TRUE_LINE(parser));
     if (parser->token->tok == EOF_T 
         || parser->token->tok == DO_T 
         || parser->token->tok == EOL_T 
@@ -852,7 +914,6 @@ mAST_T *MerParser_parse_primary_expression(mParser_T *parser)
         || parser->token->tok == STRING 
         || parser->token->tok == COMMA
         || parser->token->tok == COLON
-        || parser->token->tok == SEMICOLON
         || parser->token->tok == LEFT_PAREN
         || parser->token->tok == RIGHT_PAREN
         || parser->token->tok == LEFT_BRACKET
@@ -867,4 +928,12 @@ mAST_T *MerParser_parse_primary_expression(mParser_T *parser)
     string msg = "Unexpected primary expression near '" + sym + "'";
     MerDebug_print_error(SYNTAX_ERROR, msg.c_str(), parser->lexer->file, TRUE_LINE(parser));
     return NULL;
+}
+
+mAST_T *MerParser_parse_operator_expression(mAST_T *left, string op, mAST_T *right, string type) {
+    mAST_T *node = MerAST_make_parent(type);
+    node->left = left;
+    node->op = op;
+    node->right = right;
+    return node;
 }

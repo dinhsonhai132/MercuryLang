@@ -19,8 +19,8 @@
 
 #define CLAMP01(x) CLAMP(x, 0.0, 1.0)
 
-#define DEG_TO_RAD(x) ((x) * (PI / 180.0))
-#define RAD_TO_DEG(x) ((x) * (180.0 / PI))
+#define RAD_TO_DEG(x) ((x) * (PI / 180.0))
+#define DEG_TO_RAD(x) ((x) * (180.0 / PI))
 
 #define SQ(x) ((x) * (x))
 

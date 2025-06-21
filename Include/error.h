@@ -3,12 +3,14 @@
 
 #include <string>
 #include <iostream>
+
 using namespace std;
 
 #define SYNTAX_ERROR "SyntaxError"
 #define RUNTIME_ERROR "RuntimeError"
 #define SYSTEM_ERROR "SystemError"
-#define BREAK_POINT "BreakPoint"
+
+#define BREAK_POINT while(1);
 
 void mer_run_time_error(string line, string error, string messages, string file);
 void mer_error(string type, string msg);

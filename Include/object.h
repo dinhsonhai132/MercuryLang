@@ -26,7 +26,6 @@
 
 typedef struct _pcode           mCode_T;
 typedef struct _code            mOpCode_T;
-typedef struct _type            mType_T;
 typedef struct _val             mValue_T;
 typedef struct _string          mString_T;
 typedef struct _variable        mVariable_T;

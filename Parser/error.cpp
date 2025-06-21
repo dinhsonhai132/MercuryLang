@@ -1,25 +1,26 @@
 #include "error.h"
 
 void MerDebug_print_message(const char *msg, const char *file, int line) {
-    cout << "MercuryLang system message: " << msg << endl;
-    cout << "At file '" << file << "', line " << line << endl;
+    cerr << "MercuryLang system message: " << msg << endl;
+    cerr << "At file '" << file << "', line " << line << endl;
 }
 
 void MerDebug_print_error(const char *type, const char *msg, const char *file, int line) {
-    cout << type << ": " << msg << endl;
-    cout << "At file '" << file << "', line " << line << endl;
-    while (1);
+    cerr << type << ": " << msg << endl;
+    cerr << "At file '" << file << "', line " << line << endl;
+    BREAK_POINT
 }
 
 void MerDebug_system_error(const char *type, const char *msg, const char* file)
 {
-    cout << type << ": " << msg << endl;
-    cout << "At file '" << file << "'" << endl;
-    while (1);
+    cerr << type << ": " << msg << endl;
+    cerr << "At file '" << file << "'" << endl;
+    BREAK_POINT
 }
 
 void MerDebug_print_warning(const char *msg, const char *file, int line, const char *c_line) {
-    cout << "MercuryLang warning: " << msg << endl;
-    cout << "At file '" << file << "', line " << line << endl;
-    cout << c_line << endl;
+    cerr << "Warning: " << msg << endl;
+    cerr << "At file '" << file << "', line " << line << endl;
+    cerr << c_line << endl;
+    BREAK_POINT
 }

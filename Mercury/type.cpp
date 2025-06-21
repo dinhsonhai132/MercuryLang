@@ -129,64 +129,41 @@ _variable *MerCompiler_variable_new(void) {
     return v;
 }
 
-_type *MerCompiler_type_new(void) {
-    _type *t = new _type;
-    t->func = MerCompiler_func_object_new();
-    t->variable = MerCompiler_variable_new();
-    t->str = MerCompiler_string_new();
-    t->pcode = MerCompiler_pcode_new();
-    t->code = MerCompiler_code_new_as_ptr();
-    t->o_ptr = NULL_PTR;
-    t->is_builtin = false;
-    t->builtin_name = "";
-    t->builtin_ptr = NULL_PTR;
-    t->name = "";
-    t->type = "";
-    t->file_name = "";
-    return t;
-}
-
 _object *MerCompiler_object_new(void) {
     _object *o = new _object;
     o->attributes.clear();
-    o->type = MerCompiler_type_new();
-    o->data_type = MerCompiler_type_new();
-    o->value = MerCompiler_type_new();
-    o->name = MerCompiler_type_new();
-    o->file_name = MerCompiler_type_new();
-    o->code = MerCompiler_pcode_new();
+    o->obj_size = 0;
+    o->obj_val;
+
     return o;
 }
 
 int MerCompiler_free_object(_object *o) {
     if (!o) return 0;
-    MerCompiler_free_type(o->type);
-    MerCompiler_free_type(o->data_type);
-    MerCompiler_free_type(o->value);
-    MerCompiler_free_type(o->file_name);
-    MerCompiler_free_pcode(o->code);
+    
     o->attributes.clear();
     delete o;
     return 1;
 }
 
-int MerCompiler_free_type(_type *t) {
-    if (!t) return 0;
-    MerCompiler_free_func_object(t->func);
-    MerCompiler_free_variable(t->variable);
-    MerCompiler_free_string(t->str);
-    MerCompiler_free_pcode(t->pcode);
-    MerCompiler_free_code(t->code);
-    t->o_ptr = NULL_PTR;
-    t->is_builtin = false;
-    t->builtin_name = "";
-    t->builtin_ptr = NULL_PTR;
-    t->name = "";
-    t->type = "";
-    t->file_name = "";
-    delete t;
-    return 1;
+_type_obj *MerCompiler_type_obj_new(void) {
+    _type_obj *obj = new _type_obj();
+
+    obj->func = NULL_PTR;
+    obj->variable = NULL_PTR;
+    obj->str = NULL_PTR;
+    obj->pcode = NULL_PTR;
+    obj->code = NULL_PTR;
+    obj->list = NULL_PTR;
+    obj->bool_obj = NULL_PTR;
+    obj->block = NULL_PTR;
+    obj->val = NULL_PTR;
+    obj->reg = NULL_PTR;
+    obj->str_entry = NULL_PTR;
+
+    return obj;
 }
+
 
 int MerCompiler_free_pcode(_pcode *p) {
     if (!p) return 0;

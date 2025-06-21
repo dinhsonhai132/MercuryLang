@@ -1,0 +1,81 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "mercurylang",
+  "scopeName": "source.mer",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#keywords" },
+    { "include": "#functions" },
+    { "include": "#constants" },
+    { "include": "#operators" },
+    { "include": "#numbers" },
+    { "include": "#strings" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.mercurylang",
+          "match": "#.*$"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.mercurylang",
+          "match": "\\b(let|if|do|end|break|continue|auto|is|float|local|function|double|char|list|short|true|false|long|void|bool|str|string|loop|not|include|else|for|while|assert|in|return|func|class|struct|interface|new|delete|cast|const|function|and|or|then)\\b"
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "support.function.library.mercurylang",
+          "match": "\\b(print|empty|input|to_list|range|type|write|sin|cos|tan|cot|sqrt|split|size|pop|watch|puts|push|ch|glb|sub|help|exit|pause|eval|cls|same|random|randint|sleep|isdigit|to_str|to_int|hash|factorial)\\b"
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.language.mercurylang",
+          "match": "\\b(pi|e|inf|tau|gr|true|false|null)\\b"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.mercurylang",
+          "match": "(\\+=|-=|\\*=|/=|==|!=|<=|>=|<|>|=|\\+|\\-|\\*|/)"
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.mercurylang",
+          "match": "\\b\\d+(\\.\\d+)?\\b"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.mercurylang",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.mercurylang",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "fileTypes": ["mer", "m3"],
+  "uuid": "a-unique-uuid-if-needed"
+}

@@ -7,3 +7,4 @@ float fcot(float x) { return 1 / tan(RAD_TO_DEG(x)); }
 float fexp(float x) { return exp(x); }
 float flog(float x) { return log(x); }
 float fsqrt(float x) { return sqrt(x); }
+float ffactorial(float x) { return tgamma(x + 1); }

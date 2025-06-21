@@ -32,6 +32,10 @@ MERCURY_API void MerCore_initialize() {
     BUILD_LIB_FUNC("to_int", __builtin_to_int);
     BUILD_LIB_FUNC("input", __builtin_mer_read_line);
     BUILD_LIB_FUNC("split", __builtin_mer_split);
+    BUILD_LIB_FUNC("to_str", __builtin_to_string);
+    BUILD_LIB_FUNC("hash", __builtin_mer_hash);
+    BUILD_LIB_FUNC("empty", __builtin_mer_empty);
+    BUILD_LIB_FUNC("factorial", __builtin_mer_factorial);
 
     BUILD_GLOBAL_VARIABLE("pi", 3.1415926535897932384626433832795);
     BUILD_GLOBAL_VARIABLE("e", 2.7182818284590452353602874713527);

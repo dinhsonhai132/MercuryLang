@@ -89,7 +89,6 @@ int MerCompiler_free_table(table *t) {
     if (t->list_v) delete t->list_v;
     if (t->f_str_v) delete t->f_str_v;
     if (t->code_v) delete t->code_v;
-    if (t->type_v) delete t->type_v;
     if (t->func_obj_v) delete t->func_obj_v;
     if (t->obj_v) delete t->obj_v;
     if (t->opcode_v) delete t->opcode_v;
@@ -109,7 +108,6 @@ int MerCompiler_free_symboltable(symtable *s) {
     if (s->list_v) delete s->list_v;
     if (s->f_str_v) delete s->f_str_v;
     if (s->code_v) delete s->code_v;
-    if (s->type_v) delete s->type_v;
     if (s->func_obj_v) delete s->func_obj_v;
     if (s->obj_v) delete s->obj_v;
     if (s->opcode_v) delete s->opcode_v;

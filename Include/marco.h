@@ -2,6 +2,7 @@
 #define MERCURY_MARCO_HEADER_FILE
 
 #include <string>
+#include "opcode.h"
 
 #define TO_STRING(x) std::to_string(x).c_str()
 
@@ -36,6 +37,8 @@
 #define DECR_BYTE_uint16_t(var) var -= 0x0001;
 #define INCR_BYTE_uint32_t(var) var += 0x0001;
 #define DECR_BYTE_uint32_t(var) var -= 0x0001;
+#define stack_push(val) (stk->s_table->table.push_back(val))
+#define stack_pop() (stk->s_table->table.pop_back())
 #define CHECK 1
 #define CONST(x) const x
 #define IS_TRUE(x) ((x) == 1)
@@ -45,6 +48,40 @@
 #define INLINE(x) inline x
 #define CONSTEXPR(x) constexpr x
 #define EXTERN(x) extern x
+
+#define both(a, b) (a && b)
+#define str(a) (a->is_str)
+#define list(a) (a->is_list)
+#define rbool(a) (a->is_bool)
+#define func(a) (a->is_func)
+#define both_list(a, b) (both(list(a), list(b)))
+#define both_str(a, b) (both(str(a), str(b)))
+#define both_func(a, b) (both(func(a), func(b)))
+#define both_bool(a, b) (both(rbool(a), rbool(b)))
+
+#define push_true_to_stack()                        \
+    table *bool_obj = MerCompiler_Table_new();      \
+    bool_obj->bool_v = MerCompiler_bool_new();      \
+    bool_obj->bool_v->value = true;                 \
+    bool_obj->is_bool = true;                       \
+    bool_obj->cval = 1;                             \
+    stack_push(bool_obj);                           
+
+#define push_false_to_stack()                       \
+    table *bool_obj = MerCompiler_Table_new();      \
+    bool_obj->bool_v = MerCompiler_bool_new();      \
+    bool_obj->bool_v->value = false;                \
+    bool_obj->is_bool = true;                       \
+    bool_obj->cval = 0;                             \
+    stack_push(bool_obj);                           
+    
+
+#define MERCURY_ADD_VALUE(stk, value) (stk->s_table->table.push_back(MerCompiler_table_setup(value)))
+#define MERCURY_ADD_VALUE_ADDRESS(stk, value, address) (stk->s_table->table.push_back(MerCompiler_table_setup(value, address)))
+#define POP_STACK(stk) pop_stack(stk)    
+#define EAT_STACK(stk) eat_stack(stk)
+#define POP() pop_stack(stk)
+#define PUSH_STACK(stk, value) push_stack(stk, value)
 
 const char* show_opcode_name(uint8_t x) {
     if (x == CPUSH_FLOAT)         return "PUSH_FLOAT";

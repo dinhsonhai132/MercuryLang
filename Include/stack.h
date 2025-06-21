@@ -70,7 +70,6 @@ using namespace std;
     mBool_T *bool_v; \
     mCode_T *code_v; \
     mIter_T *iter_v; \
-    mType_T *type_v; \
     mList_T *list_v; \
     mObject_T *obj_v; \
     mOpCode_T *opcode_v; \

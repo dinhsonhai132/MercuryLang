@@ -1,10 +1,14 @@
 #include "../include/string.h"
 
-hash_t __hash(mString_T *str) {
-    hash_t hash = 0x00;
-    for (Mer_size_t i = 0; i < str->size; ++i) {
-        hash += str->buff[i] * i;
+float __hash(mString_T *str) {
+    vector<uint8_t> data = str->buff;
+    uint32_t hash = 2166136261u;
+    for (uint8_t byte : data) {
+        hash ^= byte;
+        hash *= 16777619u;
     }
     
-    return hash;
+    float result;
+    memcpy(&result, &hash, sizeof(float));
+    return result;
 }

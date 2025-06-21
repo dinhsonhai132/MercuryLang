@@ -9,7 +9,7 @@ float __list_value(mList_T *list) {
         uint32_t int_val;
         memcpy(&int_val, &val, sizeof(float));
 
-        seed ^= int_val + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+        seed ^= int_val * i + 0x9e3779b9 + (seed << 6) + (seed >> 2);
     }
 
     float result;

@@ -210,21 +210,6 @@ struct _variable {
     bool _is_global;
 };
 
-struct _class {
-    GC_HEAD;
-
-    Mer_string name;
-    Mer_string base_name;
-
-    unordered_map<Mer_uint8_t, _func_object*> methods;
-
-    _code *class_code;
-
-    bool has_constructor = false;
-    _func_object* constructor = nullptr;
-};
-
-
 struct _type_obj {
     FLAG_HEAD;
     GC_HEAD;
@@ -242,44 +227,29 @@ struct _type_obj {
     Mer_string_entry *str_entry;
 };
 
-struct _type
-{
+struct _class {
     GC_HEAD;
-    FLAG_HEAD;
-    _func_object *func;
-    _variable *variable;
-    _string *str;
-    _pcode *pcode;
-    _code *code;
-    void *o_ptr;
-    bool is_builtin;
-    Mer_real_string builtin_name;
-    void* builtin_ptr;
-    const char *name;
-    const char *type;
-    const char *file_name;
+    Mer_uint8_t address;
+    unordered_map<Mer_uint8_t, _type_obj *> members;
+    
+    _class *super_class;
+    _class *inheritance;
 };
 
 struct _object
 {
     GC_HEAD;
-    _type *type;
-    _type *data_type;
-    _type *value;
-    _type *file_name;
-    _type *name;
-    _pcode *code;
 
     _type_obj *obj_val;
-    Mer_size_t size;
+    Mer_size_t obj_size;
 
     unordered_map<string, _object *> attributes;
 };
 
 static _object NULL_OBJECT_INSTANCE = _object();
-static _type NULL_TYPE_INSTANCE = _type();
 static _pcode NULL_CODE_INSTANCE = _pcode();
 static _code NULL_OPCODE_INSTANCE = _code();
+static _type_obj NULL_TYPE_INSTANCE = _type_obj();
 
 #define NULL_OBJECT NULL_OBJECT_INSTANCE
 #define NULL_TYPE NULL_TYPE_INSTANCE
@@ -298,7 +268,7 @@ static _code NULL_OPCODE_INSTANCE = _code();
 #define NULL_BOOL 0
 #define NULL_STRING ""
 #define NULL_CHAR '\0'
-#define NULL_PTR NULL
+#define NULL_PTR nullptr
 #define NULL_PTR_PTR &NULL_PTR
 #define NULL_UINT_8_T 0x0000
 #define NULL_UINT_16_T 0x0000
@@ -319,12 +289,12 @@ _string *MerCompiler_string_new(void);
 _func_object *MerCompiler_func_object_new(void);
 _list_object *MerCompiler_list_object_new(void);
 _variable *MerCompiler_variable_new(void);
-_type *MerCompiler_type_new(void);
 _object *MerCompiler_object_new(void);
 _code *MerCompiler_code_new_as_ptr(void);
 
+_type_obj *MerCompiler_type_obj_new(void);
+
 int MerCompiler_free_object(_object *o);
-int MerCompiler_free_type(_type *t);
 int MerCompiler_free_pcode(_pcode *p);
 int MerCompiler_free_code(_code *c);
 int MerCompiler_free_string(_string *s);

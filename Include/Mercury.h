@@ -21,6 +21,7 @@
 #include <chrono>
 #include <thread>
 #include <cstring>
+#include <stdio.h>
 #include <cstdlib>
 #include <unordered_map>
 #include <filesystem>
@@ -58,7 +59,7 @@ const char* LANGUAGE = "MercuryLang";
 #define SYSTEM_TEST 1
 #endif
 
-#define MERCURY_FUNCTION_VALUE           100
+#define MERCURY_FUNCTION_VALUE           0
 #define MERCURY_LIST_VALUE               1
 #define MERCURY_STRING_VALUE             2
 #define MERCURY_OPCODE_VALUE             3

@@ -10,6 +10,8 @@ struct __global {
     Mer_uint8_t __Address;
     Mer_string __Name;
     Mer_real_string __name;
+
+    Mer_uint8_t args_size = 0x00;
     bool is_let = true;
 };
 

@@ -39,8 +39,6 @@ struct loop_stack {
 struct __compiler_u {
     const char* file;
     Mer_uint8_t address;
-    Mer_uint8_t line;
-    Mer_uint8_t byte;
     Mer_uint8_t cid;
     Mer_string name;
     Mer_string type;
@@ -53,32 +51,68 @@ __compiler_u compiler_init(void);
 
 #define create_label(glb) ++glb.address
 
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_program(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_id(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_literal(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_binary_expression(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_function_call(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_string_identifier(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_if(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_let(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_return(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_identifier(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_id_expression_statment(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_function(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_print(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_comparison_expression(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_while(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_list(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_assign(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_string_var(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_array(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_extract(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_store_index_statement(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_for_in_statement(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_loop(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_break(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_continue(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_true(mAST_T *ast, __compiler_u &glb);
-MERCURY_API __mer_core_api__ __Mer_return_Code MerCompiler_compile_ast_false(mAST_T *ast, __compiler_u &glb);
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_program(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_id(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_literal(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_binary_expression(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_function_call(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_string_identifier(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_if(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_let(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_return(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_identifier(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_id_expression_statment(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_function(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_print(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_comparison_expression(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_while(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_list(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_assign(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_string_var(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_array(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_extract(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_store_index_statement(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_for_in_statement(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_loop(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_break(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_continue(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_true(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_false(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_function_with_args(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_function_call_with_args(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_and_expression(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_not_expression(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_or_expression(mAST_T *ast, __compiler_u &glb);
 
 #endif // MERCURY_BYTECODE_COMPILER_HEADER

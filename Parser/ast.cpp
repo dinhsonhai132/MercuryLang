@@ -1,6 +1,6 @@
 #include "ast.h"
 
-mAST_T *_MerAST_new(void)
+mAST_T *MerAST_new(void)
 {
     mAST_T *node = new mAST_T();
 
@@ -39,7 +39,10 @@ mAST_T *_MerAST_new(void)
     node->is_break = false;
     node->is_continue = false;
     node->is_dad = false;
+    node->is_inc = false;
+    node->is_dec = false;
 
+    node->inc_dec_value = nullptr;
     node->attr = nullptr;
     node->attr_value = nullptr;
     node->poutput = nullptr;
@@ -62,17 +65,16 @@ mAST_T *_MerAST_new(void)
     return node;
 }
 
-
-mAST_T *_MerAST_make_parent(string type)
+mAST_T *MerAST_make_parent(string type)
 {
-    mAST_T *node = _MerAST_new();
+    mAST_T *node = MerAST_new();
     node->type = type;
     return node;
 }
 
-mAST_T *_MerAST_make(string type, string tok, float value, const char *dt, const char *iden, int row)
+mAST_T *MerAST_make(string type, string tok, float value, const char *dt, const char *iden, int row)
 {
-    mAST_T *node = _MerAST_new();
+    mAST_T *node = MerAST_new();
     node->tok = tok;
     node->value = value;
     node->data_type = dt;
@@ -81,51 +83,51 @@ mAST_T *_MerAST_make(string type, string tok, float value, const char *dt, const
     return node;
 }
 
-int _MerAST_free(mAST_T *ast)
+int MerAST_free(mAST_T *ast)
 {
     if (ast == nullptr)
         return _SUCCESS;
 
     if (ast->left)
-        _MerAST_free(ast->left);
+        MerAST_free(ast->left);
     if (ast->right)
-        _MerAST_free(ast->right);
+        MerAST_free(ast->right);
     if (ast->comp)
-        _MerAST_free(ast->comp);
+        MerAST_free(ast->comp);
     if (ast->comp_left)
-        _MerAST_free(ast->comp_left);
+        MerAST_free(ast->comp_left);
     if (ast->comp_right)
-        _MerAST_free(ast->comp_right);
+        MerAST_free(ast->comp_right);
     if (ast->var_value)
-        _MerAST_free(ast->var_value);
+        MerAST_free(ast->var_value);
     if (ast->return_v)
-        _MerAST_free(ast->return_v);
+        MerAST_free(ast->return_v);
     if (ast->poutput)
-        _MerAST_free(ast->poutput);
+        MerAST_free(ast->poutput);
 
     for (mAST_T *node : ast->args)
     {
-        _MerAST_free(node);
+        MerAST_free(node);
     }
     for (mAST_T *node : ast->body)
     {
-        _MerAST_free(node);
+        MerAST_free(node);
     }
     for (mAST_T *node : ast->then_body)
     {
-        _MerAST_free(node);
+        MerAST_free(node);
     }
     for (mAST_T *node : ast->else_body)
     {
-        _MerAST_free(node);
+        MerAST_free(node);
     }
     for (mAST_T *node : ast->list)
     {
-        _MerAST_free(node);
+        MerAST_free(node);
     }
     for (mAST_T *node : ast->children)
     {
-        _MerAST_free(node);
+        MerAST_free(node);
     }
 
     delete ast;

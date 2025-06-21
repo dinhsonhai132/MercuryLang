@@ -34,40 +34,7 @@ struct mParser_T {
     bool is_eof = false;
 };
 
-static inline vector<string> lib_iden = {
-    "write",
-    "eval",
-    "pause",
-    "exit",
-    "cls",
-    "help",
-    "same",
-    "size",
-    "push",
-    "pop",
-    "watch",
-    "puts",
-    "cos",
-    "tan",
-    "cot",
-    "sqrt",
-    "sin",
-    "glb",
-    "ch",
-    "type",
-    "range",
-    "randint",
-    "sub",
-    "print",
-    "sleep",
-    "split",
-    "isdigit",
-    "to_str",
-    "to_int",
-    "input",
-};
-
-static inline vector<string> tem_glb = {};
+static inline vector<string> lib_iden = {"print", "empty", "input", "to_list", "range", "type", "write", "sin", "cos", "tan", "cot", "sqrt", "split", "size", "pop", "watch", "puts", "push", "ch", "glb", "sub", "help", "exit", "pause", "eval", "cls", "same", "random", "randint", "sleep", "isdigit", "to_str", "to_int", "hash", "factorial"};
 
 #define TRUE_LINE(parser) (parser->lexer->row)
 
@@ -76,30 +43,63 @@ mParser_T *_MerParser_init(mLexer_T *lexer);
 int _MerParser_free(mParser_T *parser);
 
 mAST_T *MerParser_parse_binary_expression(mAST_T *left, string op, mAST_T *right);
+
+mAST_T *MerParser_parse_operator_expression(mAST_T *left, string op, mAST_T *right, string type);
+
 mAST_T *MerParser_parse_program(mParser_T *parser);
+
 mAST_T *MerParser_parse(mParser_T *parser);
+
 mAST_T *MerParser_parse_primary_expression(mParser_T *parser);
+
 mAST_T *MerParser_parse_additive_expression(mParser_T *parser);
+
 mAST_T *MerParser_parse_multiplicative_expression(mParser_T *parser);
+
 mAST_T *MerParser_parse_expression_statement(mParser_T *parser);
+
 mAST_T *MerParser_parse_let_statement(mParser_T *parser);
+
 mAST_T *MerParser_parse_function_statement(mParser_T *parser);
+
 mAST_T *MerParser_parse_function_call_expression(mParser_T *parser);
+
 mAST_T *MerParser_parse_return_statement(mParser_T *parser);
+
 mAST_T *MerParser_parse_comparison_expression(mParser_T *parser);
+
 mAST_T *MerParser_parse_compair(mAST_T *left, string op, mAST_T *right);
+
 mAST_T *MerParser_parse_if_statement(mParser_T *parser);
+
 mAST_T *MerParser_parse_while_statement(mParser_T *parser);
+
 mAST_T *MerParser_parse_assignment_statement(mParser_T *parser);
+
 mAST_T *MerParser_parse_string_expression(mParser_T *parser);
+
 mAST_T *MerParser_parse_list_statement(mParser_T *parser);
+
 mAST_T *MerParser_parse_variable_statement(mParser_T *parser);
+
 mAST_T *MerParser_parse_extract_expression(mParser_T *parser);
+
 mAST_T *MerParser_parse_string_statement(mParser_T *parser);
+
 mAST_T *MerParser_parse_store_index_statement(mParser_T *parser);
-mAST_T *MerParser_parse_constructor(mParser_T *parser);
+
 mAST_T *MerParser_parse_array_expression(mParser_T *parser);
+
 mAST_T *MerParser_parse_for_statement(mParser_T *parser);
+
 mAST_T *MerParser_parse_loop_statement(mParser_T *parser);
+
+mAST_T *MerParser_parse_and_expression(mParser_T *parser);
+
+mAST_T *MerParser_parse_or_expression(mParser_T *parser);
+
+mAST_T *MerParser_parse_not_expression(mParser_T *parser);
+
+mAST_T *MerParser_parse_logical_expression(mParser_T *parser);
 
 #endif // MERCURY_PARSER_HEADER_FILE

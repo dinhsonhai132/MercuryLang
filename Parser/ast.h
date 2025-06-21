@@ -67,17 +67,29 @@ using namespace std;
 #define AndExpression "AndExpression"
 #define OrExpression "OrExpression"
 #define NotExpression "NotExpression"
+#define IncrementExpression "IncrementExpression"
+#define DecrementExpression "DecrementExpression"
+#define FunctionWithArgsStatement "FunctionWithArgsStatement"
+#define FunctionCallWithArgsExpression "FunctionCallWithArgsStatement"
+#define ClassStatement "ClassStatement"
+#define DeleteStatement "DeleteStatement"
+#define AssertStatement "AssertStatement"
 
 #define is_ast_expression(type) \
-    ((type) == BinaryExpression || \
-     (type) == Literal || \
-     (type) == Identifier_ || \
-     (type) == ComparisonExpression || \
-     (type) == ArrayExpression || \
-     (type) == FunctionCallExpression || \
-     (type) == ExtractExpression || \
-     (type) == TrueExpression || \
-     (type) == FalseExpression || \
+    ((type) == BinaryExpression                 || \
+     (type) == Literal                          || \
+     (type) == Identifier_                      || \
+     (type) == ComparisonExpression             || \
+     (type) == ArrayExpression                  || \
+     (type) == FunctionCallExpression           || \
+     (type) == FunctionCallWithArgsExpression   || \
+     (type) == IncrementExpression              || \
+     (type) == AndExpression                    || \
+     (type) == OrExpression                     || \
+     (type) == NotExpression                    || \
+     (type) == ExtractExpression                || \
+     (type) == TrueExpression                   || \
+     (type) == FalseExpression                  || \
      (type) == StringIdentifier)
 
 struct mAST_T
@@ -105,6 +117,11 @@ struct mAST_T
     vector<mAST_T *> else_body;
     bool has_else = false;
 
+    // incr expr
+    bool is_inc;
+    bool is_dec;
+    mAST_T *inc_dec_value;
+
     // assginment
     string assign_iden;
     mAST_T *assign_value;
@@ -114,6 +131,9 @@ struct mAST_T
     bool is_mul_assign;
     bool is_div_assign;
     bool is_mod_assign;
+
+    // not expr
+    mAST_T *not_expr;
     
     // for break and continue
     bool is_break;
@@ -160,6 +180,11 @@ struct mAST_T
     mAST_T *attr;
     mAST_T *attr_value;
     bool is_dad;
+
+    // for delete
+    bool is_del_element_from_list;
+    string del_iden;
+    mAST_T *del_index;
 
     // for comparison expression
     string comp_op;
@@ -231,10 +256,10 @@ struct mAST_T
     vector<mAST_T *> children;
 };
 
-mAST_T *_MerAST_new(void);
-mAST_T *_MerAST_make_parent(string type);
-mAST_T *_MerAST_make(string type, string tok, float value, const char *dt, const char *iden, int row);
+mAST_T *MerAST_new(void);
+mAST_T *MerAST_make_parent(string type);
+mAST_T *MerAST_make(string type, string tok, float value, const char *dt, const char *iden, int row);
 void MerAST_print_ast(mAST_T *ast, int indent = 0);
-int _MerAST_free(mAST_T *ast);
+int MerAST_free(mAST_T *ast);
 
 #endif // MERCURY_ABSTRACT_SYNTAX_TREE_HEADER_FILE

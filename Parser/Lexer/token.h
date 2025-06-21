@@ -20,7 +20,6 @@
 
 #ifndef MERCURY_TOKEN_HEADER_FILE
 #define MERCURY_TOKEN_HEADER_FILE
-#define MERCURY_LANG3
 #include <string>
 #include <vector>
 #include <iostream>
@@ -48,6 +47,7 @@ using namespace std;
 #define VARIABLE "VARIABLE"
 #define STRING "STRING"
 #define LET "LET"
+#define IS "IS"
 #define DOT "DOT"
 #define COMMA "COMMA"
 #define ASSIGN "ASSIGN"
@@ -61,6 +61,7 @@ using namespace std;
 #define RIGHT_PAREN "RIGHT_PAREN"
 #define LEFT_BRACKET "LEFT_BRACKET"
 #define RIGHT_BRACKET "RIGHT_BRACKET"
+#define ASSERT "ASSERT"
 #define LEFT_BRACE "LEFT_BRACE"
 #define END_T "END_T"
 #define RIGHT_BRACE "RIGHT_BRACE"
@@ -217,6 +218,7 @@ inline bool is_identifier(string c) {
     || (c == "if")
     || (c == "do")
     || (c == "end")
+    || (c == "function")
     || (c == "break")
     || (c == "continue")
     || (c == "auto")
@@ -239,6 +241,8 @@ inline bool is_identifier(string c) {
     || (c == "else")
     || (c == "for")
     || (c == "while")
+    || (c == "local")
+    || (c == "assert")
     || (c == "in")
     || (c == "return")
     || (c == "func")
@@ -256,7 +260,7 @@ inline bool is_identifier(string c) {
 }
 
 inline const char* GET_SYNTAX(string c) {
-    if (c == "let") return LET;
+    if (c == "let" || c == "local") return LET;
     else if (c == "if") return IF;
     else if (c == "else") return ELSE;
     else if (c == "for") return FOR;
@@ -264,14 +268,15 @@ inline const char* GET_SYNTAX(string c) {
     else if (c == "in") return IN;
     else if (c == "not") return NOT;
     else if (c == "return") return RETURN;
-    else if (c == "func") return FUNCTION;
+    else if (c == "assert") return ASSERT;
+    else if (c == "func" || c == "function") return FUNCTION;
     else if (c == "include") return INCLUDE;
     else if (c == "and") return AND;
     else if (c == "true") return TRUE_T;
     else if (c == "false") return FALSE_T;
     else if (c == "or") return OR;
     else if (c == "do") return DO_T;
-    else if (c == "is") return EQUAL;
+    else if (c == "is") return IS;
     else if (c == "end") return END_T;
     else if (c == "break") return BREAK;
     else if (c == "loop") return LOOP;
@@ -300,6 +305,7 @@ inline const char* GET_SYNTAX(string c) {
 inline bool is_identifier(const std::string& c) {
     return (c == LET_S)
     || (c == IF_S)
+    || (c == LOCAL_S)
     || (c == DO_S)
     || (c == END_S)
     || (c == BREAK_S)
@@ -309,6 +315,7 @@ inline bool is_identifier(const std::string& c) {
     || (c == DOUBLE_S)
     || (c == CHAR_S)
     || (c == LIST_S)
+    || (c == ASSERT_S)
     || (c == NOT_S)
     || (c == AND_S)
     || (c == OR_S)
@@ -338,7 +345,7 @@ inline bool is_identifier(const std::string& c) {
 }
 
 inline const char* GET_SYNTAX(const std::string& c) {
-    if (c == LET_S) return LET;
+    if (c == LET_S || c == LOCAL_S) return LET;
     else if (c == IF_S) return IF;
     else if (c == ELSE_S) return ELSE;
     else if (c == FOR_S) return FOR;
@@ -348,7 +355,7 @@ inline const char* GET_SYNTAX(const std::string& c) {
     else if (c == LOOP_S) return LOOP;
     else if (c == RETURN_S) return RETURN;
     else if (c == FUNCTION_S) return FUNCTION;
-    else if (c == IS_S) return EQUAL;
+    else if (c == IS_S) return IS;
     else if (c == DO_S) return DO_T;
     else if (c == END_S) return END_T;
     else if (c == INCLUDE_S) return INCLUDE;

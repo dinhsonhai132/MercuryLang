@@ -1,0 +1,25 @@
+{
+  "name": "mercurylang",
+  "displayName": "mercurylang",
+  "description": "mercurylang",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.101.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "mercurylang",
+      "aliases": ["mercurylang", "mercurylang"],
+      "extensions": [".mer"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "mercurylang",
+      "scopeName": "source.mer",
+      "path": "./syntaxes/mercurylang.tmLanguage.json"
+    }]
+  }
+}

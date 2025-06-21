@@ -3,6 +3,6 @@
 
 #include "Mercury.h"
 
-hash_t __hash(mString_T *str);
+float __hash(mString_T *str);
 
 #endif

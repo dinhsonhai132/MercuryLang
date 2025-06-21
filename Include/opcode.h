@@ -48,6 +48,22 @@
 #define CLOAD_TRUE                              0x63
 #define CLOAD_FALSE                             0x64
 
+#define CINC                                    0x9A
+#define CDEC                                    0x9B
+
+#define CAND                                    0x9C
+#define COR                                     0x9D
+
+#define CCLASS_BEGIN                            0x9E // CLASS_BEGIN <class_name>
+#define CCLASS_END                              0x9F // CLASS_END
+
+#define CSTORE_ATTR                             0xA0 // STORE_ATTR <class_name> <attr_name>
+#define CLOAD_ATTR                              0xA1 // LOAD_ATTR <class_name> <attr_name>
+
+#define CDELETE                                 0xA2
+
+#define CIS                                     0xA3
+
 #define NUMBER_0 {0x00, 0x00, 0x00, 0x00}
 #define NUMBER_1 {0x00, 0x00, 0x80, 0x3F}
 #define NUMBER_2 {0x00, 0x00, 0x00, 0x40}

@@ -115,11 +115,12 @@ void prompt() {
         string line;
         string full_line = "";
         while (true) {
+
             if (first) {
                 cout << "> ";
                 first = false;
             } else {
-                cout << ">> ";
+                cout << "... ";
             }
             getline(cin, line);
    

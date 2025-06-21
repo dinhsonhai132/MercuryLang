@@ -28,6 +28,8 @@ typedef const char* Error_t;
 
 #define DEBUG(x) cout << x << endl;
 
+#define BREAK_POINT while(1);
+
 void MerDebug_print_message(const char *msg, const char *file, int line);
 void MerDebug_print_warning(const char* msg, const char* file, int line, const char* c_line);
 void MerDebug_print_error(const char *type, const char *msg, const char *file, int line);

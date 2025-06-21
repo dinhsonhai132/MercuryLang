@@ -80,6 +80,8 @@ sqrt(x)
 let x = 2
 let y = 3
 print(x < y)
+print(x < y and y > x)
+print(x == 1 or y == 1)
 ```
 ### Function and function call
 ```python

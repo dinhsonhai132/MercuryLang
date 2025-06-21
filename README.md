@@ -48,7 +48,6 @@ let y = 2
 ```python
 let x = ["apple", "pineapple", "orange"]
 print(x[1])
-x[1] = "watermelon"
 ```
 
 ### Global variable

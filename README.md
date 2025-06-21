@@ -82,6 +82,7 @@ let y = 3
 print(x < y)
 print(x < y and y > x)
 print(x == 1 or y == 1)
+print(not x)
 ```
 ### Function and function call
 ```python

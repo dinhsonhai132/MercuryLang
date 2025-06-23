@@ -38,9 +38,11 @@ struct loop_stack {
 
 struct __compiler_u {
     const char* file;
-    Mer_uint8_t address;
+    Mer_uint8_t address = 0x0001;
+    Mer_uint8_t para_address;
     Mer_uint8_t cid;
     Mer_string name;
+    bool is_in_func = false;
     Mer_string type;
     vector<loop_stack> loop;
 };
@@ -50,6 +52,7 @@ __compiler_u compiler_init(void);
 #define INC_U(u) (u.byte++, u.cid++)
 
 #define create_label(glb) ++glb.address
+#define create_para(glb) ++glb.para_address
 
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_program(mAST_T *ast, __compiler_u &glb);
 

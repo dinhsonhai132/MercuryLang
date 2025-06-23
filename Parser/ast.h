@@ -252,7 +252,7 @@ struct mAST_T
     mAST_T *array_store;
     mAST_T *array_store_value;
     
-
+    int args_size = 0;
     vector<mAST_T *> children;
 };
 

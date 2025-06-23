@@ -50,8 +50,8 @@
 #define EXTERN(x) extern x
 
 #define both(a, b) (a && b)
-#define str(a) (a->is_str)
-#define list(a) (a->is_list)
+#define str(a) ((a)->is_str)
+#define list(a) ((a)->is_list)
 #define rbool(a) (a->is_bool)
 #define func(a) (a->is_func)
 #define both_list(a, b) (both(list(a), list(b)))

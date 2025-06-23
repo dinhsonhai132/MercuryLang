@@ -166,14 +166,6 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
             stk = MerVM_evaluate_STORE_INDEX(u, stk);
         }
 
-        // else if (code == CFUNCTION_CALL_WITH_ARGS) {
-        //     stk = MerVM_evaluate_FUNCTION_CALL_WITH_ARGS(u, stk);
-        // }
-
-        // else if (code = CMAKE_FUNCTION_WITH_ARGS) {
-        //     stk = MerVM_evaluate_MAKE_FUNCTION_WITH_ARGS(u, stk);
-        // }
-
         else if (code == CDELETE) {
             stk = MerVM_evaluate_DELETE(u, stk);
         }
@@ -214,7 +206,7 @@ MERCURY_API __mer_core_api__ stack *MerVM_evaluate_DELETE(__program_bytecode &u,
     table *del = POP();
     bool found = false;
 
-    for (auto &item : _G) {
+    for (auto &item : u.is_in_func ? _L : _G) {
         if (item->address == del->address) {
             found = true;
             MerCompiler_free_symboltable(item);
@@ -226,110 +218,6 @@ MERCURY_API __mer_core_api__ stack *MerVM_evaluate_DELETE(__program_bytecode &u,
     }
     return stk;
 }
-
-MERCURY_API __mer_core_api__ stack *MerVM_evaluate_FUNCTION_CALL_WITH_ARGS(__program_bytecode &u, stack *stk) {
-#ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_FUNCTION_CALL_WITH_ARGS] [building...]" << endl;
-#endif
-
-    Mer_uint8_t address = __get_next_code_in_prg_code(u);
-    Mer_uint8_t argc = __get_next_code_in_prg_code(u);
-
-    vector<table*> args = {};
-
-    for (int i = 0; i < argc; ++i) {
-        table *arg = POP();
-        args.insert(args.begin(), arg);
-    }
-
-    symtable *target_func = nullptr;
-
-    for (auto &sym : _G) {
-        if (sym->address == address && sym->tab->is_func) {
-            target_func = sym;
-            break;
-        }
-    }
-
-    if (!target_func) {
-        MerDebug_system_error(SYSTEM_ERROR, "Function not found or not callable", u.file);
-        return stk;
-    }
-
-    mFunc_object_T *func_obj = target_func->tab->func_obj_v;
-
-    mCode_T func_code = NULL_CODE;
-    func_code.prg_code.buff = func_obj->f_bc->buff;
-    func_code.prg_code.raw = func_obj->f_bc->buff;
-
-    for (int i = 0; i < argc; ++i) {
-        Mer_uint8_t arg_addr = i;
-        symtable *arg_sym = MerCompiler_SymbolTable_new();
-        arg_sym->address = arg_addr;
-        arg_sym->value = args[i]->cval;
-        arg_sym->tab = args[i];
-        _G.push_back(arg_sym);
-    }
-
-    __program_bytecode new_u = init_program_bytecode(func_code);
-    __get_label_map(new_u, "function");
-
-    stk = MerVM_evaluate_statement(new_u, stk);
-
-    #ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_FUNCTION_CALL_WITH_ARGS] [pass]" << endl;
-    #endif
-
-    return stk;
-}
-
-MERCURY_API __mer_core_api__ stack *MerVM_evaluate_MAKE_FUNCTION_WITH_ARGS(__program_bytecode &u, stack *stk) {
-#ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_MAKE_FUNCTION_WITH_ARGS] [building...]" << endl;
-#endif
-
-    Mer_uint8_t address = __get_next_code_in_prg_code(u); 
-    Mer_uint8_t argc = __get_next_code_in_prg_code(u); 
-
-    vector<Mer_uint8_t> body;
-
-    Mer_uint8_t code = __get_next_code_in_prg_code(u);
-    while (code != CRETURN) {
-        body.push_back(code);
-        code = __get_next_code_in_prg_code(u);
-    }
-
-    body.push_back(CRETURN);
-
-    mFunc_object_T *func_obj = MerCompiler_func_object_new();
-    func_obj->f_bc = MerCompiler_code_new_as_ptr();
-    func_obj->f_bc->buff = body;
-    func_obj->f_bc->raw = body;
-    func_obj->raw_body = body;
-    func_obj->body_size = body.size();
-    func_obj->args_size = argc;
-    func_obj->is_return = true;
-    func_obj->is_global = true;
-    func_obj->f_value = 0.0;
-
-    symtable *func_sym = MerCompiler_SymbolTable_new();
-    func_sym->address = address;
-    func_sym->value = MERCURY_FUNCTION_VALUE;
-    func_sym->cval = MERCURY_FUNCTION_VALUE;
-    func_sym->tab->cval = MERCURY_FUNCTION_VALUE;
-    func_sym->tab->address = address;
-    func_sym->tab->func_obj_v = func_obj;
-    func_sym->tab->is_func = true;
-
-    _G.push_back(func_sym);
-
-#ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_MAKE_FUNCTION_WITH_ARGS] [pass]" << endl;
-#endif
-
-    return stk;
-}
-
 
 MERCURY_API __mer_core_api__ stack *MerVM_evaluate_INC(__program_bytecode &u, stack *stk) {
     table *value = POP();
@@ -757,21 +645,32 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_LOAD_GLOBAL(__program_byteco
 
     Mer_uint8_t code = __get_next_code_in_prg_code(u);
     bool found = false;
-
-    for (Mer_size_t i = 0; i < _G.size(); i++) {
-        if (_G[i]->address == code) {
-            _G[i]->tab->cval = _G[i]->value;
-            _G[i]->tab->address = _G[i]->address;
-            stack_push(_G[i]->tab);
+    
+    for (auto &item : _L) {
+        if (item->address == code) {
+            item->tab->cval = item->value;
+            item->tab->address = item->address;
+            stack_push(item->tab);
             found = true;
             break;
         }
     }
 
     if (!found) {
-        cout << "Global not found: ";
-        cout << " 0x" << hex << setfill('0') << setw(2) << (int)code << endl;
-        break_point();
+        for (auto &item : _G) {
+            if (item->address == code) {
+                item->tab->cval = item->value;
+                item->tab->address = item->address;
+                stack_push(item->tab);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            cerr << "global var dont exist " << "0x" << hex << setfill('0') << setw(2) << (int)code << endl;
+            MER_BREAK_POINT;
+        }
     }
 
     #ifdef SYSTEM_TEST
@@ -790,7 +689,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_STORE_GLOBAL(__program_bytec
 
     table *top = POP();
 
-    for (auto &sym : _G) {
+    for (auto &sym : u.is_in_func ? _L : _G) {
         if (sym->address == code) {
             sym->value = top->cval;
             sym->tab = top;
@@ -808,7 +707,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_STORE_GLOBAL(__program_bytec
     sym_value->tab->cval = top->cval;
     sym_value->tab->address = code;
 
-    _G.push_back(sym_value);
+    u.is_in_func ? _L.push_back(sym_value) : _G.push_back(sym_value);
 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [MerVM_evaluate_STORE_GLOBAL] [pass]" << endl;
@@ -825,6 +724,8 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_MAKE_FUNCTION(__program_byte
     Mer_uint8_t code = __get_next_code_in_prg_code(u);
     Mer_uint8_t address = code;
 
+    Mer_uint8_t args_size = __get_next_code_in_prg_code(u);
+    
     symtable *func = MerCompiler_SymbolTable_new();
 
     vector<Mer_uint8_t> body;
@@ -842,7 +743,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_MAKE_FUNCTION(__program_byte
     func_obj->f_bc->raw = body;
     func_obj->raw_body = body;
     func_obj->body_size = body.size();
-    func_obj->args_size = 0;
+    func_obj->args_size = args_size;
     func_obj->is_return = true;
     func_obj->is_global = true;
     func_obj->f_value = 0.0;
@@ -857,7 +758,6 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_MAKE_FUNCTION(__program_byte
     func->tab->is_func = true;
 
     _G.push_back(func);
-
 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [MerVM_evaluate_MAKE_FUNCTION] [pass]" << endl;
@@ -875,17 +775,23 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_FUNCTION_CALL(__program_byte
 
     Mer_uint8_t func_address = func->address;
     if (func->is_func) {
-        vector<Mer_uint8_t> f_bc = func->func_obj_v->f_bc->buff;
-
         mCode_T f_code = NULL_CODE;
-        f_code.prg_code.buff = f_bc;
-        f_code.prg_code.raw = f_bc;
-        f_code.out_code.buff = f_bc;
-        f_code.out_code.raw = f_bc;
+        f_code.prg_code.buff = func->func_obj_v->f_bc->buff;
+        Mer_uint8_t para_address = 0x00;
+
+        for (Mer_size_t i = 0; i < func->func_obj_v->args_size; i++) {
+            table *para = POP();
+            symtable *sym = MerCompiler_symboltable_setup("<arg>", para->cval, "<None>", ++para_address);
+            sym->tab = para;
+            _L.push_back(sym);
+        }
 
         __program_bytecode new_u = init_program_bytecode(f_code);
+        new_u.is_in_func = true;
         __get_label_map(new_u, "function");
         stk = MerVM_evaluate_statement(new_u, stk);
+        new_u.is_in_func = false;
+        _L.clear();
         return stk;
     } else {
         Mer_uint8_t address = func->address;

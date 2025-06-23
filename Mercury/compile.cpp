@@ -7,6 +7,8 @@ __compiler_u compiler_init(void) {
   glb.cid = 0x0000;
   glb.name = nullptr;
   glb.type = nullptr;
+  glb.is_in_func = false;
+  glb.para_address = 0x0000;
   glb.file = "stdin";
   return glb;
 }
@@ -16,13 +18,13 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_id(mAST_T *ast, __compiler
 
   if (ast->type == Identifier_)             return MerCompiler_compile_ast_identifier(ast, glb);
   if (ast->type == Literal)                 return MerCompiler_compile_ast_literal(ast, glb);
+  if (ast->type == FunctionStatement)       return MerCompiler_compile_ast_function(ast, glb); 
   if (ast->type == BinaryExpression)        return MerCompiler_compile_ast_binary_expression(ast, glb);
   if (ast->type == FunctionCallExpression)  return MerCompiler_compile_ast_function_call(ast, glb);
   if (ast->type == IfStatement)             return MerCompiler_compile_ast_if(ast, glb);
   if (ast->type == LetStatement)            return MerCompiler_compile_ast_let(ast, glb);
   if (ast->type == ReturnStatement)         return MerCompiler_compile_ast_return(ast, glb);
   if (ast->type == ExpressionStatement)     return MerCompiler_compile_ast_id_expression_statment(ast, glb);
-  if (ast->type == FunctionStatement)       return MerCompiler_compile_ast_function(ast, glb); 
   if (ast->type == ComparisonExpression)    return MerCompiler_compile_ast_comparison_expression(ast, glb);
   if (ast->type == AssignStatement)         return MerCompiler_compile_ast_assign(ast, glb);
   if (ast->type == WhileStatement)          return MerCompiler_compile_ast_while(ast, glb);
@@ -61,7 +63,7 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_function_call_with_args(mA
   Mer_uint8_t address = NULL_UINT_8_T;
   Mer_uint8_t args_size = NULL_UINT_8_T;
   bool found = false;
-  for (auto &item : GLOBAL_TABLE) {
+  for (auto &item : glb.is_in_func ? LOCAL_TABLE : GLOBAL_TABLE) {
     if (item->__Name == ast->func_call) {
       address = item->__Address;
       args_size = item->args_size;
@@ -210,7 +212,7 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_store_index_statement(mAST
   Mer_uint8_t address = NULL_UINT_8_T;
   bool found = false;
 
-  for (auto &item : GLOBAL_TABLE) {
+  for (auto &item : glb.is_in_func ? LOCAL_TABLE : GLOBAL_TABLE) {
     if (item->__name == ast->extract_name) {
       address = item->__Address;
       found = true;
@@ -245,7 +247,7 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_extract(mAST_T *ast, __com
   bool found = false;
   Mer_uint8_t list_address = NULL_UINT_8_T;
 
-  for (auto &global : GLOBAL_TABLE) {
+  for (auto &global : glb.is_in_func ? LOCAL_TABLE : GLOBAL_TABLE) {
     if (global->__name == ast->extract_name) {
       found = true;
       list_address = global->__Address;
@@ -365,7 +367,7 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_assign(mAST_T *ast, __comp
   Mer_uint8_t address;
   bool found = false;
 
-  for (auto &item : GLOBAL_TABLE) {
+  for (auto &item : glb.is_in_func ? LOCAL_TABLE : GLOBAL_TABLE) {
     if (item->__name == ast->assign_iden) {
       address = item->__Address;
       found = true;
@@ -375,7 +377,7 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_assign(mAST_T *ast, __comp
 
   if (!found) {
     address = create_label(glb);
-    GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(address, ast->assign_iden.c_str(), ast->assign_iden));
+    glb.is_in_func ? LOCAL_TABLE.push_back(CREAT_LOCAL_TABLE(address, ast->assign_iden.c_str(), ast->assign_iden)) : GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(address, ast->assign_iden.c_str(), ast->assign_iden));
   }
 
   if (ast->is_assign_operator) {
@@ -478,7 +480,11 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_for_in_statement(mAST_T *a
   GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(__iter, __iter__, __iter__));
   GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(__i, __i__, __i__));
 
-  for (auto &item : GLOBAL_TABLE) {
+  LOCAL_TABLE.push_back(CREAT_LOCAL_TABLE(__iter, __iter__, __iter__));
+  LOCAL_TABLE.push_back(CREAT_LOCAL_TABLE(__i, __i__, __i__));
+
+
+  for (auto &item : glb.is_in_func ? LOCAL_TABLE : GLOBAL_TABLE) {
     if (item->__name == ast->in_iden) {
       __value = item->__Address;
       found = true;
@@ -488,6 +494,7 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_for_in_statement(mAST_T *a
 
   if (!found) {
     GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(__value, ast->in_iden.c_str(), ast->in_iden));
+    LOCAL_TABLE.push_back(CREAT_LOCAL_TABLE(__value, ast->in_iden.c_str(), ast->in_iden));
   }
 
   for (auto child : ast->in_body) {
@@ -613,7 +620,7 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_function_call(mAST_T *ast,
   Mer_uint8_t address;
   Mer_bool found = false;
   Mer_string name = strdup(ast->func_call.c_str());
-  for (auto &item : GLOBAL_TABLE) {
+  for (auto &item : glb.is_in_func ? LOCAL_TABLE : GLOBAL_TABLE) {
     if (item->__name == name && !item->is_let) {
       address = item->__Address;
       found = true;
@@ -714,7 +721,7 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_let(mAST_T *ast, __compile
   Mer_uint8_t address = NULL_UINT_8_T;
   bool found = false;
 
-  for (auto &item : GLOBAL_TABLE) {
+  for (auto &item : glb.is_in_func ? LOCAL_TABLE : GLOBAL_TABLE) {
     if (item->__name == real_name) {
       found = true;
       address = item->__Address;
@@ -723,7 +730,7 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_let(mAST_T *ast, __compile
 
   if (!found) {
     address = create_label(glb);
-    GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(address, name, real_name));
+    glb.is_in_func ? LOCAL_TABLE.push_back(CREAT_LOCAL_TABLE(address, name, real_name)) : GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(address, name, real_name));
   }
 
   __Mer_return_Code var_val = MerCompiler_compile_ast_id(ast->var_value, glb);
@@ -769,7 +776,7 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_identifier(mAST_T *ast, __
     MerDebug_system_error(COMPILER_ERROR, "Invalid identifier", glb.file);
   }
 
-  for (auto &item : GLOBAL_TABLE) {
+  for (auto &item : glb.is_in_func ? LOCAL_TABLE : GLOBAL_TABLE) {
     if (item->__name == name && item->is_let) {
       address = item->__Address;
       found = true;
@@ -856,8 +863,9 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_function(mAST_T *ast, __co
   Mer_uint8_t func_address = create_label(glb);
   Mer_real_string name = ast->func_name;
   Mer_string func_name = strdup(ast->func_name.c_str());
+  Mer_uint8_t args_size = ast->args_size;
 
-  for (auto &item : GLOBAL_TABLE) {
+  for (auto &item : glb.is_in_func ? LOCAL_TABLE : GLOBAL_TABLE) {
     if (item->__name == func_name) {
       Mer_real_string msg = "Function already defined: '" + ast->func_name + "'";
       MerDebug_print_error(COMPILER_ERROR, msg.c_str(), glb.file, ast->true_line);
@@ -866,16 +874,28 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_function(mAST_T *ast, __co
 
   __global *glb_tab = CREAT_GLOBAL_TABLE(func_address, func_name, name);
   glb_tab->is_let = false; 
+  glb_tab->args_size = args_size;
   GLOBAL_TABLE.push_back(glb_tab);
 
+  if (ast->is_having_args) {
+    for (auto &item : ast->args_idens) {
+      LOCAL_TABLE.push_back(CREAT_LOCAL_TABLE(create_para(glb), item.c_str(), item));
+    }
+  }
+
+  glb.is_in_func = true;
   for (auto child : ast->body) {
     __Mer_return_Code _code = MerCompiler_compile_ast_id(child, glb);
     INSERT_VEC(body, _code);
     _code.prg_code.buff.clear();
   }
+  glb.is_in_func = false;
 
   PUSH(result, CMAKE_FUNCTION);
+  
   PUSH(result, func_address);
+  PUSH(result, args_size);
+
   INSERT_VEC(result, body);
   PUSH(result, CRETURN);
 

@@ -117,6 +117,20 @@ typedef struct __stack
     Mer_uint8_t raw_debug; // Debug
 } stack;
 
+typedef struct __call_context {
+    vector<symtable*> locals;
+    mCode_T code;
+    stack *stk;
+    
+    Mer_uint8_t address;
+    __call_context *caller;
+
+    Mer_size_t ip;
+    table* return_val;
+
+
+} CallContext;
+
 #define incr_stk_idx(stk) \
     stk->code_idx++; \
 

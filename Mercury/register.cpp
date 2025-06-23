@@ -6,12 +6,14 @@ MERCURY_API __mer_core_api__ void __register_lib(Mer_uint8_t address, void *func
 
 MERCURY_API __mer_core_api__ void __register_global(Mer_uint8_t address, Mer_string name) {
     GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(address, name, name));
+    LOCAL_TABLE.push_back(CREAT_LOCAL_TABLE(address, name, name));
 }
 
 MERCURY_API __mer_core_api__ void __register_lib_to_global(Mer_uint8_t address, Mer_string name) {
     __global *item = CREAT_GLOBAL_TABLE(address, name, name);
     item->is_let = false;
     GLOBAL_TABLE.push_back(item);
+    LOCAL_TABLE.push_back(item);
 }
 
 MERCURY_API __mer_core_api__ void __register_global_data(symtable *item) {

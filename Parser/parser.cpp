@@ -635,6 +635,7 @@ mAST_T *MerParser_parse_function_statement(mParser_T *parser)
                 {
                     node->args_idens.push_back(parser->token->name);
                     node->is_having_args = true;
+                    node->args_size++;
                 } else {
                     MerDebug_print_error(SYNTAX_ERROR, "Expected argument in function definition", parser->lexer->file, TRUE_LINE(parser));
                 }

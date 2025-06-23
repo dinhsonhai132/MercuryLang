@@ -71,6 +71,19 @@ symtable *MerCompiler_SymbolTable_new(void) {
     return s;
 }
 
+CallContext *MerCallContext_new(void) {
+    CallContext *ctx = new CallContext();
+    ctx->address = NULL_UINT_8_T;
+    ctx->code = NULL_CODE;
+    ctx->caller = nullptr;
+    ctx->caller = NULL_PTR;
+    ctx->stk = MerCompiler_Stack_new();
+    ctx->locals[0] = MerCompiler_SymbolTable_new();
+    ctx->return_val = nullptr;
+    ctx->ip = 0;
+    return ctx;
+}
+
 int MerCompiler_free_stack(stack *s) {
     if (!s) return __FAILURE__;
 

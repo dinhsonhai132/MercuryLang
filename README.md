@@ -86,13 +86,11 @@ print(not x)
 ```
 ### Function and function call
 ```python
-func foo() do
-    let x = 1
-    let y = 2
+func foo(x, y) do
     print(x + y)
 end
 
-foo()
+foo(1, 2)
 ```
 
 ### If-else statement

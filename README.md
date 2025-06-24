@@ -60,6 +60,8 @@ write(tau)
 
 ### Math
 ```python
+import "math" # using math standard library
+
 # Merucury support '+', '-', '/', '*', '%'
 2 * 2
 3 + 3 / 2

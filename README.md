@@ -1,5 +1,11 @@
 # 🪐 *Mercury Programming Language*
 
+![GitHub Stars](https://img.shields.io/github/stars/dinhsonhai132/MercuryLang?style=social)
+![GitHub forks](https://img.shields.io/github/forks/dinhsonhai132/MercuryLang?style=social)
+![GitHub repo size](https://img.shields.io/github/repo-size/dinhsonhai132/MercuryLang)
+![GitHub issues](https://img.shields.io/github/issues/dinhsonhai132/MercuryLang)
+![GitHub license](https://img.shields.io/github/license/dinhsonhai132/MercuryLang)
+
 **Welcome to ```MercuryLang``` — a small free and open-source lightweight interpreter written in **C++**, inspired by the simplicity of Python. ```MercuryLang``` is designed to offer clean, readable, and expressive syntax, making it an ideal choice for developers of all experience levels.**
 
 ## 🌟 Features

@@ -85,7 +85,7 @@ FUCN add(x, y) DO
     print(x + y)
 END
 
-print(add(2, 3))
+add(2, 3)
 ```
 
 ### 🔀 Control Flow

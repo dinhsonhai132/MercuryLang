@@ -44,7 +44,7 @@ mer           # Launch REPL
 mer file.mer  # Run file
 ```
 
-You can also use `merc` or `mer3` aliases.
+You can also use `mer3` for lowercase-only syntax.
 
 ---
 

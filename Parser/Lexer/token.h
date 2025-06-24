@@ -150,22 +150,7 @@ using namespace std;
 )
 
 #define is_tok_identifier(tok) (\
-    tok == DIV \
-    || tok == MOD \
-    || tok == PLUS \
-    || tok == EQUAL \
-    || tok == NOT_EQUAL \
-    || tok == LESS \
-    || tok == LESS_EQUAL \
-    || tok == GREATER \
-    || tok == GREATER_EQUAL \
-    || tok == AND \
-    || tok == OR \
-    || tok == NOT \
-    || tok == DOT \
-    || tok == TIME \
-    || tok == EOF_T \
-    || tok == MINUS \
+    tok == EOF_T \
     || tok == VARIABLE \
 )
 

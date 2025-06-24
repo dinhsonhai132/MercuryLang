@@ -99,6 +99,7 @@ end
 
 while x < 10 do
     x += 1
+    continue
 end
 
 for i in range(0, 5) do

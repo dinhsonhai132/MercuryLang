@@ -42,6 +42,7 @@
 ```bash
 mer           # Launch REPL
 mer file.mer  # Run Mercury file
+mer3 file.mer # Run Mercury 3 syntax
 ```
 
 You can also use `merc` or `mer3` aliases.

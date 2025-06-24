@@ -90,7 +90,7 @@ add(2, 3)
 
 ### 🔀 Control Flow
 ```mer
-IF 1 == 1 THEN
+IF 1 == 1 OR 2 == 2 THEN
     print("true")
 END
 

@@ -42,6 +42,7 @@
 ```bash
 mer           # Launch REPL
 mer3 file.mer
+mer file.mer
 ```
 
 You can also use `merc` or `mer3` aliases.

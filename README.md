@@ -41,7 +41,6 @@
 
 ```bash
 mer           # Launch REPL
-mer3 file.mer
 mer file.mer
 ```
 
@@ -58,58 +57,60 @@ print("hello world")
 
 ### 🔢 Variables
 ```mer
-let x = 10
+LET  x = 10
 x += 1
 ```
 
 ### 📋 Lists
 ```mer
-let fruits = ["apple", "banana"]
+LET fruits = ["apple", "banana"]
 print(fruits[0])
 ```
 
 ### 🧮 Math & Logic
 ```mer
-import "math"
+IMPORT "math"
 
-let x = pi
+LET x = pi
 cos(x) + sin(x)
 
-let a = 2
-let b = 3
-print(a < b and b != 0)
+LET a = 2
+LET b = 3
+print(a < b AND b != 0)
 ```
 
 ### 🧠 Functions
 ```mer
-func add(x, y) do
-    return x + y
-end
+FUCN add(x, y) DO
+    print(x + y)
+END
 
 print(add(2, 3))
 ```
 
 ### 🔀 Control Flow
 ```mer
-if 1 == 1 then
+IF 1 == 1 THEN
     print("true")
-else
+END
+
+ELSE
     print("false")
-end
+END
 
-while x < 10 do
+WHILE x < 10 DO
     x += 1
-    continue
-end
+    CONTINUE
+END
 
-for i in range(0, 5) do
+FOR i IN range(0, 5) DO
     print(i)
-end
+END
 
-loop
-    if x == 10 then break end
+LOOP
+    if x == 10 THEN BREAK END
     x += 1
-end
+END
 ```
 
 ---

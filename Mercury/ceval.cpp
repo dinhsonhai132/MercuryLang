@@ -781,10 +781,17 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_FUNCTION_CALL(__program_byte
 
         for (Mer_size_t i = 0; i < func->func_obj_v->args_size; i++) {
             table *para = POP();
-            symtable *sym = MerCompiler_symboltable_setup("<arg>", para->cval, "<None>", ++para_address);
+            symtable *sym = MerCompiler_symboltable_setup("<arg>", para->cval, "<None>", NULL_UINT_8_T);
             sym->tab = para;
-            _L.push_back(sym);
+            _T.push_back(sym);
         }
+
+        reverse(_T.begin(), _T.end());
+        for (auto &item : _T) {
+            item->address = ++para_address;
+        }
+        
+        _L.insert(_L.end(), _T.begin(), _T.end());
 
         __program_bytecode new_u = init_program_bytecode(f_code);
         new_u.is_in_func = true;

@@ -49,6 +49,8 @@ struct __compiler_u {
 
 __compiler_u compiler_init(void);
 
+vector<string> import;
+
 #define INC_U(u) (u.byte++, u.cid++)
 
 #define create_label(glb) ++glb.address
@@ -117,5 +119,7 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_and_expression(mAST_T *ast
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_not_expression(mAST_T *ast, __compiler_u &glb);
 
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_or_expression(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_import(mAST_T *ast, __compiler_u &glb);
 
 #endif // MERCURY_BYTECODE_COMPILER_HEADER

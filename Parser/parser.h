@@ -102,4 +102,6 @@ mAST_T *MerParser_parse_not_expression(mParser_T *parser);
 
 mAST_T *MerParser_parse_logical_expression(mParser_T *parser);
 
+mAST_T *MerParser_parse_import_statement(mParser_T *parser);
+
 #endif // MERCURY_PARSER_HEADER_FILE

@@ -32,6 +32,7 @@ using namespace std;
 #define Program "Program"
 #define LetStatement "LetStatement"
 #define ExpressionStatement "ExpressionStatement"
+#define ImportStatement "ImportStatement"
 #define IfStatement "IfStatement"
 #define AssignStatement "AssignStatement"
 #define WhileStatement "WhileStatement"
@@ -39,6 +40,7 @@ using namespace std;
 #define ImportStatement "ImportStatement"
 #define BlockStatement "BlockStatement"
 #define ReturnStatement "ReturnStatement"
+#define MemberAccess "MemberAccess"
 #define StoreIndexStatement "StoreIndexStatement"
 #define ExtractExpression "ExtractExpression"
 #define StringExpression "StringExpression"
@@ -101,6 +103,10 @@ struct mAST_T
     float value = 0.0;
     string string_iden;
     mAST_T *poutput;
+
+    // member
+    mAST_T *object;
+    mAST_T *property;
 
     int true_line;
 

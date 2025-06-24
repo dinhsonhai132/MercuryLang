@@ -75,5 +75,3 @@ function evaluate(buff) do
     
     print(result)
 end
-
-evaluate("1 + 1")

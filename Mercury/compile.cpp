@@ -42,9 +42,73 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_id(mAST_T *ast, __compiler
   if (ast->type == AndExpression)           return MerCompiler_compile_ast_and_expression(ast, glb);
   if (ast->type == NotExpression)           return MerCompiler_compile_ast_not_expression(ast, glb);
   if (ast->type == OrExpression)            return MerCompiler_compile_ast_or_expression(ast, glb);
+  if (ast->type == ImportStatement)         return MerCompiler_compile_ast_import(ast, glb);
 
   return NULL_CODE;
 }
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_id_expression_statment(mAST_T *ast, __compiler_u &glb) {
+  
+  __Mer_return_Code code = NULL_CODE;
+  code.cfile = ast->file;
+
+  mAST_T *root;
+  if (ast->children[0]->type == ExpressionStatement) {
+    root = ast->children[0];
+  }
+
+  PUSH(code, CPROGRAM_START);
+  
+  for (auto child : root->children) {
+    __Mer_return_Code _code = MerCompiler_compile_ast_id(child, glb);
+    INSERT_VEC_TO_OUTCODE_AND_PROG_CODE(code, _code);
+    _code.prg_code.buff.clear();
+  }
+
+  PUSH(code, CPROGRAM_END);
+
+  #ifdef SYSTEM_TEST
+  cout << "[compiler.cpp] [MerCompiler_compile_ast_id_expression_statment] [pass]" << endl;
+  #endif
+  return code;
+}
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_import(mAST_T *ast, __compiler_u &glb) {
+  string path = ast->string_iden;
+  for (auto &item : import) {
+    if (item == path) {
+      MerDebug_print_error(COMPILER_ERROR, "File already imported", glb.file, ast->true_line);
+    }
+  }
+
+  import.push_back(path);
+  const char* buff;
+  
+  if (path == "math") {
+    buff = MerBuffer_read_file("C:\\MercuryLang\\Libs\\math.mer");
+  } else {
+    buff = MerBuffer_read_file(path);
+  }
+
+  mLexer_T *lexer = _MerLexer_init(buff);
+  mParser_T *parser = _MerParser_init(lexer);
+  mAST_T *new_ast = MerParser_parse_program(parser);
+  mCode_T code = NULL_CODE;
+
+  mAST_T *root;
+  if (new_ast->children[0]->type == ExpressionStatement) {
+    root = new_ast->children[0];
+  }
+
+  for (auto child : root->children) {
+    __Mer_return_Code _code = MerCompiler_compile_ast_id(child, glb);
+    INSERT_VEC_TO_OUTCODE_AND_PROG_CODE(code, _code);
+    _code.prg_code.buff.clear();
+  }
+  
+  return code;
+}
+
 
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_or_expression(mAST_T *ast, __compiler_u &glb) {
   mCode_T result = NULL_CODE;
@@ -809,32 +873,6 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_program(mAST_T *ast, __com
   #endif
 
   return MerCompiler_compile_ast_id_expression_statment(ast, glb);
-}
-
-MERCURY_API __Mer_return_Code MerCompiler_compile_ast_id_expression_statment(mAST_T *ast, __compiler_u &glb) {
-  
-  __Mer_return_Code code = NULL_CODE;
-  code.cfile = ast->file;
-
-  mAST_T *root;
-  if (ast->children[0]->type == ExpressionStatement) {
-    root = ast->children[0];
-  }
-
-  PUSH(code, CPROGRAM_START);
-  
-  for (auto child : root->children) {
-    __Mer_return_Code _code = MerCompiler_compile_ast_id(child, glb);
-    INSERT_VEC_TO_OUTCODE_AND_PROG_CODE(code, _code);
-    _code.prg_code.buff.clear();
-  }
-
-  PUSH(code, CPROGRAM_END);
-
-  #ifdef SYSTEM_TEST
-  cout << "[compiler.cpp] [MerCompiler_compile_ast_id_expression_statment] [pass]" << endl;
-  #endif
-  return code;
 }
 
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_string_var(mAST_T *ast, __compiler_u &glb) {

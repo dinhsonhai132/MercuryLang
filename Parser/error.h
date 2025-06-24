@@ -16,7 +16,7 @@ using namespace std;
 #define RUNTIME_ERROR "RuntimeError"
 #define RUNTIME_WARNING "RuntimeWarning"
 #define SYSTEM_WARNING "SystemWarning"
-#define SYSTEM_ERROR "SystemError"
+#define SYSTEM_ERROR "RunTimeError"
 #define COMPILER_WARNING "CompilerWarning"
 #define COMPILER_ERROR "CompilerError"
 

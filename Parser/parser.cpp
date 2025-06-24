@@ -98,9 +98,25 @@ mAST_T *MerParser_parse(mParser_T *parser)
         mAST_T *node = MerAST_make_parent(BreakStatement);
         node->true_line = TRUE_LINE(parser);
         return node;
+    } else if (parser->token->tok == IMPORT) {
+        return MerParser_parse_import_statement(parser);
     }
 
     return MerParser_parse_logical_expression(parser);
+}
+
+mAST_T *MerParser_parse_import_statement(mParser_T *parser) {
+    mAST_T *node = MerAST_make_parent(ImportStatement);
+    parser->token = _MerLexer_get_next_tok(parser->lexer);
+    node->true_line = TRUE_LINE(parser);
+    
+    if (parser->token->tok == STRING) {
+        node->string_iden = parser->token->string_iden;
+    } else {
+        MerDebug_print_error(SYNTAX_ERROR, "Invalide syntax in import, import \"<file>\" ", parser->lexer->file, TRUE_LINE(parser));
+    }
+
+    return node;
 }
 
 mAST_T *MerParser_parse_loop_statement(mParser_T *parser) {

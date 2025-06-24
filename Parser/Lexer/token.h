@@ -91,6 +91,7 @@ using namespace std;
 #define LONG_ "LONG"
 #define AUTO_ "AUTO"
 #define VOID_ "VOID"
+#define IMPORT "IMPORT"
 #define BOOL_ "BOOL"
 #define SEMICOLON "SEMICOLON"
 #define COLON "COLON"
@@ -225,6 +226,7 @@ inline bool is_identifier(string c) {
     || (c == "include")
     || (c == "else")
     || (c == "for")
+    || (c == "import")
     || (c == "while")
     || (c == "local")
     || (c == "assert")
@@ -253,6 +255,7 @@ inline const char* GET_SYNTAX(string c) {
     else if (c == "in") return IN;
     else if (c == "not") return NOT;
     else if (c == "return") return RETURN;
+    else if (c == "import") return IMPORT;
     else if (c == "assert") return ASSERT;
     else if (c == "func" || c == "function") return FUNCTION;
     else if (c == "include") return INCLUDE;

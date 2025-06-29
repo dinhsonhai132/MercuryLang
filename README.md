@@ -113,6 +113,73 @@ LOOP
 END
 ```
 
+## 3️⃣ Mercury3 Syntax
+
+You can execute Mercury3 using ```mer3```
+
+### 📤 Output
+```mer
+print("hello world")
+```
+
+### 🔢 Variables
+```mer
+let x = 10
+x += 1
+```
+
+### 📋 Lists
+```mer
+let fruits = ["apple", "banana"]
+print(fruits[0])
+```
+
+### 🧮 Math & Logic
+```mer
+import "math"
+
+let x = pi
+cos(x) + sin(x)
+
+let a = 2
+let b = 3
+print(a < b and b != 0)
+```
+
+### 🧠 Functions
+```mer
+func add(x, y) do
+    print(x + y)
+end
+
+add(2, 3)
+```
+
+### 🔀 Control Flow
+```mer
+if 1 == 1 or 2 == 2 then
+    print("true")
+end
+
+else
+    print("false")
+end
+
+while x < 10 do
+    x += 1
+    continue
+end
+
+for i int range(0, 5) do
+    print(i)
+end
+
+loop
+    if x == 10 then break end
+    x += 1
+end
+```
+
 ---
 
 ## 🧬 Embedding MercuryLang in C++

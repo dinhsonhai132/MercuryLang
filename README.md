@@ -113,6 +113,8 @@ LOOP
 END
 ```
 
+---
+
 ## 3️⃣ Mercury3 Syntax
 
 You can execute Mercury3 using ```mer3 name.mer```

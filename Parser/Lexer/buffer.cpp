@@ -80,3 +80,15 @@ vector<uint8_t> MerBuffer_read_file_bytecode(const string &file_name)
     file.close();
     return data;
 }
+
+vector<string> list_files_in_folder(const string& folder_path) {
+    vector<string> file_names;
+
+    for (const auto& entry : fs::directory_iterator(folder_path)) {
+        if (entry.is_regular_file()) {
+            file_names.push_back(entry.path().filename().string());
+        }
+    }
+
+    return file_names;
+}

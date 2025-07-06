@@ -12,6 +12,7 @@ struct __global {
     Mer_real_string __name;
 
     Mer_uint8_t args_size = 0x00;
+    Mer_size_t true_args_size = 0;
     bool is_let = true;
 };
 

@@ -106,6 +106,12 @@ struct mLexer_T
 #define LEX_STAY(lexer) (lexer->buf[lexer->id])
 #define LEX_CUR(lexer) (lexer->cur);
 
+#define IS_HEX_CHAR(c) ( \
+    ((c) >= '0' && (c) <= '9') || \
+    ((c) >= 'a' && (c) <= 'f') || \
+    ((c) >= 'A' && (c) <= 'F') \
+)
+
 mLexer_T *_MerLexer_init(char *buf);
 mLexer_T *_MerLexer_get_next_char(mLexer_T *lexer);
 mLexer_T *_MerLexer_peek_char(mLexer_T *lexer);
@@ -119,7 +125,7 @@ mToken_T *_MerLexer_tokenize_keyword(mLexer_T *lexer);
 mToken_T *_MerLexer_tokenize_string(mLexer_T *lexer);
 mToken_T *_MerLexer_tokenize_syntax(mLexer_T *lexer);
 mToken_T *_MerLexer_tokenize_function_call(mLexer_T *lexer);
-mToken_T *_MerLexer_tokenize_extract(mLexer_T *lexer);
+mToken_T *_MerLexer_tokenize_define(mLexer_T *lexer);
 
 void _MerLexer_jump_to(mLexer_T *lexer, int n);
 void _MerLexer_skip_whitespace(mLexer_T *lexer);

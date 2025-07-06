@@ -35,9 +35,11 @@ using namespace std;
 #define ImportStatement "ImportStatement"
 #define IfStatement "IfStatement"
 #define AssignStatement "AssignStatement"
+#define DefineStatement "DefineStatement"
 #define WhileStatement "WhileStatement"
 #define ForStatement "ForStatement"
 #define ImportStatement "ImportStatement"
+#define IncludeStatement "IncludeStatement"
 #define BlockStatement "BlockStatement"
 #define ReturnStatement "ReturnStatement"
 #define MemberAccess "MemberAccess"
@@ -54,6 +56,7 @@ using namespace std;
 #define ComparisonExpression "ComparisonExpression"
 #define StringVariableStatement "StringVariableStatement"
 #define Literal "Literal"
+#define DictionaryExpression "DictionaryExpression"
 #define TrueExpression "TrueExpression"
 #define FalseExpression "FalseExpression"
 #define IntegerLiteral "IntegerLiteral"
@@ -66,6 +69,7 @@ using namespace std;
 #define ListExpression "ListExpression"
 #define ArrayStoreElementExpression "ArrayStoreElementExpression"
 #define ForInStatement "ForInStatement"
+#define DefineExpression "DefineExpression" 
 #define AndExpression "AndExpression"
 #define OrExpression "OrExpression"
 #define NotExpression "NotExpression"
@@ -80,6 +84,7 @@ using namespace std;
 #define is_ast_expression(type) \
     ((type) == BinaryExpression                 || \
      (type) == Literal                          || \
+     (type) == DictionaryExpression             || \
      (type) == Identifier_                      || \
      (type) == ComparisonExpression             || \
      (type) == ArrayExpression                  || \
@@ -87,6 +92,7 @@ using namespace std;
      (type) == FunctionCallWithArgsExpression   || \
      (type) == IncrementExpression              || \
      (type) == AndExpression                    || \
+     (type) == DefineExpression                 || \
      (type) == OrExpression                     || \
      (type) == NotExpression                    || \
      (type) == ExtractExpression                || \
@@ -119,14 +125,24 @@ struct mAST_T
 
     // For if statement
     mAST_T *comp;
+    
     vector<mAST_T *> then_body;
     vector<mAST_T *> else_body;
+    vector<mAST_T *> elif_body;
+
     bool has_else = false;
+    bool has_elif = false;
 
     // incr expr
     bool is_inc;
     bool is_dec;
     mAST_T *inc_dec_value;
+
+    // define
+    mAST_T * define_val;
+
+    // dict
+    vector<pair<mAST_T*, mAST_T*>> dict;
 
     // assginment
     string assign_iden;

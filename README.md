@@ -40,84 +40,13 @@
 ### Running Mercury
 
 ```bash
-mer           # Launch REPL
-mer file.mer  # Run file
+mercury           # Launch REPL
+mercury main.mer  # Run file
 ```
-
-You can also use `mer3` for lowercase-only syntax.
 
 ---
 
 ## 🧠 Syntax Guide
-
-### 📤 Output
-```mer
-print("hello world")
-```
-
-### 🔢 Variables
-```mer
-LET  x = 10
-x += 1
-```
-
-### 📋 Lists
-```mer
-LET fruits = ["apple", "banana"]
-print(fruits[0])
-```
-
-### 🧮 Math & Logic
-```mer
-IMPORT "math"
-
-LET x = pi
-cos(x) + sin(x)
-
-LET a = 2
-LET b = 3
-print(a < b AND b != 0)
-```
-
-### 🧠 Functions
-```mer
-FUCN add(x, y) DO
-    print(x + y)
-END
-
-add(2, 3)
-```
-
-### 🔀 Control Flow
-```mer
-IF 1 == 1 OR 2 == 2 THEN
-    print("true")
-END
-
-ELSE
-    print("false")
-END
-
-WHILE x < 10 DO
-    x += 1
-    CONTINUE
-END
-
-FOR i IN range(0, 5) DO
-    print(i)
-END
-
-LOOP
-    if x == 10 THEN BREAK END
-    x += 1
-END
-```
-
----
-
-## 3️⃣ Mercury3 Syntax
-
-You can execute Mercury3 using ```mer3 name.mer```
 
 ### 📤 Output
 ```mer
@@ -138,12 +67,16 @@ print(fruits[0])
 
 ### 🧮 Math & Logic
 ```mer
-import "math"
+import "math.mer"
 
 let x = pi
-cos(x) + sin(x)
+print(cos(x) + sin(x) + tan(x) + cot(x))
+print(power(x, 20))
+print(isdigit(x))
+print(factorial(x))
+print(sqrt(x))
 
-let a = 2
+let a = (2 + 1) / 2
 let b = 3
 print(a < b and b != 0)
 ```
@@ -151,7 +84,7 @@ print(a < b and b != 0)
 ### 🧠 Functions
 ```mer
 func add(x, y) do
-    print(x + y)
+    return x + y
 end
 
 add(2, 3)
@@ -159,12 +92,12 @@ add(2, 3)
 
 ### 🔀 Control Flow
 ```mer
-if 1 == 1 or 2 == 2 then
-    print("true")
+if (1 == 1 or 2 == 2) and 2 == 2 then
+    print(true)
 end
 
 else
-    print("false")
+    print(false)
 end
 
 while x < 10 do
@@ -172,7 +105,7 @@ while x < 10 do
     continue
 end
 
-for i int range(0, 5) do
+for i in range(0, 5) do
     print(i)
 end
 
@@ -190,7 +123,7 @@ end
 #include <Mercury.h>
 
 int main() {
-    LET_S   = "gan";
+    let_S   = "gan";
     PRINT_S = "in";
     WHILE_S = "lap";
     IF_S    = "neu";

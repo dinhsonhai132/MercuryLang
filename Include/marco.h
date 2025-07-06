@@ -2,7 +2,9 @@
 #define MERCURY_MARCO_HEADER_FILE
 
 #include <string>
+#include <cmath>
 #include "opcode.h"
+#include "type.h"
 
 #define TO_STRING(x) std::to_string(x).c_str()
 
@@ -10,6 +12,7 @@
 #define MERCURY_BINARY_SUB(c1, c2) ((c1) - (c2))
 #define MERCURY_BINARY_ADD(c1, c2) ((c1) + (c2))
 #define MERCURY_BINARY_DIV(c1, c2) ((c2) != 0 ? ((c1) / (c2)) : MAX_FLOAT)
+#define MERCURY_BINARY_POW(c1, c2) (powf((c1), (c2)))
 #define MERCURY_BINARY_MUL(c1, c2) ((c1) * (c2))
 #define MERCURY_BINARY_MOD(c1, c2) ((c1) % (c2))
 #define MERCURY_BINARY_AND(c1, c2) ((c1) & (c2))
@@ -37,8 +40,13 @@
 #define DECR_BYTE_uint16_t(var) var -= 0x0001;
 #define INCR_BYTE_uint32_t(var) var += 0x0001;
 #define DECR_BYTE_uint32_t(var) var -= 0x0001;
+
 #define stack_push(val) (stk->s_table->table.push_back(val))
+
 #define stack_pop() (stk->s_table->table.pop_back())
+
+#define value(val) MerCompiler_table_setup(val, NULL_UINT_8_T)
+
 #define CHECK 1
 #define CONST(x) const x
 #define IS_TRUE(x) ((x) == 1)
@@ -101,6 +109,7 @@ const char* show_opcode_name(uint8_t x) {
     else if (x == FALSE_ADDRESS)  return "FALSE_ADDRESS";
     else if (x == CEQUAL)         return "EQUAL";
     else if (x == CNOT_EQUAL)     return "NOT_EQUAL";
+    else if (x == CEND_FUNCTION)  return "END_FUNCTION";
     else if (x == CLESS)          return "LESS";
     else if (x == CLESS_EQUAL)    return "LESS_EQUAL";
     else if (x == CGREATER)       return "GREATER";

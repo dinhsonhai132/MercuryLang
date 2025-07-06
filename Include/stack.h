@@ -91,7 +91,6 @@ using namespace std;
     Mer_flag_t is_local; \
     vector<Mer_uint8_t> tbody;
 
-
 typedef struct __table
 {
     GC_HEAD HEAD_STACK HEAD_OBJ HEAD_VALUE FLAG OTHER
@@ -118,17 +117,14 @@ typedef struct __stack
 } stack;
 
 typedef struct __call_context {
-    vector<symtable*> locals;
-    mCode_T code;
-    stack *stk;
+    mCode_T &code;
     
     Mer_uint8_t address;
     __call_context *caller;
 
-    Mer_size_t ip;
     table* return_val;
 
-
+    mFunc_object_T* func_obj;
 } CallContext;
 
 #define incr_stk_idx(stk) \
@@ -147,7 +143,6 @@ table *MerCompiler_table_setup(float cval, uint8_t address = 0x00);
 symtable *MerCompiler_symboltable_setup(string name, float value, string type, uint8_t address);
 table *pop_stack(stack *stk);
 table *eat_stack(stack *stk);
-void push_stack(stack *stk, int value);
 
 #define STACK_PUSH(stk, value) \
     stk->s_table->table.push_back(value);

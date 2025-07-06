@@ -26,6 +26,8 @@
 #include <cstdlib>
 #include <vector>
 #include <cstdint>
+#include <filesystem>
+namespace fs = std::filesystem;
 using namespace std;
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -42,5 +44,7 @@ const char* MerBuffer_read_file(const string& file_name);
 void MerBuffer_make_and_write_file(const string& filename, const char* content);
 void MerBuffer_make_and_write_file_bytecode(const string& filename, const vector<uint8_t>& data);
 vector<uint8_t> MerBuffer_read_file_bytecode(const string& file_name);
+
+std::vector<fs::path> find_lib_files(const fs::path& lib_folder);
 
 #endif // MERCURY_BUFFER_HEADER_FILE

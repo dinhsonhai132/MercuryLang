@@ -98,11 +98,53 @@ mAST_T *MerParser_parse(mParser_T *parser)
         mAST_T *node = MerAST_make_parent(BreakStatement);
         node->true_line = TRUE_LINE(parser);
         return node;
-    } else if (parser->token->tok == IMPORT) {
+    } if (parser->token->tok == IMPORT) {
         return MerParser_parse_import_statement(parser);
+    } if (parser->token->tok == DEFINE_STA) {
+        return MerParser_parse_define_statement(parser);
+    } if (parser->token->tok == INCLUDE) {
+        return MerParser_parse_include_statement(parser);
     }
 
     return MerParser_parse_logical_expression(parser);
+}
+
+mAST_T *MerParser_parse_include_statement(mParser_T *parser) {
+    mAST_T *node = MerAST_make_parent(IncludeStatement);
+    parser->token = _MerLexer_get_next_tok(parser->lexer);
+    node->true_line = TRUE_LINE(parser);
+    
+    if (parser->token->tok == STRING) {
+        node->string_iden = parser->token->string_iden;
+    } else {
+        MerDebug_print_error(SYNTAX_ERROR, "Invalide syntax in import, import \"<file>\" ", parser->lexer->file, TRUE_LINE(parser));
+    }
+
+    return node;
+}
+
+mAST_T *MerParser_parse_define_statement(mParser_T *parser) {
+    mAST_T *node = MerAST_make_parent(DefineStatement);
+    parser->token = _MerLexer_get_next_tok(parser->lexer);
+
+    if (parser->token->tok == VARIABLE) {
+        node->string_iden = parser->token->string_iden;
+    } else {
+        MerDebug_print_error(SYNTAX_ERROR, "Missing name in define, 'define <name> {<code>}' ", parser->lexer->file, TRUE_LINE(parser));
+    }
+
+    parser->token = _MerLexer_get_next_tok(parser->lexer);
+    node->define_val = MerParser_parse(parser);
+    if (!node) {
+        MerDebug_print_error(SYNTAX_ERROR, "Invalide syntax in define", parser->lexer->file, TRUE_LINE(parser));
+    }
+
+    if (!is_ast_expression(node->define_val->type)) {
+        MerDebug_print_error(SYNTAX_ERROR, "Invalide syntax in define", parser->lexer->file, TRUE_LINE(parser));
+    }
+
+    
+    return node;
 }
 
 mAST_T *MerParser_parse_import_statement(mParser_T *parser) {
@@ -266,18 +308,12 @@ mAST_T *MerParser_parse_return_statement(mParser_T *parser)
 {
     mAST_T *node = MerAST_make_parent(ReturnStatement);
     parser->token = _MerLexer_get_next_tok(parser->lexer);
-    if (parser->token->tok == VOID_T)
-    {
-        node->is_void = true;
-        parser->token = _MerLexer_get_next_tok(parser->lexer);
+
+    node->return_v = MerParser_parse(parser);
+    if (!is_ast_expression(node->return_v->type)) {
+        MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, TRUE_LINE(parser));
     }
-    
-    else
-    {
-        node->is_void = false;
-        node->return_v = MerParser_parse(parser);
-    }
-    
+
     node->true_line = TRUE_LINE(parser);
     return node;
 }
@@ -342,8 +378,7 @@ mAST_T *MerParser_parse_if_statement(mParser_T *parser)
                 MerDebug_print_error(SYNTAX_ERROR, "Unexpected statement", parser->lexer->file, TRUE_LINE(parser));
             }
         }
-    }
-    else
+    }    else
     {
 #ifdef MERCURY_LANG3
         MerDebug_print_error(SYNTAX_ERROR, "Missing 'then'", parser->lexer->file, TRUE_LINE(parser));
@@ -352,8 +387,46 @@ mAST_T *MerParser_parse_if_statement(mParser_T *parser)
         return NULL;
     }
 
-
     parser->token = _MerLexer_get_next_tok(parser->lexer);
+    elif:
+    if (parser->token->tok == ELIF) {
+        mAST_T *elif_node = MerAST_make_parent(IfStatement);
+        node->has_elif = true;
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+        elif_node->comp = MerParser_parse(parser);
+
+        if (!is_ast_expression(elif_node->comp->type) || !elif_node->comp) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, TRUE_LINE(parser));
+        }
+
+        if (parser->token->tok == THEN) {
+            parser->token = _MerLexer_get_next_tok(parser->lexer);
+            while (parser->token->tok != END_T)
+            {
+                if (parser->token->tok == EOF_T) {
+                    MerDebug_print_error(SYNTAX_ERROR, "Expected statement, missing 'end'", parser->lexer->file, TRUE_LINE(parser));
+                }
+
+                mAST_T *body = MerParser_parse(parser);
+                if (body)
+                {
+                    elif_node->then_body.push_back(body);
+                } else {
+                    MerDebug_print_error(SYNTAX_ERROR, "Expected statement", parser->lexer->file, TRUE_LINE(parser));
+                }
+            }
+
+            node->elif_body.push_back(elif_node);
+            parser->token = _MerLexer_get_next_tok(parser->lexer);
+            goto elif;
+        }    
+        else
+        {
+            MerDebug_print_error(SYNTAX_ERROR, "Missing 'then'", parser->lexer->file, TRUE_LINE(parser));
+        }
+    }
+    
+    
     if (parser->token->tok == ELSE) {
         parser->token = _MerLexer_get_next_tok(parser->lexer);
         while (parser->token->tok != END_T)
@@ -432,6 +505,8 @@ mAST_T *MerParser_parse_let_statement(mParser_T *parser)
 
     return NULL;
 }
+
+
 
 mAST_T *MerParser_parse_while_statement(mParser_T *parser) {
     mAST_T *node = MerAST_make_parent(WhileStatement);
@@ -739,7 +814,6 @@ mAST_T *MerParser_parse_function_call_expression(mParser_T *parser)
             mAST_T *arg = MerParser_parse(parser);
 
             if (!is_ast_expression(arg->type)) {
-                cout << arg->type << endl;
                 MerDebug_print_error(SYNTAX_ERROR, "Expected expression in function call, not an expression", parser->lexer->file, TRUE_LINE(parser));
             }
 
@@ -907,12 +981,79 @@ mAST_T *MerParser_parse_logical_expression(mParser_T *parser) {
     return MerParser_parse_or_expression(parser);
 }
 
+mAST_T *MerParser_parse_dictionary_expression(mParser_T *parser) {
+    mAST_T *node = MerAST_make_parent(DictionaryExpression);
+    parser->token = _MerLexer_get_next_tok(parser->lexer);
+
+    while (parser->token->tok != RIGHT_BRACE) {
+        pair<mAST_T *, mAST_T *> dict;
+        mAST_T *node = MerParser_parse(parser);
+        if (!node && !is_ast_expression(node->type)) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression in dictionary", parser->lexer->file, TRUE_LINE(parser));
+        }
+    
+        dict.first = node;
+        if (parser->token->tok == COLON) {
+            parser->token = _MerLexer_get_next_tok(parser->lexer);
+            mAST_T *node2 = MerParser_parse(parser);
+            
+            if (!node && !is_ast_expression(node->type)) {
+                MerDebug_print_error(SYNTAX_ERROR, "Expected expression in dictionary", parser->lexer->file, TRUE_LINE(parser));
+            }
+
+            dict.second = node2;
+            node->dict.push_back(dict);
+        } else {
+            MerDebug_print_error(SYNTAX_ERROR, "Missing comma", parser->lexer->file, TRUE_LINE(parser));
+        }
+    }
+
+    return node;
+}
+
+mAST_T *MerParser_parse_parent_expression(mParser_T *parser) {
+    parser->token = _MerLexer_get_next_tok(parser->lexer);
+
+    mAST_T *left = MerParser_parse_logical_expression(parser);
+    if (!left) {
+        MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, TRUE_LINE(parser));
+    }
+
+    if (parser->token->tok != RIGHT_PAREN) {
+        MerDebug_print_error(SYNTAX_ERROR, "Missing ')' at the end of expression", parser->lexer->file, TRUE_LINE(parser));
+    }
+
+    return left;
+}
+
+// mAST_T *MerParser_parse_pow_expression(mParser_T *parser) {
+//     mAST_T *left = MerParser_parse_primary_expression(parser);
+//     parser->token = _MerLexer_get_next_tok(parser->lexer);
+
+//     while (parser->token->tok == POW) {
+//         string op = parser->token->tok;
+//         parser->token = _MerLexer_get_next_tok(parser->lexer);
+//         mAST_T *right = MerParser_parse_primary_expression(parser);
+//         if (!right) {
+//             MerDebug_print_error(SYNTAX_ERROR, "Expected expression after '^'", parser->lexer->file, TRUE_LINE(parser));
+//         }
+//         left = MerParser_parse_binary_expression(left, op, right);
+//         left->true_line = TRUE_LINE(parser);
+//         parser->token = _MerLexer_get_next_tok(parser->lexer);
+//     }
+
+//     return left;
+// }
+
 mAST_T *MerParser_parse_primary_expression(mParser_T *parser)
 {
     if (parser->token->tok == TRUE_T) return MerAST_make(TrueExpression, TRUE_T, 1, "AUTO_T", "", TRUE_LINE(parser));
     if (parser->token->tok == FALSE_T) return MerAST_make(FalseExpression, FALSE_T, 0, "AUTO_T", "", TRUE_LINE(parser));
+    if (parser->token->tok == DEFINE_VAL) return MerAST_make(DefineExpression, parser->token->tok, 0, "AUTO_T", parser->token->string_iden, TRUE_LINE(parser));
     if (parser->token->tok == STRING) return MerParser_parse_string_expression(parser);
     if (parser->token->tok == LEFT_BRACKET) return MerParser_parse_array_expression(parser);
+    if (parser->token->tok == LEFT_BRACE) return MerParser_parse_dictionary_expression(parser);
+    if (parser->token->tok == LEFT_PAREN) return MerParser_parse_parent_expression(parser);
     if (parser->token->tok == VARIABLE) {
         parser->next = _MerLexer_look_ahead(parser->lexer);
         if (parser->next->tok == LEFT_BRACKET) {
@@ -924,22 +1065,8 @@ mAST_T *MerParser_parse_primary_expression(mParser_T *parser)
     if (is_tok_identifier(parser->token->tok)) return MerAST_make(Identifier_, parser->token->tok, 0, "AUTO_T", parser->token->string_iden, TRUE_LINE(parser));
     if (is_tok_literal(parser->token->tok)) return MerAST_make(Literal, parser->token->tok, parser->token->value, "AUTO_T", "", TRUE_LINE(parser));
     if (parser->token->tok == EOF_T 
-        || parser->token->tok == DO_T 
-        || parser->token->tok == EOL_T 
-        || parser->token->tok == LESS 
-        || parser->token->tok == GREATER 
-        || parser->token->tok == STRING 
-        || parser->token->tok == COMMA
-        || parser->token->tok == COLON
-        || parser->token->tok == LEFT_PAREN
-        || parser->token->tok == RIGHT_PAREN
-        || parser->token->tok == LEFT_BRACKET
-        || parser->token->tok == RIGHT_BRACKET
-        || parser->token->tok == LEFT_BRACE
-        || parser->token->tok == RIGHT_BRACE
-        || parser->token->tok == TRUE_T
-        || parser->token->tok == FALSE_T
-        || parser->token->tok == ASSIGN) return NULL;
+        || parser->token->tok == DO_T
+        || parser->token->tok == COLON) return NULL;
     
     string sym = parser->token->string_iden;
     string msg = "Unexpected primary expression near '" + sym + "'";

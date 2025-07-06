@@ -3,7 +3,7 @@ bool skip = false;
 
 __compiler_u compiler_init(void) {
   __compiler_u glb;
-  glb.address = 0x0000;
+  glb.address = 0xAA;
   glb.cid = 0x0000;
   glb.name = nullptr;
   glb.type = nullptr;
@@ -43,7 +43,35 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_id(mAST_T *ast, __compiler
   if (ast->type == NotExpression)           return MerCompiler_compile_ast_not_expression(ast, glb);
   if (ast->type == OrExpression)            return MerCompiler_compile_ast_or_expression(ast, glb);
   if (ast->type == ImportStatement)         return MerCompiler_compile_ast_import(ast, glb);
+  if (ast->type == DefineStatement)         return MerCompiler_compile_ast_define(ast, glb);
+  if (ast->type == DefineExpression)        return MerCompiler_compile_ast_define_expression(ast, glb);
+  if (ast->type == IncludeStatement)        return MerCompiler_compile_ast_include(ast, glb);
 
+  return NULL_CODE;
+}
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_define_expression(mAST_T *ast, __compiler_u &glb) {
+  bool found = false;
+  mCode_T code = NULL_CODE;
+  for (auto &item : code_s) {
+    if (item.name == ast->string_iden) {
+      found = true;
+      code = item.code;
+      break;
+    }
+  }
+
+  if (!found) {
+    string msg = ast->string_iden + " not defined";
+    MerDebug_print_error(COMPILER_ERROR, msg.c_str(), glb.file, ast->true_line);
+  }
+
+  return code;
+}
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_define(mAST_T *ast, __compiler_u &glb) {
+  mCode_T code = MerCompiler_compile_ast_id(ast->define_val, glb);
+  code_s.push_back(code_stack {create_label(glb), ast->string_iden, code});
   return NULL_CODE;
 }
 
@@ -82,13 +110,65 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_import(mAST_T *ast, __comp
   }
 
   import.push_back(path);
-  const char* buff;
-  
-  if (path == "math") {
-    buff = MerBuffer_read_file("C:\\MercuryLang\\Libs\\math.mer");
-  } else {
-    buff = MerBuffer_read_file(path);
+
+  vector<string> paths = list_files_in_folder("C:\\MercuryLang\\Libs");
+  const char *buff;
+  bool found = false;
+  for (auto &item : paths) {
+    if (item == path) {
+      path = "C:\\MercuryLang\\Libs\\" + item;
+      buff = MerBuffer_read_file(path);
+      found = true;
+      break; 
+    }
   }
+
+  if (!found) {
+    paths = list_files_in_folder("C:\\MercuryLang\\Libs\\__Libs__");
+    for (auto &item : paths) {
+      if (item == path) {
+        path = "C:\\MercuryLang\\Libs\\__Libs__\\" + item;
+        buff = MerBuffer_read_file(path);
+        import.push_back(path);
+        found = true;
+        break; 
+      }
+    }
+
+    if (!found) {
+      MerDebug_print_error(COMPILER_ERROR, "File not found, make sure it exists in ..\\MercuryLang\\Libs or ..\\MercuryLang\\Libs\\__Libs__", glb.file, ast->true_line);
+    }
+  }
+
+  mLexer_T *lexer = _MerLexer_init(buff);
+  mParser_T *parser = _MerParser_init(lexer);
+  mAST_T *new_ast = MerParser_parse_program(parser);
+  mCode_T code = NULL_CODE;
+
+  mAST_T *root;
+  if (new_ast->children[0]->type == ExpressionStatement) {
+    root = new_ast->children[0];
+  }
+
+  for (auto child : root->children) {
+    __Mer_return_Code _code = MerCompiler_compile_ast_id(child, glb);
+    INSERT_VEC_TO_OUTCODE_AND_PROG_CODE(code, _code);
+    _code.prg_code.buff.clear();
+  }
+  
+  return code;
+}
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_include(mAST_T *ast, __compiler_u &glb) {
+  string path = ast->string_iden;
+  for (auto &item : import) {
+    if (item == path) {
+      MerDebug_print_error(COMPILER_ERROR, "File already imported", glb.file, ast->true_line);
+    }
+  }
+
+  import.push_back(path);
+  const char* buff = MerBuffer_read_file(path);
 
   mLexer_T *lexer = _MerLexer_init(buff);
   mParser_T *parser = _MerParser_init(lexer);
@@ -165,8 +245,10 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_and_expression(mAST_T *ast
   mCode_T result = NULL_CODE;
   mCode_T left = MerCompiler_compile_ast_id(ast->left, glb);
   mCode_T right = MerCompiler_compile_ast_id(ast->right, glb);
+  
   INSERT_VEC(result, left);
-  INSERT_VEC(result, right);
+  INSERT_VEC(result, right); 
+
   PUSH(result, CAND);
   return result;
 }
@@ -507,12 +589,17 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_while(mAST_T *ast, __compi
 
   PUSH(result, CADDRESS);
   PUSH(result, while_begin);
+
   INSERT_VEC(result, while_cond);
+
   PUSH(result, CPOP_JUMP_IF_FALSE);
   PUSH(result, while_end);
+
   INSERT_VEC(result, while_body);
+
   PUSH(result, CJUMP_TO);
   PUSH(result, while_begin);
+
   PUSH(result, CADDRESS);
   PUSH(result, while_end);
 
@@ -664,6 +751,7 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_binary_expression(mAST_T *
   else if (ast->op == DIV)       _oper = CBINARY_DIV;
   else if (ast->op == MOD)       _oper = CBINARY_MOD;
   else if (ast->op == TIME)      _oper = CBINARY_MUL;
+  else if (ast->op == POW)       _oper = CBINARY_POW;
 
   __Mer_return_Code result = NULL_CODE;
   
@@ -684,11 +772,24 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_function_call(mAST_T *ast,
   Mer_uint8_t address;
   Mer_bool found = false;
   Mer_string name = strdup(ast->func_call.c_str());
+  __global *func;
   for (auto &item : glb.is_in_func ? LOCAL_TABLE : GLOBAL_TABLE) {
     if (item->__name == name && !item->is_let) {
       address = item->__Address;
       found = true;
+      func = item;
       break;
+    }
+  }
+
+  if (!found and glb.is_in_func) {
+    for (auto &item : GLOBAL_TABLE) {
+      if (item->__name == name && !item->is_let) {
+        address = item->__Address;
+        found = true;
+        func = item;
+        break;
+      }
     }
   }
 
@@ -699,12 +800,26 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_function_call(mAST_T *ast,
     return NULL_CODE;
   }
 
+  Mer_size_t args_size = 0;
   if (ast->is_having_args) {
     for (auto child : ast->args) {
       __Mer_return_Code _code = MerCompiler_compile_ast_id(child, glb);
       INSERT_VEC(result, _code);
       _code.prg_code.buff.clear();
+      ++args_size;
     }
+  }
+
+  if (is_a_builtin(ast->func_call)) {
+    // do nothing
+  } else if (args_size > func->true_args_size) {
+    Mer_real_string str = ast->func_call.c_str();
+    Mer_real_string msg = "Too many arguments for function '" + str + "'";
+    MerDebug_print_error(COMPILER_ERROR, msg.c_str(), glb.file, ast->true_line);
+  } else if (args_size < func->true_args_size) {
+    Mer_real_string str = ast->func_call.c_str();
+    Mer_real_string msg = "Not enough arguments for function '" + str + "'";
+    MerDebug_print_error(COMPILER_ERROR, msg.c_str(), glb.file, ast->true_line);
   }
 
   PUSH(result, CLOAD_GLOBAL);
@@ -812,15 +927,13 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_let(mAST_T *ast, __compile
 }
 
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_return(mAST_T *ast, __compiler_u &glb) {
-  __Mer_return_Code result = NULL_CODE;
-  __Mer_return_Code ret_val = NULL_CODE;
+  #ifdef SYSTEM_TEST
+  cout << "[compiler.cpp] [MerCompiler_compile_ast_return] [building]" << endl;
+  #endif
 
-  if (ast->is_void) {
-    PUSH(result, CRETURN);
-    return result;
-  }
+  __Mer_return_Code result = NULL_CODE;
+  __Mer_return_Code ret_val = MerCompiler_compile_ast_id(ast->return_v, glb);
   
-  ret_val = MerCompiler_compile_ast_id(ast->return_v, glb);
   INSERT_VEC(result, ret_val);
   PUSH(result, CRETURN);
 
@@ -845,6 +958,16 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_identifier(mAST_T *ast, __
       address = item->__Address;
       found = true;
       break;
+    }
+  }
+
+  if (!found and glb.is_in_func) {
+    for (auto &item : GLOBAL_TABLE) {
+      if (item->__name == name && !item->is_let) {
+        address = item->__Address;
+        found = true;
+        break;
+      }
     }
   }
 
@@ -898,7 +1021,7 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_string_var(mAST_T *ast, __
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_function(mAST_T *ast, __compiler_u &glb) {
   __Mer_return_Code result = NULL_CODE;
   __Mer_return_Code body = NULL_CODE;
-  Mer_uint8_t func_address = create_label(glb);
+  Mer_uint8_t func_address = create_label(glb) + 0xAF;
   Mer_real_string name = ast->func_name;
   Mer_string func_name = strdup(ast->func_name.c_str());
   Mer_uint8_t args_size = ast->args_size;
@@ -913,13 +1036,15 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_function(mAST_T *ast, __co
   __global *glb_tab = CREAT_GLOBAL_TABLE(func_address, func_name, name);
   glb_tab->is_let = false; 
   glb_tab->args_size = args_size;
-  GLOBAL_TABLE.push_back(glb_tab);
 
   if (ast->is_having_args) {
     for (auto &item : ast->args_idens) {
       LOCAL_TABLE.push_back(CREAT_LOCAL_TABLE(create_para(glb), item.c_str(), item));
+      ++glb_tab->true_args_size;
     }
   }
+
+  GLOBAL_TABLE.push_back(glb_tab);
 
   glb.is_in_func = true;
   for (auto child : ast->body) {
@@ -935,7 +1060,11 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_function(mAST_T *ast, __co
   PUSH(result, args_size);
 
   INSERT_VEC(result, body);
-  PUSH(result, CRETURN);
+  
+  PUSH(result, CEND_FUNCTION);
+
+  LOCAL_TABLE.clear();
+  glb.para_address = NULL_UINT_8_T;
 
   #ifdef SYSTEM_TEST
   cout << "[compiler.cpp] [MerCompiler_compile_ast_function] [pass]" << endl;

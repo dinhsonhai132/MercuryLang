@@ -136,55 +136,7 @@ int MerAST_free(mAST_T *ast)
 }
 
 void MerAST_print_ast(mAST_T *ast, int indent) {
-    if (ast == nullptr) {
-        return;
+    for (auto &node : ast->children[0]->children) {
+        cout << node->type << endl;
     }
-
-    for (int i = 0; i < indent; ++i) {
-        cout << "  ";
-    }
-
-    cout << ast->type;
-    if (!ast->string_iden.empty()) cout << " (id: " << ast->string_iden << ")";
-    if (!ast->assign_iden.empty()) cout << " (assign: " << ast->assign_iden << ")";
-    if (!ast->var_name.empty()) cout << " (var: " << ast->var_name << ")";
-    if (!ast->func_name.empty()) cout << " (func: " << ast->func_name << ")";
-    if (!ast->func_call.empty()) cout << " (call: " << ast->func_call << ")";
-    if (!ast->list_name.empty()) cout << " (list: " << ast->list_name << ")";
-    if (!ast->extract_name.empty()) cout << " (extract: " << ast->extract_name << ")";
-    if (!ast->str_var_name.empty()) cout << " (str_var: " << ast->str_var_name << ")";
-    if (ast->value != 0.0) cout << " (value: " << ast->value << ")";
-    cout << endl;
-
-    // Print children vectors
-    for (auto *child : ast->children) MerAST_print_ast(child, indent + 1);
-    for (auto *child : ast->then_body) MerAST_print_ast(child, indent + 1);
-    for (auto *child : ast->else_body) MerAST_print_ast(child, indent + 1);
-    for (auto *child : ast->do_body) MerAST_print_ast(child, indent + 1);
-    for (auto *child : ast->body) MerAST_print_ast(child, indent + 1);
-    for (auto *child : ast->args) MerAST_print_ast(child, indent + 1);
-    for (auto *child : ast->list) MerAST_print_ast(child, indent + 1);
-    for (auto *child : ast->in_body) MerAST_print_ast(child, indent + 1);
-    for (auto *child : ast->in_else_body) MerAST_print_ast(child, indent + 1);
-    for (auto *child : ast->class_body) MerAST_print_ast(child, indent + 1);
-    for (auto *child : ast->str_children) MerAST_print_ast(child, indent + 1);
-
-    // Print single child pointers
-    if (ast->left) MerAST_print_ast(ast->left, indent + 1);
-    if (ast->right) MerAST_print_ast(ast->right, indent + 1);
-    if (ast->comp) MerAST_print_ast(ast->comp, indent + 1);
-    if (ast->comp_left) MerAST_print_ast(ast->comp_left, indent + 1);
-    if (ast->comp_right) MerAST_print_ast(ast->comp_right, indent + 1);
-    if (ast->var_value) MerAST_print_ast(ast->var_value, indent + 1);
-    if (ast->assign_value) MerAST_print_ast(ast->assign_value, indent + 1);
-    if (ast->return_v) MerAST_print_ast(ast->return_v, indent + 1);
-    if (ast->while_cond) MerAST_print_ast(ast->while_cond, indent + 1);
-    if (ast->print_v) MerAST_print_ast(ast->print_v, indent + 1);
-    if (ast->extract_value) MerAST_print_ast(ast->extract_value, indent + 1);
-    if (ast->extract_assign) MerAST_print_ast(ast->extract_assign, indent + 1);
-    if (ast->array_store) MerAST_print_ast(ast->array_store, indent + 1);
-    if (ast->array_store_value) MerAST_print_ast(ast->array_store_value, indent + 1);
-    if (ast->attr) MerAST_print_ast(ast->attr, indent + 1);
-    if (ast->attr_value) MerAST_print_ast(ast->attr_value, indent + 1);
-    if (ast->poutput) MerAST_print_ast(ast->poutput, indent + 1);
 }

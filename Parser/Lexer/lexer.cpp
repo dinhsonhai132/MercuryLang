@@ -136,9 +136,9 @@ mToken_T *_MerLexer_get_next_tok(mLexer_T *lexer)
             return token;
         }
 
-        if (c == '$' && isalpha(lexer->buf[lexer->id + 1]))
+        if (c == '$')
         {
-            mToken_T *token = _MerLexer_tokenize_extract(lexer);
+            mToken_T *token = _MerLexer_tokenize_define(lexer);
             token->index++;
             return token;
         }
@@ -197,7 +197,7 @@ mToken_T *_MerLexer_look_ahead(mLexer_T *lexer) {
     return _MerLexer_get_next_tok(&temp);
 }
 
-mToken_T *_MerLexer_tokenize_extract(mLexer_T *lexer)
+mToken_T *_MerLexer_tokenize_define(mLexer_T *lexer)
 {
     lexer->cur = lexer->buf[lexer->id++];
     string extract_name = "";
@@ -210,7 +210,7 @@ mToken_T *_MerLexer_tokenize_extract(mLexer_T *lexer)
     LEX_DECR(lexer);
 
     const char *extract_name_c = strdup(extract_name.c_str());
-    return _MerInit_token(EXTRACT, "AUTO_T", 0.0, extract_name_c, extract_name_c, extract_name_c);
+    return _MerInit_token(DEFINE_VAL, "AUTO_T", 0.0, extract_name_c, extract_name_c, extract_name_c);
 }
 
 mToken_T *_MerLexer_tokenize_number(mLexer_T *lexer)
@@ -322,9 +322,8 @@ mToken_T *_MerLexer_tokenize_string(mLexer_T *lexer)
             MerDebug_print_error(SYSTEM_WARNING, "The number of keyword in string is too large, this can cause a crash", lexer->file, lexer->row);
         }
 
-        LEX_ADVANCE(lexer);
-
         if (lexer->cur == '\\') {
+            str.pop_back();
             LEX_ADVANCE(lexer);
             if (lexer->cur == 'n') {
                 str += '\n';
@@ -340,10 +339,32 @@ mToken_T *_MerLexer_tokenize_string(mLexer_T *lexer)
                 str += '"';
             } else if (lexer->cur == '0') {
                 str += '\0';
+            } else if (lexer->cur == 'x') {
+                string uint_char = "0x";
+                float count = 0;
+                LEX_ADVANCE(lexer);
+                if (IS_HEX_CHAR(lexer->cur)) {
+                    uint_char += lexer->cur;
+                    LEX_ADVANCE(lexer);
+                    if (IS_HEX_CHAR(lexer->cur)) {
+                        uint_char += lexer->cur;
+                    } else {
+                        MerDebug_print_error(SYNTAX_ERROR, "Invalid escape sequence", lexer->file, lexer->row);
+                    }
+                } else {
+                    MerDebug_print_error(SYNTAX_ERROR, "Invalid escape sequence", lexer->file, lexer->row);
+                }
+                
+                uint8_t value = (uint8_t)strtol(uint_char.c_str(), NULL, 8);
+                string str_value;
+                str_value.push_back(value);
+                str += str_value;
             } else {
                 MerDebug_print_error(SYNTAX_ERROR, "Invalid escape sequence", lexer->file, lexer->row);
             }
 
+            LEX_ADVANCE(lexer);
+        } else {
             LEX_ADVANCE(lexer);
         }
     }

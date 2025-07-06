@@ -34,7 +34,6 @@ void print_bytecode(vector<uint8_t> &bytecode) {
         } 
         else if (c == "STORE_GLOBAL" 
             || c == "LOAD_GLOBAL" 
-            || c == "MAKE_FUNCTION" 
             || c == "POP_JUMP_IF_FALSE" 
             || c == "JUMP_IF_FALSE" 
             || c == "JUMP_TO" 
@@ -50,6 +49,7 @@ void print_bytecode(vector<uint8_t> &bytecode) {
             || c == "RETURN"
             || c == "BINARY_ADD"
             || c == "BINARY_SUB"
+            || c == "END_FUNCTION"
             || c == "BINARY_MUL"
             || c == "BINARY_DIV"
             || c == "BINARY_MOD"
@@ -63,6 +63,10 @@ void print_bytecode(vector<uint8_t> &bytecode) {
             || c == ""
         ) {
             cout << c << endl;
+        } else if (c == "MAKE_FUNCTION") {
+            uint8_t address = bytecode[++i];
+            uint8_t name_length = bytecode[++i];
+            cout << c << " 0x" << hex << setfill('0') << setw(2) << (int)address << " " << "0x" << hex << setfill('0') << setw(2) << (int)name_length << endl;
         }
         ++i;
     }
@@ -87,7 +91,6 @@ void print_help() {
     cout << "  -v\t\tShow version information\n";
     cout << "  -p\t\tStart the Mercury REPL\n";
     cout << "  -h\t\tShow this help message\n";
-    cout << "  -o <filename> <target>\tCompile to a specific output file\n";
     cout << "  -m\t\tCompiled into readable bytecode\n";
     cout << "  -c\t\tCompile into .o file\n";
 }

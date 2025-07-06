@@ -24,7 +24,7 @@ unordered_map<Mer_uint8_t, Mer_size_t> __get_label_map(__program_bytecode &u, st
     Mer_uint8_t end = CPROGRAM_END;
     u.is_label = true;
 
-    if (mode == "function") end = CRETURN;
+    if (mode == "function") end = CEND_FUNCTION;
 
     Mer_uint8_t code = __get_next_code_in_prg_code(u);
 
@@ -86,7 +86,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
             stk = MerVM_evaluate_PUSH_FLOAT(u, stk);
         }
         
-        else if (code == CBINARY_ADD || code == CBINARY_SUB || code == CBINARY_MUL || code == CBINARY_DIV || code == CBINARY_MOD) {
+        else if (code == CBINARY_ADD || code == CBINARY_SUB || code == CBINARY_MUL || code == CBINARY_DIV || code == CBINARY_MOD || code == CBINARY_POW) {
             stk = MerVM_evaluate_BINARY_OPER(u, stk, code);
         } 
 
@@ -138,6 +138,10 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
             stk = MerVM_evaluate_INC(u, stk);
         }
 
+        else if (code == CPROGRAM_START) {
+            continue;
+        }
+
         else if (code == CDEC) {
             stk = MerVM_evaluate_DEC(u, stk);
         }
@@ -158,7 +162,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
             stk = MerVM_evaluate_LOAD_FALSE(u, stk);
         }
         
-        else if (code == CRETURN || code == CPROGRAM_END) {
+        else if (code == CPROGRAM_END) {
             break;
         } 
         
@@ -364,7 +368,7 @@ MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_STORE_INDEX
 
 MERCURY_API __mer_core_data__ stack *MerVM_evaluate_POP_JUMP_IF_FALSE(__program_bytecode &u, stack *stk) {
     #ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_POP();_JUMP_IF_FALSE] [building...]" << endl;
+    cout << "[ceval.cpp] [MerVM_evaluate_POP_JUMP_IF_FALSE] [building...]" << endl;
     #endif
 
     table *top = POP();
@@ -375,7 +379,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_POP_JUMP_IF_FALSE(__program_
     }
 
     #ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_POP();_JUMP_IF_FALSE] [pass]" << endl;
+    cout << "[ceval.cpp] [MerVM_evaluate_POP_JUMP_IF_FALSE] [pass]" << endl;
     #endif
 
     return stk;
@@ -606,6 +610,8 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_BINARY_OPER(__program_byteco
         stack_push(MerCompiler_table_setup(MERCURY_BINARY_DIV(left->cval, right->cval)));
     } else if (op == CBINARY_MOD) {
         stack_push(MerCompiler_table_setup(MERCURY_BINARY_MOD(static_cast<int>(left->cval), static_cast<int>(right->cval))));
+    } else if (op == CBINARY_POW) {
+        stack_push(MerCompiler_table_setup(MERCURY_BINARY_POW(left->cval, right->cval)));
     }
 
     #ifdef SYSTEM_TEST
@@ -669,6 +675,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_LOAD_GLOBAL(__program_byteco
 
         if (!found) {
             cerr << "global var dont exist " << "0x" << hex << setfill('0') << setw(2) << (int)code << endl;
+            cerr << "at id " << u.iid << endl;
             MER_BREAK_POINT;
         }
     }
@@ -729,12 +736,12 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_MAKE_FUNCTION(__program_byte
     symtable *func = MerCompiler_SymbolTable_new();
 
     vector<Mer_uint8_t> body;
-    while (code != CRETURN) {
+    while (code != CEND_FUNCTION) {
         code = __get_next_code_in_prg_code(u);
         body.push_back(code);
     }
 
-    body.push_back(CRETURN);
+    body.push_back(CEND_FUNCTION);
 
     mFunc_object_T *func_obj = MerCompiler_func_object_new();
     
@@ -766,6 +773,124 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_MAKE_FUNCTION(__program_byte
     return stk;
 }
 
+MERCURY_API __mer_core_data__ stack *MerVM_evaluate_call_context(CallContext *ctx, __program_bytecode &u, stack *stk) {
+    __program_bytecode tmp = init_program_bytecode(ctx->code);    
+    __get_label_map(tmp, "function");
+
+    for (;;) {
+        Mer_uint8_t code = __get_next_code_in_prg_code(tmp);
+
+        if (code == CPUSH_FLOAT) {
+            stk = MerVM_evaluate_PUSH_FLOAT(tmp, stk);
+        }
+        
+        else if (code == CBINARY_ADD || code == CBINARY_SUB || code == CBINARY_MUL || code == CBINARY_DIV || code == CBINARY_MOD || code == CBINARY_POW) {
+            stk = MerVM_evaluate_BINARY_OPER(tmp, stk, code);
+        } 
+
+        else if (code == CLOAD_GLOBAL) {
+            stk = MerVM_evaluate_LOAD_GLOBAL(tmp, stk);
+        } 
+        
+        else if (code == CSTORE_GLOBAL) {
+            stk = MerVM_evaluate_STORE_GLOBAL(tmp, stk);
+        } 
+        
+        else if (code == CMAKE_FUNCTION) {
+            stk = MerVM_evaluate_MAKE_FUNCTION(tmp, stk);
+        } 
+        
+        else if (code == CFUNCTION_CALL) {
+            stk = MerVM_evaluate_FUNCTION_CALL(tmp, stk);
+        } 
+        
+        else if (code == CGREATER || code == CEQUAL || code == CNOT_EQUAL || code == CGREATER_EQUAL || code == CLESS_EQUAL || code == CLESS) {
+            stk = MerVM_evaluate_COMPARE(tmp, stk, code);
+        } 
+        
+        else if (code == CJUMP_TO) {
+            stk = MerVM_evaluate_JUMP_TO(tmp, stk);
+        } 
+        
+        else if (code == CNOT) {
+            stk = MerVM_evaluate_NOT(tmp, stk);
+        }
+
+        else if (code == CLEN) {
+            stk = MerVM_evaluate_CLEN(tmp, stk);
+        }
+
+        else if (code == CBUILD_LIST) {
+            stk = MerVM_evaluate_BUILD_LIST(tmp, stk);
+        }
+        
+        else if (code == CPUSH_NORMAL_MODE) {
+            stk = MerVM_evaluate_PUSH_NORMAL_MODE(tmp, stk);
+        } 
+        
+        else if (code == CPOP_JUMP_IF_FALSE) {
+            stk = MerVM_evaluate_POP_JUMP_IF_FALSE(tmp, stk);
+        } 
+        
+        else if (code == CINC) {
+            stk = MerVM_evaluate_INC(tmp, stk);
+        }
+
+        else if (code == CDEC) {
+            stk = MerVM_evaluate_DEC(tmp, stk);
+        }
+
+        else if (code == CGET_ITEM) {
+            stk = MerVM_evaluate_GET_ITEM(tmp, stk);
+        } 
+
+        else if (code == CLOAD_TRUE) {
+            stk = MerVM_evaluate_LOAD_TRUE(tmp, stk);
+        } 
+
+        else if (code == CIS) {
+            stk = MerVM_evaluate_IS(tmp, stk);
+        }
+        
+        else if (code == CLOAD_FALSE) {
+            stk = MerVM_evaluate_LOAD_FALSE(tmp, stk);
+        }
+        
+        else if (code == CRETURN) {
+            table *top = POP();
+            ctx->return_val = top;
+            break;
+        }
+
+        else if (code == CEND_FUNCTION) {
+            break;
+        }
+        
+        else if (code == CSTORE_INDEX) {
+            stk = MerVM_evaluate_STORE_INDEX(tmp, stk);
+        }
+
+        else if (code == CDELETE) {
+            stk = MerVM_evaluate_DELETE(tmp, stk);
+        }
+
+        else if (code == CADDRESS) {
+            code = __get_next_code_in_prg_code(tmp);
+        }
+
+        else if (code == CAND) {
+            stk = MerVM_evaluate_AND(tmp, stk);
+        }
+
+        else if (code == COR) {
+            stk = MerVM_evaluate_OR(tmp, stk);
+        }
+    }
+
+    stk->s_table->table.push_back(ctx->return_val);
+    return stk;
+}
+
 MERCURY_API __mer_core_data__ stack *MerVM_evaluate_FUNCTION_CALL(__program_bytecode &u, stack *stk) {
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [MerVM_evaluate_FUNCTION_CALL] [building...]" << endl;
@@ -793,11 +918,15 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_FUNCTION_CALL(__program_byte
         
         _L.insert(_L.end(), _T.begin(), _T.end());
 
-        __program_bytecode new_u = init_program_bytecode(f_code);
-        new_u.is_in_func = true;
-        __get_label_map(new_u, "function");
-        stk = MerVM_evaluate_statement(new_u, stk);
-        new_u.is_in_func = false;
+        CallContext *ctx = new CallContext {
+            .code = f_code,
+            .address = func_address,
+            .caller = nullptr,
+            .return_val = MerCompiler_Table_new(),
+            .func_obj = func->func_obj_v,
+        };
+
+        stk = MerVM_evaluate_call_context(ctx, u, stk);
         _L.clear();
         return stk;
     } else {

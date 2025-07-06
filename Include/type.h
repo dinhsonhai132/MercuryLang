@@ -96,6 +96,13 @@ struct _code
     _code *scr[MAX_CODE_LEN];
 };
 
+struct _dict {
+    GC_HEAD;
+    Mer_size_t size;
+
+    vector<pair<void*, void*>> dict;
+};
+
 struct _char {
     GC_HEAD;
     char item;
@@ -270,7 +277,7 @@ static _type_obj NULL_TYPE_INSTANCE = _type_obj();
 #define NULL_CHAR '\0'
 #define NULL_PTR nullptr
 #define NULL_PTR_PTR &NULL_PTR
-#define NULL_UINT_8_T 0x0000
+#define NULL_UINT_8_T 0x00
 #define NULL_UINT_16_T 0x0000
 #define NULL_UINT_32_T 0x0000
 #define NULL_UINT_64_T 0x0000

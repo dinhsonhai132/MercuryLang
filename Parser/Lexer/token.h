@@ -25,7 +25,6 @@
 #include <iostream>
 #include "syntax.cpp"
 #include "../../Parser/error.cpp"
-#include "../../Mercury/error.cpp"
 
 using namespace std;
 
@@ -42,6 +41,8 @@ using namespace std;
 #define STR "STR"
 #define LIST "LIST"
 #define EXTRACT "EXTRACT"
+#define DEFINE_VAL "DEFINE_VAL"
+#define DEFINE_STA "DEFINE_STA"
 #define DIV "DIV"
 #define TIME "TIME"
 #define VARIABLE "VARIABLE"
@@ -77,6 +78,7 @@ using namespace std;
 #define DO_T "DO_T"
 #define END_LINE "END_LINE"
 #define BREAK "BREAK"
+#define ELIF "ELIF"
 #define CONTINUE "CONTINUE"
 #define CLASS "CLASS"
 #define INTERFACE_ "INTERFACE_"
@@ -197,16 +199,59 @@ using namespace std;
     || c == '[' || c == ']' || c == '.' \
     || c == '|')
 
-
-#ifdef MERCURY_LANG3
-inline bool is_identifier(string c) {
-    return (c == "let")
+inline bool is_identifier(const std::string& c) {
+    return (c == LET_S)
+    || (c == IF_S)
+    || (c == LOCAL_S)
+    || (c == DO_S)
+    || (c == END_S)
+    || (c == ELIF_S)
+    || (c == BREAK_S)
+    || (c == IMPORT_S)
+    || (c == CONTINUE_S)
+    || (c == AUTO_S)
+    || (c == FLOAT_S)
+    || (c == DOUBLE_S)
+    || (c == CHAR_S)
+    || (c == LIST_S)
+    || (c == ASSERT_S)
+    || (c == NOT_S)
+    || (c == AND_S)
+    || (c == OR_S)
+    || (c == SHORT_S)
+    || (c == IS_S)
+    || (c == LONG_S)
+    || (c == VOID_S)
+    || (c == BOOL_S)
+    || (c == STR_S)
+    || (c == TRUE_S)
+    || (c == FALSE_S)
+    || (c == LOOP_S)
+    || (c == STRING_S)
+    || (c == DEFINED_S)
+    || (c == INCLUDE_S)
+    || (c == ELSE_S)
+    || (c == FOR_S)
+    || (c == WHILE_S)
+    || (c == RETURN_S)
+    || (c == FUNCTION_S)
+    || (c == IN_S)
+    || (c == CLASS_S)
+    || (c == STRUCT_S)
+    || (c == INTERFACE_S)
+    || (c == NEW_S)
+    || (c == DELETE_S)
+    || (c == CAST_S)
+    || (c == CONST_S)
+    || (c == THEN_S)
+    || (c == "let")
     || (c == "if")
     || (c == "do")
     || (c == "end")
     || (c == "function")
     || (c == "break")
     || (c == "continue")
+    || (c == "elif")
     || (c == "auto")
     || (c == "is")
     || (c == "float")
@@ -222,6 +267,7 @@ inline bool is_identifier(string c) {
     || (c == "str")
     || (c == "string")
     || (c == "loop")
+    || (c == "define")
     || (c == "not")
     || (c == "include")
     || (c == "else")
@@ -244,92 +290,7 @@ inline bool is_identifier(string c) {
     || (c == "or")
     || (c == "not")
     || (c == "then");
-}
-
-inline const char* GET_SYNTAX(string c) {
-    if (c == "let" || c == "local") return LET;
-    else if (c == "if") return IF;
-    else if (c == "else") return ELSE;
-    else if (c == "for") return FOR;
-    else if (c == "while") return WHILE;
-    else if (c == "in") return IN;
-    else if (c == "not") return NOT;
-    else if (c == "return") return RETURN;
-    else if (c == "import") return IMPORT;
-    else if (c == "assert") return ASSERT;
-    else if (c == "func" || c == "function") return FUNCTION;
-    else if (c == "include") return INCLUDE;
-    else if (c == "and") return AND;
-    else if (c == "true") return TRUE_T;
-    else if (c == "false") return FALSE_T;
-    else if (c == "or") return OR;
-    else if (c == "do") return DO_T;
-    else if (c == "is") return IS;
-    else if (c == "end") return END_T;
-    else if (c == "break") return BREAK;
-    else if (c == "loop") return LOOP;
-    else if (c == "continue") return CONTINUE;
-    else if (c == "class") return CLASS;
-    else if (c == "interface") return INTERFACE_;
-    else if (c == "struct") return STRUCT;
-    else if (c == "new") return NEW;
-    else if (c == "list") return LIST;
-    else if (c == "delete") return DELETE_;
-    else if (c == "cast") return CAST;
-    else if (c == "void") return VOID_T;
-    else if (c == "double") return DOUBLE_;
-    else if (c == "char") return CHAR_;
-    else if (c == "short") return SHORT_;
-    else if (c == "long") return LONG_;
-    else if (c == "auto") return AUTO_;
-    else if (c == "then") return THEN;
-    else if (c == "else") return ELSE;
-    else if (c == "bool") return BOOL_;
-    else if (c == "string") return STR;
-    return NULL;
-}
-#else
-
-inline bool is_identifier(const std::string& c) {
-    return (c == LET_S)
-    || (c == IF_S)
-    || (c == LOCAL_S)
-    || (c == DO_S)
-    || (c == END_S)
-    || (c == BREAK_S)
-    || (c == CONTINUE_S)
-    || (c == AUTO_S)
-    || (c == FLOAT_S)
-    || (c == DOUBLE_S)
-    || (c == CHAR_S)
-    || (c == LIST_S)
-    || (c == ASSERT_S)
-    || (c == NOT_S)
-    || (c == AND_S)
-    || (c == OR_S)
-    || (c == SHORT_S)
-    || (c == IS_S)
-    || (c == LONG_S)
-    || (c == VOID_S)
-    || (c == BOOL_S)
-    || (c == STR_S)
-    || (c == LOOP_S)
-    || (c == STRING_S)
-    || (c == INCLUDE_S)
-    || (c == ELSE_S)
-    || (c == FOR_S)
-    || (c == WHILE_S)
-    || (c == RETURN_S)
-    || (c == FUNCTION_S)
-    || (c == IN_S)
-    || (c == CLASS_S)
-    || (c == STRUCT_S)
-    || (c == INTERFACE_S)
-    || (c == NEW_S)
-    || (c == DELETE_S)
-    || (c == CAST_S)
-    || (c == CONST_S)
-    || (c == THEN_S);
+    
 }
 
 inline const char* GET_SYNTAX(const std::string& c) {
@@ -341,6 +302,10 @@ inline const char* GET_SYNTAX(const std::string& c) {
     else if (c == IN_S) return IN;
     else if (c == NOT_S) return NOT;
     else if (c == LOOP_S) return LOOP;
+    else if (c == TRUE_S) return TRUE_T;
+    else if (c == FALSE_S) return FALSE_T;
+    else if (c == ELIF_S) return ELIF;
+    else if (c == IMPORT_S) return IMPORT;
     else if (c == RETURN_S) return RETURN;
     else if (c == FUNCTION_S) return FUNCTION;
     else if (c == IS_S) return IS;
@@ -348,6 +313,7 @@ inline const char* GET_SYNTAX(const std::string& c) {
     else if (c == END_S) return END_T;
     else if (c == INCLUDE_S) return INCLUDE;
     else if (c == AND_S) return AND;
+    else if (c == DEFINED_S) return DEFINE_STA;
     else if (c == OR_S) return OR;
     else if (c == BREAK_S) return BREAK;
     else if (c == CONTINUE_S) return CONTINUE;
@@ -368,15 +334,56 @@ inline const char* GET_SYNTAX(const std::string& c) {
     else if (c == THEN_S) return THEN;
     else if (c == BOOL_S) return BOOL_;
     else if (c == STRING_S) return STR;
+    else if (c == "let" || c == "local") return LET;
+    else if (c == "if") return IF;
+    else if (c == "else") return ELSE;
+    else if (c == "for") return FOR;
+    else if (c == "while") return WHILE;
+    else if (c == "in") return IN;
+    else if (c == "not") return NOT;
+    else if (c == "return") return RETURN;
+    else if (c == "import") return IMPORT;
+    else if (c == "assert") return ASSERT;
+    else if (c == "func" || c == "function") return FUNCTION;
+    else if (c == "include") return INCLUDE;
+    else if (c == "elif") return ELIF;
+    else if (c == "and") return AND;
+    else if (c == "true") return TRUE_T;
+    else if (c == "false") return FALSE_T;
+    else if (c == "or") return OR;
+    else if (c == "do") return DO_T;
+    else if (c == "is") return IS;
+    else if (c == "end") return END_T;
+    else if (c == "break") return BREAK;
+    else if (c == "loop") return LOOP;
+    else if (c == "continue") return CONTINUE;
+    else if (c == "class") return CLASS;
+    else if (c == "interface") return INTERFACE_;
+    else if (c == "define") return DEFINE_STA;
+    else if (c == "struct") return STRUCT;
+    else if (c == "new") return NEW;
+    else if (c == "list") return LIST;
+    else if (c == "delete") return DELETE_;
+    else if (c == "cast") return CAST;
+    else if (c == "void") return VOID_T;
+    else if (c == "double") return DOUBLE_;
+    else if (c == "char") return CHAR_;
+    else if (c == "short") return SHORT_;
+    else if (c == "long") return LONG_;
+    else if (c == "auto") return AUTO_;
+    else if (c == "then") return THEN;
+    else if (c == "else") return ELSE;
+    else if (c == "bool") return BOOL_;
+    else if (c == "string") return STR;
     return NULL_T;
 }
-#endif
 
 inline const char* GET_1_CHAR(char c) {
     switch (c) {
         case '=': return ASSIGN;
         case '<': return LESS;
         case '>': return GREATER;
+        case '^': return POW;
         case '+': return PLUS;
         case '-': return MINUS;
         case '/': return DIV;
@@ -388,7 +395,10 @@ inline const char* GET_1_CHAR(char c) {
         case '*': return TIME;
         case '(': return LEFT_PAREN;
         case ')': return RIGHT_PAREN;
-        case '{': return LEFT_BRACE;
+        case '{': {
+            cout << 'a' << endl;
+            return LEFT_BRACE;
+        };
         case '}': return RIGHT_BRACE;
         case '[': return LEFT_BRACKET;
         case ']': return RIGHT_BRACKET;

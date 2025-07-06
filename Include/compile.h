@@ -26,7 +26,8 @@
 #include <cstring>
 #include <iomanip>
 
-#include "../Mercury/sign.cpp"
+#include "data.h"
+#include "../Mercury/initialize.cpp"
 #include "../Parser/parser.cpp"
 
 using namespace std;
@@ -36,9 +37,15 @@ struct loop_stack {
     Mer_uint8_t break_label;
 };
 
+struct code_stack {
+    Mer_uint8_t address;
+    string name;
+    mCode_T &code;
+};
+
 struct __compiler_u {
     const char* file;
-    Mer_uint8_t address = 0x0001;
+    Mer_uint8_t address;
     Mer_uint8_t para_address;
     Mer_uint8_t cid;
     Mer_string name;
@@ -50,6 +57,8 @@ struct __compiler_u {
 __compiler_u compiler_init(void);
 
 vector<string> import;
+vector<code_stack> code_s;
+
 
 #define INC_U(u) (u.byte++, u.cid++)
 
@@ -121,5 +130,11 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_not_expression(mAST_T *ast
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_or_expression(mAST_T *ast, __compiler_u &glb);
 
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_import(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_include(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_define(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_define_expression(mAST_T *ast, __compiler_u &glb);
 
 #endif // MERCURY_BYTECODE_COMPILER_HEADER

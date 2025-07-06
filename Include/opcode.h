@@ -12,6 +12,7 @@
 #define CBINARY_MUL                             0x12
 #define CBINARY_DIV                             0x13
 #define CBINARY_MOD                             0x14
+#define CBINARY_POW                             0xF1
 #define CBINARY_SUBSCRIBE                       0x15
 
 #define TRUE_ADDRESS                            0x20
@@ -63,6 +64,9 @@
 #define CDELETE                                 0xA2
 
 #define CIS                                     0xA3
+
+#define CEND_FUNCTION                           0xFF
+
 
 #define NUMBER_0 {0x00, 0x00, 0x00, 0x00}
 #define NUMBER_1 {0x00, 0x00, 0x80, 0x3F}

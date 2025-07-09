@@ -28,7 +28,7 @@
 
 👉 [Download MercuryLang (.exe for Windows)](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-init.exe)
 
-✅ Or you can go to this website (https://dinhsonhai132.github.io/main.html)
+✅ Or you can go to this website https://dinhsonhai132.github.io/main.html
 
 ---
 

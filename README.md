@@ -50,6 +50,8 @@ mercury main.mer  # Run file
 
 ### 📤 Output
 ```mer
+import "io.mer"
+
 print("hello world")
 ```
 

@@ -77,7 +77,7 @@ print(power(x, 20))
 print(isdigit(x))
 print(factorial(x))
 print(sqrt(x))
-print(eval("1 + 1") # support "+" and "-" only
+print(eval("1 + 1")) # support "+" and "-" only
 
 let a = (2 + 1) / 2
 let b = 3

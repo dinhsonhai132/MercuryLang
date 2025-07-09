@@ -72,6 +72,7 @@ print(fruits[0])
 ### 🧮 Math & Logic
 ```mer
 import "math.mer"
+import "io.mer"
 
 let x = pi
 print(cos(x) + sin(x))

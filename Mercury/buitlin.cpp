@@ -649,6 +649,8 @@ MERCURY_API __mer_core_lib_api__ __builtin_func_t __builtin_type(stack *stk) {
         STACK_PUSH(stk, MerCompiler_table_setup(MER_FUNCTION_TYPE, NULL_UINT_8_T));
     } else if (top->is_code) {
         STACK_PUSH(stk, MerCompiler_table_setup(MER_CODE_TYPE, NULL_UINT_8_T));
+    } else if (top->is_bool) {
+        STACK_PUSH(stk, MerCompiler_table_setup(MER_BOOL_TYPE, NULL_UINT_8_T));
     } else {
         STACK_PUSH(stk, MerCompiler_table_setup(MER_FLOAT_TYPE, NULL_UINT_8_T));
     }

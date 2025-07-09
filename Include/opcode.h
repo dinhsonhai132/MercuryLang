@@ -43,7 +43,7 @@
 #define CSTORE_INDEX                            0x52
 
 #define CPROGRAM_START                          0x60
-#define CPROGRAM_END                            0x61
+#define CPROGRAM_END                            0x8D
 #define CADDRESS                                0x9D
 
 #define CLOAD_TRUE                              0x63

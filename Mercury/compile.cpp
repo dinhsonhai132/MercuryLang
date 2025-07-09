@@ -795,6 +795,10 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_function_call(mAST_T *ast,
 
   if (!found) {
     Mer_real_string str = ast->func_call.c_str();
+    if (str == "print") {
+      Mer_real_string msg = "Function not found '" + str + "', you forgot to import \"io.mer\"?";
+      MerDebug_print_error(COMPILER_ERROR, msg.c_str(), glb.file, ast->true_line);
+    }
     Mer_real_string msg = "Function not found '" + str + "'";
     MerDebug_print_error(COMPILER_ERROR, msg.c_str(), glb.file, ast->true_line);
     return NULL_CODE;

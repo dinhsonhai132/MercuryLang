@@ -19,6 +19,7 @@ table *MerCompiler_Table_new(void) {
     t->cbuf = 0;
     t->err = "";
     t->is_list = false;
+    t->is_bool = false;
     t->is_str = false;
     t->is_code = false;
     t->is_builtin = false;
@@ -53,6 +54,7 @@ symtable *MerCompiler_SymbolTable_new(void) {
     s->is_str = false;
     s->is_code = false;
     s->is_list = false;
+    s->is_bool = false;
     s->is_obj = false;
     s->is_func = false;
     s->is_type = false;

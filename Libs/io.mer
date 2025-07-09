@@ -39,8 +39,23 @@ func print(__value) do
         return 0
     end
 
+    elif type(__value) == 2 then
+        if __value == 1 then
+            puts("true")
+            puts("\n")
+            return 0
+        end
+
+        else
+            puts("false")
+            puts("\n")
+            return 0
+        end
+    end
+
     else
         puts(__value)
         puts("\n")
+        return 0
     end
 end

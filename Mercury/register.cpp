@@ -32,3 +32,11 @@ MERCURY_API __mer_core_api__ void __register_lib_to_global_stack(Mer_uint8_t add
 MERCURY_API __mer_core_api__ void __register_global_variable(Mer_uint8_t address, float value) {
     _G.push_back(MerCompiler_symboltable_setup("", value, "AUTO_T", address));
 }
+
+MERCURY_API __mer_core_api__ void __register_global_variable_with_object(string name, table *obj) {
+    Mer_uint8_t address = global_hashmap[name];
+    symtable *item = MerCompiler_symboltable_setup("", obj->cval, "AUTO_T", address);
+    item->tab = obj;
+    _G.push_back(item);
+}
+

@@ -47,6 +47,17 @@ using namespace std;
 #define HASH_ADDRESS                       0x97
 #define EMPTY_ADDRESS                      0x98
 #define FACTORIAL_ADDRESS                  0x99
+#define TIME_ADDRESS                       0xFA
+
+// system variable
+#define __file__G                          0xE0
+#define __Global_G                         0xE1
+#define __Module__G                        0xE2
+#define __Libs__G                          0xE3
+#define __Ver__G                           0xE4
+#define __name__G                          0xE5
+#define __path__G                          0xE8
+#define __cached__G                        0xE9
 
 MERCURY_API __mer_core_data__ vector<symtable *> _G = {};
 MERCURY_API __mer_core_data__ vector<symtable *> _L = {};

@@ -910,7 +910,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_FUNCTION_CALL(__program_byte
             sym->tab = para;
             _T.push_back(sym);
         }
-
+        
         reverse(_T.begin(), _T.end());
         for (auto &item : _T) {
             item->address = ++para_address;
@@ -946,11 +946,4 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_FUNCTION_CALL(__program_byte
     #endif
 
     return stk;
-}
-
-MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_function(mFunc_object_T *func_obj, stack *stk, __program_bytecode &u) {
-    vector<Mer_uint8_t> func_body = func_obj->raw_body;
-    mCode_T body_c;
-    body_c.prg_code.buff = func_body;
-    return MerVM_evaluate_statement(u, stk);
 }

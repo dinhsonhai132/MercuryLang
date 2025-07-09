@@ -1,5 +1,7 @@
 # Standard Math Mercury Library
-# Last update 7/2/2025
+# Last update 7/9/2025
+# Created in 7/2/2025 by dinhsonhai132
+# This library is free for change
 
 # Global variable in math
 let pi = 3.1415926535897932384626433832795
@@ -46,12 +48,16 @@ func sin(__degree) do
     let __result = 0.0
     let __sign = 1.0
     let __i = 0
+    let __power = 0
+    let __numerator = 0
+    let __deno = 0
+    let __j = 0
 
     while __i < 10 do
-        let __power = 2 * __i + 1
-        let __numerator = power(__x, __power)
-        let __deno = 1.0
-        let __j = 1
+        __power = 2 * __i + 1
+        __numerator = power(__x, __power)
+        __deno = 1.0
+        __j = 1
 
         while __j <= __power do
             __deno *= __j
@@ -71,12 +77,16 @@ func cos(__degree) do
     let __result = 0.0
     let __sign = 1.0
     let __i = 0
+    let __power = 0
+    let __numerator = 0
+    let __denominator = 0
+    let __j = 0
 
     while __i < 10 do
-        let __power = 2 * __i
-        let __numerator = power(__x, __power)
-        let __denominator = 1.0
-        let __j = 1
+        __power = 2 * __i
+        __numerator = power(__x, __power)
+        __denominator = 1.0
+        __j = 1
 
         while __j <= __power do
             __denominator *= __j
@@ -91,30 +101,67 @@ func cos(__degree) do
     return __result
 end
 
-func tan(__degree) do
-    let __s = sin(__degree)
-    let __c = cos(__degree)
-
-    if __c == 0.0 then
-        return "inf"
-    end
-
-    return __s / __c
+func isdigit(__char) do
+    return same(__char, "0") 
+    or same(__char, "1") 
+    or same(__char, "2")
+    or same(__char, "3") 
+    or same(__char, "4") 
+    or same(__char, "5")
+    or same(__char, "6") 
+    or same(__char, "7") 
+    or same(__char, "8")
+    or same(__char, "9")
 end
 
-func cot(__degree) do
-    let __s = sin(__degree)
-    let __c = cos(__degree)
+func eval(__expression) do
+    let buffer = to_list(__expression)
+    let index = 0
+    let tokens = []
+    let num_str = ""
 
-    if __s == 0.0 then
-        return "inf"
+    while index < size(buffer) do        
+        if same(buffer[index], "+") or same(buffer[index], "-") then
+            push(tokens, buffer[index])
+            index += 1
+        end
+
+        elif isdigit(buffer[index]) then
+            num_str = ""
+            while index < size(buffer) and isdigit(buffer[index]) do
+                sub(num_str, buffer[index])
+                index += 1
+                if index >= size(buffer) then
+                    break
+                end
+            end
+            push(tokens, num_str)
+        end
+
+        else
+            index += 1
+        end
     end
 
-    return __c / __s
-end
+    let index = 0
+    let result = to_int(tokens[index])
 
-func isdigit(__v) do
-    return same(__v, "1") or same(__v, "2") or same(__v, "3") or
-           same(__v, "4") or same(__v, "5") or same(__v, "6") or
-           same(__v, "7") or same(__v, "8") or same(__v, "9")
+    index += 1
+
+    while index < size(tokens) do
+        op = tokens[index]
+        num = to_int(tokens[index + 1])
+
+        if same(op, "+") then
+            result += num
+        end
+        
+        elif same(op, "-") then
+            result -= num
+        end 
+
+        index += 2
+    end
+
+    return result
 end

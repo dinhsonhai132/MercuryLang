@@ -314,9 +314,17 @@ mToken_T *_MerLexer_tokenize_string(mLexer_T *lexer)
     int idx = 0;
     char string_start = lexer->buf[lexer->id - 1];
 
+    if (lexer->cur == '\n') {
+        MerDebug_print_error(SYNTAX_ERROR, "Expected empty string", lexer->file, lexer->row);
+    }
+
     while (lexer->cur != '"') {
         str += lexer->cur;
         ++idx;
+
+        if (lexer->cur == '\n') {
+            MerDebug_print_error(SYNTAX_ERROR, "Missing the end of string", lexer->file, lexer->row);
+        }
 
         if (idx > 4300) {
             MerDebug_print_error(SYSTEM_WARNING, "The number of keyword in string is too large, this can cause a crash", lexer->file, lexer->row);

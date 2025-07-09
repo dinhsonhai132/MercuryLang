@@ -16,51 +16,38 @@ typedef void __builtin_func_t;
     cout << x;
 
 unordered_map<string, Mer_uint8_t> lib_hashmap = {
-    {"write", IO_WRITE_ADDRESS}, 
     {"pause", PAUSE_ADDRESS}, 
     {"exit", EXIT_ADDRESS},
-    {"cls", CLS_ADDRESS},
-    {"help", HELP_ADDRESS},
     {"same", SAME_STRING_ADDRESS}, 
     {"size", SIZE_ADDRESS}, 
     {"push", PUSH_ADDRESS},
     {"pop", POP_ADDRESS},
-    {"watch", PRINT_LIST_ADDRESS}, 
     {"puts", PUTS_ADDRESS}, 
-    {"cos", COS_ADDRESS}, 
-    {"tan", TAN_ADDRESS},
-    {"cot", COT_ADDRESS}, 
-    {"sqrt", SQRT_ADDRESS}, 
-    {"sin", SIN_ADDRESS},
-    {"glb", PRINT_GLOBAL_ADDRESS}, 
-    {"ch", CHANGE_ITEM_ADDRESS},
     {"type", TYPE_ADDRESS}, 
     {"range", RANGE_ADDRESS},
     {"randint", RANDINT_ADDRESS},
     {"sub", SUB_STR}, 
-    {"print", PRINT_ADDRESS}, 
     {"sleep", SLEEP_ADDRESS},
     {"to_list", LIST_ADDRESS},
-    {"isdigit", ISDIGIT_ADDRESS},
     {"to_str", TO_STRING_ADDRESS},
     {"to_int", TO_INT_ADDRESS},
     {"input", INPUT_ADDRESS},
-    {"split", SPLIT_ADDRESS},
     {"to_str", TO_STRING_ADDRESS},
-    {"hash", HASH_ADDRESS},
-    {"empty", EMPTY_ADDRESS},
-    {"factorial", FACTORIAL_ADDRESS}
 };
 
 
 #define is_a_builtin(x) (lib_hashmap.find(x) != lib_hashmap.end())
 
 unordered_map<string, Mer_uint8_t> global_hashmap = {
-    {"pi", PI_ADDRESS}, 
-    {"e", EULER_ADDRESS}, 
     {"inf", INFINITY_ADDRESS},
-    {"tau", TAU_ADDRESS}, 
-    {"gr", GOLDEN_RATIO_ADDRESS}
+    {"__file__", __file__G},
+    {"__Global__", __Global_G},
+    {"__Module__", __Module__G},
+    {"__Libs__", __Libs__G},
+    {"__Ver__", __Ver__G},
+    {"__name__", __name__G},
+    {"__path__", __path__G},
+    {"__cached__", __cached__G}
 };
 
 __mer_core_lib_api__ const char* to_char(Mer_uint8_t c);
@@ -141,6 +128,8 @@ __mer_core_lib_api__ __builtin_func_t __builtin_mer_hash(stack *stk);
 __mer_core_lib_api__ __builtin_func_t __builtin_mer_empty(stack *stk);
 
 __mer_core_lib_api__ __builtin_func_t __builtin_mer_factorial(stack *stk);
+
+__mer_core_lib_api__ __builtin_func_t __builtin_mer_whats_time_is_it(stack *stk);
 
 
 mString_T *make_str_obj(string str);

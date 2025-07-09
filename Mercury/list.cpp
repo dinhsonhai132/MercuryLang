@@ -16,3 +16,10 @@ float __list_value(mList_T *list) {
     memcpy(&result, &seed, sizeof(float));
     return result;
 }
+
+mList_T *creat_list_obj(vector<void *> args) {
+    mList_T *list = MerCompiler_list_object_new();
+    list->size = args.size();
+    list->args = args;
+    return list;
+}

@@ -3,7 +3,7 @@ bool skip = false;
 
 __compiler_u compiler_init(void) {
   __compiler_u glb;
-  glb.address = 0xAA;
+  glb.address = 0x50;
   glb.cid = 0x0000;
   glb.name = nullptr;
   glb.type = nullptr;
@@ -846,6 +846,7 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_if(mAST_T *ast, __compiler
   }
 
   Mer_uint8_t end_if = create_label(glb);
+  Mer_uint8_t label_else = create_label(glb);
 
   for (auto child : ast->then_body) {
     __Mer_return_Code _code = MerCompiler_compile_ast_id(child, glb);
@@ -853,6 +854,47 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_if(mAST_T *ast, __compiler
     _code.prg_code.buff.clear();
   }
 
+  INSERT_VEC(result, comp);
+  
+  PUSH(result, CPOP_JUMP_IF_FALSE);
+  PUSH(result, label_else);
+
+  INSERT_VEC(result, if_body);
+  
+  PUSH(result, CJUMP_TO);
+  PUSH(result, end_if);
+
+  PUSH(result, CADDRESS);
+  PUSH(result, label_else);
+
+  if (ast->has_elif) {
+    for (auto &child : ast->elif_body) {
+      __Mer_return_Code elifcomp = MerCompiler_compile_ast_id(child->comp, glb);
+      __Mer_return_Code elifbody = NULL_CODE;
+
+      for (auto child : child->then_body) {
+        __Mer_return_Code _code = MerCompiler_compile_ast_id(child, glb);
+        INSERT_VEC(elifbody, _code);
+        _code.prg_code.buff.clear();
+      }
+
+      label_else = create_label(glb);
+
+      INSERT_VEC(result, elifcomp);
+      
+      PUSH(result, CPOP_JUMP_IF_FALSE);
+      PUSH(result, label_else);
+      
+      INSERT_VEC(result, elifbody);
+      
+      PUSH(result, CJUMP_TO);
+      PUSH(result, end_if);
+    }
+  }
+
+  PUSH(result, CADDRESS);
+  PUSH(result, label_else);
+  
   if (ast->has_else) {
     for (auto child : ast->else_body) {
       __Mer_return_Code _code = MerCompiler_compile_ast_id(child, glb);
@@ -860,31 +902,9 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_if(mAST_T *ast, __compiler
       _code.prg_code.buff.clear();
     }
 
-    Mer_uint8_t label_else = create_label(glb);
-
-    INSERT_VEC(result, comp);
-    PUSH(result, CPOP_JUMP_IF_FALSE);
-    PUSH(result, label_else);
-    INSERT_VEC(result, if_body);
-    PUSH(result, CJUMP_TO);
-    PUSH(result, end_if);
-    PUSH(result, CADDRESS);
-    PUSH(result, label_else);
     INSERT_VEC(result, else_body);
-    PUSH(result, CADDRESS);
-    PUSH(result, end_if);
-
-    #ifdef SYSTEM_TEST
-    cout << "[compiler.cpp] [MerCompiler_compile_ast_if] [pass]" << endl;
-    #endif
-
-    return result;
   }
 
-  INSERT_VEC(result, comp);
-  PUSH(result, CPOP_JUMP_IF_FALSE);
-  PUSH(result, end_if);
-  INSERT_VEC(result, if_body);
   PUSH(result, CADDRESS);
   PUSH(result, end_if);
 

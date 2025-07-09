@@ -31,6 +31,17 @@ const float to_float(string c) {
     return value;
 }
 
+float get_current_time() {
+    auto now = std::chrono::high_resolution_clock::now();
+    auto sec = std::chrono::duration<float>(now.time_since_epoch());
+    return sec.count();
+}
+
+__mer_core_lib_api__ __builtin_func_t __builtin_mer_whats_time_is_it(stack *stk) {
+    float __value = get_current_time();
+    stack_push(MerCompiler_table_setup(__value, NULL_UINT_8_T));
+}
+
 MERCURY_API __mer_core_lib_api__ __builtin_func_t __builtin_mer_read_line(stack *stk) {
     string input_line;
     getline(cin, input_line);

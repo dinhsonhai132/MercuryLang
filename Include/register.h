@@ -18,4 +18,8 @@ MERCURY_API __mer_core_api__ void __register_lib_to_global(Mer_uint8_t address, 
     __register_global_variable(global_hashmap[name], val); \
     __register_global(global_hashmap[name], name); \
 
+#define BUILD_GLOBAL_VARIABLE_WITH_OBJECT(name, obj) \
+    __register_global_variable_with_object(name, obj); \
+    __register_global(global_hashmap[name], name); \
+
 #endif // MERCURY_REGISTER_HEADER_FILE

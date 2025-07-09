@@ -44,7 +44,7 @@
 
 #define CPROGRAM_START                          0x60
 #define CPROGRAM_END                            0x61
-#define CADDRESS                                0x62
+#define CADDRESS                                0x9D
 
 #define CLOAD_TRUE                              0x63
 #define CLOAD_FALSE                             0x64
@@ -53,7 +53,7 @@
 #define CDEC                                    0x9B
 
 #define CAND                                    0x9C
-#define COR                                     0x9D
+#define COR                                     0x62
 
 #define CCLASS_BEGIN                            0x9E // CLASS_BEGIN <class_name>
 #define CCLASS_END                              0x9F // CLASS_END

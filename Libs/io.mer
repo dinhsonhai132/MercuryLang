@@ -36,6 +36,7 @@ func print(__value) do
         end
 
         puts("]")
+        puts("\n")
         return 0
     end
 

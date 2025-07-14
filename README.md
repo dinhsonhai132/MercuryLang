@@ -7,6 +7,8 @@
 ![License](https://img.shields.io/github/license/dinhsonhai132/MercuryLang)
 ![C++](https://img.shields.io/badge/Made%20with-C++-blue.svg)
 
+![Logo](./logo.png)
+
 ---
 
 **MercuryLang** is a lightweight, free, and open-source programming language written in **C++**, inspired by the simplicity of **Lua** and **Python**. It provides clean syntax, dynamic typing, powerful standard libraries, and a fast interpreter — ideal for beginners and language creators alike.

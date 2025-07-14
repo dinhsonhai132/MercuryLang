@@ -7,7 +7,9 @@
 ![License](https://img.shields.io/github/license/dinhsonhai132/MercuryLang)
 ![C++](https://img.shields.io/badge/Made%20with-C++-blue.svg)
 
-![Logo](./logo.png)
+<p align="center">
+  <img src="./logo.png" alt="MercuryLang Logo" width="200"/>
+</p>
 
 ---
 

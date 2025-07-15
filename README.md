@@ -73,6 +73,12 @@ let fruits = ["apple", "banana"]
 print(fruits[0])
 ```
 
+### 🧠 Lambda
+```mer
+let f(x) = x * 2
+print(f3)
+```
+
 ### 🧮 Math & Logic
 ```mer
 import "math.mer"

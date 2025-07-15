@@ -76,7 +76,7 @@ print(fruits[0])
 ### 🧠 Lambda
 ```mer
 let f(x) = x * 2
-print(f3)
+print(f(3))
 ```
 
 ### 🧮 Math & Logic

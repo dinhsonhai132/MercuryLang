@@ -24,6 +24,6 @@ INLINE(__global) *create_global_table_ptr(Mer_uint8_t __Address, const Mer_strin
 
 typedef vector<__global *> __global_table;
 #define CREAT_GLOBAL_TABLE(address, name, real_name) create_global_table_ptr(address, name, real_name)
-#define CREAT_LOCAL_TABLE(address, name, real_name) CREAT_GLOBAL_TABLE(address, name, real_name)
+#define CREAT_LOCAL_TABLE(address, name, real_name) create_global_table_ptr(address, name, real_name)
 
 #endif // MERCURY_GLOBAL_HEADER_FILE

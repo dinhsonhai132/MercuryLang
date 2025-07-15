@@ -191,6 +191,7 @@ struct mAST_T
     bool is_local;
     bool is_mom;
     bool is_list;
+    bool is_extract_expression = false;
     bool is_None;
 
     // for class

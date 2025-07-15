@@ -3,7 +3,7 @@ bool skip = false;
 
 __compiler_u compiler_init(void) {
   __compiler_u glb;
-  glb.address = 0x50;
+  glb.address = 0x90;
   glb.cid = 0x0000;
   glb.name = nullptr;
   glb.type = nullptr;
@@ -103,6 +103,11 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_id_expression_statment(mAS
 
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_import(mAST_T *ast, __compiler_u &glb) {
   string path = ast->string_iden;
+
+  if (glb.is_in_func) {
+    MerDebug_print_error(COMPILER_ERROR, "Can not import in function", glb.file, ast->true_line);
+  }
+
   for (auto &item : import) {
     if (item == path) {
       MerDebug_print_error(COMPILER_ERROR, "File already imported", glb.file, ast->true_line);
@@ -161,10 +166,19 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_import(mAST_T *ast, __comp
 
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_include(mAST_T *ast, __compiler_u &glb) {
   string path = ast->string_iden;
+  if (glb.is_in_func) {
+    MerDebug_print_error(COMPILER_ERROR, "Can not include in function", glb.file, ast->true_line);
+  }
+
   for (auto &item : import) {
     if (item == path) {
       MerDebug_print_error(COMPILER_ERROR, "File already imported", glb.file, ast->true_line);
     }
+  }
+
+  // check if file is .mer
+  if (path.find(".mer") == string::npos) {
+    MerDebug_print_error(COMPILER_ERROR, "Include file must be .mer", glb.file, ast->true_line);
   }
 
   import.push_back(path);
@@ -389,6 +403,22 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_store_index_statement(mAST
 
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_extract(mAST_T *ast, __compiler_u &glb) {
   __Mer_return_Code result = NULL_CODE;
+  
+  if (ast->is_extract_expression) {
+    __Mer_return_Code _value = MerCompiler_compile_ast_id(ast->extract_value, glb);
+    __Mer_return_Code _list = NULL_CODE;
+
+    for (auto &item : ast->list) {
+      __Mer_return_Code _code = MerCompiler_compile_ast_id(item, glb);
+      INSERT_VEC(_list, _code);
+    }
+
+    INSERT_VEC(result, _list);
+    INSERT_VEC(result, _value);
+    PUSH(result, CGET_ITEM);
+
+    return result;
+  }
 
   bool found = false;
   Mer_uint8_t list_address = NULL_UINT_8_T;
@@ -954,6 +984,10 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_return(mAST_T *ast, __comp
   #ifdef SYSTEM_TEST
   cout << "[compiler.cpp] [MerCompiler_compile_ast_return] [building]" << endl;
   #endif
+
+  if (!glb.is_in_func) {
+    MerDebug_print_error(COMPILER_ERROR, "Return outside of function", glb.file, ast->true_line);
+  }
 
   __Mer_return_Code result = NULL_CODE;
   __Mer_return_Code ret_val = MerCompiler_compile_ast_id(ast->return_v, glb);

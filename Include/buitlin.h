@@ -2,7 +2,6 @@
 #define MERCURY_BUILTIN_HEADER_FILE
 
 #include "Mercury.h"
-#include "..\Mercury\evallib.cpp"
 #include "..\Mercury\ram.cpp"
 #include "../Mercury/string.cpp"
 #include "../Mercury/list.cpp"
@@ -25,14 +24,15 @@ unordered_map<string, Mer_uint8_t> lib_hashmap = {
     {"puts", PUTS_ADDRESS}, 
     {"type", TYPE_ADDRESS}, 
     {"range", RANGE_ADDRESS},
-    {"randint", RANDINT_ADDRESS},
     {"sub", SUB_STR}, 
+    {"isdigit", ISDIGIT_ADDRESS},
     {"sleep", SLEEP_ADDRESS},
     {"to_list", LIST_ADDRESS},
     {"to_str", TO_STRING_ADDRESS},
     {"to_int", TO_INT_ADDRESS},
     {"input", INPUT_ADDRESS},
     {"to_str", TO_STRING_ADDRESS},
+    {"__rand", RANDOM_ADDRESS},
 };
 
 

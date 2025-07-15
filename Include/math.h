@@ -12,6 +12,9 @@
 
 #define ABS(x) ((x) > 0 ? (x) : -(x))
 
+#define POWER(x, y) ((x) < 0 ? -powf(-(x), (y)) : powf((x), (y)))
+#define SQRT(x) ((x) < 0 ? -sqrtf(-(x)) :
+
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
 

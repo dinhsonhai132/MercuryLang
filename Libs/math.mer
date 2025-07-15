@@ -1,6 +1,4 @@
-# Standard Math Mercury Library
-# Last update 7/9/2025
-# Created in 7/2/2025 by dinhsonhai132
+# Standard Math Mercury Library, dinhsonhai132
 # This library is free for change
 
 # Global variable in math
@@ -28,7 +26,16 @@ func factorial(__value) do
 end
 
 func sqrt(__value) do
-    return __value * __value
+    let x = __value
+    let guess = x / 2
+    let i = 0
+
+    while i < 10 do
+        guess = (guess + x / guess) / 2
+        i += 1
+    end
+
+    return guess
 end
 
 func power(__value, __times) do
@@ -42,6 +49,8 @@ func power(__value, __times) do
 
     return __result
 end
+
+func square(x) do return x * x end
 
 func sin(__degree) do
     let __x = to_radian(__degree)
@@ -99,19 +108,6 @@ func cos(__degree) do
     end
 
     return __result
-end
-
-func isdigit(__char) do
-    return same(__char, "0") 
-    or same(__char, "1") 
-    or same(__char, "2")
-    or same(__char, "3") 
-    or same(__char, "4") 
-    or same(__char, "5")
-    or same(__char, "6") 
-    or same(__char, "7") 
-    or same(__char, "8")
-    or same(__char, "9")
 end
 
 func eval(__expression) do

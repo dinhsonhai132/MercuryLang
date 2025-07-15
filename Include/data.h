@@ -41,7 +41,7 @@ using namespace std;
 #define CHANGE_ITEM_ADDRESS                0x91
 #define TYPE_ADDRESS                       0x92
 #define RANGE_ADDRESS                      0x93
-#define RANDINT_ADDRESS                    0x94
+#define RANDOM_ADDRESS                     0xF9
 #define SUB_STR                            0x95
 #define SPLIT_ADDRESS                      0x96
 #define HASH_ADDRESS                       0x97

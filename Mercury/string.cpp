@@ -1,15 +1,19 @@
 #include "../include/string.h"
+#include "../include/math.h"
+
+float __uint8_to_float(Mer_uint8_t c) {
+    return static_cast<float>(c);
+}
 
 float __hash(mString_T *str) {
     vector<uint8_t> data = str->buff;
-    uint32_t hash = 2166136261u;
-    for (uint8_t byte : data) {
-        hash ^= byte;
-        hash *= 16777619u;
+    float result = 0.0f;
+    int size = data.size();
+    for (auto &item : data) {
+        result += __uint8_to_float(item) * POWER(31, size - 1);
+        size--;
     }
     
-    float result;
-    memcpy(&result, &hash, sizeof(float));
     return result;
 }
 

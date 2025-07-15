@@ -108,8 +108,6 @@ mAST_T *MerParser_parse_parent_expression(mParser_T *parser);
 
 mAST_T *MerParser_parse_dictionary_expression(mParser_T *parser);
 
-mAST_T *MerParser_parse_pow_expression(mParser_T *parser);
-
 mAST_T *MerParser_parse_include_statement(mParser_T *parser);
 
 #endif // MERCURY_PARSER_HEADER_FILE

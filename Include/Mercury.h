@@ -28,7 +28,7 @@
 #include <random>
 #include <functional>
 
-const char* CUSTOM_VERSION = "2.0.1";
+const char* CUSTOM_VERSION = "2.1.1";
 const char* AUTHOR = "dinhsonhai132";
 const char* LANGUAGE = "MercuryLang";
 

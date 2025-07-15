@@ -46,8 +46,8 @@
 #define CPROGRAM_END                            0x8D
 #define CADDRESS                                0x9D
 
-#define CLOAD_TRUE                              0x63
-#define CLOAD_FALSE                             0x64
+#define CLOAD_TRUE                              0x4F
+#define CLOAD_FALSE                             0xF2
 
 #define CINC                                    0x9A
 #define CDEC                                    0x9B

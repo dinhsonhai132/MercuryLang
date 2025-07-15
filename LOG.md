@@ -199,3 +199,7 @@
 - **Add** ```io.mer``` library
 
 - **Change** Opcode
+
+### 7/15/2025
+
+- **Add** new ```lambda```

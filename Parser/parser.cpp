@@ -515,6 +515,7 @@ mAST_T *MerParser_parse_let_statement(mParser_T *parser)
             }
 
             parser->token = _MerLexer_get_next_tok(parser->lexer);
+            parser->next = _MerLexer_look_ahead(parser->lexer);
 
             if (parser->token->tok == ASSIGN) {
                 parser->token = _MerLexer_get_next_tok(parser->lexer);

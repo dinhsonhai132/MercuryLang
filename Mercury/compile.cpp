@@ -1079,7 +1079,7 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_string_var(mAST_T *ast, __
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_function(mAST_T *ast, __compiler_u &glb) {
   __Mer_return_Code result = NULL_CODE;
   __Mer_return_Code body = NULL_CODE;
-  Mer_uint8_t func_address = create_label(glb) + 0xAF;
+  Mer_uint8_t func_address = create_label(glb) + 0x23;
   Mer_real_string name = ast->func_name;
   Mer_string func_name = strdup(ast->func_name.c_str());
   Mer_uint8_t args_size = ast->args_size;

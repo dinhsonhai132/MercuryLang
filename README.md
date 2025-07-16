@@ -56,7 +56,7 @@ mercury main.mer  # Run file
 
 ### 📤 Output
 ```mer
-import "io.mer"
+import "IO"
 
 print("hello world")
 ```
@@ -69,12 +69,16 @@ x += 1
 
 ### 📋 Lists
 ```mer
+import "IO"
+
 let fruits = ["apple", "banana"]
 print(fruits[0])
 ```
 
 ### 🧠 Lambda
 ```mer
+import "IO"
+
 let f(x) = x * 2
 print(f(3))
 ```
@@ -82,7 +86,7 @@ print(f(3))
 ### 🧮 Math & Logic
 ```mer
 import "math.mer"
-import "io.mer"
+import "IO"
 
 let x = pi
 print(cos(x) + sin(x))
@@ -108,6 +112,8 @@ add(2, 3)
 
 ### 🔀 Control Flow
 ```mer
+import "IO"
+
 if (1 == 1 or 2 == 2) and 2 == 2 then
     print(true)
 end

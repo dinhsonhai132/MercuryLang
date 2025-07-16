@@ -776,6 +776,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_MAKE_FUNCTION(__program_byte
 MERCURY_API __mer_core_data__ stack *MerVM_evaluate_call_context(CallContext *ctx, __program_bytecode &u, stack *stk) {
     __program_bytecode tmp = init_program_bytecode(ctx->code);    
     __get_label_map(tmp, "function");
+    tmp.is_in_func = true;
 
     for (;;) {
         Mer_uint8_t code = __get_next_code_in_prg_code(tmp);
@@ -927,6 +928,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_FUNCTION_CALL(__program_byte
         };
 
         stk = MerVM_evaluate_call_context(ctx, u, stk);
+        u.is_in_func = false;
         _L.clear();
         return stk;
     } else {

@@ -1,0 +1,162 @@
+# Standard Math Mercury Library, dinhsonhai132
+# This library is free for change
+
+# Global variable in math
+let pi = 3.1415926535897932384626433832795
+let e = 2.7182818284590452353602874713527
+let tau = 6.283185307179586476925286766559
+let gr = 1.6180339887498948482045868343656
+
+let __minus_1 = 0 - 1
+
+let to_radian(__degree) = __degree * 3.1415926535897932384626433832795 / 180
+
+func factorial(__value) do
+    let __result = 1
+    let __i = 1
+
+    while __i <= __value do
+        __result *= __i
+        __i += 1
+    end
+
+    return __result
+end
+
+func sqrt(__value) do
+    let x = __value
+    let guess = x / 2
+    let i = 0
+
+    while i < 10 do
+        guess = (guess + x / guess) / 2
+        i += 1
+    end
+
+    return guess
+end
+
+func power(__value, __times) do
+    let __i = 1
+    let __result = __value
+
+    while __i < __times do
+        __result *= __value
+        __i += 1
+    end
+
+    return __result
+end
+
+let square(x) = x * x
+let cube(x) = square(x) * x
+
+func sin(__degree) do
+    let __x = to_radian(__degree)
+    let __result = 0.0
+    let __sign = 1.0
+    let __i = 0
+    let __power = 0
+    let __numerator = 0
+    let __deno = 0
+    let __j = 0
+
+    while __i < 10 do
+        __power = 2 * __i + 1
+        __numerator = power(__x, __power)
+        __deno = 1.0
+        __j = 1
+
+        while __j <= __power do
+            __deno *= __j
+            __j += 1
+        end
+
+        __result += __sign * (__numerator / __deno)
+        __sign *= (0 - 1)
+        __i += 1
+    end
+
+    return __result
+end
+
+func cos(__degree) do
+    let __x = __degree * (3.14159265 / 180.0)
+    let __result = 0.0
+    let __sign = 1.0
+    let __i = 0
+    let __power = 0
+    let __numerator = 0
+    let __denominator = 0
+    let __j = 0
+
+    while __i < 10 do
+        __power = 2 * __i
+        __numerator = power(__x, __power)
+        __denominator = 1.0
+        __j = 1
+
+        while __j <= __power do
+            __denominator *= __j
+            __j += 1
+        end
+
+        __result += __sign * (__numerator / __denominator)
+        __sign *= (0 - 1)
+        __i += 1
+    end
+
+    return __result
+end
+
+func eval(__expression) do
+    let buffer = to_list(__expression)
+    let index = 0
+    let tokens = []
+    let num_str = ""
+
+    while index < size(buffer) do        
+        if same(buffer[index], "+") or same(buffer[index], "-") then
+            push(tokens, buffer[index])
+            index += 1
+        end
+
+        elif isdigit(buffer[index]) then
+            num_str = ""
+            while index < size(buffer) and isdigit(buffer[index]) do
+                sub(num_str, buffer[index])
+                index += 1
+                if index >= size(buffer) then
+                    break
+                end
+            end
+            push(tokens, num_str)
+        end
+
+        else
+            index += 1
+        end
+    end
+
+    let index = 0
+    let result = to_int(tokens[index])
+
+    index += 1
+
+    while index < size(tokens) do
+        op = tokens[index]
+        num = to_int(tokens[index + 1])
+
+        if same(op, "+") then
+            result += num
+        end
+        
+        elif same(op, "-") then
+            result -= num
+        end 
+
+        index += 2
+    end
+
+    return result
+end

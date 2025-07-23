@@ -175,7 +175,7 @@ int main() {
 }
 ```
 
---
+---
 
 ## 📕 library installation
 

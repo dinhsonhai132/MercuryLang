@@ -174,3 +174,52 @@ int main() {
     prompt();
 }
 ```
+
+--
+
+## 📕 library installation
+
+If ```Python``` has ```pip```, so ```MercuryLang``` has ```mpi```
+
+---
+
+### 🔍 What is ```mpi```?
+ - **`mpi`** (Mercury Package Installer) is the official tool for installing external libraries in **MercuryLang** — just like `pip` in Python.
+
+- Unlike Python or Lua which use centralized **package markets**,  
+  **MercuryLang uses GitHub** as the main source for libraries.
+
+---
+
+### 🚀 How to install a library?
+
+Installing a library with `mpi` is simple. Just type:
+
+```bash
+mpi --install https://github.com/author/repo
+```
+
+> Replace `author/repo` with the actual GitHub repository of the library you want to install.
+
+---
+
+### 📁 Required Files in a Library Repo
+
+To be recognized as a valid MercuryLang library, the repository **must contain**:
+
+#### 1. `main.mer`
+- This is the **entry point** of the library.
+- If it’s missing or named incorrectly, `mpi` will reject the repo.
+
+#### 2. `mpi.json`
+- A metadata file that describes the library.
+- Example format:
+
+```json
+{
+  "name": "your-library-name",
+  "version": "1.0.0",
+  "description": "A short description of your library.",
+  "author": "YourName"
+}
+```

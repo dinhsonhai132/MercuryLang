@@ -1,0 +1,62 @@
+# Standard IO Mercury Library
+# Last update 7/9/2025
+# Created in 7/9/2025 by dinhsonhai132
+# This library is free for change
+
+func print(__value) do
+    if type(__value) == 5 then
+        puts("[")
+        if size(__value) == 1 then
+            puts(__value[0])
+        end
+
+        elif size(__value) == 0 then
+            puts("]")
+            return 0
+        end
+
+        else
+            let id = 0
+            while id < size(__value) do
+                if type(__value[id]) == 4 then
+                    puts("\"")
+                    puts(__value[id])
+                    puts("\"")
+                end
+
+                else
+                    puts(__value[id])
+                end
+
+                if id != size(__value) - 1 then
+                    puts(", ")
+                end
+                id += 1
+            end
+        end
+
+        puts("]")
+        puts("\n")
+        return 0
+    end
+
+    elif type(__value) == 2 then
+        if __value == 1 then
+            puts("true")
+            puts("\n")
+            return 0
+        end
+
+        else
+            puts("false")
+            puts("\n")
+            return 0
+        end
+    end
+
+    else
+        puts(__value)
+        puts("\n")
+        return 0
+    end
+end

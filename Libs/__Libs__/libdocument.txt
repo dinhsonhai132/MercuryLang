@@ -1,0 +1,42 @@
+MercuryLang Library Installation Guide
+
+This is the place where you install external libraries.
+
+How to Create Your Library
+--------------------------
+
+1. Create a GitHub repository
+   Inside it, you must include a file named "main.mer".
+   The branch of your repository must be "main" branch.
+   NOTE: The main file MUST be named "main.mer".
+   If not, mpi (Mercury Package Installer) will not recognize it as a library and will show an error.
+
+2. Create a mpi.json file
+   This file describes your library metadata. Use this format:
+
+   {
+       "name": "your-library-name",
+       "version": "your-version",
+       "description": "A short description of your library",
+       "author": "Your Name"
+   }
+
+3. Your GitHub repository folder structure must look like this:
+
+   your_repository/
+   ├── (other_files)/
+   ├── ...
+   ├── main.mer
+   └── mpi.json
+
+How to Install a Library
+------------------------
+
+Once everything is ready, you can install your library using:
+
+    mpi --install <link_to_your_repository>
+
+Replace <link_to_your_repository> with the full GitHub URL.
+For example:
+
+    mpi --install https://github.com/username/my-mercury-lib

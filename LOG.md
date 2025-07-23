@@ -203,3 +203,9 @@
 ### 7/15/2025
 
 - **Add** new ```lambda```
+
+### 7/23/2025
+
+- **Remake** function
+
+- **Add** new **mpi**

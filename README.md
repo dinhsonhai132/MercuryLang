@@ -46,8 +46,8 @@
 ### Running Mercury
 
 ```bash
-mercury           # Launch REPL
-mercury main.mer  # Run file
+mer           # Launch REPL
+mer main.mer  # Run file
 ```
 
 ---

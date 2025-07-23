@@ -199,6 +199,16 @@ Installing a library with `mpi` is simple. Just type:
 mpi --install https://github.com/author/repo
 ```
 
+Example:
+```bash
+mpi --install https://github.com/dinhsonhai132/math
+```
+
+When done just import it:
+```
+import "math"
+```
+
 > Replace `author/repo` with the actual GitHub repository of the library you want to install.
 
 ---

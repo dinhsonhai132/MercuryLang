@@ -92,3 +92,15 @@ vector<string> list_files_in_folder(const string& folder_path) {
 
     return file_names;
 }
+
+vector<string> list_folder(const string& folder_path) {
+    vector<string> folder_names;
+
+    for (const auto& entry : fs::directory_iterator(folder_path)) {
+        if (entry.is_directory()) {
+            folder_names.push_back(entry.path().filename().string());
+        }
+    }
+
+    return folder_names;
+}

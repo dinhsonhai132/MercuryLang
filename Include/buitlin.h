@@ -25,6 +25,7 @@ unordered_map<string, Mer_uint8_t> lib_hashmap = {
     {"type", TYPE_ADDRESS}, 
     {"range", RANGE_ADDRESS},
     {"sub", SUB_STR}, 
+    {"ffi", FFI_ADDRESS},
     {"isdigit", ISDIGIT_ADDRESS},
     {"sleep", SLEEP_ADDRESS},
     {"to_list", LIST_ADDRESS},

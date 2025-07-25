@@ -220,7 +220,7 @@ mAST_T *MerParser_parse_for_statement(mParser_T *parser) {
         MerDebug_print_error(SYNTAX_ERROR, "Expected variable", parser->lexer->file, TRUE_LINE(parser));
     }
 
-    if (parser->token->tok == IN) {
+    if (parser->token->tok == IN_T) {
         parser->token = _MerLexer_get_next_tok(parser->lexer);
         node->in_value = MerParser_parse(parser);
 
@@ -989,8 +989,6 @@ mAST_T *MerParser_parse_not_expression(mParser_T *parser) {
 mAST_T *MerParser_parse_dictionary_expression(mParser_T *parser) {
     mAST_T *node = MerAST_make_parent(DictionaryExpression);
 
-    cout << "dict" << endl;
-    
     while (parser->token->tok != RIGHT_BRACE) {
         mAST_T *dict_key = MerAST_make_parent(DictionaryExpression);
         parser->token = _MerLexer_get_next_tok(parser->lexer);

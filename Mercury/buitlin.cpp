@@ -531,3 +531,59 @@ MERCURY_API __mer_core_lib_api__ __builtin_func_t __builtin_pause(stack *stk) {
 MERCURY_API __mer_core_lib_api__ __builtin_func_t __mer_builtin_exit(stack *stk) {
     MER_EXIT;
 }
+
+typedef int(*SumFunc)(int[]);
+
+float __ffi(string dll_path, string func, vector<int> args) {
+#ifdef _WIN32
+    HMODULE hModule = LoadLibraryA(dll_path.c_str());
+
+    if (!hModule) {
+        cerr << "Failed to load DLL: " << dll_path << endl;
+        FreeLibrary(hModule);
+        return 0;
+    }
+
+    FARPROC pFunc = GetProcAddress(hModule, func.c_str());
+
+    if (!pFunc) {
+        cerr << "Failed to find function: " << func << endl;
+        FreeLibrary(hModule);
+        return 0;
+    }
+
+    SumFunc sumFunc = (SumFunc)pFunc;
+    int result = sumFunc(args.data());
+    return result;
+
+#else   
+    cerr << "FFI is not supported on this platform." << endl;
+#endif
+}
+
+MERCURY_API __mer_core_api__ __builtin_func_t __builtin_ffi(stack *stk) {
+    table *args = POP();
+    table *func_to_call = POP();
+    table *path_to_dll = POP();
+
+    vector<int> args_list;
+
+    if (args->is_list) {
+        for (auto &item : args->list_v->args) {
+            table *val = (table *) item;
+            args_list.push_back(val->cval);
+        }
+    }
+
+    if (!func_to_call->is_str || !path_to_dll->is_str) {
+        return;
+    }
+    
+    string dll_path = __convert_to_string(path_to_dll->f_str_v);
+    string func = __convert_to_string(func_to_call->f_str_v);
+    
+    int value = __ffi(dll_path, func, args_list);
+    stack_push(MerCompiler_table_setup(value, NULL_UINT_8_T));
+
+    delete args; delete func_to_call; delete path_to_dll;
+}

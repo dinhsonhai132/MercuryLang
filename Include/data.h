@@ -37,7 +37,7 @@ using namespace std;
 #define TAN_ADDRESS                        0x8D
 #define COT_ADDRESS                        0x8E
 #define SQRT_ADDRESS                       0x8F
-#define PRINT_GLOBAL_ADDRESS               0x90
+#define FFI_ADDRESS                        0x90
 #define CHANGE_ITEM_ADDRESS                0x91
 #define TYPE_ADDRESS                       0x92
 #define RANGE_ADDRESS                      0x93

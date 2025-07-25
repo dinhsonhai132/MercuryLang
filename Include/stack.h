@@ -30,9 +30,6 @@
 
 using namespace std;
 
-#define GC_HEAD \
-    int ref_count = 1;
-
 #define OTHER \
     bool is_in_glb; \
     bool is_in_lc; \
@@ -93,14 +90,16 @@ using namespace std;
 
 typedef struct __table
 {
-    GC_HEAD HEAD_STACK HEAD_OBJ HEAD_VALUE FLAG OTHER
+    int ref_count = 0;
+    HEAD_STACK HEAD_OBJ HEAD_VALUE FLAG OTHER
     vector<__table *> table;
 
 } table;
 
 typedef struct __symboltable
 {
-    GC_HEAD HEAD_STACK HEAD_OBJ HEAD_VALUE FLAG OTHER
+    int ref_count = 0;
+    HEAD_STACK HEAD_OBJ HEAD_VALUE FLAG OTHER
     table *tab;
 } symtable;
 

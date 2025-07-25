@@ -4,6 +4,21 @@
 #define __SUCCESS__ 0
 #define __FAILURE__ 1
 
+#ifdef _WIN32
+    #ifndef WIN32_LEAN_AND_MEAN
+        #define WIN32_LEAN_AND_MEAN
+    #endif
+
+    #ifndef _WIN32_WINNT
+        #define _WIN32_WINNT 0x0601
+    #endif
+
+    #include <windows.h>
+    #include <timezoneapi.h> 
+    #include <winbase.h>   
+#endif
+
+
 #include "opcode.h"
 #include "math.h"
 #include "sys.h"

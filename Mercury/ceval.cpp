@@ -37,7 +37,7 @@ unordered_map<Mer_uint8_t, Mer_size_t> __get_label_map(__program_bytecode &u, st
         code = __get_next_code_in_prg_code(u);
     }
 
-    u.iid = 0; // reset it
+    u.iid = 0;
 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [__get_label_map] [pass]" << endl;
@@ -334,9 +334,9 @@ MERCURY_API __mer_core_api__ stack *MerVM_evaluate_CLEN(__program_bytecode &u, s
 
     table *value = POP();
 
-    if (value->is_list) stack_push(MerCompiler_table_setup(value->list_v->size, NULL_UINT_8_T));
-    else if (value->is_str) stack_push(MerCompiler_table_setup(value->f_str_v->size, NULL_UINT_8_T));
-    else stack_push(MerCompiler_table_setup(4, NULL_UINT_8_T));
+    if (value->is_list) {stack_push(MerCompiler_table_setup(value->list_v->size, NULL_UINT_8_T));}
+    else if (value->is_str) {stack_push(MerCompiler_table_setup(value->f_str_v->size, NULL_UINT_8_T));}
+    else {stack_push(MerCompiler_table_setup(4, NULL_UINT_8_T));}
 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [MerVM_evaluate_GET_ITERATOR] [pass]" << endl;
@@ -1027,6 +1027,8 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_FUNCTION_CALL(__program_byte
 
     if (func->is_func) {
         Mer_uint8_t para_address = 0x00;
+        vector<symtable*> _T;
+
         for (int i = 0; i < func->func_obj_v->args_size; i++) {
             table *item = POP();
 

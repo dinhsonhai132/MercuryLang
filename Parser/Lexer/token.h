@@ -115,7 +115,7 @@ using namespace std;
 #define PLUS_PLUS "PLUS_PLUS"
 #define MINUS_MINUS "MINUS_MINUS"
 #define THEN "THEN"
-#define IN "IN"
+#define IN_T "IN"
 #define PLUS_EQUAL "PLUS_EQUAL"
 #define MINUS_EQUAL "MINUS_EQUAL"
 #define TIMES_EQUAL "TIMES_EQUAL"
@@ -299,7 +299,7 @@ inline const char* GET_SYNTAX(const std::string& c) {
     else if (c == ELSE_S) return ELSE;
     else if (c == FOR_S) return FOR;
     else if (c == WHILE_S) return WHILE;
-    else if (c == IN_S) return IN;
+    else if (c == IN_S) return IN_T;
     else if (c == NOT_S) return NOT;
     else if (c == LOOP_S) return LOOP;
     else if (c == TRUE_S) return TRUE_T;
@@ -339,7 +339,7 @@ inline const char* GET_SYNTAX(const std::string& c) {
     else if (c == "else") return ELSE;
     else if (c == "for") return FOR;
     else if (c == "while") return WHILE;
-    else if (c == "in") return IN;
+    else if (c == "in") return IN_T;
     else if (c == "not") return NOT;
     else if (c == "return") return RETURN;
     else if (c == "import") return IMPORT;

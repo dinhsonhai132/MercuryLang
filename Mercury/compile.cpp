@@ -129,10 +129,10 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_import(mAST_T *ast, __comp
   }
 
   if (!found) {
-    paths = list_files_in_folder("C:\\MercuryLang\\Libs\\__Libs__");
+    paths = list_folder("C:\\MercuryLang\\Libs\\__Libs__");
     for (auto &item : paths) {
       if (item == path) {
-        path = "C:\\MercuryLang\\Libs\\__Libs__\\" + item;
+        path = "C:\\MercuryLang\\Libs\\__Libs__\\" + item + "\\main.mer";
         buff = MerBuffer_read_file(path);
         import.push_back(path);
         found = true;

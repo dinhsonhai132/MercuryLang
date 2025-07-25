@@ -143,6 +143,15 @@ symtable *MerCompiler_symboltable_setup(string name, float value, string type, u
     return s;
 }
 
+void release_table_obj(table *obj) {
+    if (obj == nullptr) return;
+
+    obj->ref_count--;
+    if (obj->ref_count == 0) {
+        MerCompiler_free_table(obj);
+    }
+}
+
 table *pop_stack(stack *stk) { 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [pop_stack] [start]" << endl;

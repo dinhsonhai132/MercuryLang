@@ -44,7 +44,7 @@
 
 #define CPROGRAM_START                          0x60
 #define CPROGRAM_END                            0x8D
-#define CADDRESS                                0x9D
+#define CADDRESS                                0xFE
 
 #define CLOAD_TRUE                              0x4F
 #define CLOAD_FALSE                             0xF2

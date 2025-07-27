@@ -204,12 +204,12 @@
 
 - **Add** new ```lambda```
 
-### 7/27/2025
-
-- **New** **LIST** update
-
 ### 7/23/2025
 
 - **Remake** function
 
 - **Add** new **mpi**
+
+### 7/27/2025
+
+- **New** **LIST** update (store index statement, multi-dimensional array

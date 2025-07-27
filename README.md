@@ -155,6 +155,54 @@ end
 ### 📜 Other syntax
 MercuryLang also supports many other syntax features such as `break`, `return`, `continue`, `and`, `or`, `not`, `is`, `include`, `import`, `do`, `end`, `if`, `elif`, `else`, `while`, `for`, `loop`, and more.
 
+### 🎮 Game
+```
+import "MGL"
+
+screen_width = 500
+screen_height = 500
+
+screen_init(screen_width, screen_height)
+
+cube_width = 50
+cube_height = 50
+
+cube_x = 0
+cube_y = screen_height - cube_height
+
+cube_vel = 5
+
+cube_color = [255, 255, 255]
+
+while true do
+    screen_fill(0, 0, 0)
+
+    screen_draw(cube_x, cube_y, cube_width, cube_height, cube_color[0], cube_color[1], cube_color[2])
+
+    let key = get_key_char(key_pressed())
+
+    if same(key, "a") then
+        cube_x -= cube_vel
+    end
+
+    if same(key, "d") then
+        cube_x += cube_vel
+    end
+
+    if cube_x >= screen_width - cube_width then
+        cube_x = screen_width - cube_width
+    end
+
+    if cube_x <= 0 then
+        cube_x = 0
+    end
+
+    screen_flip()
+end
+
+screen_quit()
+```
+
 ---
 
 ## 🧬 Embedding MercuryLang in C++

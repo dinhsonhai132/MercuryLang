@@ -212,4 +212,4 @@
 
 ### 7/27/2025
 
-- **New** **LIST** update (store index statement, multi-dimensional array
+- **New** **LIST** update (store index statement, multi-dimensional array, ...)

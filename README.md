@@ -73,8 +73,10 @@ print(x)
 ```mer
 import "IO"
 
-let fruits = ["apple", "banana", "water"]
-print(fruits[0])
+let fruits = [["apple, "orange", "pineapple"], "banana", "water"]
+print(fruits[0][1])
+
+frutis[0][2] = "watermelon"
 ```
 
 ### 🧠 Lambda

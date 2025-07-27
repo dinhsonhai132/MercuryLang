@@ -33,7 +33,6 @@ mAST_T *MerAST_new(void)
     node->is_minus_assign = false;
     node->is_mul_assign = false;
     node->is_div_assign = false;
-    node->is_class = false;
     node->is_mod_assign = false;
     node->is_assign_operator = false;
     node->is_break = false;
@@ -45,7 +44,6 @@ mAST_T *MerAST_new(void)
 
     node->inc_dec_value = nullptr;
     node->attr = nullptr;
-    node->attr_value = nullptr;
     node->poutput = nullptr;
     node->comp = nullptr;
     node->assign_value = nullptr;

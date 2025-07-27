@@ -58,11 +58,17 @@ end
 
 func reverse(vec1) do
     vec1 = vector(vec1)
-
     vsize = size(vec1)
 
     i = 0
-    while i < vsize do
-        
+    j = vsize - 1
+
+    while i < j do
+        tmp = vec1[i]
+        vec1[i] = vec1[j]
+        vec1[j] = tmp
+
+        i = i + 1
+        j = j - 1
     end
 end

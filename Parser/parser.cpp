@@ -205,6 +205,43 @@ mAST_T *MerParser_parse_array_expression(mParser_T *parser) {
     node->is_list = true;
     node->is_alone_val = true;
 
+    parser->next = _MerLexer_look_ahead(parser->lexer);
+    mAST_T *new_node = MerAST_make_parent(ExtractExpression);
+    new_node->extract_value = node;
+    new_node->is_value_extract = true;
+
+    left_bracket:
+    if (parser->next->tok == LEFT_BRACKET) {
+        parser->token = _MerLexer_get_next_tok(parser->lexer); // eat '['
+
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+
+        mAST_T *item = MerParser_parse(parser);
+
+        if (!item || !is_ast_expression(item->type)) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression in list", parser->lexer->file, TRUE_LINE(parser));
+        }
+
+        if (item->type == ArrayExpression) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression in list", parser->lexer->file, TRUE_LINE(parser));
+        }
+
+        new_node->mul_extract.push_back(item);
+
+        if (parser->token->tok == RIGHT_BRACKET) {
+            parser->next = _MerLexer_look_ahead(parser->lexer);
+
+            if (parser->next->tok == LEFT_BRACKET) {
+                new_node->is_mul_extract = true;
+                goto left_bracket;
+            } else {
+                return new_node;
+            }
+        } else {
+            MerDebug_print_error(SYNTAX_ERROR, "Missing ']'", parser->lexer->file, TRUE_LINE(parser));
+        }
+    }
+
     return node;
 }
 
@@ -259,19 +296,6 @@ mAST_T *MerParser_parse_for_statement(mParser_T *parser) {
     }
 
     parser->token = _MerLexer_get_next_tok(parser->lexer);
-    node->true_line = TRUE_LINE(parser);
-    return node;
-}
-
-mAST_T *MerParser_parse_store_index_statement(mParser_T *parser) {
-    mAST_T *node = MerAST_make_parent(StoreIndexStatement);
-
-    node->extract_assign = MerParser_parse(parser);
-
-    if (!is_ast_expression(node->extract_assign->type)) {
-        MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, TRUE_LINE(parser));
-    }
-    
     node->true_line = TRUE_LINE(parser);
     return node;
 }
@@ -829,6 +853,43 @@ mAST_T *MerParser_parse_function_call_expression(mParser_T *parser)
         return NULL;
     }
 
+    mAST_T *new_node = MerAST_make_parent(ExtractExpression);
+    new_node->extract_value = node;
+    new_node->is_value_extract = true;
+
+    if (parser->token->tok == RIGHT_PAREN) {
+        parser->next = _MerLexer_look_ahead(parser->lexer);
+        left_bracket:
+        if (parser->next->tok == LEFT_BRACKET) {
+            parser->token = _MerLexer_get_next_tok(parser->lexer); // eat '[' 
+            
+            parser->token = _MerLexer_get_next_tok(parser->lexer);
+            mAST_T *value = MerParser_parse(parser);
+            
+            if (!value || !is_ast_expression(value->type)) {
+                MerDebug_print_error(SYNTAX_ERROR, "Expected extract expression", parser->lexer->file, TRUE_LINE(parser));
+            }
+            
+            new_node->mul_extract.push_back(value);
+            
+            if (parser->token->tok == RIGHT_BRACKET) {
+                parser->next = _MerLexer_look_ahead(parser->lexer);
+                if (parser->next->tok == LEFT_BRACKET) {
+                    goto left_bracket;
+                }
+
+                return new_node;
+            } else {
+                MerDebug_print_error(SYNTAX_ERROR, "Expected ']' in extract expression", parser->lexer->file, TRUE_LINE(parser));
+            }
+
+        } else {
+            return node;
+        }
+    } else {
+        MerDebug_print_error(SYNTAX_ERROR, "Expected ')'", parser->lexer->file, TRUE_LINE(parser));
+    }
+
     return node;
 }
 
@@ -912,22 +973,35 @@ mAST_T *MerParser_parse_extract_expression(mParser_T *parser) {
 
         if (parser->token->tok == RIGHT_BRACKET) {
             parser->next = _MerLexer_look_ahead(parser->lexer);
-            if (parser->next->tok == ASSIGN) {
-                mAST_T *assign = MerAST_make_parent(StoreIndexStatement);
-                assign->extract_name = node->extract_name;
-                assign->array_store = node->extract_value;
+
+            left_bracket:
+            if (parser->next->tok == LEFT_BRACKET) {
+                node->is_mul_extract = true;
+
+                parser->token = _MerLexer_get_next_tok(parser->lexer); // eat '['
 
                 parser->token = _MerLexer_get_next_tok(parser->lexer);
-                parser->token = _MerLexer_get_next_tok(parser->lexer);
+                mAST_T *value = MerParser_parse(parser);
 
-                assign->array_store_value = MerParser_parse(parser);
-
-                if (!assign->array_store_value || !is_ast_expression(assign->array_store_value->type)) {
-                    MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, TRUE_LINE(parser));
+                if (!value || !is_ast_expression(value->type)) {
+                    MerDebug_print_error(SYNTAX_ERROR, "Expected extract expression", parser->lexer->file, TRUE_LINE(parser));
                 }
 
-                return assign;
+                if (value->type == ArrayExpression) {
+                    MerDebug_print_error(SYNTAX_ERROR, "Expected extract expression, can not be list", parser->lexer->file, TRUE_LINE(parser));
+                }
+
+                node->mul_extract.push_back(value);
+
+                if (parser->token->tok == RIGHT_BRACKET) {
+                    parser->next = _MerLexer_look_ahead(parser->lexer);
+                    goto left_bracket;
+                } else {
+                    string msg = "Expected ']' in expression, name: " + node->extract_name;
+                    MerDebug_print_error(SYNTAX_ERROR, msg.c_str(), parser->lexer->file, TRUE_LINE(parser));
+                }
             }
+
             return node;
         } else {
             string msg = "Expected ']' in expression, name: " + node->extract_name;
@@ -1042,10 +1116,35 @@ mAST_T *MerParser_parse_parent_expression(mParser_T *parser) {
     return left;
 }
 
+mAST_T *MerParser_parse_store_index_statement(mParser_T *parser, mAST_T *left) {
+    if (parser->token->tok == ASSIGN) {
+        mAST_T *node = MerAST_make_parent(StoreIndexStatement);
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+
+        mAST_T *right = MerParser_parse(parser);
+
+        if (!right || !is_ast_expression(right->type)) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, TRUE_LINE(parser));
+        }
+
+        node->array_store = left;
+        node->array_store_value = right;
+
+        return node;
+    }
+
+    return left;
+}
+
+
 mAST_T *MerParser_parse_logical_expression(mParser_T *parser) {
     mAST_T *value = MerParser_parse_or_expression(parser);
     if (!value) {
         MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, TRUE_LINE(parser));
+    }
+
+    if (value->type == ExtractExpression) {
+        return MerParser_parse_store_index_statement(parser, value);
     }
 
     value->true_line = TRUE_LINE(parser);

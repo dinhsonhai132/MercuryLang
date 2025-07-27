@@ -74,6 +74,7 @@ using namespace std;
 #define OrExpression "OrExpression"
 #define NotExpression "NotExpression"
 #define IncrementExpression "IncrementExpression"
+#define AttrExpression "AttrExpression"
 #define DecrementExpression "DecrementExpression"
 #define FunctionWithArgsStatement "FunctionWithArgsStatement"
 #define FunctionCallWithArgsExpression "FunctionCallWithArgsStatement"
@@ -89,6 +90,7 @@ using namespace std;
      (type) == ComparisonExpression             || \
      (type) == ArrayExpression                  || \
      (type) == FunctionCallExpression           || \
+     (type) == AttrExpression                   || \
      (type) == FunctionCallWithArgsExpression   || \
      (type) == IncrementExpression              || \
      (type) == AndExpression                    || \
@@ -197,12 +199,11 @@ struct mAST_T
 
     // for class
     string class_name;
-    bool is_class;
     vector<mAST_T *> class_body;
 
     // for attr System.out.println("hello");
     mAST_T *attr;
-    mAST_T *attr_value;
+    vector<mAST_T *> attr_value;
     bool is_dad;
 
     // for delete
@@ -266,8 +267,12 @@ struct mAST_T
 
     // for extract expression and statement
     string extract_name;
+    vector<mAST_T *> mul_extract;
     mAST_T *extract_value;
     mAST_T *extract_assign;
+    vector<mAST_T *> extract_list;
+    bool is_mul_extract;
+    bool is_value_extract;
     bool is_extract;
     bool is_string_extract;
     bool is_extract_statement;

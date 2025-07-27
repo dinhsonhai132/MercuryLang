@@ -366,29 +366,61 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_loop(mAST_T *ast, __compil
 
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_store_index_statement(mAST_T *ast, __compiler_u &glb) {
   __Mer_return_Code result = NULL_CODE;
-  __Mer_return_Code array_store = MerCompiler_compile_ast_id(ast->array_store, glb);
-  __Mer_return_Code array_store_value = MerCompiler_compile_ast_id(ast->array_store_value, glb);
+  __Mer_return_Code mul_extract = NULL_CODE;
+  __Mer_return_Code value = MerCompiler_compile_ast_id(ast->array_store_value, glb);
+  __Mer_return_Code index = MerCompiler_compile_ast_id(ast->array_store->extract_value, glb);
 
-  Mer_real_string extract_name = ast->extract_name.c_str();
-  Mer_uint8_t address = NULL_UINT_8_T;
+  Mer_uint8_t list_address = NULL_UINT_8_T;  
+  Mer_real_string list_name = ast->array_store->extract_name.c_str();
+
   bool found = false;
-
   for (auto &global : glb.is_in_func ? LOCAL_TABLE : GLOBAL_TABLE) {
-    if (global->__name == extract_name) {
-      address = global->__Address;
+    if (global->__name == ast->array_store->extract_name) {
+      list_address = global->__Address;
       found = true;
       break;
     }
   }
 
   if (!found) {
-    MerDebug_print_error(COMPILER_ERROR, "List not found, can not extract value from list", glb.file, ast->true_line);
+    MerDebug_print_error(COMPILER_ERROR, "List not found, can not store value in list", glb.file, ast->true_line);
+  }
+
+  if (ast->array_store->is_mul_extract) {
+      PUSH(result, CLOAD_GLOBAL);
+      PUSH(result, list_address);
+
+      INSERT_VEC(result, index);
+      PUSH(result, CGET_ITEM);
+
+      size_t size = ast->array_store->mul_extract.size();
+      size_t id = 0;
+
+      for (auto &node : ast->array_store->mul_extract) {
+          mul_extract = MerCompiler_compile_ast_id(node, glb);
+
+          if (id < size - 1) {
+              INSERT_VEC(result, mul_extract);
+              PUSH(result, CGET_ITEM);
+          } else {
+              INSERT_VEC(result, mul_extract);
+          }
+
+          id++;
+      }
+
+      INSERT_VEC(result, value);
+      PUSH(result, CSTORE_INDEX);
+
+      return result;
   }
 
   PUSH(result, CLOAD_GLOBAL);
-  PUSH(result, address);
-  INSERT_VEC(result, array_store);
-  INSERT_VEC(result, array_store_value);
+  PUSH(result, list_address);
+
+  INSERT_VEC(result, index);
+
+  INSERT_VEC(result, value);
   PUSH(result, CSTORE_INDEX);
 
   return result;
@@ -399,6 +431,22 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_extract(mAST_T *ast, __com
 
   bool found = false;
   Mer_uint8_t list_address = NULL_UINT_8_T;
+
+  if (ast->is_value_extract) {
+    __Mer_return_Code value = MerCompiler_compile_ast_id(ast->extract_value, glb);
+    __Mer_return_Code result = NULL_CODE;
+    __Mer_return_Code index = NULL_CODE;
+
+    INSERT_VEC(result, value);
+
+    for (auto &item : ast->mul_extract) {
+      __Mer_return_Code _code = MerCompiler_compile_ast_id(item, glb);
+      INSERT_VEC(result, _code);
+      PUSH(result, CGET_ITEM);
+    }
+
+    return result;
+  }
 
   for (auto &global : glb.is_in_func ? LOCAL_TABLE : GLOBAL_TABLE) {
     if (global->__name == ast->extract_name) {
@@ -418,6 +466,14 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_extract(mAST_T *ast, __com
 
   INSERT_VEC(result, _code);
   PUSH(result, CGET_ITEM);
+
+  if (ast->is_mul_extract) {
+    for (auto &item : ast->mul_extract) {
+      __Mer_return_Code _code = MerCompiler_compile_ast_id(item, glb);
+      INSERT_VEC(result, _code);
+      PUSH(result, CGET_ITEM);
+    }
+  }
 
   return result;
 }

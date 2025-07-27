@@ -514,7 +514,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_GET_ITEM(__program_bytecode 
     }
 
     if (!extract_val) {
-        MerDebug_system_error(SYSTEM_ERROR, "Error while getting item from a list object", u.file);
+        MerDebug_system_error(SYSTEM_ERROR, "Error while getting item from a list object, extract value", u.file);
     }
 
     if (obj->is_list) {

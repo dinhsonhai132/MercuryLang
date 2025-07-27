@@ -285,3 +285,7 @@ To be recognized as a valid MercuryLang library, the repository **must contain**
   "author": "YourName"
 }
 ```
+
+---
+
+**Made** by **dinhsonhai132**

@@ -156,8 +156,10 @@ end
 MercuryLang also supports many other syntax features such as `break`, `return`, `continue`, `and`, `or`, `not`, `is`, `include`, `import`, `do`, `end`, `if`, `elif`, `else`, `while`, `for`, `loop`, and more.
 
 ### 🎮 Game
+- MercuryLang has a library for **graphic** and **game** (```MGL```)
+- This code here is a example for a simple jumping game using ```MGL```
 ```
-import "MGL"
+import "MGL" # import Mercury Game Library
 
 screen_width = 500
 screen_height = 500

@@ -52,7 +52,7 @@ mer main.mer  # Run file
 
 ---
 
-## 🧠 Syntax Guide
+## 🧠 Syntax Guide and help
 
 ### 📤 Output
 ```mer

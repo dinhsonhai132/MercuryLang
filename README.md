@@ -83,8 +83,8 @@ frutis[0][2] = "watermelon"
 ```mer
 import "IO"
 
-let f(x) = x * 2
-print(f(3))
+let f(x) = [1, 2, 3, 4, x]
+print(f(3)[0])
 ```
 
 ### 🧠 Functions

@@ -290,7 +290,6 @@ inline bool is_identifier(const std::string& c) {
     || (c == "or")
     || (c == "not")
     || (c == "then");
-    
 }
 
 inline const char* GET_SYNTAX(const std::string& c) {
@@ -385,6 +384,7 @@ inline const char* GET_1_CHAR(char c) {
         case '>': return GREATER;
         case '^': return POW;
         case '+': return PLUS;
+        case '.': return DOT;
         case '-': return MINUS;
         case '/': return DIV;
         case ';': return SEMICOLON;

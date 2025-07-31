@@ -112,9 +112,9 @@ struct mAST_T
     string string_iden;
     mAST_T *poutput;
 
-    // member
-    mAST_T *object;
-    mAST_T *property;
+    // class
+    string class_name;
+    vector<mAST_T *> members;
 
     int true_line;
 
@@ -197,13 +197,10 @@ struct mAST_T
     bool is_extract_expression = false;
     bool is_None;
 
-    // for class
-    string class_name;
-    vector<mAST_T *> class_body;
-
     // for attr System.out.println("hello");
     mAST_T *attr;
-    vector<mAST_T *> attr_value;
+    string attr_iden;
+    vector<mAST_T *> attrs;
     bool is_dad;
 
     // for delete

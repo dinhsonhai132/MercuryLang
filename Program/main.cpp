@@ -61,12 +61,12 @@ int main(int argc, char** argv) {
     if (mode == "-m") {
         print_bytecode(compiledCode.prg_code.buff);
         return 0;
-    }
+    }   
 
-    if (mode == "-c") {
-        std::string outputFile = inputFile.substr(0, inputFile.find_last_of(".")) + ".o";
-        MerBuffer_make_and_write_file_bytecode(outputFile, compiledCode.prg_code.buff);
-    }
+    string OutputByteCode = "__mercache__\\" + inputFile.substr(0, inputFile.find_last_of(".")) + ".merc-210.merc";
+
+    MerBuffer_create_folder("__mercache__");
+    MerBuffer_make_and_write_file_bytecode(OutputByteCode, compiledCode.prg_code.buff);
 
     stack* result = MerVM_evaluate_program(compiledCode);
     MerCore_Finalize();

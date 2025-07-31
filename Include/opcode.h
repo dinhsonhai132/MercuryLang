@@ -55,18 +55,20 @@
 #define CAND                                    0x9C
 #define COR                                     0x62
 
-#define CCLASS_BEGIN                            0x9E // CLASS_BEGIN <class_name>
-#define CCLASS_END                              0x9F // CLASS_END
+#define CCLASS_BEGIN                            0x9E 
+#define CCLASS_END                              0x9F
 
-#define CSTORE_ATTR                             0xA0 // STORE_ATTR <class_name> <attr_name>
-#define CLOAD_ATTR                              0xA1 // LOAD_ATTR <class_name> <attr_name>
+#define CSTORE_ATTR                             0xA0
+#define CLOAD_ATTR                              0xA1
+
+#define CLOAD_METHOD                            0xA2
+#define CCALL_METHOD                            0xA4
 
 #define CDELETE                                 0xA2
 
 #define CIS                                     0xA3
 
 #define CEND_FUNCTION                           0xFF
-
 
 #define NUMBER_0 {0x00, 0x00, 0x00, 0x00}
 #define NUMBER_1 {0x00, 0x00, 0x80, 0x3F}

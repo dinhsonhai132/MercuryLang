@@ -137,4 +137,8 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_define(mAST_T *ast, __comp
 
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_define_expression(mAST_T *ast, __compiler_u &glb);
 
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_class_statement(mAST_T *ast, __compiler_u &glb);
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_attribute_expression(mAST_T *ast, __compiler_u &glb);
+
 #endif // MERCURY_BYTECODE_COMPILER_HEADER

@@ -94,7 +94,6 @@ void print_help() {
     cout << "  -p\t\tStart the Mercury REPL\n";
     cout << "  -h\t\tShow this help message\n";
     cout << "  -m\t\tCompiled into readable bytecode\n";
-    cout << "  -c\t\tCompile into .o file\n";
 }
 
 string time_date() {

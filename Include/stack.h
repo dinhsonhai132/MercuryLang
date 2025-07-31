@@ -52,6 +52,7 @@ using namespace std;
     bool is_str; \
     bool is_var; \
     bool is_func; \
+    bool is_class; \
     bool is_code; \
     bool is_type; \
     bool is_iter; \
@@ -67,6 +68,7 @@ using namespace std;
     mBool_T *bool_v; \
     mCode_T *code_v; \
     mIter_T *iter_v; \
+    mClass_T *class_v; \
     mList_T *list_v; \
     mObject_T *obj_v; \
     mOpCode_T *opcode_v; \

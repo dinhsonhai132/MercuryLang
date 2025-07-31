@@ -46,8 +46,117 @@ MERCURY_API __Mer_return_Code MerCompiler_compile_ast_id(mAST_T *ast, __compiler
   if (ast->type == DefineStatement)         return MerCompiler_compile_ast_define(ast, glb);
   if (ast->type == DefineExpression)        return MerCompiler_compile_ast_define_expression(ast, glb);
   if (ast->type == IncludeStatement)        return MerCompiler_compile_ast_include(ast, glb);
+  if (ast->type == ClassStatement)          return MerCompiler_compile_ast_class_statement(ast, glb);
+  if (ast->type == AttrExpression)          return MerCompiler_compile_ast_attribute_expression(ast, glb);
 
   return NULL_CODE;
+}
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_attribute_expression(mAST_T *ast, __compiler_u &glb) {
+  __Mer_return_Code result = NULL_CODE;
+
+  Mer_real_string class_name = ast->attr_iden;
+  Mer_uint8_t class_address = NULL_UINT_8_T;
+
+  bool found = false;
+
+  for (auto &item : glb.is_in_func ? LOCAL_TABLE : GLOBAL_TABLE) {
+    if (item->__name == class_name) {
+      class_address = item->__Address;
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) {
+    MerDebug_print_error(COMPILER_ERROR, "Error cannot found class while compiling", glb.file, ast->true_line);
+  }
+
+  PUSH(result, CLOAD_GLOBAL);
+  PUSH(result, class_address);
+
+  glb.is_in_func = true;
+
+  for (auto &item : ast->attrs) {
+    if (item->type == Identifier_) {
+      __Mer_return_Code code = NULL_CODE;
+      Mer_uint8_t address = NULL_UINT_8_T;
+      bool found = false;
+
+      for (auto &item2 : glb.is_in_func ? LOCAL_TABLE : GLOBAL_TABLE) {
+        if (item2->__name == item->string_iden) {
+          address = item2->__Address;
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        string msg = "Error cannot found attribute '" + item->string_iden + "' while compiling";
+        MerDebug_print_error(COMPILER_ERROR, msg.c_str(), glb.file, ast->true_line);
+      }
+
+      PUSH(code, CLOAD_ATTR);
+      PUSH(code, address);
+
+      INSERT_VEC(result, code);
+    } else if (item->type == FunctionCallExpression) {
+      __Mer_return_Code code = NULL_CODE;
+      Mer_uint8_t address = NULL_UINT_8_T;
+      bool found = false;
+
+      for (auto &item2 : GLOBAL_TABLE) {
+        if (item2->__name == item->func_call) {
+          address = item2->__Address;
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        string msg = "Error cannot found attribute '" + item->string_iden + "' while compiling";
+        MerDebug_print_error(COMPILER_ERROR, msg.c_str(), glb.file, ast->true_line);
+      }
+
+      PUSH(code, CLOAD_METHOD);
+      PUSH(code, address);
+
+      PUSH(code, CCALL_METHOD);
+
+      INSERT_VEC(result, code);
+    }
+  }
+
+  glb.is_in_func = false;
+
+  return result;
+}
+
+MERCURY_API __Mer_return_Code MerCompiler_compile_ast_class_statement(mAST_T *ast, __compiler_u &glb) {
+  __Mer_return_Code result = NULL_CODE;
+
+  Mer_uint8_t class_address = create_label(glb);        
+
+  GLOBAL_TABLE.push_back(CREAT_GLOBAL_TABLE(class_address, ast->class_name.c_str(), ast->class_name));
+
+  glb.is_in_func = true;
+
+  PUSH(result, CCLASS_BEGIN);
+
+  for (auto &item : ast->members) {
+    __Mer_return_Code code = MerCompiler_compile_ast_id(item, glb);
+    INSERT_VEC(result, code);
+  }
+  
+  PUSH(result, CCLASS_END);
+
+  PUSH(result, CSTORE_GLOBAL);
+  PUSH(result, class_address);
+
+  glb.is_in_func = false;
+
+  return result;
+
 }
 
 MERCURY_API __Mer_return_Code MerCompiler_compile_ast_define_expression(mAST_T *ast, __compiler_u &glb) {

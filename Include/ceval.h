@@ -83,5 +83,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_DELETE(__program_bytecode &u
 MERCURY_API __mer_core_data__ stack *MerVM_evaluate_IS(__program_bytecode &u, stack *stk);
 MERCURY_API __mer_core_data__ stack *MerVM_evaluate_NOT(__program_bytecode &u, stack *stk);
 MERCURY_API __mer_core_data__ stack *MerVM_evaluate_LOAD_ARGS(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_data__ stack *MerVM_evaluate_CLASS_BEGIN(__program_bytecode &u, stack *stk);
+MERCURY_API __mer_core_data__ stack *MerVM_evaluate_LOAD_ATTR(__program_bytecode &u, stack *stk);
 
 #endif // MERCURY_EVALUATE_H

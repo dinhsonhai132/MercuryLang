@@ -32,6 +32,7 @@ typedef struct _variable        mVariable_T;
 typedef struct _func_object     mFunc_object_T;
 typedef struct _list_object     mList_T;
 typedef struct _object          mObject_T;
+typedef struct _class           mClass_T;   
 typedef struct __iter           mIter_T;
 typedef struct _bool            mBool_T;
 typedef __global_table   GlobalTable;

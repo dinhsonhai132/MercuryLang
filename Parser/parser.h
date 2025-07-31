@@ -111,6 +111,11 @@ mAST_T *MerParser_parse_dictionary_expression(mParser_T *parser);
 
 mAST_T *MerParser_parse_include_statement(mParser_T *parser);
 
+mAST_T *MerParser_parse_class_statement(mParser_T *parser);
+
 mAST_T *MerParser_parse_store_index_statement(mParser_T *parser, mAST_T *left);
+
+mAST_T *MerParser_parse_attribute_expression(mParser_T *parser);
+
 
 #endif // MERCURY_PARSER_HEADER_FILE

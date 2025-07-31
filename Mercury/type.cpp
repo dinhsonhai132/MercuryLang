@@ -47,6 +47,16 @@ __iter *MerCompiler_iter_new(void) {
     return it;
 }
 
+_class *MerCompiler_class_new(void) {
+    _class *c = new _class;
+    c->address = NULL_UINT_8_T;
+    c->super_class = NULL_PTR;
+    c->inheritance = NULL_PTR;
+    c->members.clear();
+    c->methods.clear();
+    return c;
+}
+
 _code *MerCompiler_code_new_as_ptr(void) {
     _code *c = new _code;
     c->code = NULL_UINT_8_T;

@@ -157,10 +157,238 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
         else if (code == CLOAD_FALSE) {
             stk = MerVM_evaluate_LOAD_FALSE(u, stk);
         }
+
+        else if (code == CLOAD_ATTR) {
+            stk = MerVM_evaluate_LOAD_ATTR(u, stk);
+        }
         
         else if (code == CPROGRAM_END) {
             break;
         } 
+        
+        else if (code == CGET_ITEM) {
+            stk = MerVM_evaluate_GET_ITEM(u, stk);
+        } 
+
+        else if (code == CSTORE_INDEX) {
+            stk = MerVM_evaluate_STORE_INDEX(u, stk);
+        }
+
+        else if (code == CDELETE) {
+            stk = MerVM_evaluate_DELETE(u, stk);
+        }
+
+        else if (code == CADDRESS) {
+            code = __get_next_code_in_prg_code(u);
+        }
+
+        else if (code == CCLASS_BEGIN) {
+            stk = MerVM_evaluate_CLASS_BEGIN(u, stk);
+        }
+
+        else if (code == CAND) {
+            stk = MerVM_evaluate_AND(u, stk);
+        }
+
+        else if (code == COR) {
+            stk = MerVM_evaluate_OR(u, stk);
+        }
+    }
+
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_evaluate_statement] [pass]" << endl;
+    #endif
+
+    return stk;
+}
+
+MERCURY_API __mer_core_data__ stack *MerVM_evaluate_LOAD_ATTR(__program_bytecode &u, stack *stk) {
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_evaluate_LOAD_ATTR] [building...]" << endl;
+    #endif
+
+    Mer_uint8_t address = __get_next_code_in_prg_code(u);
+    table *class_obj = POP();
+
+    for (auto &item : class_obj->class_v->methods) {
+        symtable *sym_item = (symtable *) item;
+        if (sym_item->address == address) {
+            table *tab = sym_item->tab;
+            tab->cval = sym_item->value;
+            tab->address = sym_item->address;
+            stack_push(tab);
+            break;
+        }
+    }
+
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_evaluate_LOAD_ATTR] [pass]" << endl;
+    #endif
+
+    return stk;
+}
+
+__mer_core_data__ mClass_T *MerVM_class_evaluate_STORE_GLOBAL(__program_bytecode &u, stack *stk, mClass_T *cls) {
+#ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_class_evaluate_STORE_GLOBAL] [building...]" << endl;
+#endif
+    Mer_uint8_t code = __get_next_code_in_prg_code(u);
+    table *top = POP();
+
+    symtable *sym_value = MerCompiler_SymbolTable_new();
+
+    sym_value->value = top->cval;
+    sym_value->address = code;
+    sym_value->tab = top;
+    sym_value->tab->cval = top->cval;
+    sym_value->tab->address = code;
+
+    cls->methods.push_back(sym_value);
+
+#ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_class_evaluate_STORE_GLOBAL] [pass]" << endl;
+#endif
+
+    return cls;
+}
+
+__mer_core_data__ mClass_T *MerVM_class_evaluate_MAKE_FUNCTION(__program_bytecode &u, stack *stk, mClass_T *cls) {
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_class_evaluate_MAKE_FUNCTION] [building...]" << endl;
+    #endif
+
+    Mer_uint8_t code = __get_next_code_in_prg_code(u);
+    Mer_uint8_t address = code;
+
+    Mer_uint8_t args_size = __get_next_code_in_prg_code(u);
+    
+    symtable *func = MerCompiler_SymbolTable_new();
+
+    vector<Mer_uint8_t> body;
+    while (code != CEND_FUNCTION) {
+        code = __get_next_code_in_prg_code(u);
+        body.push_back(code);
+    }
+
+    body.push_back(CEND_FUNCTION);
+
+    mFunc_object_T *func_obj = MerCompiler_func_object_new();
+    
+    func_obj->f_bc = MerCompiler_code_new_as_ptr();
+    func_obj->f_bc->buff = body;
+    func_obj->f_bc->raw = body;
+    func_obj->raw_body = body;
+    func_obj->body_size = body.size();
+    func_obj->args_size = args_size;
+    func_obj->is_return = true;
+    func_obj->is_global = true;
+    func_obj->f_value = 0.0;
+
+    func->address = address;
+    func->value = MERCURY_FUNCTION_VALUE;
+    func->cval = MERCURY_FUNCTION_VALUE;
+
+    func->tab->cval = MERCURY_FUNCTION_VALUE;
+    func->tab->address = address;
+    func->tab->func_obj_v = func_obj;
+    func->tab->is_func = true;
+
+    cls->methods.push_back(func);
+
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_class_evaluate_MAKE_FUNCTION] [pass]" << endl;
+    #endif
+
+    return cls;
+}
+
+MERCURY_API __mer_core_data__ stack *MerVM_evaluate_CLASS_BEGIN(__program_bytecode &u, stack *stk) {
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_evaluate_CLASS_BEGIN] [building...]" << endl;
+    #endif
+    Mer_uint8_t code = __get_next_code_in_prg_code(u);
+
+    mClass_T *cls = MerCompiler_class_new();
+
+    table *class_obj = MerCompiler_Table_new();
+    class_obj->is_class = true;
+
+    while (code != CCLASS_END) {
+        if (code == CPUSH_FLOAT) {
+            stk = MerVM_evaluate_PUSH_FLOAT(u, stk);
+        }
+        
+        else if (code == CBINARY_ADD || code == CBINARY_SUB || code == CBINARY_MUL || code == CBINARY_DIV || code == CBINARY_MOD || code == CBINARY_POW) {
+            stk = MerVM_evaluate_BINARY_OPER(u, stk, code);
+        } 
+
+        else if (code == CLOAD_GLOBAL) {
+            stk = MerVM_evaluate_LOAD_GLOBAL(u, stk);
+        } 
+        
+        else if (code == CSTORE_GLOBAL) {
+            cls = MerVM_class_evaluate_STORE_GLOBAL(u, stk, cls);
+        } 
+        
+        else if (code == CMAKE_FUNCTION) {
+            cls = MerVM_class_evaluate_MAKE_FUNCTION(u, stk, cls);
+        } 
+        
+        else if (code == CFUNCTION_CALL) {
+            stk = MerVM_evaluate_FUNCTION_CALL(u, stk);
+        } 
+        
+        else if (code == CGREATER || code == CEQUAL || code == CNOT_EQUAL || code == CGREATER_EQUAL || code == CLESS_EQUAL || code == CLESS) {
+            stk = MerVM_evaluate_COMPARE(u, stk, code);
+        } 
+        
+        else if (code == CJUMP_TO) {
+            stk = MerVM_evaluate_JUMP_TO(u, stk);
+        } 
+        
+        else if (code == CNOT) {
+            stk = MerVM_evaluate_NOT(u, stk);
+        }
+
+        else if (code == CLEN) {
+            stk = MerVM_evaluate_CLEN(u, stk);
+        }
+
+        else if (code == CBUILD_LIST) {
+            stk = MerVM_evaluate_BUILD_LIST(u, stk);
+        }
+        
+        else if (code == CPUSH_NORMAL_MODE) {
+            stk = MerVM_evaluate_PUSH_NORMAL_MODE(u, stk);
+        } 
+        
+        else if (code == CPOP_JUMP_IF_FALSE) {
+            stk = MerVM_evaluate_POP_JUMP_IF_FALSE(u, stk);
+        } 
+        
+        else if (code == CINC) {
+            stk = MerVM_evaluate_INC(u, stk);
+        }
+
+        else if (code == CDEC) {
+            stk = MerVM_evaluate_DEC(u, stk);
+        }
+
+        else if (code == CLOAD_TRUE) {
+            stk = MerVM_evaluate_LOAD_TRUE(u, stk);
+        }
+
+        else if (code == CIS) {
+            stk = MerVM_evaluate_IS(u, stk);
+        }
+
+        else if (code == CCLASS_END) {
+            break;
+        }
+        
+        else if (code == CLOAD_FALSE) {
+            stk = MerVM_evaluate_LOAD_FALSE(u, stk);
+        }
         
         else if (code == CGET_ITEM) {
             stk = MerVM_evaluate_GET_ITEM(u, stk);
@@ -185,10 +413,15 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
         else if (code == COR) {
             stk = MerVM_evaluate_OR(u, stk);
         }
+
+        code = __get_next_code_in_prg_code(u);
     }
 
+    class_obj->class_v = cls;
+    stack_push(class_obj);
+
     #ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_statement] [pass]" << endl;
+    cout << "[ceval.cpp] [MerVM_evaluate_CLASS_BEGIN] [pass]" << endl;
     #endif
 
     return stk;
@@ -364,6 +597,8 @@ MERCURY_API __mer_core_api__ __mer_core_data__ stack *MerVM_evaluate_STORE_INDEX
         }
 
         value->list_v->args[index->cval] = item;
+    } else {
+        MerDebug_system_error(SYSTEM_ERROR, "Can't store value to non-list", u.file);
     }
 
     #ifdef SYSTEM_TEST

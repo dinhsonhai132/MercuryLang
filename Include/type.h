@@ -238,6 +238,7 @@ struct _class {
     GC_HEAD;
     Mer_uint8_t address;
     unordered_map<Mer_uint8_t, _type_obj *> members;
+    vector<void*> methods;
     
     _class *super_class;
     _class *inheritance;
@@ -291,6 +292,7 @@ static _type_obj NULL_TYPE_INSTANCE = _type_obj();
 
 _val *MerCompiler_val_new(void);
 _code MerCompiler_code_new(void);
+_bool *MerCompiler_bool_new(void);
 _pcode *MerCompiler_pcode_new(void);
 _string *MerCompiler_string_new(void);
 _func_object *MerCompiler_func_object_new(void);
@@ -298,6 +300,7 @@ _list_object *MerCompiler_list_object_new(void);
 _variable *MerCompiler_variable_new(void);
 _object *MerCompiler_object_new(void);
 _code *MerCompiler_code_new_as_ptr(void);
+_class *MerCompiler_class_new(void);
 
 _type_obj *MerCompiler_type_obj_new(void);
 

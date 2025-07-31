@@ -104,9 +104,39 @@ mAST_T *MerParser_parse(mParser_T *parser)
         return MerParser_parse_define_statement(parser);
     } if (parser->token->tok == INCLUDE) {
         return MerParser_parse_include_statement(parser);
+    } if (parser->token->tok == CLASS) {
+        return MerParser_parse_class_statement(parser);
     }
 
     return MerParser_parse_logical_expression(parser);
+}
+
+mAST_T *MerParser_parse_class_statement(mParser_T *parser) {
+    mAST_T *node = MerAST_make_parent(ClassStatement);
+    parser->token = _MerLexer_get_next_tok(parser->lexer);
+
+    if (parser->token->tok == VARIABLE) {
+        node->class_name = parser->token->name;
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+    } else {
+        MerDebug_print_error(SYNTAX_ERROR, "Expected class name", parser->lexer->file, TRUE_LINE(parser));
+    }
+
+    if (parser->token->tok == DO_T) {
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+
+        while (parser->token->tok != END_T) {
+            mAST_T *member = MerParser_parse(parser);
+            node->members.push_back(member);
+        }
+
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+        node->true_line = TRUE_LINE(parser);
+    } else {
+        MerDebug_print_error(SYNTAX_ERROR, "Expected 'do' keyword in class statement", parser->lexer->file, TRUE_LINE(parser));
+    }
+
+    return node;
 }
 
 mAST_T *MerParser_parse_include_statement(mParser_T *parser) {
@@ -1151,6 +1181,55 @@ mAST_T *MerParser_parse_logical_expression(mParser_T *parser) {
     return value;
 }
 
+
+mAST_T *MerParser_parse_attribute_expression(mParser_T *parser) {
+    mAST_T *node = MerAST_make_parent(AttrExpression);
+
+    node->attr_iden = parser->token->string_iden;
+
+    parser->token = _MerLexer_get_next_tok(parser->lexer); // eat '.'
+
+    mAST_T *value = MerAST_new();
+
+    while (true) {
+        parser->token = _MerLexer_get_next_tok(parser->lexer); // get the first primary expression
+
+        if (parser->token->tok == VARIABLE) {
+            parser->next = _MerLexer_look_ahead(parser->lexer);
+
+            if (parser->next->tok == LEFT_BRACKET) {
+                value = MerParser_parse_extract_expression(parser);
+            } 
+            else if (parser->next->tok == LEFT_PAREN) {
+                value = MerParser_parse_function_call_expression(parser);
+            } 
+            else {
+                value = MerAST_make(Identifier_, parser->token->tok, 0, "AUTO_T", parser->token->string_iden, TRUE_LINE(parser));
+            }
+        } 
+        else {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, TRUE_LINE(parser));
+        }
+
+        if (!value) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected expression", parser->lexer->file, TRUE_LINE(parser));
+        }
+
+        node->attrs.push_back(value);
+
+        parser->next = _MerLexer_look_ahead(parser->lexer); // check if '.'
+
+        if (parser->next->tok == DOT) {
+            parser->token = _MerLexer_get_next_tok(parser->lexer); // eat '.'
+        } else {
+            break;
+        }
+    }
+    
+    node->true_line = TRUE_LINE(parser);
+    return node;
+}
+
 mAST_T *MerParser_parse_primary_expression(mParser_T *parser)
 {
     if (parser->token->tok == TRUE_T) return MerAST_make(TrueExpression, TRUE_T, 1, "AUTO_T", "", TRUE_LINE(parser));
@@ -1166,15 +1245,18 @@ mAST_T *MerParser_parse_primary_expression(mParser_T *parser)
             return MerParser_parse_extract_expression(parser);
         } else if (parser->next->tok == LEFT_PAREN) {
             return MerParser_parse_function_call_expression(parser);
+        } else if (parser->next->tok == DOT) {
+            return MerParser_parse_attribute_expression(parser);
         }
     }
     if (is_tok_identifier(parser->token->tok)) return MerAST_make(Identifier_, parser->token->tok, 0, "AUTO_T", parser->token->string_iden, TRUE_LINE(parser));
     if (is_tok_literal(parser->token->tok)) return MerAST_make(Literal, parser->token->tok, parser->token->value, "AUTO_T", "", TRUE_LINE(parser));
     if (parser->token->tok == EOF_T 
         || parser->token->tok == DO_T
+        || parser->token->tok == DOT
         || parser->token->tok == COLON) return NULL;
     
-    string sym = parser->token->string_iden;
+    string sym = parser->token->tok;
     string msg = "Unexpected primary expression near '" + sym + "'";
     MerDebug_print_error(SYNTAX_ERROR, msg.c_str(), parser->lexer->file, TRUE_LINE(parser));
     return NULL;

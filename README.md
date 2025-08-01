@@ -38,11 +38,6 @@
 
 ## ⚙️ Getting Started
 
-### Prerequisites
-
-- C++ Compiler (MSVC / GCC / Clang)
-- [CMake](https://cmake.org/) 3.12+
-
 ### Running Mercury
 
 ```bash

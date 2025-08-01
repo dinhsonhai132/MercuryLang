@@ -30,7 +30,8 @@
 
 ## 📦 Download
 
-👉 [Download MercuryLang (.exe for Windows)](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-init.exe) when done donwload you can run straight in terminal
+👉 [Download MercuryLang (.exe for Windows)](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-init.exe) 
+* The installer will automatically add MercuryLang to your Environment PATH, you can run straight in terminal
 
 ✅ Or you can go to this website https://dinhsonhai132.github.io/main.html to see more useful information 
 

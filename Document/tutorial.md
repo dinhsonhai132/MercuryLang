@@ -114,7 +114,7 @@ It is recommended to read this tutorial **before** writing or running MercuryLan
 
 * Know how random work
 
-#### [4.4 game](Tutorual/game.md)
+#### [4.4 game](Tutorial/game.md)
 
 * If you want to creat a game
 

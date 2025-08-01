@@ -2,7 +2,7 @@
 
 ## Introduction
 
-**MercuryLang** is a lightweight, free, and open-source programming language built entirely in **C++**. It draws inspiration from the simplicity of **Lua** and the readability of **Python**, offering developers a clean and friendly environment for writing and running code.
+**MercuryLang** is a lightweight, small, free, and open-source programming language built entirely in **C++**. It draws inspiration from the simplicity of **Lua** and the readability of **Python**, offering developers a clean and friendly environment for writing and running code.
 
 Whether you are a **beginner** exploring your first programming language or a **language enthusiast** building your own tools, MercuryLang provides a balance between power and simplicity.
 

@@ -83,7 +83,7 @@ It is recommended to read this tutorial **before** writing or running MercuryLan
 
 ---
 
-### [3.0 High-Level Concepts](Tutorial/high.md)
+### [3.0 High-Level Concepts]()
 
 #### [3.1 Functions and Function Calls](Tutorial/func.md)
 

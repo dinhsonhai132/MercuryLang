@@ -1,0 +1,49 @@
+func extend(item1, item2) do
+    return dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "extend", [item1, item2])
+end
+
+func insert_item(item, index, value) do
+    return dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "insert_item", [item, index, value])
+end
+
+func insert(item, index, value) do
+    return dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "insert", [item, index, value])
+end
+
+func eval(value) do
+    return dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "eval", [value])
+end
+
+func max(value) do
+    let max = value[0]
+    for i in value do
+        if i > max then
+            max = i
+        end
+    end
+
+    return max
+end
+
+func min(value) do
+    let max = value[0]
+    for i in value do
+        if i < max then
+            max = i
+        end
+    end
+
+    return max
+end
+
+func reverse(value) do
+    let n = size(value)
+    
+    for i in range(0, n / 2) do
+        let tmp = value[i]
+        value[i] = value[n - i - 1]
+        value[n - i - 1] = tmp
+    end
+
+    return value
+end

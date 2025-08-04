@@ -1,0 +1,25 @@
+func __rand() do
+    return ffi_float("C:\\MercuryLang\\Libs\\__Libs__\\random2\\init.dll", "__rand", [])
+end
+
+func random() do
+    return __rand()
+end
+
+func randbelow(n) do
+    if n < 0 then
+        return 0
+    end
+
+    return to_int(__rand() * n)
+end
+
+func randint(a, b) do
+    if a > b then
+        return 0
+    end
+
+    return a + randbelow(b - a + 1)
+end
+
+let choice(l) = l[randint(0, size(l) - 1)]

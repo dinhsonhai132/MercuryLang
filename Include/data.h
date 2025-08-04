@@ -35,13 +35,13 @@ using namespace std;
 #define COS_ADDRESS                        0x8B
 #define SIN_ADDRESS                        0x8C
 #define TAN_ADDRESS                        0x8D
-#define COT_ADDRESS                        0x8E
-#define SQRT_ADDRESS                       0x8F
+#define FFI_CHARR_ADDRESS                  0x8E
+#define FFI_FLOAT_ADDRESS                  0x8F
 #define FFI_ADDRESS                        0x90
 #define CHANGE_ITEM_ADDRESS                0x91
 #define TYPE_ADDRESS                       0x92
 #define RANGE_ADDRESS                      0x93
-#define RANDOM_ADDRESS                     0xF9
+#define DLL_LOAD_FUNC                      0xF9
 #define SUB_STR                            0x95
 #define SPLIT_ADDRESS                      0x96
 #define HASH_ADDRESS                       0x97
@@ -65,6 +65,7 @@ MERCURY_API __mer_core_data__ vector<symtable *> _T = {};
 
 MERCURY_API __mer_core_data__ GlobalTable GLOBAL_TABLE = {};
 MERCURY_API __mer_core_data__ GlobalTable LOCAL_TABLE = {};
+MERCURY_API __mer_core_data__ GlobalTable ATTRIBUTE_TABLE = {};
 
 MERCURY_API __mer_core_data__ vector<Mer_string_entry*> STRING_ENTRY = {};
 

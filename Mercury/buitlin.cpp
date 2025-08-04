@@ -84,17 +84,6 @@ int ISDIGIT(string str) {
     return 1;
 }
 
-__mer_core_lib_api__ string __convert_to_string(mString_T *__string) {
-    string value = "";
-    vector<Mer_uint8_t> cont = __string->buff;
-
-    for (auto &item : cont) {
-        value += to_char(item);
-    }
-
-    return value;
-}
-
 __mer_core_lib_api__ __builtin_func_t __builtin_mer_is_digit(stack *stk) {
     table *top = POP();
     
@@ -345,27 +334,40 @@ __mer_core_api__ int __same(vector<Mer_uint8_t> a, vector<Mer_uint8_t> b) {
 }
 
 MERCURY_API __mer_core_lib_api__ __builtin_func_t __builtin_same_string(stack *stk) {
-    table *top = POP();
-    if (top->is_str) {
-        table *new_list = POP();
-        if (__same(top->f_str_v->buff, new_list->f_str_v->buff)) {
+    table *item1 = POP();
+    table *item2 = POP();
+
+    if (item1->is_str && item2->is_str) {
+        if (__same(item1->f_str_v->buff, item2->f_str_v->buff)) {
             push_true_to_stack();
         } else {
             push_false_to_stack();
         }
-    } else if (top->is_list) {
-        table *new_list = POP();
-        bool same = false;
+    } else if (item1->is_list && item2->is_list) {
+        if (item1->list_v->size == item2->list_v->size) {
+            for (int i = 0; i < item1->list_v->size; i++) {
+                if (item1->list_v->args[i] != item2->list_v->args[i]) {
+                    push_false_to_stack();
+                    return;
+                }
+            }
 
-        if (top->list_v->size != new_list->list_v->size) {
+            push_true_to_stack();
+
+        } else {
             push_false_to_stack();
-            return;
         }
-
-        for (auto &item : top->list_v->args) {
+    } else if (item1->is_bool && item2->is_bool) {
+        if (item1->bool_v->value == item2->bool_v->value) {
+            push_true_to_stack();
+        } else {
+            push_false_to_stack();
         }
+    } else if (item1->cval == item2->cval) {
+        push_true_to_stack();
+    } else {
+        push_false_to_stack();
     }
-
 }
 
 __mer_core_lib_api__  Mer_real_string hash_to_string(mString_T *str) {
@@ -533,6 +535,36 @@ MERCURY_API __mer_core_lib_api__ __builtin_func_t __mer_builtin_exit(stack *stk)
 }
 
 typedef int(*SumFunc)(int[]);
+typedef float(*FloatFunc)(float[]);
+
+typedef table*(*Function_ffi)(table*[]);
+
+table* dll_load_func(string dll_path, string func, vector<table*> args) {
+#ifdef _WIN32
+    HMODULE hModule = LoadLibraryA(dll_path.c_str());
+
+    if (!hModule) {
+        cerr << "Failed to load DLL: " << dll_path << endl;
+        FreeLibrary(hModule);
+        return nullptr;
+    }
+
+    FARPROC pFunc = GetProcAddress(hModule, func.c_str());
+
+    if (!pFunc) {
+        cerr << "Failed to find function: " << func << endl;
+        FreeLibrary(hModule);
+        return nullptr;
+    }
+
+    Function_ffi sumFunc = (Function_ffi)pFunc;
+    table* result = sumFunc(args.data());
+    return result;
+
+#else   
+    cerr << "FFI is not supported on this platform." << endl;
+#endif
+}
 
 float __ffi(string dll_path, string func, vector<int> args) {
 #ifdef _WIN32
@@ -553,12 +585,69 @@ float __ffi(string dll_path, string func, vector<int> args) {
     }
 
     SumFunc sumFunc = (SumFunc)pFunc;
-    int result = sumFunc(args.data());
+    float result = sumFunc(args.data());
     return result;
 
 #else   
     cerr << "FFI is not supported on this platform." << endl;
 #endif
+}
+
+float __ffi_float(string dll_path, string func, vector<float> args) {
+#ifdef _WIN32
+    HMODULE hModule = LoadLibraryA(dll_path.c_str());
+
+    if (!hModule) {
+        cerr << "Failed to load DLL: " << dll_path << endl;
+        FreeLibrary(hModule);
+        return 0;
+    }
+
+    FARPROC pFunc = GetProcAddress(hModule, func.c_str());
+
+    if (!pFunc) {
+        cerr << "Failed to find function: " << func << endl;
+        FreeLibrary(hModule);
+        return 0;
+    }
+
+    FloatFunc sumFunc = (FloatFunc)pFunc;
+    float result = sumFunc(args.data());
+    return result;
+
+#else   
+    cerr << "FFI is not supported on this platform." << endl;
+#endif
+}
+
+MERCURY_API __mer_core_api__ __builtin_func_t __builtin_dll_load_func(stack *stk) {
+    table *args = POP();
+    table *func_to_call = POP();
+    table *path_to_dll = POP();
+
+    vector<table*> args_list;
+
+    if (args->is_list) {
+        for (auto &item : args->list_v->args) {
+            table *val = (table *) item;
+            args_list.push_back(val);
+        }
+    }
+
+    if (!func_to_call->is_str || !path_to_dll->is_str) {
+        return;
+    }
+    
+    string dll_path = __convert_to_string(path_to_dll->f_str_v);
+    string func = __convert_to_string(func_to_call->f_str_v);
+    
+    table* result = dll_load_func(dll_path, func, args_list);
+
+    if (result) {
+        stack_push(result);
+    } else {
+        stack_push(MerCompiler_table_setup(0, NULL_UINT_8_T));
+    }
 }
 
 MERCURY_API __mer_core_api__ __builtin_func_t __builtin_ffi(stack *stk) {
@@ -583,6 +672,33 @@ MERCURY_API __mer_core_api__ __builtin_func_t __builtin_ffi(stack *stk) {
     string func = __convert_to_string(func_to_call->f_str_v);
     
     int value = __ffi(dll_path, func, args_list);
+    stack_push(MerCompiler_table_setup(value, NULL_UINT_8_T));
+
+    delete args; delete func_to_call; delete path_to_dll;
+}
+
+MERCURY_API __mer_core_api__ __builtin_func_t __builtin_ffi_float_arg(stack *stk) {
+    table *args = POP();
+    table *func_to_call = POP();
+    table *path_to_dll = POP();
+
+    vector<float> args_list;
+
+    if (args->is_list) {
+        for (auto &item : args->list_v->args) {
+            table *val = (table *) item;
+            args_list.push_back(val->cval);
+        }
+    }
+
+    if (!func_to_call->is_str || !path_to_dll->is_str) {
+        return;
+    }
+    
+    string dll_path = __convert_to_string(path_to_dll->f_str_v);
+    string func = __convert_to_string(func_to_call->f_str_v);
+    
+    float value = __ffi_float(dll_path, func, args_list);
     stack_push(MerCompiler_table_setup(value, NULL_UINT_8_T));
 
     delete args; delete func_to_call; delete path_to_dll;

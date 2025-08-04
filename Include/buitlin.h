@@ -23,9 +23,12 @@ unordered_map<string, Mer_uint8_t> lib_hashmap = {
     {"pop", POP_ADDRESS},
     {"puts", PUTS_ADDRESS}, 
     {"type", TYPE_ADDRESS}, 
+    {"dll_loadf", DLL_LOAD_FUNC},
     {"range", RANGE_ADDRESS},
     {"sub", SUB_STR}, 
     {"ffi", FFI_ADDRESS},
+    {"ffi_float", FFI_FLOAT_ADDRESS},
+    {"ffi_char", FFI_CHARR_ADDRESS},
     {"isdigit", ISDIGIT_ADDRESS},
     {"sleep", SLEEP_ADDRESS},
     {"to_list", LIST_ADDRESS},
@@ -33,7 +36,6 @@ unordered_map<string, Mer_uint8_t> lib_hashmap = {
     {"to_int", TO_INT_ADDRESS},
     {"input", INPUT_ADDRESS},
     {"to_str", TO_STRING_ADDRESS},
-    {"__rand", RANDOM_ADDRESS},
 };
 
 
@@ -132,6 +134,11 @@ __mer_core_lib_api__ __builtin_func_t __builtin_mer_factorial(stack *stk);
 
 __mer_core_lib_api__ __builtin_func_t __builtin_mer_whats_time_is_it(stack *stk);
 
+__mer_core_lib_api__ __builtin_func_t __builtin_ffi(stack *stk);
+
+__mer_core_lib_api__ __builtin_func_t __builtin_ffi_float_arg(stack *stk);
+
+__mer_core_lib_api__ __builtin_func_t __builtin_dll_load_func(stack *stk);
 
 mString_T *make_str_obj(string str);
 

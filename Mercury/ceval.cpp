@@ -790,59 +790,99 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_GET_ITEM(__program_bytecode 
 }
 
 MERCURY_API __mer_core_data__ stack *MerVM_evaluate_COMPARE(__program_bytecode &u, stack *stk, Mer_uint8_t op) {
-    #ifdef SYSTEM_TEST
+#ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [MerVM_evaluate_COMPARE] [building...]" << endl;
-    #endif
+#endif
 
     table *right = POP();
     table *left = POP();
     
-    if (left == nullptr || right == nullptr) {
+    if (!left || !right) {
         MerDebug_system_error(SYSTEM_ERROR, "Stack underflow", u.file);
     }
 
+    auto compare_string = [](auto *a, auto *b) -> int {
+        Mer_size_t min_size = std::min(a->size, b->size);
+        for (Mer_size_t i = 0; i < min_size; ++i) {
+            if (a->buff[i] < b->buff[i]) return -1;
+            if (a->buff[i] > b->buff[i]) return 1;
+        }
+        if (a->size < b->size) return -1;
+        if (a->size > b->size) return 1;
+        return 0;
+    };
+
+    auto compare_list = [](auto *a, auto *b) -> int {
+        Mer_size_t min_size = std::min(a->size, b->size);
+        for (Mer_size_t i = 0; i < min_size; ++i) {
+            table *ai = (table*)a->args[i];
+            table *bi = (table*)b->args[i];
+            if (ai->cval < bi->cval) return -1;
+            if (ai->cval > bi->cval) return 1;
+        }
+        if (a->size < b->size) return -1;
+        if (a->size > b->size) return 1;
+        return 0;
+    };
+
+    int cmp = 0;
+    if (left->is_str && right->is_str) {
+        cmp = compare_string(left->f_str_v, right->f_str_v);
+    } else if (left->is_list && right->is_list) {
+        cmp = compare_list(left->list_v, right->list_v);
+    } else {
+        if (left->cval < right->cval) cmp = -1;
+        else if (left->cval > right->cval) cmp = 1;
+        else cmp = 0;
+    }
+    
     if (op == CLESS) {
-        if (MERCURY_BINARY_LESS(left->cval, right->cval)) {
+        if (cmp < 0) {
             push_true_to_stack();
         } else {
             push_false_to_stack();
         }
-    } else if (op == CGREATER) {
-        if (MERCURY_BINARY_GREATER(left->cval, right->cval)) {
+    }
+    else if (op == CGREATER) {
+        if (cmp > 0) {
             push_true_to_stack();
         } else {
             push_false_to_stack();
         }
-    } else if (op == CEQUAL) {
-        if (MERCURY_BINARY_EQUAL(left->cval, right->cval)) {
+    }
+    else if (op == CEQUAL) {
+        if (cmp == 0) {
             push_true_to_stack();
         } else {
             push_false_to_stack();
         }
-    } else if (op == CNOT_EQUAL) {
-        if (MERCURY_BINARY_NOT_EQUAL(left->cval, right->cval)) {
+    }
+    else if (op == CNOT_EQUAL) {
+        if (cmp != 0) {
             push_true_to_stack();
         } else {
             push_false_to_stack();
         }
-    } else if (op == CGREATER_EQUAL) {
-        if (MERCURY_BINARY_GREATER_EQUAL(left->cval, right->cval)) {
+    }
+    else if (op == CGREATER_EQUAL) {
+        if (cmp >= 0) {
             push_true_to_stack();
         } else {
             push_false_to_stack();
         }
-    } else if (op == CLESS_EQUAL) {
-        if (MERCURY_BINARY_LESS_EQUAL(left->cval, right->cval)) {
+    }
+    else if (op == CLESS_EQUAL) {
+        if (cmp <= 0) {
             push_true_to_stack();
         } else {
             push_false_to_stack();
         }
     }
 
-    #ifdef SYSTEM_TEST
-    cout << "[ceval.cpp] [MerVM_evaluate_COMPARE] [pass]" << endl;
-    #endif
 
+#ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_evaluate_COMPARE] [pass]" << endl;
+#endif
     return stk;
 }
 
@@ -857,13 +897,47 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_BINARY_OPER(__program_byteco
     if (left == nullptr || right == nullptr) {
         MerDebug_system_error(SYSTEM_ERROR, "Stack underflow", u.file);
     }
-
+    
     if (op == CBINARY_ADD) {
-        stack_push(MerCompiler_table_setup(MERCURY_BINARY_ADD(left->cval, right->cval)));
+        if (left->is_list && right->is_list) {
+            table *list_obj = MerCompiler_Table_new();
+            list_obj->list_v = add_list(left->list_v, right->list_v);;
+            list_obj->is_list = true;
+            stack_push(list_obj);
+        } else if (left->is_str && right->is_str) {
+            table *str_obj = MerCompiler_Table_new();
+            str_obj->f_str_v = add_string(left->f_str_v, right->f_str_v);
+            str_obj->is_str = true;
+            stack_push(str_obj);
+        } else {
+            stack_push(MerCompiler_table_setup(MERCURY_BINARY_ADD(left->cval, right->cval)));
+        }
     } else if (op == CBINARY_SUB) {
         stack_push(MerCompiler_table_setup(MERCURY_BINARY_SUB(left->cval, right->cval)));
     } else if (op == CBINARY_MUL) {
-        stack_push(MerCompiler_table_setup(MERCURY_BINARY_MUL(left->cval, right->cval)));
+        if (left->is_list && !right->is_list) {
+            table *list_obj = MerCompiler_Table_new();
+            list_obj->list_v = mul_list(left->list_v, right->cval);
+            list_obj->is_list = true;
+            stack_push(list_obj);
+        } else if (left->is_str && !right->is_str) {
+            table *str_obj = MerCompiler_Table_new();
+            str_obj->f_str_v = mul_string(left->f_str_v, right->cval);
+            str_obj->is_str = true;
+            stack_push(str_obj);
+        } else if (right->is_list && !left->is_list) {
+            table *list_obj = MerCompiler_Table_new();
+            list_obj->list_v = mul_list(right->list_v, left->cval);
+            list_obj->is_list = true;
+            stack_push(list_obj);
+        } else if (right->is_str && !left->is_str) {
+            table *str_obj = MerCompiler_Table_new();
+            str_obj->f_str_v = mul_string(right->f_str_v, left->cval);
+            str_obj->is_str = true;
+            stack_push(str_obj);
+        } else {
+            stack_push(MerCompiler_table_setup(MERCURY_BINARY_MUL(left->cval, right->cval)));
+        }
     } else if (op == CBINARY_DIV) {
         stack_push(MerCompiler_table_setup(MERCURY_BINARY_DIV(left->cval, right->cval)));
     } else if (op == CBINARY_MOD) {

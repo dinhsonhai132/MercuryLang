@@ -23,3 +23,20 @@ mList_T *creat_list_obj(vector<void *> args) {
     list->args = args;
     return list;
 }
+
+mList_T *add_list(mList_T *a, mList_T *b) {
+    mList_T *list = MerCompiler_list_object_new();
+    list->size = a->size + b->size;
+    list->args.insert(list->args.end(), a->args.begin(), a->args.end());
+    list->args.insert(list->args.end(), b->args.begin(), b->args.end());
+    return list;
+}
+
+mList_T *mul_list(mList_T *a, int times) {
+    mList_T *list = MerCompiler_list_object_new();
+    list->size = a->size * times;
+    for (int i = 0; i < times; i++) {
+        list->args.insert(list->args.end(), a->args.begin(), a->args.end());
+    }
+    return list;
+}

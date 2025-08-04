@@ -42,12 +42,12 @@
 #define DECR_BYTE_uint32_t(var) var -= 0x0001;
 
 #define stack_push(val)                 \
-    __retain(val)                       \
     stk->s_table->table.push_back(val)  \
 
 #define stack_pop() (stk->s_table->table.pop_back())
 
 #define value(val) MerCompiler_table_setup(val, NULL_UINT_8_T)
+#define NULL_VALUE value(0)
 
 #define CHECK 1
 #define CONST_M(x) const x
@@ -71,7 +71,6 @@
 
 #define push_true_to_stack()                        \
     table *bool_obj = MerCompiler_Table_new();      \
-    __retain(bool_obj)                              \
     bool_obj->bool_v = MerCompiler_bool_new();      \
     bool_obj->bool_v->value = true;                 \
     bool_obj->is_bool = true;                       \
@@ -80,13 +79,26 @@
 
 #define push_false_to_stack()                       \
     table *bool_obj = MerCompiler_Table_new();      \
-    __retain(bool_obj)                              \
     bool_obj->bool_v = MerCompiler_bool_new();      \
     bool_obj->bool_v->value = false;                \
     bool_obj->is_bool = true;                       \
     bool_obj->cval = 0;                             \
     stack_push(bool_obj);                           
     
+
+#define TRUE_VALUE                                  \
+    table *bool_obj = MerCompiler_Table_new();      \
+    bool_obj->bool_v = MerCompiler_bool_new();      \
+    bool_obj->bool_v->value = true;                 \
+    bool_obj->is_bool = true;                       \
+    bool_obj->cval = 1;                             \
+
+#define FALSE_VALUE                                 \
+    table *bool_obj = MerCompiler_Table_new();      \
+    bool_obj->bool_v = MerCompiler_bool_new();      \
+    bool_obj->bool_v->value = false;                \
+    bool_obj->is_bool = true;                       \
+    bool_obj->cval = 0;                             \
 
 #define MERCURY_ADD_VALUE(stk, value) (stk->s_table->table.push_back(MerCompiler_table_setup(value)))
 #define MERCURY_ADD_VALUE_ADDRESS(stk, value, address) (stk->s_table->table.push_back(MerCompiler_table_setup(value, address)))

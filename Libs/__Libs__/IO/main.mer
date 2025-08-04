@@ -1,0 +1,65 @@
+func puts(value) do
+    return dll_load("C:\\MercuryLang\\Libs\\__Libs__\\IO\\init.dll", "builtin_puts", [value])
+end
+
+let is_list(o) = type(o) == 5
+let is_str(o) = type(o) == 4
+let is_bool(o) = type(o) == 2
+
+func print(__value) do
+    if type(__value) == 5 then
+        puts("[")
+        if size(__value) == 1 then
+            puts(__value[0])
+        end
+
+        elif size(__value) == 0 then
+            puts("]")
+            return 0
+        end
+
+        else
+            let id = 0
+            while id < size(__value) do
+                if type(__value[id]) == 4 then
+                    puts("\"")
+                    puts(__value[id])
+                    puts("\"")
+                end
+
+                else
+                    puts(__value[id])
+                end
+
+                if id != size(__value) - 1 then
+                    puts(", ")
+                end
+                id += 1
+            end
+        end
+
+        puts("]")
+        puts("\n")
+        return 0
+    end
+
+    elif type(__value) == 2 then
+        if __value == true then
+            puts("true")
+            puts("\n")
+            return 0
+        end
+
+        else
+            puts("false")
+            puts("\n")
+            return 0
+        end
+    end
+
+    else
+        puts(__value)
+        puts("\n")
+        return 0
+    end
+end

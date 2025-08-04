@@ -13,7 +13,7 @@ Lists are enclosed in square brackets `[` `]` and elements are separated by comm
 
 ---
 
-### Using Lists
+### Using Lists for math
 
 You can create a list and store it in a variable:
 
@@ -21,6 +21,38 @@ You can create a list and store it in a variable:
 > let numbers = [1, 2, 3];
 > let mixed = ["a", 1];
 ```
+
+### Using `+` and `*` with Lists in MercuryLang
+
+MercuryLang supports two special operators for working with lists:
+
+1. **`+` (Concatenation)** – Joins two lists together  
+2. **`*` (Repetition)** – Repeats a list multiple times
+
+---
+
+#### 1. `+` Operator (Concatenation)
+
+The `+` operator concatenates two lists and returns a new list:
+
+```mercury
+a = [1, 2, 3]
+b = [4, 5, 6]
+
+print(a + b)
+# Output: [1, 2, 3, 4, 5, 6]
+```
+
+#### 2. `*` Operator (Repetition)
+
+```
+a = [1, 2, 3]
+
+print(a * 2)
+# Output: [1, 2, 3, 1, 2, 3]
+```
+
+---
 
 MercuryLang currently provides **two main functions** for list manipulation:
 

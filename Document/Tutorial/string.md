@@ -32,6 +32,24 @@ The backslash allows you to store any character, including a `"`, inside a strin
 
 ---
 
+### Using string for math
+
+MercuryLang support `+` and `*` for string
+```
+a = "hello, "
+b = "world"
+print(a + b) # hello, world
+```
+
+and using `*` to multiply the string
+```
+a = "hello"
+a *= 2
+print(a) # hellohello
+```
+
+---
+
 ### String Manipulation
 
 Strings in MercuryLang can be manipulated just like math expressions. The `sub` function is used to **concatenate (join)** multiple strings together:

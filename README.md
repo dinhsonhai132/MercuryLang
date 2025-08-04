@@ -77,6 +77,9 @@ let fruits = [["apple, "orange", "pineapple"], "banana", "water"]
 print(fruits[0][1])
 
 frutis[0][2] = "watermelon"
+
+let other_food = ["fish", "egg"]
+print(fruits + other_food)
 ```
 
 ### 🧠 Lambda

@@ -333,48 +333,35 @@ mToken_T *_MerLexer_tokenize_string(mLexer_T *lexer)
         if (lexer->cur == '\\') {
             str.pop_back();
             LEX_ADVANCE(lexer);
-            if (lexer->cur == 'n') {
-                str += '\n';
-            } else if (lexer->cur == 't') {
-                str += '\t';
-            } else if (lexer->cur == 'r') {
-                str += '\r';
-            } else if (lexer->cur == '\\') {
-                str += '\\';
-            } else if (lexer->cur == '\'') {
-                str += '\'';
-            } else if (lexer->cur == '"') {
-                str += '"';
-            } else if (lexer->cur == '0') {
-                str += '\0';
-            } else if (lexer->cur == 'x') {
-                string uint_char = "0x";
-                float count = 0;
-                LEX_ADVANCE(lexer);
-                if (IS_HEX_CHAR(lexer->cur)) {
-                    uint_char += lexer->cur;
-                    LEX_ADVANCE(lexer);
-                    if (IS_HEX_CHAR(lexer->cur)) {
-                        uint_char += lexer->cur;
-                    } else {
-                        MerDebug_print_error(SYNTAX_ERROR, "Invalid escape sequence", lexer->file, lexer->row);
-                    }
-                } else {
-                    MerDebug_print_error(SYNTAX_ERROR, "Invalid escape sequence", lexer->file, lexer->row);
-                }
-                
-                uint8_t value = (uint8_t)strtol(uint_char.c_str(), NULL, 8);
-                string str_value;
-                str_value.push_back(value);
-                str += str_value;
-            } else {
-                MerDebug_print_error(SYNTAX_ERROR, "Invalid escape sequence", lexer->file, lexer->row);
-            }
 
-            LEX_ADVANCE(lexer);
-        } else {
-            LEX_ADVANCE(lexer);
+            switch(lexer->cur) {
+                case '\\':
+                    str += '\\';
+                    break;
+                case '"':
+                    str += '"';
+                    break;
+                case 'n':
+                    str += '\n';
+                    break;
+                case 't':
+                    str += '\t';
+                    break;
+                case 'r':
+                    str += '\r';
+                    break;
+                case 'f':
+                    str += '\f';
+                    break;
+                case 'b':
+                    str += '\b';
+                    break;
+                default:
+                    str += lexer->cur;
+            }
         }
+
+        LEX_ADVANCE(lexer);
     }
 
     LEX_ADVANCE(lexer);

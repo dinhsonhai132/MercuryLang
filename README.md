@@ -30,14 +30,18 @@
 
 ## 📦 Download
 
-👉 [Download MercuryLang (.exe for Windows)](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-init.exe) 
-* The installer will automatically add MercuryLang to your Environment PATH then you can run straight in terminal
+👉 [Download MercuryLang (.exe for Windows)](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-init.exe)
 
 ✅ Or you can go to this website https://dinhsonhai132.github.io/main.html to see more useful information 
 
 ---
 
 ## ⚙️ Getting Started
+
+### Prerequisites
+
+- C++ Compiler (MSVC / GCC / Clang)
+- [CMake](https://cmake.org/) 3.12+
 
 ### Running Mercury
 
@@ -148,13 +152,81 @@ else
 end
 ```
 
+### 🧠 Call `C++` Functions from `MercuryLang`
+
+`MercuryLang` supports calling **C++ functions** from dynamic libraries (`.dll` on Windows) via the `dll_load` function.
+```mercury
+dll_load("<path_to_dll>", "<function_name>", [arg1, arg2, ...])
+```
+
+- `<path_to_dll>`: Path to your compiled DLL or shared library.
+- `<function_name>`: Name of the exported C++ function.
+- `[arg1, arg2, ...]`: Arguments passed to the C++ function (as a list).
+
+---
+
+### 🛠 Example: Extending Lists or Strings
+
+#### 1️⃣ C++ Implementation
+
+```cpp
+#include <Mercury.h>  // Include Mercury API
+
+START_DLL  // Required macro for Mercury DLL
+
+// Exported function must return table* and accept table* args[]
+DLL_EXPORT table* extend(table* args[]) {
+    table *item1 = args[0];
+    table *item2 = args[1];
+
+    if (item1->is_list && item2->is_list) {
+        item1->list_v->args.insert(item1->list_v->args.end(),
+                                   item2->list_v->args.begin(),
+                                   item2->list_v->args.end());
+        item1->list_v->size += item2->list_v->size;
+        return item1;
+    }
+
+    else if (item1->is_str && item2->is_str) {
+        item1->f_str_v->buff.insert(item1->f_str_v->buff.end(),
+                                    item2->f_str_v->buff.begin(),
+                                    item2->f_str_v->buff.end());
+        item1->f_str_v->size += item2->f_str_v->size;
+        return item1;
+    }
+
+    else {
+        item1->cval += item2->cval;
+        item1->value += item2->value;
+        return item1;
+    }
+}
+
+END_DLL  // Required macro
+```
+
+#### 2️⃣ MercuryLang Side
+
+Compile the C++ file into a `.dll` (Windows) or `.so` (Linux), then call it from Mercury:
+
+```mercury
+func extend(item1, item2) do
+    return dll_load("init.dll", "extend", [item1, item2])
+end
+
+extend([1, 2, 3], [4, 5, 6])  # => [1, 2, 3, 4, 5, 6]
+extend("Hello, ", "World!")   # => "Hello, World!"
+```
+
+---
+
 ### 📜 Other syntax
 MercuryLang also supports many other syntax features such as `break`, `return`, `continue`, `and`, `or`, `not`, `is`, `include`, `import`, `do`, `end`, `if`, `elif`, `else`, `while`, `for`, `loop`, and more.
 
 ### 🎮 Game
 - MercuryLang has a library for **graphic** and **game** (```MGL```)
 - This code here is a example for a simple jumping game using ```MGL```
-```
+```cpp
 import "MGL" # import Mercury Game Library
 
 screen_width = 500

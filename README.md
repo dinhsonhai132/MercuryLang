@@ -221,7 +221,7 @@ END_DLL  // Required macro
 
 #### 2️⃣ MercuryLang Side
 
-Compile the C++ file into a `.dll` (Windows) or `.so` (Linux), then call it from Mercury:
+Compile the C++ file into a `.dll` (Windows), then call it from Mercury:
 
 ```mercury
 func extend(item1, item2) do

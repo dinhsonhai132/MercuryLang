@@ -1,3 +1,11 @@
+let screen_init(a, b) = ffi("C:\\MercuryLang\\Libs\\__Libs__\\MGL\\init.dll", "init", [a, b])
+let user_quit() = ffi("C:\\MercuryLang\\Libs\\__Libs__\\MGL\\init.dll", "is_quit", [])
+let screen_flip() = ffi("C:\\MercuryLang\\Libs\\__Libs__\\MGL\\init.dll", "flip", [])
+let screen_fill(a, b, c) = ffi("C:\\MercuryLang\\Libs\\__Libs__\\MGL\\init.dll", "fill_screen", [a, b, c])
+let key_pressed() = ffi("C:\\MercuryLang\\Libs\\__Libs__\\MGL\\init.dll", "get_input_char", [])
+let screen_draw(a, b, c, d, e, f, g) = ffi("C:\\MercuryLang\\Libs\\__Libs__\\MGL\\init.dll", "draw_square", [a, b, c, d, e, f, g])
+let screen_quit() = ffi("C:\\MercuryLang\\Libs\\__Libs__\\MGL\\init.dll", "quit", [])
+
 func get_key_char(num) do
     key_event = [
         ["a", 97], ["b", 98], ["c", 99], ["d", 100], ["e", 101], ["f", 102], ["g", 103], ["h", 104],
@@ -22,32 +30,4 @@ func get_key_char(num) do
     end
 
     return " "
-end
-
-func screen_init(a, b) do
-    ffi("C:\\MercuryLang\\Libs\\__Libs__\\MGL\\init.dll", "init", [a, b])
-end
-
-func user_quit() do
-    ffi("C:\\MercuryLang\\Libs\\__Libs__\\MGL\\init.dll", "is_quit", [])
-end
-
-func screen_flip() do
-    ffi("C:\\MercuryLang\\Libs\\__Libs__\\MGL\\init.dll", "flip", [])
-end
-
-func screen_fill(a, b, c) do
-    ffi("C:\\MercuryLang\\Libs\\__Libs__\\MGL\\init.dll", "fill_screen", [a, b, c])
-end
-
-func key_pressed() do
-    return ffi("C:\\MercuryLang\\Libs\\__Libs__\\MGL\\init.dll", "get_input_char", [])
-end
-
-func screen_draw(a, b, c, d, e, f, g) do
-    ffi("C:\\MercuryLang\\Libs\\__Libs__\\MGL\\init.dll", "draw_square", [a, b, c, d, e, f, g])
-end
-
-func screen_quit() do
-    ffi("C:\\MercuryLang\\Libs\\__Libs__\\MGL\\init.dll", "quit", [])
 end

@@ -1,18 +1,7 @@
-func extend(item1, item2) do
-    return dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "extend", [item1, item2])
-end
-
-func insert_item(item, index, value) do
-    return dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "insert_item", [item, index, value])
-end
-
-func insert(item, index, value) do
-    return dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "insert", [item, index, value])
-end
-
-func eval(value) do
-    return dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "eval", [value])
-end
+let extend(item1, item2) = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "extend", [item1, item2])
+let insert_item(item, index, value) = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "insert_item", [item, index, value])
+let insert(item, index, value) = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "insert", [item, index, value])
+let eval(value) = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "eval", [value])
 
 func max(value) do
     let max = value[0]

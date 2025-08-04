@@ -69,11 +69,22 @@ let x = 10
 print(x)
 ```
 
+### 📋 String
+```mer
+import "IO"
+
+let a = "hello, "
+let b = "world"
+print(a + b)
+
+```
+
 ### 📋 Lists
 ```mer
 import "IO"
 
 let fruits = [["apple, "orange", "pineapple"], "banana", "water"]
+fruit *= 2
 print(fruits[0][1])
 
 frutis[0][2] = "watermelon"

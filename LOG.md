@@ -213,3 +213,9 @@
 ### 7/27/2025
 
 - **New** **LIST** update (store index statement, multi-dimensional array, ...)
+
+### 8/4/2025
+
+- **Add** `dll_load`
+
+- **Support** `+` and `*` for list and string

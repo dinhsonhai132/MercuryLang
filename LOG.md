@@ -219,3 +219,8 @@
 - **Add** `dll_load`
 
 - **Support** `+` and `*` for list and string
+
+### 8/5/2025
+
+- **Add** new `sys` library
+

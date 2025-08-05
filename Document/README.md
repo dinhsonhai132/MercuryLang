@@ -120,6 +120,12 @@ It is recommended to read this tutorial **before** writing or running MercuryLan
 
 #### [4.5 vector](Tutorial/vector.md)
 
+* Get more function at list
+
+#### [4.6 System](Tutorial/system.md)
+
+* Controlling system
+
 * Get more function for list
 
 ---

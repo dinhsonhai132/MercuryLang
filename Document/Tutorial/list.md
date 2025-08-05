@@ -1,4 +1,4 @@
-### List Expressions in MercuryLang
+# List Expressions in MercuryLang
 
 In MercuryLang, **list expressions** allow you to store multiple values in a single variable. A **list** is a collection of elements, which can be numbers, strings, or even a mix of both.
 
@@ -13,7 +13,7 @@ Lists are enclosed in square brackets `[` `]` and elements are separated by comm
 
 ---
 
-### Using Lists for math
+## **Using Lists for Variables**
 
 You can create a list and store it in a variable:
 
@@ -22,16 +22,16 @@ You can create a list and store it in a variable:
 > let mixed = ["a", 1];
 ```
 
-### Using `+` and `*` with Lists in MercuryLang
+---
+
+## **Using `+` and `*` with Lists in MercuryLang**
 
 MercuryLang supports two special operators for working with lists:
 
-1. **`+` (Concatenation)** – Joins two lists together  
+1. **`+` (Concatenation)** – Joins two lists together
 2. **`*` (Repetition)** – Repeats a list multiple times
 
----
-
-#### 1. `+` Operator (Concatenation)
+### **1. `+` Operator (Concatenation)**
 
 The `+` operator concatenates two lists and returns a new list:
 
@@ -43,9 +43,9 @@ print(a + b)
 # Output: [1, 2, 3, 4, 5, 6]
 ```
 
-#### 2. `*` Operator (Repetition)
+### **2. `*` Operator (Repetition)**
 
-```
+```mercury
 a = [1, 2, 3]
 
 print(a * 2)
@@ -54,36 +54,16 @@ print(a * 2)
 
 ---
 
+## **Built-in List Functions**
+
 MercuryLang currently provides **two main functions** for list manipulation:
 
 1. `push(list, element)` – Add an element to the **end** of the list
 2. `pop(list)` – Remove and return the **last** element from the list
 
----
+### **Example: Using `push` and `pop`**
 
-### Accessing and Modifying Elements by Index
-
-Lists are **zero-indexed**, meaning the first element is at index `0`. Use square brackets to access or modify an element:
-
-```
-> let a = [10, 20, 30];
-> print(a[0]);
-10
-> print(a[1]);
-20
-
-> a[1] = 2;
-> print(a);
-[10, 2, 30]
-```
-
-If you try to access an index that doesn’t exist, MercuryLang will return an error.
-
----
-
-### Example: Using `push` and `pop`
-
-```
+```mercury
 > let my_list = [1, 2];
 > push(my_list, 3);
 > print(my_list);
@@ -104,9 +84,29 @@ Step by step:
 
 ---
 
-### Generating Lists with `range`
+## **Accessing and Modifying Elements by Index**
 
-MercuryLang also supports generating lists using the `range(a, b)` function. It creates a list starting from `a` up to `b - 1`, **if `b > a`**.
+Lists are **zero-indexed**, meaning the first element is at index `0`. Use square brackets to access or modify an element:
+
+```
+> let a = [10, 20, 30];
+> print(a[0]);
+10
+> print(a[1]);
+20
+
+> a[1] = 2;
+> print(a);
+[10, 2, 30]
+```
+
+If you try to access an index that doesn’t exist, MercuryLang will return an error.
+
+---
+
+## **Generating Lists with `range`**
+
+MercuryLang also supports generating lists using the `range(a, b)` function. It creates a list starting from `a` up to `b - 1`.
 
 **Example:**
 
@@ -120,7 +120,7 @@ MercuryLang also supports generating lists using the `range(a, b)` function. It 
 
 ---
 
-Currently, MercuryLang lists are simple but effective for:
+MercuryLang lists are simple but effective for:
 
 * Storing sequences of data
 * Accessing elements with indexes

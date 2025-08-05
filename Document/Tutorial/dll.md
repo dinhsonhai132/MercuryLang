@@ -1,10 +1,5 @@
 # MercuryLang Dynamic Library: Extending Lists and Strings
 
-**Feature:** `dll_load`  
-**Last Update:** 7/9/2025  
-**Created by:** dinhsonhai132  
-**License:** Free to modify and use
-
 MercuryLang allows calling **C++ functions** from external dynamic libraries (`.dll` on Windows or `.so` on Linux) using the `dll_load` function.  
 This feature makes it easy to extend MercuryLang with **high-performance native code**.
 

@@ -42,7 +42,7 @@
 
 **2.** Open **Command Prompt**.
 
-**3.** Run `make` to build from source, and now `mer`, `merc`, `mpi` will be in `MercuryLang-main/Bin/`
+**3.** Run `make` to build from source, and `mer`, `merc`, `mpi` will be in `MercuryLang-main/Bin/`
 
 ---
 

@@ -34,7 +34,7 @@
 
 ✅ Or you can go to this website https://dinhsonhai132.github.io/main.html to see more useful information 
 
---
+---
 
 ## 🔨 Build from source
 
@@ -42,7 +42,7 @@
 
 **2.** Open **Command Prompt**.
 
-**3.** Run `make` to build from source
+**3.** Run `make` to build from source, and now `mer`, `merc`, `mpi` will be in `MercuryLang-main/Bin/`
 
 ---
 

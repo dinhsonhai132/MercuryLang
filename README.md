@@ -34,7 +34,10 @@
 
 ✅ Or you can go to this website https://dinhsonhai132.github.io/main.html to see more useful information 
 
+--
+
 ## 🔨 Build from source
+
 **1.** Navigate to the `MercuryLang-main` folder.
 
 **2.** Open **Command Prompt**.

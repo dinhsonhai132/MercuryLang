@@ -356,6 +356,26 @@ mToken_T *_MerLexer_tokenize_string(mLexer_T *lexer)
                 case 'b':
                     str += '\b';
                     break;
+                case 'x':
+                    {
+                        string hex = "";
+                        LEX_ADVANCE(lexer);
+
+                        if (IS_HEX_CHAR(lexer->cur)) {
+                            hex += lexer->cur;
+                            LEX_ADVANCE(lexer);
+                            if (IS_HEX_CHAR(lexer->cur)) {
+                                hex += lexer->cur;
+                            } else {
+                                MerDebug_print_error(SYNTAX_ERROR, "Invalid hex character", lexer->file, lexer->row);
+                            }
+                        } else {
+                            MerDebug_print_error(SYNTAX_ERROR, "Invalid hex character", lexer->file, lexer->row);
+                        }
+
+                        str += (char)strtol(hex.c_str(), NULL, 16);
+                        break;
+                    }
                 default:
                     str += lexer->cur;
             }

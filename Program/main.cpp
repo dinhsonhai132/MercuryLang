@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
     std::string mode;
 
     if (inputFile == "-v") {
-        std::cout << LANGUAGE << " " << CUSTOM_VERSION << " 2025 " << AUTHOR << '\n';
+        std::cout << LANGUAGE << " " << CUSTOM_VERSION << " Copyright (C) 2025-present, " << AUTHOR << '\n';
         return 0;
     }
 

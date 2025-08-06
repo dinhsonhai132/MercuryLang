@@ -44,6 +44,7 @@ DLL_EXPORT table* __list_dir(table* args[]) {
             str_tab->value = str_tab->cval;
 
             list->list_v->args.push_back(str_tab);
+            list->list_v->size++;
         }
 
         return list;

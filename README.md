@@ -245,6 +245,7 @@ MercuryLang also supports many other syntax features such as `break`, `return`, 
 ### 🎮 Game
 - MercuryLang has a library for **graphic** and **game** (```MGL```)
 - This code here is a example for a simple jumping game using ```MGL```
+- If you want to use the library **graphic** and **game** download `SDL3.dll` and then move it into `..\Bin`
 ```cpp
 import "MGL" # import Mercury Game Library
 

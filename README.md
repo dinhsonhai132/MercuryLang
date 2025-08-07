@@ -25,15 +25,6 @@
 - 🔹 Dynamic variables and control flow
 - 🔹 Interactive REPL + `.mer` file runner
 - 🔹 C++ API to embed or customize MercuryLang
-
----
-
-## 📦 Download
-
-👉 [Download MercuryLang (.exe for Windows)](https://github.com/dinhsonhai132/MercuryLang-download/raw/refs/heads/main/MercuryLang-init.exe)
-
-✅ Or you can go to this website https://dinhsonhai132.github.io/main.html to see more useful information 
-
 ---
 
 ## 🔨 Build from source
@@ -43,6 +34,10 @@
 **2.** Open **Command Prompt**.
 
 **3.** Run `make` to build from source, and `mer`, `merc`, `mpi` will be in `MercuryLang-main/Bin/`
+
+**4.** **Rename** `MercuryLang-main` into `MercuryLang` and then move it to `C:/`
+
+**5.** **Edit** environment path to `C:/MercuryLang/Bin/`
 
 ---
 

@@ -1,3 +1,5 @@
+**Warning ⚠: This programming language is currently under active development and is not yet stable. Using it may lead to unexpected behavior, including potential memory leaks and other critical issues. Many features are incomplete or experimental, and the language is not fully tested. It is strongly advised not to use this language for production or critical projects until development is fully completed and it has been thoroughly validated.**
+
 # 🪐 Mercury Programming Language
 
 ![GitHub Stars](https://img.shields.io/github/stars/dinhsonhai132/MercuryLang?style=social)
@@ -10,10 +12,6 @@
 <p align="center">
   <img src="./logo.png" alt="MercuryLang Logo" width="200"/>
 </p>
-
----
-
-**Warning ⚠: This programming language is currently under active development and is not yet stable. Using it may lead to unexpected behavior, including potential memory leaks and other critical issues. Many features are incomplete or experimental, and the language is not fully tested. It is strongly advised not to use this language for production or critical projects until development is fully completed and it has been thoroughly validated.**
 
 ---
 

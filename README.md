@@ -1,4 +1,4 @@
-**Warning ⚠: This programming language is currently under active development and is not yet stable. Using it may lead to unexpected behavior, including potential memory leaks and other critical issues. Many features are incomplete or experimental, and the language is not fully tested. It is strongly advised not to use this language for production or critical projects until development is fully completed and it has been thoroughly validated.**
+**Warning ⚠: This programming language is currently under active development and is not yet stable. Using it may lead to unexpected behavior, including potential memory leaks and other critical issues. Many features are incomplete or experimental, and the language is not fully tested. It is strongly advised not to use this language for production or critical projects until development is fully completed and it has been thoroughly validated. (what would you expect from a 15 yrs kid?)**
 
 # 🪐 Mercury Programming Language
 

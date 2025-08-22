@@ -133,7 +133,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
             case CFUNCTION_CALL:
                 stk = MerVM_evaluate_FUNCTION_CALL(u, stk);
                 break;
-
+            
             case CBINARY_ADD:
             case CBINARY_SUB:
             case CBINARY_MUL:
@@ -211,9 +211,16 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
             }
 
             case CPOP_TOP: {
+#ifdef SYSTEM_TEST
+                cout << "[ceval.cpp] [CPOP_TOP] [building...]" << endl;
+#endif
                 table *top = POP();
                 push_to_gc(top);
+#ifdef SYSTEM_TEST
+                cout << "[ceval.cpp] [CPOP_TOP] [pass]" << endl;
+#endif
                 break;
+
             }
 
             case CLOAD_TRUE: {
@@ -292,50 +299,51 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_CALL_METHOD(__program_byteco
     cout << "[ceval.cpp] [MerVM_evaluate_CALL_METHOD] [building...]" << endl;
     #endif
 
+    Mer_size_t args_size = next_c(u);
+    Mer_uint8_t para_address = 0x00;
+
+    vector<symtable*> _T;
+
+    for (int i = 0; i < args_size; i++) {
+        #ifdef SYSTEM_TEST
+        cout << "[ceval.cpp] [MerVM_evaluate_CALL_METHOD] [pushing parameter " << i << " start]" << endl;
+        #endif
+
+        table *item = POP();
+        
+        #ifdef SYSTEM_TEST
+        cout << "[ceval.cpp] [MerVM_evaluate_CALL_METHOD] [pushing parameter " << i << " pass]" << endl;
+        #endif
+
+        symtable *parameter = MerCompiler_symboltable_setup("", item->cval, "AUTO_T", NULL_UINT_8_T);  
+        parameter->tab = item;
+        parameter->tab->address = parameter->address;
+        parameter->tab->ref_count++;
+
+        _T.push_back(parameter);
+    }
+
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_evaluate_CALL_METHOD] [pushing parameters done!]" << endl;
+    #endif
+
+    reverse(_T.begin(), _T.end());
+
+    for (auto &item : _T) {
+        item->address = ++para_address;
+    }
+
     table *func_obj = POP();
     table *class_obj = func_obj->class_p;
 
-    if (!class_obj) {
-        MerDebug_system_error(SYSTEM_ERROR, "Error while calling method", u.file);
-    }
+    symtable *this_class = MerCompiler_symboltable_setup("", class_obj->cval, "AUTO_T", THIS_ADDRESS);
+    this_class->tab = class_obj;
+    this_class->tab->address = this_class->address;
+    this_class->tab->ref_count++;
+
+    _T.push_back(this_class);
 
     if (func_obj->is_func) {
-        Mer_uint8_t para_address = 0x00;
-        vector<symtable*> _T;
-
-        #ifdef SYSTEM_TEST
-        cout << "[ceval.cpp] [MerVM_evaluate_CALL_METHOD] [pushing parameters... with size " << func_obj->func_obj_v->args_size << "]" << endl;
-        #endif
-
-        for (int i = 0; i < func_obj->func_obj_v->args_size; i++) {
-            #ifdef SYSTEM_TEST
-            cout << "[ceval.cpp] [MerVM_evaluate_CALL_METHOD] [pushing parameter " << i << " start]" << endl;
-            #endif
-
-            table *item = POP();
-
-            #ifdef SYSTEM_TEST
-            cout << "[ceval.cpp] [MerVM_evaluate_CALL_METHOD] [pushing parameter " << i << " pass]" << endl;
-            #endif
-
-            symtable *parameter = MerCompiler_symboltable_setup("", item->cval, "AUTO_T", NULL_UINT_8_T);  
-            parameter->tab = item;
-            parameter->tab->address = parameter->address;
-            parameter->tab->ref_count++;
-
-            _T.push_back(parameter);
-        }
-
-        #ifdef SYSTEM_TEST
-        cout << "[ceval.cpp] [MerVM_evaluate_CALL_METHOD] [pushing parameters done!]" << endl;
-        #endif
-
-        reverse(_T.begin(), _T.end());
-
-        for (auto &item : _T) {
-            item->address = ++para_address;
-        }
-
         mCode_T code = NULL_CODE;
         code.prg_code.buff = func_obj->func_obj_v->f_bc->buff;
 
@@ -345,10 +353,6 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_CALL_METHOD(__program_byteco
             .return_val = MerCompiler_Table_new(),
             .local = _T
         };
-
-        #ifdef SYSTEM_TEST
-        cout << "[ceval.cpp] [MerVM_evaluate_CALL_METHOD] [evaluating...]" << endl;
-        #endif
 
         u.is_in_func = true;
         stk = MerVM_evaluate_call_context(ctx, u, stk);
@@ -412,10 +416,7 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_LOAD_ATTR(__program_bytecode
 
     Mer_uint8_t address = next_c(u);
     table *class_obj = POP();
-
-    if (!class_obj->is_class || !class_obj->is_instance) {
-        MerDebug_system_error(SYSTEM_ERROR, "Error while loading attribute", u.file);
-    } 
+    bool found = false;
 
     for (auto &item : class_obj->class_v->methods) {
         symtable *sym_item = (symtable *) item;
@@ -424,8 +425,36 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_LOAD_ATTR(__program_bytecode
             tab->cval = sym_item->value;
             tab->address = sym_item->address;
             tab->class_p = class_obj;
+            found = true;
             stack_push(tab);
             break;
+        }
+    }
+
+    if (!found) {
+        if (class_obj->class_v->is_extend) {
+            mClass_T *super_class = class_obj->class_v->super_class;
+
+            if (!super_class) {
+                cerr << "Error: Cannot found attribute" << endl;
+                MER_BREAK_POINT;
+            }
+
+            for (auto &item : super_class->methods) {
+                symtable *sym_item = (symtable *) item;
+                if (sym_item->address == address) {
+                    table *tab = sym_item->tab;
+                    tab->cval = sym_item->value;
+                    tab->address = sym_item->address;
+                    tab->class_p = class_obj;
+                    found = true;
+                    stack_push(tab);
+                    break;
+                }
+            }
+        } else {
+            cerr << "Error: Cannot found attribute" << endl;
+            MER_BREAK_POINT;
         }
     }
 
@@ -505,6 +534,40 @@ __mer_core_data__ mClass_T *MerVM_class_evaluate_MAKE_FUNCTION(__program_bytecod
     return cls;
 }
 
+__mer_core_data__ mClass_T *MerVM_class_evaluate_SET_SUPER_CLASS(__program_bytecode &u, stack *stk, mClass_T *cls) {
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_class_evaluate_SET_SUPER_CLASS] [building...]" << endl;
+    #endif
+
+    Mer_uint8_t code = next_c(u);
+    mClass_T *super_class = NULL;
+    
+    for (auto &item : _G) {
+        if (item->address == code) {
+            if (!item->tab->is_class) {
+                cerr << "Error: Cannot found class" << endl;
+                MER_BREAK_POINT;
+            }
+
+            super_class = item->tab->class_v;
+            break;
+        }
+    }
+
+    if (!super_class) {
+        cerr << "Error: Cannot found class" << endl;
+        MER_BREAK_POINT;
+    }
+
+    cls->super_class = super_class;
+
+    #ifdef SYSTEM_TEST
+    cout << "[ceval.cpp] [MerVM_class_evaluate_SET_SUPER_CLASS] [pass]" << endl;
+    #endif
+
+    return cls;
+}
+
 MERCURY_API __mer_core_data__ stack *MerVM_evaluate_CLASS_BEGIN(__program_bytecode &u, stack *stk) {
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [MerVM_evaluate_CLASS_BEGIN] [building...]" << endl;
@@ -531,6 +594,10 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_CLASS_BEGIN(__program_byteco
         
         else if (code == CSTORE_GLOBAL) {
             cls = MerVM_class_evaluate_STORE_GLOBAL(u, stk, cls);
+        }
+
+        else if (code == CSET_SUPER_CLASS) {
+            cls = MerVM_class_evaluate_SET_SUPER_CLASS(u, stk, cls);
         } 
         
         else if (code == CMAKE_FUNCTION) {

@@ -1,8 +1,6 @@
 #include "../include/stack.h"
 #include "../include/gc.h"
 
-vector<table*> GARBAGE_POOL = {};
-
 stack *MerCompiler_Stack_new(void) {
     stack *s = new stack;
     s->s_table = MerCompiler_Table_new();
@@ -137,22 +135,10 @@ int MerCompiler_free_table(table *t) {
 #ifdef GC_DEBUG
         cout << "[stack.cpp] [MerCompiler_free_table] [free str] " << endl;
 #endif
-        MerCompiler_free_string(t->f_str_v);
+        delete t->f_str_v;
         delete t;
 #ifdef GC_DEBUG
         cout << "[stack.cpp] [MerCompiler_free_table] [free str done] " << endl;
-#endif
-    }
-
-    else if (t->is_func) {
-#ifdef GC_DEBUG
-        cout << "[stack.cpp] [MerCompiler_free_table] [free func] " << endl;
-#endif
-        MerCompiler_free_func_object(t->func_obj_v);
-
-        delete t;
-#ifdef GC_DEBUG
-cout << "[stack.cpp] [MerCompiler_free_table] [free func done] " << endl;
 #endif
     }
 

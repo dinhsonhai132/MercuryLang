@@ -54,7 +54,6 @@ __mer_core_data__ unordered_map<string, Mer_uint8_t> global_hashmap = {
 
 #define is_a_builtin(x) (lib_hashmap.find(x) != lib_hashmap.end())
 
-
 __mer_core_lib_api__ const char* to_char(Mer_uint8_t c);
 __mer_core_lib_api__ void __io_write(mString_T *__string);
 __mer_core_lib_api__ void __io_puts(mString_T *__string);
@@ -136,14 +135,6 @@ __mer_core_lib_api__ __builtin_func_t __builtin_mer_factorial(stack *stk);
 
 __mer_core_lib_api__ __builtin_func_t __builtin_mer_whats_time_is_it(stack *stk);
 
-__mer_core_lib_api__ __builtin_func_t __builtin_ffi(stack *stk);
-
-__mer_core_lib_api__ __builtin_func_t __builtin_ffi_float_arg(stack *stk);
-
 __mer_core_lib_api__ __builtin_func_t __builtin_dll_load_func(stack *stk);
-
-__mer_core_lib_api__ __builtin_func_t __builtin_free_memory(stack *stk);
-
-mString_T *make_str_obj(string str);
 
 #endif // MERCURY_BUILTIN_HEADER_FILE

@@ -104,9 +104,8 @@ int main(int argc, char** argv) {
 
     mCode_T compiledCode = MerCompiler_compile_ast_program(ast, compiler);
 
-    free(ast);
-    free(lexer);
-    free(parser);
+    MerAST_free(ast);
+    _MerParser_free(parser);
     
     if (mode == "-m") {
         print_bytecode(compiledCode.prg_code.buff);

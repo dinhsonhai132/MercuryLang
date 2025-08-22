@@ -70,7 +70,6 @@ __mer_core_data__ GlobalTable ATTRIBUTE_TABLE = {};
 
 __mer_core_data__ vector<void*> _EXIST = {};
 
-
 __mer_core_data__ vector<table *> GC_TABLE = {};
 
 __mer_core_data__ vector<Mer_string_entry*> STRING_ENTRY = {};

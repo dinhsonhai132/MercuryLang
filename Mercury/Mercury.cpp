@@ -82,6 +82,7 @@ void print_bytecode(vector<uint8_t> &bytecode) {
         } 
         else if (c == "STORE_GLOBAL" 
             || c == "LOAD_GLOBAL" 
+            || c == "CALL_METHOD"
             || c == "STORE_ATTR"
             || c == "CLASS_BEGIN"
             || c == "LOAD_ARGS"
@@ -99,7 +100,6 @@ void print_bytecode(vector<uint8_t> &bytecode) {
             || c == "GET_ITEM" 
             || c == "FUNCTION_CALL"
             || c == "POP_TOP"
-            || c == "CALL_METHOD"
             || c == "PROGRAM_START" 
             || c == "PROGRAM_END"
             || c == "RETURN"
@@ -198,9 +198,8 @@ void prompt() {
         mCode_T code = MerCompiler_compile_ast_program(ast, glb);
         stack *stk = MerVM_evaluate_program(code);
 
-        free(lexer);
-        free(parser);
-        free(ast);
+        _MerParser_free(parser);
+        MerAST_free(ast);
     }
 
     MerCore_Finalize();

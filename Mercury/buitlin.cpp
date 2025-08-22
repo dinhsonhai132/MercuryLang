@@ -132,7 +132,7 @@ MERCURY_API __mer_core_lib_api__ __builtin_func_t __builtin_to_string(stack *stk
         stack_push(top);
     } else {
         string str = to_string(top->cval);
-        mString_T *str_obj = make_str_obj(str);
+        mString_T *str_obj = creat_string_obj(str);
         table *str_tab = MerCompiler_Table_new();
         str_tab->is_str = true;
         str_tab->f_str_v = str_obj;
@@ -237,14 +237,6 @@ vector<string> __split(string a, char b) {
 
     result.push_back(temp);
     return result;
-}
-
-mString_T *make_str_obj(string str) {
-    mString_T *str_obj = MerCompiler_string_new();
-    str_obj->buff.insert(str_obj->buff.end(), str.begin(), str.end());
-    str_obj->size = str.size();
-    str_obj->hash = __hash(str_obj);
-    return str_obj;
 }
 
 MERCURY_API __mer_core_lib_api__ __builtin_func_t __builtin_mer_sub(stack *stk) {
@@ -467,6 +459,9 @@ MERCURY_API __mer_core_lib_api__ __builtin_func_t __builtin_io_write(stack *stk)
 
 MERCURY_API __mer_core_lib_api__ __builtin_func_t __builtin_puts_val(stack *stk) {
     table *top = POP();
+
+    push_to_gc(top);
+
     if (top->is_str) {
         mString_T *str_v = top->f_str_v;
         __io_puts(str_v);
@@ -475,12 +470,6 @@ MERCURY_API __mer_core_lib_api__ __builtin_func_t __builtin_puts_val(stack *stk)
     }
     
     stack_push(MER_VALUE(0));
-}
-
-MERCURY_API __mer_core_lib_api__ __builtin_func_t __builtin_free_memory(stack *stk) {
-    table *top = POP();
-    MerCompiler_free_table(top);
-    reset_table(top);
 }
 
 MERCURY_API __mer_core_lib_api__ __builtin_func_t __builtin_push(stack *stk) {
@@ -550,9 +539,6 @@ MERCURY_API __mer_core_lib_api__ __builtin_func_t __mer_builtin_exit(stack *stk)
     MER_EXIT;
 }
 
-typedef int(*SumFunc)(int[]);
-typedef float(*FloatFunc)(float[]);
-
 typedef table*(*Function_ffi)(table*[]);
 
 table* dll_load_func(string dll_path, string func, vector<table*> args) {
@@ -577,60 +563,6 @@ table* dll_load_func(string dll_path, string func, vector<table*> args) {
 
     table* result = sumFunc(args.data());
 
-    return result;
-
-#else   
-    cerr << "FFI is not supported on this platform." << endl;
-#endif
-}
-
-float __ffi(string dll_path, string func, vector<int> args) {
-#ifdef _WIN32
-    HMODULE hModule = LoadLibraryA(dll_path.c_str());
-
-    if (!hModule) {
-        cerr << "Failed to load DLL: " << dll_path << endl;
-        FreeLibrary(hModule);
-        return 0;
-    }
-
-    FARPROC pFunc = GetProcAddress(hModule, func.c_str());
-
-    if (!pFunc) {
-        cerr << "Failed to find function: " << func << endl;
-        FreeLibrary(hModule);
-        return 0;
-    }
-
-    SumFunc sumFunc = (SumFunc)pFunc;
-    float result = sumFunc(args.data());
-    return result;
-
-#else   
-    cerr << "FFI is not supported on this platform." << endl;
-#endif
-}
-
-float __ffi_float(string dll_path, string func, vector<float> args) {
-#ifdef _WIN32
-    HMODULE hModule = LoadLibraryA(dll_path.c_str());
-
-    if (!hModule) {
-        cerr << "Failed to load DLL: " << dll_path << endl;
-        FreeLibrary(hModule);
-        return 0;
-    }
-
-    FARPROC pFunc = GetProcAddress(hModule, func.c_str());
-
-    if (!pFunc) {
-        cerr << "Failed to find function: " << func << endl;
-        FreeLibrary(hModule);
-        return 0;
-    }
-
-    FloatFunc sumFunc = (FloatFunc)pFunc;
-    float result = sumFunc(args.data());
     return result;
 
 #else   
@@ -666,58 +598,8 @@ MERCURY_API __mer_core_api__ __builtin_func_t __builtin_dll_load_func(stack *stk
     } else {
         stack_push(MerCompiler_table_setup(0, NULL_UINT_8_T));
     }
-}
 
-MERCURY_API __mer_core_api__ __builtin_func_t __builtin_ffi(stack *stk) {
-    table *args = POP();
-    table *func_to_call = POP();
-    table *path_to_dll = POP();
-
-    vector<int> args_list;
-
-    if (args->is_list) {
-        for (auto &item : args->list_v->args) {
-            table *val = (table *) item;
-            args_list.push_back(val->cval);
-        }
-    }
-
-    if (!func_to_call->is_str || !path_to_dll->is_str) {
-        return;
-    }
-    
-    string dll_path = __convert_to_string(path_to_dll->f_str_v);
-    string func = __convert_to_string(func_to_call->f_str_v);
-    
-    int value = __ffi(dll_path, func, args_list);
-    stack_push(MerCompiler_table_setup(value, NULL_UINT_8_T));
-
-    delete args; delete func_to_call; delete path_to_dll;
-}
-
-MERCURY_API __mer_core_api__ __builtin_func_t __builtin_ffi_float_arg(stack *stk) {
-    table *args = POP();
-    table *func_to_call = POP();
-    table *path_to_dll = POP();
-
-    vector<float> args_list;
-
-    if (args->is_list) {
-        for (auto &item : args->list_v->args) {
-            table *val = (table *) item;
-            args_list.push_back(val->cval);
-        }
-    }
-
-    if (!func_to_call->is_str || !path_to_dll->is_str) {
-        return;
-    }
-    
-    string dll_path = __convert_to_string(path_to_dll->f_str_v);
-    string func = __convert_to_string(func_to_call->f_str_v);
-    
-    float value = __ffi_float(dll_path, func, args_list);
-    stack_push(MerCompiler_table_setup(value, NULL_UINT_8_T));
-
-    delete args; delete func_to_call; delete path_to_dll;
+    push_to_gc(args);
+    push_to_gc(func_to_call);
+    push_to_gc(path_to_dll);
 }

@@ -58,6 +58,8 @@
 #define CCLASS_BEGIN                            0x9E 
 #define CCLASS_END                              0x9F
 
+#define CSET_SUPER_CLASS                         0xA6
+
 #define CSTORE_ATTR                             0xA0
 #define CLOAD_ATTR                              0xA1
 

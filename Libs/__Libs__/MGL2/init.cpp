@@ -135,33 +135,178 @@ DLL_EXPORT int get_input_char() {
     return 0;
 }
 
-// DLL_EXPORT table* screen_write_text(table* args[]) {
-//     table *text = args[0];
-//     table *x = args[1];
-//     table *y = args[2];
-//     table *r = args[3];
-//     table *g = args[4];
-//     table *b = args[5];
+DLL_EXPORT table* draw_image(table* args[]) {
+    if (!renderer) {
+        return MER_VALUE(0);
+    }
 
-//     string str = __convert_to_string(text->f_str_v);
+    string path = __convert_to_string(args[0]->f_str_v);
+    float x = args[1]->cval;
+    float y = args[2]->cval;
+    float w = args[3]->cval;
+    float h = args[4]->cval;
 
-//     SDL_SetRenderDrawColor(renderer, r->cval, g->cval, b->cval, 255);
-//     SDL_Surface *surface = SDL_CreateRGBSurfaceWithFormat(0, 800, 600, 32, SDL_PIXELFORMAT_RGBA32);
-//     SDL_FRect rect = {static_cast<float>(x->cval), static_cast<float>(y->cval), 800.0f, 600.0f};
-//     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-//     SDL_FreeSurface(surface);
+    // Load BMP (nếu muốn PNG/JPG thì cần SDL_image)
+    SDL_Surface* surface = SDL_LoadBMP(path.c_str());
+    if (!surface) {
+        std::cout << "[ERROR] Failed to load image: " << SDL_GetError() << std::endl;
+        return MER_VALUE(0);
+    }
 
-//     SDL_SetTextureBlendMode(texture, SDL_BLENDMODE_BLEND);
-//     SDL_SetTextureAlphaMod(texture, 255);
-//     SDL_SetTextureColorMod(texture, r->cval, g->cval, b->cval);
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_DestroySurface(surface);   // SDL3: SDL_FreeSurface -> SDL_DestroySurface
 
-//     SDL_RenderCopy(renderer, texture, NULL, &rect);
-//     SDL_DestroyTexture(texture);
+    if (!texture) {
+        std::cout << "[ERROR] Failed to create texture: " << SDL_GetError() << std::endl;
+        return MER_VALUE(0);
+    }
 
-//     SDL_RenderPresent(renderer);
+    SDL_FRect dstRect = {x, y, w, h};
+    SDL_RenderTexture(renderer, texture, nullptr, &dstRect); // SDL3: SDL_RenderCopy -> SDL_RenderTexture
 
-//     return MER_VALUE(0);
-// }
+    SDL_DestroyTexture(texture);
+
+    return MER_VALUE(0);
+}
+
+DLL_EXPORT table* draw_line_circle(table* args[]) {
+    if (!renderer) {
+        return MER_VALUE(0);
+    }
+
+    float cx = args[0]->cval;
+    float cy = args[1]->cval;
+    float radius = args[2]->cval;
+    int r = args[3]->cval;
+    int g = args[4]->cval;
+    int b = args[5]->cval;
+
+    SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+
+    int x = (int)radius;
+    int y = 0;
+    int err = 0;
+
+    while (x >= y) {
+        SDL_RenderPoint(renderer, cx + x, cy + y);  // SDL3: SDL_RenderDrawPoint -> SDL_RenderPoint
+        SDL_RenderPoint(renderer, cx + y, cy + x);
+        SDL_RenderPoint(renderer, cx - y, cy + x);
+        SDL_RenderPoint(renderer, cx - x, cy + y);
+        SDL_RenderPoint(renderer, cx - x, cy - y);
+        SDL_RenderPoint(renderer, cx - y, cy - x);
+        SDL_RenderPoint(renderer, cx + y, cy - x);
+        SDL_RenderPoint(renderer, cx + x, cy - y);
+
+        y += 1;
+        if (err <= 0) {
+            err += 2 * y + 1;
+        } else {
+            x -= 1;
+            err -= 2 * x + 1;
+        }
+    }
+
+    return MER_VALUE(0);
+}
+
+DLL_EXPORT table* draw_line_ellipse(table* args[]) {
+    if (!renderer) {
+        return MER_VALUE(0);
+    }
+
+    float cx = args[0]->cval;
+    float cy = args[1]->cval;
+    float a = args[2]->cval;
+    float b = args[3]->cval;
+    int r = args[4]->cval;
+    int g = args[5]->cval;
+    int bb = args[6]->cval;
+
+    SDL_SetRenderDrawColor(renderer, r, g, bb, 255);
+
+    for (float theta = 0; theta < 2 * M_PI; theta += 0.01f) {
+        float x = a * cos(theta);
+        float y = b * sin(theta);
+        SDL_RenderPoint(renderer, (int)(cx + x), (int)(cy + y));
+    }
+
+    return MER_VALUE(0);
+}
+
+DLL_EXPORT table* draw_arc(table* args[]) {
+    if (!renderer) {
+        return MER_VALUE(0);
+    }
+
+    float cx = args[0]->cval;
+    float cy = args[1]->cval;
+    float radius = args[2]->cval;
+    float start_angle = args[3]->cval;
+    float end_angle   = args[4]->cval;
+    int r = args[5]->cval;
+    int g = args[6]->cval;
+    int b = args[7]->cval;
+
+    SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+
+    for (float theta = start_angle; theta <= end_angle; theta += 0.01f) {
+        float x = radius * cos(theta);
+        float y = radius * sin(theta);
+        SDL_RenderPoint(renderer, (int)(cx + x), (int)(cy + y));
+    }
+
+    return MER_VALUE(0);
+}
+
+DLL_EXPORT table* draw_filled_ellipse(table* args[]) {
+    if (!renderer) {
+        return MER_VALUE(0);
+    }
+
+    float cx = args[0]->cval;
+    float cy = args[1]->cval;
+    float a = args[2]->cval;
+    float b = args[3]->cval;
+    int r = args[4]->cval;
+    int g = args[5]->cval;
+    int bb = args[6]->cval;
+
+    SDL_SetRenderDrawColor(renderer, r, g, bb, 255);
+
+    for (int y = -b; y <= b; y++) {
+        float dx = a * sqrt(1 - (y * y) / (b * b));
+        SDL_RenderLine(renderer,                     // SDL3: SDL_RenderDrawLine -> SDL_RenderLine
+                       (int)(cx - dx), (int)(cy + y),
+                       (int)(cx + dx), (int)(cy + y));
+    }
+
+    return MER_VALUE(0);
+}
+
+DLL_EXPORT table* draw_filled_circle(table* args[]) {
+    if (!renderer) {
+        return MER_VALUE(0);
+    }
+
+    float cx = args[0]->cval;
+    float cy = args[1]->cval;
+    float radius = args[2]->cval;
+    int r = args[3]->cval;
+    int g = args[4]->cval;
+    int b = args[5]->cval;
+
+    SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+
+    int rad = (int)radius;
+    for (int y = -rad; y <= rad; y++) {
+        int dx = (int)(sqrt(radius * radius - y * y));
+        SDL_RenderLine(renderer,
+                       (int)(cx - dx), (int)(cy + y),
+                       (int)(cx + dx), (int)(cy + y));
+    }
+
+    return MER_VALUE(0);
+}
 
 DLL_EXPORT table* __get_input_char(table* args[]) {
     table* result = MerCompiler_Table_new();

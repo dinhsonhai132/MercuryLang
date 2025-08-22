@@ -37,33 +37,31 @@ mLexer_T *_MerLexer_init(const char *buf)
     return lexer;
 }
 
-mLexer_T *_MerLexer_new(void)
-{
-    mLexer_T *lexer = (mLexer_T *)malloc(sizeof(mLexer_T));
-    lexer->buf = NULL;
-    lexer->inp = NULL;
-    lexer->scr = NULL;
-    lexer->buf_size = 0;
-    lexer->iden = NULL;
-    lexer->cstart = '\0';
-    lexer->cend = '\0';
-    lexer->str = NULL;
-    lexer->com = NULL;
-    lexer->sytx = NULL;
-    lexer->cur = '\0';
-    lexer->ncur = '\0';
-    lexer->col = 1;
-    lexer->row = 1;
+mLexer_T* _MerLexer_new(void) {
+    mLexer_T* lexer = (mLexer_T*)calloc(1, sizeof(mLexer_T));
+    if (!lexer) return NULL;
+
+    lexer->col  = 1;
+    lexer->row  = 1;
     lexer->line = 1;
-    lexer->blk = 0;
-    lexer->size = 0;
-    lexer->id = 0;
-    lexer->level = 0;
+
     return lexer;
 }
 
 int _MerLexer_free(mLexer_T *lexer)
 {
+    if (!lexer) return 0;
+
+    if (lexer->str)   free(lexer->str);
+    if (lexer->com)   free(lexer->com);
+    if (lexer->sytx)  free(lexer->sytx);
+    if (lexer->num)   free(lexer->num);
+    if (lexer->mmode) free(lexer->mmode);
+
+#ifdef DEBUG
+    if (lexer->c_line) free(lexer->c_line);
+#endif
+
     free(lexer);
     return 0;
 }

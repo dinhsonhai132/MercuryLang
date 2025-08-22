@@ -243,6 +243,8 @@ struct _class {
     _class *super_class;
     _class *inheritance;
     _class *this_obj;
+
+    bool is_extend;
 };
 
 struct _object

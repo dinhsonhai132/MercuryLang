@@ -13,7 +13,7 @@ mToken_T *_MerToken_new(void) {
 }
 
 int *_MerToken_free(mToken_T *token) {
-    free(token);
+    delete token;    
     return NULL;
 }
 

@@ -54,6 +54,7 @@ _class *MerCompiler_class_new(void) {
     c->inheritance = NULL_PTR;
     c->members.clear();
     c->methods.clear();
+    c->is_extend = false;
     return c;
 }
 

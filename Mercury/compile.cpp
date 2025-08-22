@@ -196,11 +196,12 @@ MERCURY_API mCode_T MerCompiler_compile_ast_attribute_expression_call_method(mAS
     return NULL_CODE;
   }
 
+  mCode_T args_c = NULL_CODE;
   Mer_size_t args_size = 0;
   if (ast->is_having_args) {
     for (auto child : ast->args) {
       mCode_T _code = MerCompiler_compile_ast_id(child, glb);
-      INSERT_VEC(result, _code);
+      INSERT_VEC(args_c, _code);
       _code.prg_code.buff.clear();
       ++args_size;
     }
@@ -218,7 +219,13 @@ MERCURY_API mCode_T MerCompiler_compile_ast_attribute_expression_call_method(mAS
 
   PUSH(result, CLOAD_ATTR);
   PUSH(result, address);
+
+  if (ast->is_having_args) {
+    INSERT_VEC(result, args_c);
+  }
+
   PUSH(result, CCALL_METHOD);
+  PUSH(result, args_size);
 
   #ifdef SYSTEM_TEST
   cout << "[compiler.cpp] [MerCompiler_compile_ast_function_call] [pass]" << endl;
@@ -411,13 +418,7 @@ MERCURY_API mCode_T MerCompiler_compile_ast_id_expression_statment(mAST_T *ast, 
   
   for (auto child : root->children) {
     mCode_T _code = MerCompiler_compile_ast_id(child, glb);
-
-    if (is_ast_expression(child->type)) {
-      PUSH(code, CPOP_TOP);
-    }
-
-    INSERT_VEC_TO_OUTCODE_AND_PROG_CODE(code, _code);
-    _code.prg_code.buff.clear();
+    INSERT_VEC(code, _code);
   }
 
   PUSH(code, CPROGRAM_END);
@@ -1198,10 +1199,6 @@ MERCURY_API mCode_T MerCompiler_compile_ast_function_call(mAST_T *ast, __compile
 
   if (!found) {
     Mer_real_string str = ast->func_call.c_str();
-    if (str == "print") {
-      Mer_real_string msg = "Function not found '" + str + "', you forgot to import \"IO\"?";
-      MerDebug_print_error(COMPILER_ERROR, msg.c_str(), glb.file, ast->true_line);
-    }
     Mer_real_string msg = "Function not found '" + str + "'";
     MerDebug_print_error(COMPILER_ERROR, msg.c_str(), glb.file, ast->true_line);
     return NULL_CODE;

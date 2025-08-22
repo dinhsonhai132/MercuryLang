@@ -82,56 +82,63 @@ mAST_T *MerAST_make(string type, string tok, float value, string dt, string iden
     return node;
 }
 
-int MerAST_free(mAST_T *ast)
-{
-    if (ast == nullptr)
-        return _SUCCESS;
+int MerAST_free(mAST_T* node) {
+    if (!node) return 0;
 
-    if (ast->left)
-        MerAST_free(ast->left);
-    if (ast->right)
-        MerAST_free(ast->right);
-    if (ast->comp)
-        MerAST_free(ast->comp);
-    if (ast->comp_left)
-        MerAST_free(ast->comp_left);
-    if (ast->comp_right)
-        MerAST_free(ast->comp_right);
-    if (ast->var_value)
-        MerAST_free(ast->var_value);
-    if (ast->return_v)
-        MerAST_free(ast->return_v);
-    if (ast->poutput)
-        MerAST_free(ast->poutput);
+    MerAST_free(node->poutput);
+    MerAST_free(node->comp);
+    MerAST_free(node->inc_dec_value);
+    MerAST_free(node->define_val);
+    MerAST_free(node->assign_value);
+    MerAST_free(node->not_expr);
+    MerAST_free(node->while_cond);
+    MerAST_free(node->str_value);
+    MerAST_free(node->print_v);
+    MerAST_free(node->attr);
+    MerAST_free(node->del_index);
+    MerAST_free(node->comp_left);
+    MerAST_free(node->comp_right);
+    MerAST_free(node->in_value);
+    MerAST_free(node->var_value);
+    MerAST_free(node->dict_key);
+    MerAST_free(node->dict_value);
+    MerAST_free(node->return_v);
+    MerAST_free(node->left);
+    MerAST_free(node->right);
+    MerAST_free(node->extract_value);
+    MerAST_free(node->extract_assign);
+    MerAST_free(node->str_var_value);
+    MerAST_free(node->array_store);
+    MerAST_free(node->array_store_value);
+    MerAST_free(node->attr_store);
+    MerAST_free(node->attr_store_value);
 
-    for (mAST_T *node : ast->args)
-    {
-        MerAST_free(node);
+    for (auto child : node->members) MerAST_free(child);
+    for (auto child : node->then_body) MerAST_free(child);
+    for (auto child : node->else_body) MerAST_free(child);
+    for (auto child : node->elif_body) MerAST_free(child);
+    for (auto& kv : node->dict) { 
+        MerAST_free(kv.first);
+        MerAST_free(kv.second);
     }
-    for (mAST_T *node : ast->body)
-    {
-        MerAST_free(node);
-    }
-    for (mAST_T *node : ast->then_body)
-    {
-        MerAST_free(node);
-    }
-    for (mAST_T *node : ast->else_body)
-    {
-        MerAST_free(node);
-    }
-    for (mAST_T *node : ast->list)
-    {
-        MerAST_free(node);
-    }
-    for (mAST_T *node : ast->children)
-    {
-        MerAST_free(node);
-    }
+    for (auto child : node->init_body) MerAST_free(child);
+    for (auto child : node->init_args) MerAST_free(child);
+    for (auto child : node->while_body) MerAST_free(child);
+    for (auto child : node->str_children) MerAST_free(child);
+    for (auto child : node->body) MerAST_free(child);
+    for (auto child : node->dict_list) MerAST_free(child);
+    for (auto child : node->args) MerAST_free(child);
+    for (auto child : node->list) MerAST_free(child);
+    for (auto child : node->mul_extract) MerAST_free(child);
+    for (auto child : node->extract_list) MerAST_free(child);
+    for (auto child : node->children) MerAST_free(child);
+    for (auto child : node->do_body) MerAST_free(child);
+    for (auto child : node->in_body) MerAST_free(child);
+    for (auto child : node->in_else_body) MerAST_free(child);
+    for (auto child : node->attrs) MerAST_free(child);
 
-    delete ast;
-
-    return _SUCCESS;
+    delete node;
+    return 0;
 }
 
 void MerAST_print_ast(mAST_T *ast, int indent) {

@@ -4,7 +4,7 @@
 
 # Internal: Load a random float from native DLL
 func __rand() do
-    return ffi_float("C:\\MercuryLang\\Libs\\__Libs__\\random\\init.dll", "__rand", [])
+    return dll_load("C:\\MercuryLang\\Libs\\__Libs__\\random\\init.dll", "random", [])
 end
 
 # Returns a random float between 0 and 1

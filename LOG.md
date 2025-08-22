@@ -224,3 +224,7 @@
 
 - **Add** new `sys` library
 
+### 8/22/2025
+
+- **Add** new `class` (W.I.P)
+

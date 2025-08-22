@@ -1,3 +1,0 @@
-func sleep(ms) do
-    return dll_load("C:\\MercuryLang\\Libs\\__Libs__\\sleep\\init.dll", "sleep_ms", [ms - 1])
-end

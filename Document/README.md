@@ -98,6 +98,10 @@ It is recommended to read this tutorial **before** writing or running MercuryLan
 * Know how `import` and `include` work
 * Know how to make your own library
 
+#### [4.4 class](Tutorial/class.md)
+
+* Learning `OOP` with MercuryLang
+
 ---
 
 ### [4.0 Library]()

@@ -1,0 +1,6 @@
+# Sleeps for the specified number of milliseconds.
+# It uses an external DLL implemented in native code.
+# Note: Subtracts 1 ms to compensate for internal timing overhead (optional adjustment).
+func sleep(ms) do
+    return dll_load("C:\\MercuryLang\\Libs\\__Libs__\\sleep\\init.dll", "sleep_ms", [ms])
+end

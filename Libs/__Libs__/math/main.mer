@@ -1,0 +1,166 @@
+# MercuryLang Standard Math Library
+
+# Constants
+let pi = 3.1415926535897932384626433832795              # π (Pi)
+let e = 2.7182818284590452353602874713527               # Euler's number
+let tau = 6.283185307179586476925286766559              # Tau (2π)
+let gr = 1.6180339887498948482045868343656              # Golden Ratio (φ)
+
+let __minus_1 = 0 - 1
+
+# Converts degrees to radians
+# Formula: radians = degrees × π / 180
+let to_radian(__degree) = __degree * pi / 180
+
+
+# Computes the factorial of a non-negative integer
+# Formula: n! = 1 × 2 × 3 × ... × n
+func factorial(__value) do
+    let __result = 1
+    let __i = 1
+
+    while __i <= __value do
+        __result *= __i
+        __i += 1
+    end
+
+    return __result
+end
+
+
+# Checks if a string consists only of numeric digits
+# Returns true if all characters are between '0' and '9'
+func isdigit(str_) do
+    for i in str_ do
+        let found = false
+        for j in "0123456789" do
+            if same(j, i) then
+                found = true
+                break
+            end
+        end
+        if not found then
+            return false
+        end
+    end
+    return true
+end
+
+
+# Approximates the square root using Newton's Method
+# Formula: xₙ₊₁ = (xₙ + a / xₙ) / 2
+# Iterates 10 times for convergence
+func sqrt(__value) do
+    let x = __value
+    let guess = x / 2
+    let i = 0
+
+    while i < 10 do
+        guess = (guess + x / guess) / 2
+        i += 1
+    end
+
+    return guess
+end
+
+
+# Raises a number to an integer power
+# Formula: result = value^times
+func power(__value, __times) do
+    let __i = 1
+    let __result = __value
+
+    while __i < __times do
+        __result *= __value
+        __i += 1
+    end
+
+    return __result
+end
+
+
+# Returns the square of a number (x^2)
+let square(x) = x * x
+
+# Returns the cube of a number (x^3)
+let cube(x) = square(x) * x
+
+
+# Approximates the sine of an angle (in degrees)
+# Uses Taylor series expansion:
+# sin(x) ≈ Σ [(-1)^n × x^(2n+1) / (2n+1)!] for n = 0 to 9
+func sin(__degree) do
+    let __x = to_radian(__degree)
+    let __result = 0.0
+    let __sign = 1.0
+    let __i = 0
+    let __power = 0
+    let __numerator = 0
+    let __deno = 0
+    let __j = 0
+
+    while __i < 10 do
+        __power = 2 * __i + 1
+        __numerator = power(__x, __power)
+        __deno = 1.0
+        __j = 1
+
+        while __j <= __power do
+            __deno *= __j
+            __j += 1
+        end
+
+        __result += __sign * (__numerator / __deno)
+        __sign *= __minus_1
+        __i += 1
+    end
+
+    return __result
+end
+
+
+# Approximates the cosine of an angle (in degrees)
+# Uses Taylor series expansion:
+# cos(x) ≈ Σ [(-1)^n × x^(2n) / (2n)!] for n = 0 to 9
+func cos(__degree) do
+    let __x = to_radian(__degree)
+    let __result = 0.0
+    let __sign = 1.0
+    let __i = 0
+    let __power = 0
+    let __numerator = 0
+    let __denominator = 0
+    let __j = 0
+
+    while __i < 10 do
+        __power = 2 * __i
+        __numerator = power(__x, __power)
+        __denominator = 1.0
+        __j = 1
+
+        while __j <= __power do
+            __denominator *= __j
+            __j += 1
+        end
+
+        __result += __sign * (__numerator / __denominator)
+        __sign *= __minus_1
+        __i += 1
+    end
+
+    return __result
+end
+
+
+# Computes the cotangent of an angle (in degrees)
+# cot(x) = sin(x) / cos(x)
+func cot(__degree) do
+    return sin(__degree) / cos(__degree)
+end
+
+
+# Computes the tangent of an angle (in degrees)
+# tan(x) = 1 / cot(x) = sin(x) / cos(x)
+func tan(__degree) do
+    return 1 / cot(__degree)
+end

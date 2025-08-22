@@ -1,0 +1,33 @@
+# Initializes a graphical window.
+# @param width: Window width in pixels
+# @param height: Window height in pixels
+# @param title: Window title as a string
+let init_window(width, height, title) = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\MGL2\\init.dll", "init", [width, height, title])
+
+# Swaps the back buffer to the front to update the screen.
+let flip() = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\MGL2\\init.dll", "flip", [])
+
+# Draws a colored square (rectangle) on the screen.
+# @param x, y: Position of the top-left corner
+# @param w, h: Width and height of the square
+# @param r, g, b: Color values (0–255)
+let draw_square(x, y, w, h, r, g, b) = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\MGL2\\init.dll", "draw_square", [x, y, w, h, r, g, b])
+
+# Fills the entire screen with a solid color.
+# @param r, g, b: RGB color values
+let fill_screen(r, g, b) = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\MGL2\\init.dll", "fill_screen", [r, g, b])
+
+# let screen_write_text(text, w, h, r, g ,b) = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\MGL2\\init.dll", "fill_screen", [text, w, h, r, g, b])
+
+# Waits for and returns the next input character (ASCII code).
+let get_input_char() = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\MGL2\\init.dll", "__get_input_char", [])
+
+# Checks if the user has requested to quit (e.g., closed the window).
+# @return 1 if quit requested, 0 otherwise
+let is_quit() = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\MGL2\\init.dll", "is_quit", [])
+
+# Closes the window and terminates the graphics system.
+let quit_window() = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\MGL2\\init.dll", "quit", [])
+
+# Converts the input ASCII code to a lowercase letter string if valid.
+# Only handles lowercase letters a–z (ASCII 97–122). Returns "" otherwise.

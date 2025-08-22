@@ -1,0 +1,96 @@
+let extend(item1, item2) = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "extend", [item1, item2])
+let insert_item(item, index, value) = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "insert_item", [item, index, value])
+let insert(item, index, value) = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "insert", [item, index, value])
+let eval(value) = dll_load("C:\\MercuryLang\\Libs\\__Libs__\\vector\\init.dll", "eval", [value])
+
+func max(value) do
+    let max = value[0]
+    for i in value do
+        if i > max then
+            max = i
+        end
+    end
+
+    return max
+end
+
+func min(value) do
+    let max_v = value[0]
+    for i in value do
+        if i < max_v then
+            max_v = i
+        end
+    end
+
+    return max_v
+end
+
+func reverse(value) do
+    let n = size(value)
+    
+    for i in range(0, n / 2) do
+        let tmp = value[i]
+        value[i] = value[n - i - 1]
+        value[n - i - 1] = tmp
+    end
+
+    return value
+end
+
+func count(value, item) do
+    let count = 0
+    for i in value do
+        if i == item then
+            count += 1
+        end
+    end
+
+    return count
+end
+
+func sort(a) do
+    n = size(a)
+    j = 0
+    while j < n do
+        i = 1
+        while i < n do
+            if a[i - 1] > a[i] then
+                tmp = a[i]
+                a[i] = a[i - 1]
+                a[i - 1] = tmp
+            end
+            i += 1
+        end
+        j += 1
+    end
+    return a
+end
+
+func tokenize(buff) do
+    i = 0
+    n = size(buff)
+    tokens = []
+
+    while i < n do
+        if buff[i] == "+" or buff[i] == "-" then
+            print(buff[i])
+            i += 1
+        end
+
+        elif isdigit(buff[i]) then
+            num = ""
+            while isdigit(buff[i]) do
+                num += buff[i]
+                i += 1
+            end
+
+            print(num)
+        end
+
+        else
+            i += 1
+        end
+    end
+
+    return tokens
+end

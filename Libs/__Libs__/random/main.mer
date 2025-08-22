@@ -1,0 +1,36 @@
+# random.mer
+# Random utility functions for MercuryLang
+# Backed by native FFI using init.dll from random
+
+# Internal: Load a random float from native DLL
+func __rand() do
+    return ffi_float("C:\\MercuryLang\\Libs\\__Libs__\\random\\init.dll", "__rand", [])
+end
+
+# Returns a random float between 0 and 1
+func random() do
+    return __rand()
+end
+
+# Returns a random integer in range [0, n)
+# If n < 0, returns 0
+func randbelow(n) do
+    if n < 0 then
+        return 0
+    end
+
+    return to_int(__rand() * n)
+end
+
+# Returns a random integer in range [a, b]
+# If a > b, returns 0
+func randint(a, b) do
+    if a > b then
+        return 0
+    end
+
+    return a + randbelow(b - a + 1)
+end
+
+# Picks and returns a random element from list l
+let choice(l) = l[randint(0, size(l) - 1)]

@@ -355,6 +355,11 @@ MERCURY_API mCode_T MerCompiler_compile_ast_class_statement(mAST_T *ast, __compi
 
   for (auto &item : ast->members) {
     mCode_T code = MerCompiler_compile_ast_id(item, glb);
+
+    if (is_ast_expression(item->type)) {
+      PUSH(code, CPOP_TOP);
+    }
+
     INSERT_VEC(result, code);
   }
   
@@ -406,6 +411,11 @@ MERCURY_API mCode_T MerCompiler_compile_ast_id_expression_statment(mAST_T *ast, 
   
   for (auto child : root->children) {
     mCode_T _code = MerCompiler_compile_ast_id(child, glb);
+
+    if (is_ast_expression(child->type)) {
+      PUSH(code, CPOP_TOP);
+    }
+
     INSERT_VEC_TO_OUTCODE_AND_PROG_CODE(code, _code);
     _code.prg_code.buff.clear();
   }
@@ -662,6 +672,11 @@ MERCURY_API mCode_T MerCompiler_compile_ast_loop(mAST_T *ast, __compiler_u &glb)
 
   for (auto &node : ast->do_body) {
     _code = MerCompiler_compile_ast_id(node, glb);
+
+    if (is_ast_expression(node->type)) {
+      PUSH(_code, CPOP_TOP);
+    }
+
     INSERT_VEC(body, _code);
     _code.prg_code.buff.clear();
   }
@@ -961,6 +976,11 @@ MERCURY_API mCode_T MerCompiler_compile_ast_while(mAST_T *ast, __compiler_u &glb
 
   for (auto child : ast->while_body) {
     _code = MerCompiler_compile_ast_id(child, glb);
+
+    if (is_ast_expression(child->type)) {
+      PUSH(_code, CPOP_TOP);
+    }
+
     INSERT_VEC(while_body, _code);
     _code.prg_code.buff.clear();
   }
@@ -1028,6 +1048,11 @@ MERCURY_API mCode_T MerCompiler_compile_ast_for_in_statement(mAST_T *ast, __comp
 
   for (auto child : ast->in_body) {
     mCode_T _code = MerCompiler_compile_ast_id(child, glb);
+
+    if (is_ast_expression(child->type)) {
+      PUSH(_code, CPOP_TOP);
+    }
+
     INSERT_VEC(for_body, _code);
     _code.prg_code.buff.clear();
   }
@@ -1476,6 +1501,11 @@ MERCURY_API mCode_T MerCompiler_compile_ast_function(mAST_T *ast, __compiler_u &
   glb.is_in_func = true;
   for (auto child : ast->body) {
     mCode_T _code = MerCompiler_compile_ast_id(child, glb);
+
+    if (is_ast_expression(child->type)) {
+      PUSH(_code, CPOP_TOP);
+    }
+
     INSERT_VEC(body, _code);
     _code.prg_code.buff.clear();
   }

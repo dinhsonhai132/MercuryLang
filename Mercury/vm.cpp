@@ -210,6 +210,12 @@ MERCURY_API __mer_core_data__ stack *MerVM_evaluate_statement(__program_bytecode
                 break;
             }
 
+            case CPOP_TOP: {
+                table *top = POP();
+                push_to_gc(top);
+                break;
+            }
+
             case CLOAD_TRUE: {
                 push_true_to_stack();
                 break;

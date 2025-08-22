@@ -24,6 +24,7 @@ const char* show_opcode_name(uint8_t x) {
     else if (x == CNOT_EQUAL)     return "NOT_EQUAL";
     else if (x == CEND_FUNCTION)  return "END_FUNCTION";
     else if (x == CCLASS_BEGIN)   return "CLASS_BEGIN";
+    else if (x == CPOP_TOP)       return "POP_TOP";
     else if (x == CCLASS_END)     return "CLASS_END";
     else if (x == CLESS)          return "LESS";
     else if (x == CCALL_METHOD)   return "CALL_METHOD";
@@ -97,6 +98,7 @@ void print_bytecode(vector<uint8_t> &bytecode) {
         } else if (c == "STORE_INDEX" 
             || c == "GET_ITEM" 
             || c == "FUNCTION_CALL"
+            || c == "POP_TOP"
             || c == "CALL_METHOD"
             || c == "PROGRAM_START" 
             || c == "PROGRAM_END"

@@ -65,6 +65,7 @@
 #define CCALL_METHOD                            0xA4
 
 #define CDELETE                                 0xA2
+#define CPOP_TOP                                0xA5
 
 #define CIS                                     0xA3
 

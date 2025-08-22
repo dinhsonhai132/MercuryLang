@@ -16,8 +16,9 @@ all:
 	@ g++ $(STATIC) $(SOURCE_FILE) -o $(TARGET)
 	@ g++ -DSYSTEM_TEST $(SOURCE_FILE) -o $(TEST)
 	@ g++ $(MPI_SOURCE) -o $(MPI_TARGET)
+	@ g++ -DGC_DEBUG $(STATIC) $(SOURCE_FILE) -o $(GC)
 	@ @echo off
-	@ copy C:\MercuryLang\Program\Mercury.h C:\msys64\ucrt64\include
+	@ copy .\Program\Mercury.hpp C:\msys64\ucrt64\include
 	@ cmd /c "echo Done!"
 clean:
 	@if exist $(TARGET) del /f /q $(TARGET)

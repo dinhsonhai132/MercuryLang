@@ -24,20 +24,18 @@ __mer_core_data__ unordered_map<string, Mer_uint8_t> lib_hashmap = {
     {"puts", PUTS_ADDRESS}, 
     {"free", FREE_ADDRESS},
     {"type", TYPE_ADDRESS}, 
-    {"dll_loadf", DLL_LOAD_FUNC},
+    {"dll_load", DLL_LOAD_FUNC},
     {"print", PRINT_ADDRESS},
     {"range", RANGE_ADDRESS},
     {"sub", SUB_STR}, 
-    {"ffi", FFI_ADDRESS},
-    {"ffi_float", FFI_FLOAT_ADDRESS},
-    {"ffi_char", FFI_CHARR_ADDRESS},
+    {"ord", ORD_ADDRESS},
+    {"chr", CHR_ADDRESS},
     {"isdigit", ISDIGIT_ADDRESS},
     {"sleep", SLEEP_ADDRESS},
     {"to_list", LIST_ADDRESS},
-    {"to_str", TO_STRING_ADDRESS},
-    {"to_int", TO_INT_ADDRESS},
+    {"str", TO_STRING_ADDRESS},
+    {"int", TO_INT_ADDRESS},
     {"input", INPUT_ADDRESS},
-    {"to_str", TO_STRING_ADDRESS},
 };
 
 __mer_core_data__ unordered_map<string, Mer_uint8_t> global_hashmap = {
@@ -136,5 +134,9 @@ __mer_core_lib_api__ __builtin_func_t __builtin_mer_factorial(stack *stk);
 __mer_core_lib_api__ __builtin_func_t __builtin_mer_whats_time_is_it(stack *stk);
 
 __mer_core_lib_api__ __builtin_func_t __builtin_dll_load_func(stack *stk);
+
+__mer_core_lib_api__ __builtin_func_t __builtin_ord(stack *stk);
+
+__mer_core_lib_api__ __builtin_func_t __builtin_chr(stack *stk);
 
 #endif // MERCURY_BUILTIN_HEADER_FILE

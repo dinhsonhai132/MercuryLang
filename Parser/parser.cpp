@@ -122,6 +122,18 @@ mAST_T *MerParser_parse_class_statement(mParser_T *parser) {
     if (parser->token->tok == VARIABLE) {
         node->class_name = parser->token->name;
         parser->token = _MerLexer_get_next_tok(parser->lexer);
+
+        if (parser->token->tok == EXTENDS) {
+            parser->token = _MerLexer_get_next_tok(parser->lexer);
+            if (parser->token->tok == VARIABLE) {
+                node->extend = parser->token->name;
+                parser->token = _MerLexer_get_next_tok(parser->lexer);
+                node->is_extend = true;
+            } else {
+                MerDebug_print_error(SYNTAX_ERROR, "Expected class name", parser->lexer->file, TRUE_LINE(parser));
+            }
+        }
+
     } else {
         MerDebug_print_error(SYNTAX_ERROR, "Expected class name", parser->lexer->file, TRUE_LINE(parser));
     }
@@ -980,6 +992,24 @@ mAST_T *MerParser_parse_additive_expression(mParser_T *parser)
         left->true_line = TRUE_LINE(parser);
     }
 
+    mAST_T *new_node = MerAST_make_parent(ExtractExpression);
+    new_node->extract_value = left;
+    new_node->is_value_extract = true;
+
+    if (parser->token->tok == LEFT_BRACKET) {
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+        mAST_T *value = MerParser_parse(parser);
+        if (!value || !is_ast_expression(value->type)) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected extract expression", parser->lexer->file, TRUE_LINE(parser));
+        }
+        new_node->mul_extract.push_back(value);
+        if (parser->token->tok == RIGHT_BRACKET) {
+            return new_node;
+        } else {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected ']' in extract expression", parser->lexer->file, TRUE_LINE(parser));
+        }
+    }
+
     left->true_line = TRUE_LINE(parser);
     return left;
 }
@@ -1143,6 +1173,25 @@ mAST_T *MerParser_parse_parent_expression(mParser_T *parser) {
 
     if (parser->token->tok != RIGHT_PAREN) {
         MerDebug_print_error(SYNTAX_ERROR, "Missing ')' at the end of expression", parser->lexer->file, TRUE_LINE(parser));
+    }
+
+    mAST_T *new_node = MerAST_make_parent(ExtractExpression);
+
+    new_node->extract_value = left;
+    new_node->is_value_extract = true;
+
+    if (parser->token->tok == LEFT_BRACKET) {
+        parser->token = _MerLexer_get_next_tok(parser->lexer);
+        mAST_T *value = MerParser_parse(parser);
+        if (!value || !is_ast_expression(value->type)) {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected extract expression", parser->lexer->file, TRUE_LINE(parser));
+        }
+        new_node->mul_extract.push_back(value);
+        if (parser->token->tok == RIGHT_BRACKET) {
+            return new_node;
+        } else {
+            MerDebug_print_error(SYNTAX_ERROR, "Expected ']' in extract expression", parser->lexer->file, TRUE_LINE(parser));
+        }
     }
 
     return left;

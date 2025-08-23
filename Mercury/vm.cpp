@@ -472,6 +472,22 @@ __mer_core_data__ mClass_T *MerVM_class_evaluate_STORE_GLOBAL(__program_bytecode
     Mer_uint8_t code = next_c(u);
     table *top = POP();
 
+    for (auto &item : cls->methods) {
+        symtable *sym_item = (symtable *) item;
+        if (sym_item->address == code) {
+            if (--sym_item->tab->ref_count < 1) {
+                push_to_gc(sym_item->tab);
+            }
+
+            sym_item->value = top->cval;
+            sym_item->address = code;
+            sym_item->tab = top;
+            sym_item->tab->cval = top->cval;
+            sym_item->tab->address = code;
+            return cls;
+        }
+    }
+
     symtable *sym_value = MerCompiler_SymbolTable_new();
 
     sym_value->value = top->cval;
@@ -560,6 +576,8 @@ __mer_core_data__ mClass_T *MerVM_class_evaluate_SET_SUPER_CLASS(__program_bytec
     }
 
     cls->super_class = super_class;
+
+    cls->methods.insert(cls->methods.end(), super_class->methods.begin(), super_class->methods.end());
 
     #ifdef SYSTEM_TEST
     cout << "[ceval.cpp] [MerVM_class_evaluate_SET_SUPER_CLASS] [pass]" << endl;

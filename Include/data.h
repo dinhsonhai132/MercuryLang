@@ -37,8 +37,8 @@ using namespace std;
 #define SIN_ADDRESS                        0x8C
 #define TAN_ADDRESS                        0x8D
 #define FFI_CHARR_ADDRESS                  0x8E
-#define FFI_FLOAT_ADDRESS                  0x8F
-#define FFI_ADDRESS                        0x90
+#define CHR_ADDRESS                        0x8F
+#define ORD_ADDRESS                        0x90
 #define CHANGE_ITEM_ADDRESS                0x91
 #define TYPE_ADDRESS                       0x92
 #define RANGE_ADDRESS                      0x93

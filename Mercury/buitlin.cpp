@@ -141,6 +141,24 @@ MERCURY_API __mer_core_lib_api__ __builtin_func_t __builtin_to_string(stack *stk
     }
 }
 
+MERCURY_API __mer_core_lib_api__ __builtin_func_t __builtin_ord(stack *stk) {
+    table *top = POP();
+    
+    string str = __convert_to_string(top->f_str_v);
+    stack_push(MER_VALUE(str[0]));
+}
+
+MERCURY_API __mer_core_lib_api__ __builtin_func_t __builtin_chr(stack *stk) {
+    table *top = POP();
+    
+    Mer_uint8_t ch = top->cval;
+    mString_T *str = creat_char_obj(ch);
+    table *str_tab = MerCompiler_Table_new();
+    str_tab->is_str = true;
+    str_tab->f_str_v = str;
+    stack_push(str_tab);
+}
+
 MERCURY_API __mer_core_lib_api__ __builtin_func_t __builtin_to_int(stack *stk) {
     table *top = POP();
     

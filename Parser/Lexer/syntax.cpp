@@ -10,6 +10,7 @@ const char* TRUE_S = "TRUE";
 const char* FALSE_S = "FALSE";
 const char* INCLUDE_S = "INCLUDE";
 const char* LOOP_S = "LOOP";
+const char* EXTENDS_S = "EXTENDS";
 const char* IMPORT_S = "IMPORT";
 const char* FUNCTION_S = "FUNC";
 const char* FUNCTION2_S = "FUNCTION";

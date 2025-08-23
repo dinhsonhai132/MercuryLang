@@ -120,6 +120,8 @@ struct mAST_T
     // class
     string class_name;
     vector<mAST_T *> members;
+    string extend;
+    bool is_extend = false;
 
     int true_line;
 

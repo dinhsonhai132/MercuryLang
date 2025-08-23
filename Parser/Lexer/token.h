@@ -77,6 +77,7 @@ using namespace std;
 #define OR "OR"
 #define NOT "NOT"
 #define DO_T "DO_T"
+#define EXTENDS "EXTENDS"
 #define END_LINE "END_LINE"
 #define BREAK "BREAK"
 #define ELIF "ELIF"
@@ -214,6 +215,7 @@ inline bool is_identifier(const std::string& c) {
     || (c == FLOAT_S)
     || (c == DOUBLE_S)
     || (c == CHAR_S)
+    || (c == EXTENDS_S)
     || (c == LIST_S)
     || (c == ASSERT_S)
     || (c == NOT_S)
@@ -251,6 +253,7 @@ inline bool is_identifier(const std::string& c) {
     || (c == "end")
     || (c == "function")
     || (c == "break")
+    || (c == "extends")
     || (c == "continue")
     || (c == "elif")
     || (c == "auto")
@@ -301,6 +304,7 @@ inline string GET_SYNTAX(const std::string& c) {
     else if (c == WHILE_S) return WHILE;
     else if (c == IN_S) return IN_T;
     else if (c == NOT_S) return NOT;
+    else if (c == EXTENDS_S) return EXTENDS;
     else if (c == LOOP_S) return LOOP;
     else if (c == TRUE_S) return TRUE_T;
     else if (c == FALSE_S) return FALSE_T;
@@ -344,6 +348,7 @@ inline string GET_SYNTAX(const std::string& c) {
     else if (c == "return") return RETURN;
     else if (c == "import") return IMPORT;
     else if (c == "assert") return ASSERT;
+    else if (c == "extends") return EXTENDS;
     else if (c == "func" || c == "function") return FUNCTION;
     else if (c == "include") return INCLUDE;
     else if (c == "elif") return ELIF;

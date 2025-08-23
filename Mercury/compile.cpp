@@ -346,8 +346,26 @@ MERCURY_API mCode_T MerCompiler_compile_ast_store_attribute_statement(mAST_T *as
 
 MERCURY_API mCode_T MerCompiler_compile_ast_class_statement(mAST_T *ast, __compiler_u &glb) {
   mCode_T result = NULL_CODE;
+  mCode_T extend_c = NULL_CODE;
+  Mer_uint8_t class_address = create_label(glb);  
+  
+  if (ast->is_extend) {
+    Mer_uint8_t super_class_a = NULL_UINT_8_T;
 
-  Mer_uint8_t class_address = create_label(glb);     
+    for (auto &item : GLOBAL_TABLE) {
+      if (item->__Name == ast->extend) {
+        super_class_a = item->__Address;
+        break;
+      }
+    }
+
+    if (super_class_a == NULL_UINT_8_T) {
+      MerDebug_print_error(COMPILER_ERROR, "Error cannot found super class while compiling", glb.file, ast->true_line);
+    }
+
+    PUSH(extend_c, CSET_SUPER_CLASS);
+    PUSH(extend_c, super_class_a);
+  }
   
   __global* class_glb = CREAT_GLOBAL_TABLE(class_address, ast->class_name.c_str(), ast->class_name);
   class_glb->is_let = false;
@@ -359,6 +377,10 @@ MERCURY_API mCode_T MerCompiler_compile_ast_class_statement(mAST_T *ast, __compi
 
   PUSH(result, CCLASS_BEGIN);
   PUSH(result, class_address);
+
+  if (ast->is_extend) {
+    INSERT_VEC(result, extend_c);
+  }
 
   for (auto &item : ast->members) {
     mCode_T code = MerCompiler_compile_ast_id(item, glb);

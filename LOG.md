@@ -228,3 +228,7 @@
 
 - **Add** new `class` (W.I.P)
 
+### 8/23/2025
+
+- **Add new** `class`
+

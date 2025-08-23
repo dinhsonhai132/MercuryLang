@@ -178,6 +178,46 @@ else
 end
 ```
 
+### 📋 Classes
+```
+class Animal do
+    let name = ""
+    let age = 0
+
+    func init_name(n, a) do
+        this.name = n
+        this.age = a
+    end
+end
+
+class Dog extends Animal do
+    name = "Dog"
+    age = 12
+
+    func bark() do
+        print("woof")
+    end
+end
+
+class Cat extends Animal do
+    name = "Cat"
+    age = 15
+    
+    func meow() do
+        print("meow")
+    end
+end
+
+let pup = Dog()
+let kirby = Cat()
+
+pup.init_name("Pup Dog", 16)
+kirby.init_name("LongTail Cat", 20)
+
+print(pup.name)
+print(kirby.name)
+```
+
 ### 🧠 Call `C++` Functions from `MercuryLang`
 
 `MercuryLang` supports calling **C++ functions** from dynamic libraries (`.dll` on Windows) via the `dll_load` function.
